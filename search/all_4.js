@@ -20,5 +20,6 @@ var searchData=
   ['communicator_2ehpp_17',['communicator.hpp',['../d4/d32/communicator_8hpp.html',1,'']]],
   ['communicatorsettings_2ehpp_18',['communicatorSettings.hpp',['../d6/d25/communicator_settings_8hpp.html',1,'']]],
   ['component_5ftimestamp_5ftimeout_19',['COMPONENT_TIMESTAMP_TIMEOUT',['../d6/db3/digital_settings_8hpp.html#a9031dce2b5874b7396f682a7ed5a628c',1,'digitalSettings.hpp']]],
-  ['create_5fleft_5fwheel_5fmsg_20',['create_left_wheel_msg',['../df/d93/utils_8hpp.html#a6253519ad1a2817283408a79e18afa98',1,'utils.hpp']]]
+  ['contributing_20',['Contributing',['../index.html#autotoc_md2',1,'']]],
+  ['create_5fleft_5fwheel_5fmsg_21',['create_left_wheel_msg',['../df/d93/utils_8hpp.html#a6253519ad1a2817283408a79e18afa98',1,'utils.hpp']]]
 ];

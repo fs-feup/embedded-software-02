@@ -25,14 +25,14 @@
 var NAVTREE =
 [
   [ "Formula Student Electronics & Software", "index.html", [
-    [ "embedded-software-02", "index.html", null ],
+    [ "Embedded Software 02 Repository", "index.html", "index" ],
     [ "Master PCB", "d7/de5/md_master_2_r_e_a_d_m_e.html", [
-      [ "State Machine", "d7/de5/md_master_2_r_e_a_d_m_e.html#autotoc_md2", null ],
-      [ "Main Loop Sequence", "d7/de5/md_master_2_r_e_a_d_m_e.html#autotoc_md3", [
-        [ "Set-up", "d7/de5/md_master_2_r_e_a_d_m_e.html#autotoc_md4", null ],
-        [ "Loop", "d7/de5/md_master_2_r_e_a_d_m_e.html#autotoc_md5", null ]
+      [ "State Machine", "d7/de5/md_master_2_r_e_a_d_m_e.html#autotoc_md6", null ],
+      [ "Main Loop Sequence", "d7/de5/md_master_2_r_e_a_d_m_e.html#autotoc_md7", [
+        [ "Set-up", "d7/de5/md_master_2_r_e_a_d_m_e.html#autotoc_md8", null ],
+        [ "Loop", "d7/de5/md_master_2_r_e_a_d_m_e.html#autotoc_md9", null ]
       ] ],
-      [ "System Details", "d7/de5/md_master_2_r_e_a_d_m_e.html#autotoc_md6", null ]
+      [ "System Details", "d7/de5/md_master_2_r_e_a_d_m_e.html#autotoc_md10", null ]
     ] ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],

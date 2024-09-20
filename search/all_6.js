@@ -4,7 +4,7 @@ var searchData=
   ['ebs_5ftest_1',['EBS_TEST',['../d3/db0/structure_8hpp.html#af686af98019fe71e9f18190349618431a600401a2aada0e65f36f57f235aa473d',1,'structure.hpp']]],
   ['ebs_5fvalve_5f1_5fpin_2',['ebs_valve_1_pin',['../db/d2c/test__digital_sender_8cpp.html#a7a728cf1dfd88108c973086de1810346',1,'EBS_VALVE_1_PIN:&#160;test_digitalSender.cpp'],['../d6/db3/digital_settings_8hpp.html#a7a728cf1dfd88108c973086de1810346',1,'EBS_VALVE_1_PIN:&#160;digitalSettings.hpp']]],
   ['ebs_5fvalve_5f2_5fpin_3',['ebs_valve_2_pin',['../db/d2c/test__digital_sender_8cpp.html#a42751ed87b55bd7a6a6cdceda2b96bb4',1,'EBS_VALVE_2_PIN:&#160;test_digitalSender.cpp'],['../d6/db3/digital_settings_8hpp.html#a42751ed87b55bd7a6a6cdceda2b96bb4',1,'EBS_VALVE_2_PIN:&#160;digitalSettings.hpp']]],
-  ['embedded_20software_2002_4',['embedded-software-02',['../index.html',1,'']]],
+  ['embedded_20software_2002_20repository_4',['Embedded Software 02 Repository',['../index.html',1,'']]],
   ['emergencysequencecomplete_5',['emergencySequenceComplete',['../d7/d1f/class_checkup_manager.html#a531e435a6a3c0c1ca83f963c1c8541f3',1,'CheckupManager']]],
   ['emergencysignal_6',['emergencySignal',['../d3/df6/struct_failure_detection.html#ab5c5f55a6d5a2908fbfa0905bd3f065c',1,'FailureDetection']]],
   ['engage_5febs_5ftimeout_5fms_7',['ENGAGE_EBS_TIMEOUT_MS',['../de/d72/system_diagnostics_8hpp.html#a48b6cee7a6f1744d5982cc961058f322',1,'systemDiagnostics.hpp']]],
