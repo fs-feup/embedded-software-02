@@ -1,0 +1,10 @@
+var searchData=
+[
+  ['sdc_5flogic_5fclose_5fsdc_5fpin_0',['sdc_logic_close_sdc_pin',['../d6/db3/digital_settings_8hpp.html#a09dee7a067930a282732cba33e5fb4fe',1,'SDC_LOGIC_CLOSE_SDC_PIN:&#160;digitalSettings.hpp'],['../db/d2c/test__digital_sender_8cpp.html#a09dee7a067930a282732cba33e5fb4fe',1,'SDC_LOGIC_CLOSE_SDC_PIN:&#160;test_digitalSender.cpp']]],
+  ['sdc_5flogic_5fwatchdog_5fin_5fpin_1',['sdc_logic_watchdog_in_pin',['../d6/db3/digital_settings_8hpp.html#ae373dd28597603d1ed6ce85d7d2483a3',1,'SDC_LOGIC_WATCHDOG_IN_PIN:&#160;digitalSettings.hpp'],['../dd/d46/test__digital_receiver_8cpp.html#ae373dd28597603d1ed6ce85d7d2483a3',1,'SDC_LOGIC_WATCHDOG_IN_PIN:&#160;test_digitalReceiver.cpp']]],
+  ['sdc_5flogic_5fwatchdog_5fout_5fpin_2',['sdc_logic_watchdog_out_pin',['../d6/db3/digital_settings_8hpp.html#a82ead1bedea5df9f051bf41b2f437369',1,'SDC_LOGIC_WATCHDOG_OUT_PIN:&#160;digitalSettings.hpp'],['../db/d2c/test__digital_sender_8cpp.html#a82ead1bedea5df9f051bf41b2f437369',1,'SDC_LOGIC_WATCHDOG_OUT_PIN:&#160;test_digitalSender.cpp']]],
+  ['sdc_5fstate_5fpin_3',['sdc_state_pin',['../d6/db3/digital_settings_8hpp.html#af09257c87136c47f8fb87c10054f385e',1,'SDC_STATE_PIN:&#160;digitalSettings.hpp'],['../dd/d46/test__digital_receiver_8cpp.html#af09257c87136c47f8fb87c10054f385e',1,'SDC_STATE_PIN:&#160;test_digitalReceiver.cpp']]],
+  ['sensor_5fpressure_5f1_5fpin_4',['sensor_pressure_1_pin',['../d6/db3/digital_settings_8hpp.html#ac163d78cbfc1b21eeb0f6041206d428b',1,'SENSOR_PRESSURE_1_PIN:&#160;digitalSettings.hpp'],['../dd/d46/test__digital_receiver_8cpp.html#ac163d78cbfc1b21eeb0f6041206d428b',1,'SENSOR_PRESSURE_1_PIN:&#160;test_digitalReceiver.cpp']]],
+  ['sensor_5fpressure_5f2_5fpin_5',['sensor_pressure_2_pin',['../d6/db3/digital_settings_8hpp.html#a3a05249faebf03552eacbcdd240c3f9c',1,'SENSOR_PRESSURE_2_PIN:&#160;digitalSettings.hpp'],['../dd/d46/test__digital_receiver_8cpp.html#a3a05249faebf03552eacbcdd240c3f9c',1,'SENSOR_PRESSURE_2_PIN:&#160;test_digitalReceiver.cpp']]],
+  ['state_5fcalculation_5finterval_6',['STATE_CALCULATION_INTERVAL',['../d2/d0c/timings_8hpp.html#a22115e8e897d85e0d9be32158d5f2dcb',1,'timings.hpp']]]
+];
