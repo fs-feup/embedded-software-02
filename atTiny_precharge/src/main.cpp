@@ -1,5 +1,4 @@
 #include <Arduino.h>
-//#include "temp_header.h"
 
 // put function declarations here:
 int myFunction(int, int);
