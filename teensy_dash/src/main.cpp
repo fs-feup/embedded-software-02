@@ -1,19 +1,26 @@
 #include <Arduino.h>
-//#include "temp_header.h"
+#include "hw_io_manager.hpp"
+#include "can_comm_handler.hpp"
+#include "logic_handler.hpp"
+# include "data_struct.hpp"
 
-// put function declarations here:
-int myFunction(int, int);
+SystemData data;
+volatile SystemData data_copy;
+
+IOManager io_manager(data_copy);
+CanCommHandler can_comm_handler(data_copy);
+LogicHandler logic_handler(data);
+
 
 void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+    io_manager.manage();
+    noInterrupts();
+    data = data_copy;
+    interrupts();
+    //run state machine
+
 }
 
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
-}
