@@ -1,7 +1,15 @@
 #pragma once
 
-#define APPS_1_PIN 0
+#define APPS_1_PIN 0//TODO: do not use defines
 #define APPS_2_PIN 0
+
+#define BMS_PIN 0
+#define IMD_PIN 0
+#define TS_OFF_PIN 0
+#define SDC_PIN 0
+#define BSPD_PIN 0
+#define INERTIA_PIN 0
+
 
 #define APPS_1_UPPER_BOUND 0
 #define APPS_1_LOWER_BOUND 0
@@ -29,8 +37,24 @@
 #define APPS_IMPLAUSIBLE_TIMEOUT_MS 0
 #define APPS_BRAKE_PLAUSIBILITY_TIMEOUT_MS 0
 
+#define BRAKE_BLOCK_THRESHOLD 250
 #define BUZZER_PIN 0
 #define FRONT_RIGHT_WHEEL_ENCODER_PIN 0
 #define FRONT_LEFT_WHEEL_ENCODER_PIN 0
 #define LIMIT_RPM_INTERVAL 500000
 #define WPS_PULSES_PER_ROTATION 36
+#define R2D_PIN 0
+#define R2D_TIMEOUT 0
+
+#define ATS_PIN 0
+#define DISPLAY_PIN 0
+#define BMS_LED_PIN 0
+#define IMD_LED_PIN 0
+#define TS_OFF_LED_PIN 0
+#define SDC_LED_PIN 0
+#define BSPD_LED_PIN 0
+#define INERTIA_LED_PIN 0
+
+
+#define BAMOCAR_MAX 0
+#define BAMOCAR_MIN 0

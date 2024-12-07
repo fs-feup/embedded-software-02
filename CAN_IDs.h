@@ -65,7 +65,6 @@ constexpr uint16_t STEERING_BOSCH_ID = 0xA1;
 
 constexpr uint16_t SET_ORIGIN_BOSCH_STEERING_ANGLE_ID = 0x725;
 
-constexpr uint16_t BAMO_RESPONSE_ID = 0x181;
 
 constexpr uint16_t AS_CU_NODE_ID = 0x400;
 
@@ -149,8 +148,7 @@ constexpr uint16_t TA_ID = 0x301;
 
 // IDS
 constexpr uint16_t MASTER_ID = 0x300;
-constexpr uint16_t C1_ID = 0x123;
-constexpr uint16_t C3_ID = 0x111;
+constexpr uint16_t DASH_ID = 0x132;
 constexpr uint16_t AS_CU_ID = 0x400;
 constexpr uint16_t STEERING_ID = 0x295D;
 
@@ -185,4 +183,5 @@ constexpr uint8_t BTB_READY = 0xE2;
 constexpr uint8_t VDC_BUS = 0xEB;
 constexpr uint16_t DC_THRESHOLD = 1890; // same as 60 volts
 
+constexpr float CAN_TIMEOUT_MS = 100;
 #endif // CAN_IDS_H
