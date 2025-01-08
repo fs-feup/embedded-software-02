@@ -73,6 +73,11 @@ void CanCommHandler::master_callback(const uint8_t* msg_data) {
   if (msg_data[0] == HYDRAULIC_LINE) {
     updatable_data.brake_pressure = (msg_data[2] << 8) | msg_data[1];
   }
+  if (msg_data[0] == ASMS) {//TODO: add this to master 
+    if (msg_data[1] == true) {//TODO: maybe chnage this to a specif byte define that master will send when asms on
+      updatable_data.asms_on = true;
+    }
+  }
 }
 
 void CanCommHandler::write_periodic_messages() {

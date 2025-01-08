@@ -55,6 +55,8 @@ constexpr uint16_t TEENSY_C1 = 0x123;
 
 constexpr uint16_t HYDRAULIC_LINE = 0x90;
 
+constexpr uint16_t ASMS = 0x91;
+
 constexpr uint16_t SET_ORIGIN_CUBEM_ID = 0x55D;
 
 constexpr uint16_t STEERING_COMMAND_CUBEM_ID = 0x45D;

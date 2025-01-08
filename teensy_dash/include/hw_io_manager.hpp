@@ -11,7 +11,8 @@
 
 class IOManager {
 public:
-  IOManager(SystemData& system_data, volatile SystemVolatileData& volatile_updatable_data, SystemVolatileData& volatile_updated_data);
+  IOManager(SystemData& system_data, volatile SystemVolatileData& volatile_updatable_data,
+            SystemVolatileData& volatile_updated_data);
 
   void setup();
   void manage();
@@ -19,6 +20,8 @@ public:
   void play_r2d_sound();
   void play_buzzer(uint8_t duration_seconds);
   void calculate_rpm();
+  void manage_ats();
+  void read_rotative_switch();
 
 private:
   SystemData& data;
@@ -32,26 +35,71 @@ private:
   Bounce display_button = Bounce();
 };
 
-IOManager::IOManager(SystemData& system_data, volatile SystemVolatileData& volatile_updatable_data, SystemVolatileData& volatile_updated_data)
-    : data(system_data), updatable_data(volatile_updatable_data), updated_data(volatile_updated_data) {
-      instance = this;
-    }
+IOManager::IOManager(SystemData& system_data, volatile SystemVolatileData& volatile_updatable_data,
+                     SystemVolatileData& volatile_updated_data)
+    : data(system_data),
+      updatable_data(volatile_updatable_data),
+      updated_data(volatile_updated_data) {
+  instance = this;
+}
 
 void IOManager::manage() {
   r2d_button.update();
   ats_button.update();
   display_button.update();
   data.r2d_pressed = r2d_button.fell();
-  data.ats_pressed = ats_button.fell();//TODO: check wtf this is for 
-  data.display_pressed = display_button.fell();//TODO: display stuff
+  data.ats_pressed = ats_button.fell();          // TODO: check wtf this is for
+  data.display_pressed = display_button.fell();  // TODO: display stuff
+  read_rotative_switch();
   read_pins_handle_leds();
   read_apps();
   update_buzzer();
   calculate_rpm();
+  manage_ats();
+}
+
+
+
+void IOManager::read_rotative_switch() {//TODO: check if this is correct
+    const int raw_value = analogRead(ROTARY_SWITCH_PIN);  // 0-1023???
+    const int segment_size = 1024 / 8;  // ~128 steps per mode
+
+    // Map ranges to modes
+    if (raw_value < segment_size) {
+        data.switch_mode = SwitchMode::MODE_0;        // 0-127
+    }
+    else if (raw_value < segment_size * 2) {
+        data.switch_mode = SwitchMode::MODE_1;        // 128-255
+    }
+    else if (raw_value < segment_size * 3) {
+        data.switch_mode = SwitchMode::MODE_2;        // 256-383
+    }
+    else if (raw_value < segment_size * 4) {
+        data.switch_mode = SwitchMode::MODE_3;        // 384-511
+    }
+    else if (raw_value < segment_size * 5) {
+        data.switch_mode = SwitchMode::MODE_4;        // 512-639
+    }
+    else if (raw_value < segment_size * 6) {
+        data.switch_mode = SwitchMode::MODE_5;        // 640-767
+    }
+    else if (raw_value < segment_size * 7) {
+        data.switch_mode = SwitchMode::MODE_6;        // 768-895
+    }
+    else {
+        data.switch_mode = SwitchMode::MODE_7;        // 896-1023
+    }
+}
+
+void IOManager::manage_ats() {
+  if (data.ats_pressed && !updated_data.asms_on) {
+    data.ats_pressed = false;
+    digitalWrite(ATS_SDC_PIN, HIGH);  // TODO: close the circuit, check if should be LOW
+  }
 }
 void IOManager::setup() {
-  //TODO: botão rotativo
-  pinMode(BMS_PIN, INPUT);//TODO: make this a loop
+  // TODO: botão rotativo
+  pinMode(BMS_PIN, INPUT);  // TODO: make this a loop
   pinMode(IMD_PIN, INPUT);
   pinMode(TS_OFF_PIN, INPUT);
   pinMode(SDC_PIN, INPUT);
