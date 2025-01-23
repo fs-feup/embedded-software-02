@@ -20,7 +20,7 @@ private:
   LogicHandler& logic_handler;
   IOManager& io_manager;
 
-  State current_state_;
+  State current_state_ = State::IDLE;
 
   void handle_idle();
 

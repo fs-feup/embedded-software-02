@@ -1,17 +1,4 @@
-#include <FlexCAN_T4.h>
-
-#include "Arduino.h"
-
-#define DELAY_VALUE 500
-#define N_NTC 18
-#define N_BYTES 1023
-#define VDD 5.0
-#define RESISTOR_PULLUP 10000.0
-#define RESISTOR_NTC_REFERNCE 10000.0  // Resistência a 25°C do NTC
-#define TEMPERATURE_DEFAULT_C 25.0
-#define TEMPERATURE_DEFAULT_K 298.15
-#define NTC_BETA 3971.0
-#define MAXIMUM_TEMPERATURE 60.0
+#include "../include/temp_header.hpp"
 
 FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> can1;
 
@@ -20,31 +7,37 @@ int pinNTC_Temp[N_NTC] = {A4,  A5,  A6,  A7, A8, A9,  A2,  A3,  A10,
 int ERROR_SIGNAL = 35;
 
 float CELL_TEMP[N_NTC];
-float MIN_TEMP;
-float MAX_TEMP;
 
-uint32_t CAN_IDS[9] = {0x100, 0x101, 0x102, 0x103, 0x104, 0x105, 0x106, 0x107, 0x108};
+static BoardData board_temps[TOTAL_BOARDS];
+
+float read_ntc_temperature(int analog_value) {
+  if (analog_value < 0 || analog_value > 1023) {
+    return TEMPERATURE_DEFAULT_C;
+  }
+  float volatge_divider = analog_value * (VDD / 1023.0);
+  float resistor_value = (RESISTOR_PULLUP * volatge_divider) / (VDD - volatge_divider);
+  float temp_kelvin = 1.0f / ((1.0f / TEMPERATURE_DEFAULT_K) +
+                              (log(resistor_value / RESISTOR_NTC_REFERNCE) / NTC_BETA));
+  return temp_kelvin - 273.15f;  // return in celcius
+}
 
 void read_Temperatures() {
-  int ANALOG_SIGNAL;
-  float VOLTAGE_DIVIDER;
-  float RESISTOR_VALUE;
-
-  MIN_TEMP = 100;
-  MAX_TEMP = -100;
+  float sum_temp = 0.0;
+  float min_temp = 100.0f;
+  float max_temp = -100.0f;
 
   for (int i = 0; i < N_NTC; i++) {
-    ANALOG_SIGNAL = analogRead(pinNTC_Temp[i]);
-    VOLTAGE_DIVIDER = ANALOG_SIGNAL * (VDD / 1023.0);
-    RESISTOR_VALUE = (RESISTOR_PULLUP * VOLTAGE_DIVIDER) / (VDD - VOLTAGE_DIVIDER);
-    CELL_TEMP[i] = 1 / ((1 / TEMPERATURE_DEFAULT_K) +
-                        (log(RESISTOR_VALUE / RESISTOR_NTC_REFERNCE) /
-                         NTC_BETA));       // fórmula para obter a temperatura do NTC em K
-    CELL_TEMP[i] = CELL_TEMP[i] - 273.15;  // conversão para Celsius
-    MIN_TEMP = min(MIN_TEMP, CELL_TEMP[i]);
-    MAX_TEMP = max(MAX_TEMP, CELL_TEMP[i]);
+    CELL_TEMP[i] = read_ntc_temperature(analogRead(pinNTC_Temp[i]));
+    min_temp = min(min_temp, CELL_TEMP[i]);
+    max_temp = max(max_temp, CELL_TEMP[i]);
+    sum_temp += CELL_TEMP[i];
   }
+  board_temps[BOARD_ID].min_temp = safeTemperatureCast(min_temp);
+  board_temps[BOARD_ID].max_temp = safeTemperatureCast(max_temp);
+  board_temps[BOARD_ID].avg_temp = safeTemperatureCast(sum_temp / N_NTC);
+  board_temps[BOARD_ID].valid = true;
 }
+
 void check_Temperatures() {
   bool error_flag = false;
   for (int i = 0; i < N_NTC; i++) {
@@ -59,24 +52,74 @@ void check_Temperatures() {
   }
 }
 
-void send_CAN_Temperatures() {
+int8_t safeTemperatureCast(float temp) {
+  if (temp > 127.0f) return MAX_INT8_T;
+  if (temp < -128.0f) return MIN_INT8_T;
+  return static_cast<int8_t>(round(temp));
+}
+
+void send_CAN_max_min_avg_Temperatures() {
+  CAN_message_t msg;
+  msg.id = MASTER_CELL_ID;
+  msg.len = 4;
+
+  msg.buf[0] = BOARD_ID;
+  msg.buf[1] = board_temps[BOARD_ID].min_temp;
+  msg.buf[2] = board_temps[BOARD_ID].max_temp;
+  msg.buf[3] = board_temps[BOARD_ID].avg_temp;
+  can1.write(msg);
+
+  Serial.print("CAN MSG - ID: 0x109 | Min: ");
+  Serial.print(static_cast<int8_t>(msg.buf[1]));
+  Serial.print("°C, Max: ");
+  Serial.print(static_cast<int8_t>(msg.buf[2]));
+  Serial.print("°C, Avg: ");
+  Serial.println(static_cast<int8_t>(msg.buf[3]));
+}
+void send_to_BMS(int8_t global_min, int8_t global_max, int8_t global_avg) {
+  CAN_message_t msg;
+  msg.id = BMS_THERMISTOR_ID;
+  msg.len = 8;
+  msg.buf[0] = THERMISTOR_MODULE_NUMBER;
+  msg.buf[1] = global_min;
+  msg.buf[2] = global_max;
+  msg.buf[3] = global_avg;
+  msg.buf[4] = NUMBER_OF_THERMISTORS;
+  msg.buf[5] = HIGHEST_THERMISTOR_ID;
+  msg.buf[6] = LOWEST_THERMISTOR_ID;
+  msg.buf[7] = msg.buf[1] + msg.buf[2] + msg.buf[3] + msg.buf[4] + msg.buf[5] + msg.buf[6] +
+               CHECKSUM_CONSTANT + MSG_LENGTH;
+  can1.write(msg);
+  // According to documentation we might need to send message to another id as well, although last
+  // year only this one was used and worked fine
+}
+
+void send_CAN_all_cell_temperatures() {
   CAN_message_t msg;
 
-  for (int i = 0; i < 9; i++) {
-    msg.id = CAN_IDS[i];
+  for (int msgIndex = 0; msgIndex < 3; msgIndex++) {
+    msg.id = BOARD_ID;  // TODO: change this to the correct ID if needed
     msg.len = 8;
-    float temp1 = CELL_TEMP[i * 2];
-    float temp2 = CELL_TEMP[i * 2 + 1];
-    memcpy(&msg.buf[0], &temp1, sizeof(temp1));
-    memcpy(&msg.buf[4], &temp2, sizeof(temp2));
+
+    msg.buf[0] = BOARD_ID;
+    msg.buf[1] = msgIndex;
+
+    for (int i = 0; i < CELLS_PER_MESSAGE; i++) {
+      int cellIndex = (msgIndex * CELLS_PER_MESSAGE) + i;
+      msg.buf[i + 2] = cellIndex < N_NTC ? safeTemperatureCast(CELL_TEMP[cellIndex]) : 0;
+    }
+
     can1.write(msg);
 
-    Serial.print("Enviando via CAN - ID: 0x");
-    Serial.print(CAN_IDS[i], HEX);
-    Serial.print(" | Temp1: ");
-    Serial.print(temp1);
-    Serial.print("°C, Temp2: ");
-    Serial.println(temp2);
+    Serial.print("CAN MSG - ID: 0x");
+    Serial.print(msg.id, HEX);
+    Serial.print(" | Board: ");
+    Serial.print(BOARD_ID);
+    Serial.print(" | Cells ");
+    Serial.print(msgIndex * CELLS_PER_MESSAGE + 1);
+    Serial.print("-");
+    Serial.println(min((msgIndex + 1) * CELLS_PER_MESSAGE, N_NTC));
+
     delay(100);
   }
 }
@@ -99,22 +142,60 @@ void code_reset() {
   digitalWrite(ERROR_SIGNAL, LOW);
 }
 
+void can_sniffer(const CAN_message_t& msg) {
+  if (msg.id == MASTER_CELL_ID && msg.len == 4) {
+    uint8_t board = msg.buf[0];
+    if (board < TOTAL_BOARDS) {
+      board_temps[board].min_temp = static_cast<int8_t>(msg.buf[1]);
+      board_temps[board].max_temp = static_cast<int8_t>(msg.buf[2]);
+      board_temps[board].avg_temp = static_cast<int8_t>(msg.buf[3]);
+      board_temps[board].valid = true;
+    }
+  }
+}
+
+void calculate_global_stats(int8_t& global_min, int8_t& global_max, int8_t& global_avg) {
+  int sum = 0;
+  int valid_count = 0;
+  global_min = MAX_INT8_T;
+  global_max = MIN_INT8_T;
+
+  for (const auto& board : board_temps) {
+    if (board.valid) {
+      global_min = min(global_min, board.min_temp);
+      global_max = max(global_max, board.max_temp);
+      sum += board.avg_temp;
+      valid_count++;
+    }
+  }
+  global_avg = valid_count > 0 ? sum / valid_count : 0;
+}
+
 void setup() {
   Serial.begin(9600);
   code_reset();
   can1.begin();
-  can1.setBaudRate(500000);
+  can1.setBaudRate(CAN_BAUD_RATE);
+  if (THIS_IS_MASTER) {
+    can1.enableFIFO();
+    can1.enableFIFOInterrupt();
+    can1.setFIFOFilter(REJECT_ALL);
+    can1.setFIFOFilter(0, MASTER_CELL_ID, STD);
+    can1.onReceive(can_sniffer);
+  }
 }
 
 void loop() {
   read_Temperatures();
   check_Temperatures();
-  send_CAN_Temperatures();
-  show_Temperatures();
-  delay(DELAY_VALUE);
-}
 
-// o que falta adicionar é uma
-//     "master" de modo a receber os IDs todos de CAN e depois mandar um ID especifico de CAN para a
-//     BMS(temperatura máxima e minima das celulas),
-//     depois amanha falo contigo
+  if (!THIS_IS_MASTER) {
+    send_CAN_max_min_avg_Temperatures();
+  } else {
+    int8_t global_min, global_max, global_avg;
+    calculate_global_stats(global_min, global_max, global_avg);
+    send_to_BMS(global_min, global_max, global_avg);
+  }
+  show_Temperatures();
+  delay(DELAY_INTERVAL);
+}
