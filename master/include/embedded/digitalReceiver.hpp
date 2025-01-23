@@ -3,11 +3,11 @@
 
 #include <Bounce2.h>
 
-#include <model/digitalData.hpp>
+#include <model/hardwareData.hpp>
 #include <model/structure.hpp>
 
 #include "debugUtils.hpp"
-#include "digitalSettings.hpp"
+#include "hardwareSettings.hpp"
 
 /**
  * @brief Class responsible for the reading of the digital
@@ -31,8 +31,8 @@ public:
   /**
    * @brief Constructor for the class, sets pintmodes and buttons
    */
-  DigitalReceiver(DigitalData *digital_data, Mission *mission)
-      : digital_data_(digital_data), mission_(mission) {
+  DigitalReceiver(HardwareData *digital_data, Mission *mission)
+      : hardware_data_(digital_data), mission_(mission) {
     pinMode(SDC_STATE_PIN, INPUT);
     pinMode(MISSION_ACCELERATION_PIN, INPUT);
     pinMode(MISSION_AUTOCROSS_PIN, INPUT);
@@ -47,7 +47,7 @@ public:
   }
 
 private:
-  DigitalData *digital_data_;  ///< Pointer to the digital data storage
+  HardwareData *hardware_data_;  ///< Pointer to the digital data storage
   Mission *mission_;           ///< Pointer to the current mission status
 
   unsigned int asms_change_counter_ = 0;          ///< counter to avoid noise on asms
@@ -57,7 +57,7 @@ private:
   Mission last_tried_mission_ = Mission::MANUAL;  ///< Last attempted mission state
 
   /**
-   * @brief Reads the pneumatic line pressure states and updates the DigitalData object.
+   * @brief Reads the pneumatic line pressure states and updates the HardwareData object.
    * Debounces input changes to avoid spurious transitions.
    */
   void read_pneumatic_line();
@@ -69,13 +69,13 @@ private:
   void read_mission();
 
   /**
-   * @brief Reads the ASMS switch state and updates the DigitalData object.
+   * @brief Reads the ASMS switch state and updates the HardwareData object.
    * Debounces input changes to avoid spurious transitions.
    */
   void read_asms_switch();
 
   /**
-   * @brief Reads the AATS state and updates the DigitalData object.
+   * @brief Reads the AATS state and updates the HardwareData object.
    * Debounces input changes to avoid spurious transitions.
    */
   void read_aats_state();
@@ -92,16 +92,16 @@ inline void DigitalReceiver::read_pneumatic_line() {
   // bool pneumatic1 = digitalRead(SENSOR_PRESSURE_1_PIN);
   bool pneumatic2 = digitalRead(SENSOR_PRESSURE_2_PIN);  // TODO: maybe poorly read
 
-  // digital_data_->pneumatic_line_pressure_1_ = pneumatic1;
-  digital_data_->pneumatic_line_pressure_2_ = pneumatic2;
+  // hardware_data_->pneumatic_line_pressure_1_ = pneumatic1;
+  hardware_data_->pneumatic_line_pressure_2_ = pneumatic2;
   bool latest_pneumatic_pressure = pneumatic2;
 
   // Only change the value if it has been different 5 times in a row
-  pneumatic_change_counter_ = latest_pneumatic_pressure == digital_data_->pneumatic_line_pressure_
+  pneumatic_change_counter_ = latest_pneumatic_pressure == hardware_data_->pneumatic_line_pressure_
                                   ? 0
                                   : pneumatic_change_counter_ + 1;
   if (pneumatic_change_counter_ >= DIGITAL_INPUT_COUNTER_LIMIT) {
-    digital_data_->pneumatic_line_pressure_ = latest_pneumatic_pressure;  // both need to be True
+    hardware_data_->pneumatic_line_pressure_ = latest_pneumatic_pressure;  // both need to be True
     pneumatic_change_counter_ = 0;
   }
 }
@@ -130,9 +130,9 @@ inline void DigitalReceiver::read_asms_switch() {
   bool latest_asms_status = digitalRead(ASMS_IN_PIN);
 
   asms_change_counter_ =
-      latest_asms_status == digital_data_->asms_on_ ? 0 : asms_change_counter_ + 1;
+      latest_asms_status == hardware_data_->asms_on_ ? 0 : asms_change_counter_ + 1;
   if (asms_change_counter_ >= DIGITAL_INPUT_COUNTER_LIMIT) {
-    digital_data_->asms_on_ = latest_asms_status;
+    hardware_data_->asms_on_ = latest_asms_status;
     asms_change_counter_ = 0;
   }
 }
@@ -140,9 +140,9 @@ inline void DigitalReceiver::read_asms_switch() {
 inline void DigitalReceiver::read_aats_state() {
   // AATS is on if SDC is closed (SDC STATE PIN AS HIGH)
   bool is_sdc_closed = !digitalRead(SDC_STATE_PIN);
-  aats_change_counter_ = is_sdc_closed == digital_data_->sdc_open_ ? 0 : aats_change_counter_ + 1;
+  aats_change_counter_ = is_sdc_closed == hardware_data_->sdc_open_ ? 0 : aats_change_counter_ + 1;
   if (aats_change_counter_ >= DIGITAL_INPUT_COUNTER_LIMIT) {
-    digital_data_->sdc_open_ = is_sdc_closed;  // both need to be True
+    hardware_data_->sdc_open_ = is_sdc_closed;  // both need to be True
     aats_change_counter_ = 0;
   }
 }

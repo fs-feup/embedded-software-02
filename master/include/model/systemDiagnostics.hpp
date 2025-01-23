@@ -4,7 +4,7 @@
 
 #include "Arduino.h"
 #include "debugUtils.hpp"
-#include "embedded/digitalSettings.hpp"
+#include "embedded/hardwareSettings.hpp"
 #include "metro.h"
 
 struct R2DLogics {

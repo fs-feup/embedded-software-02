@@ -21,21 +21,21 @@ void create_left_wheel_msg(std::array<uint8_t, 5> &msg, double value) {
 inline std::array<uint8_t, 8> create_debug_message_1(const SystemData& system_data, uint8_t state, uint8_t state_checkup) {
     return {
         DBG_LOG_MSG,
-        (system_data.sensors_._hydraulic_line_pressure >> 24) & 0xFF,
-        (system_data.sensors_._hydraulic_line_pressure >> 16) & 0xFF,
-        (system_data.sensors_._hydraulic_line_pressure >> 8) & 0xFF,
-        system_data.sensors_._hydraulic_line_pressure & 0xFF,
+        (system_data.hardware_data_._hydraulic_line_pressure >> 24) & 0xFF,
+        (system_data.hardware_data_._hydraulic_line_pressure >> 16) & 0xFF,
+        (system_data.hardware_data_._hydraulic_line_pressure >> 8) & 0xFF,
+        system_data.hardware_data_._hydraulic_line_pressure & 0xFF,
         (system_data.failure_detection_.emergency_signal_ & 0x01) << 7 | 
-        (system_data.digital_data_.pneumatic_line_pressure_ & 0x01) << 6 |
+        (system_data.hardware_data_.pneumatic_line_pressure_ & 0x01) << 6 |
         (system_data.r2d_logics_.engageEbsTimestamp.checkWithoutReset() & 0x01) << 5 | 
         (system_data.r2d_logics_.releaseEbsTimestamp.checkWithoutReset() & 0x01) << 4 |
         (system_data.failure_detection_.steer_dead_ & 0x01) << 3 | 
         (system_data.failure_detection_.pc_dead_ & 0x01) << 2 |
         (system_data.failure_detection_.inversor_dead_ & 0x01) << 1 | 
         (system_data.failure_detection_.res_dead_ & 0x01),
-        (system_data.digital_data_.asms_on_ & 0x01) << 7 | 
+        (system_data.hardware_data_.asms_on_ & 0x01) << 7 | 
         (system_data.failure_detection_.ts_on_ & 0x01) << 6 | 
-        (system_data.digital_data_.sdc_open_ & 0x01) << 5 |
+        (system_data.hardware_data_.sdc_open_ & 0x01) << 5 |
         (state_checkup & 0x0F),
         (to_underlying(system_data.mission_) & 0x0F) | ((state & 0x0F) << 4)
     };
@@ -48,7 +48,7 @@ inline std::array<uint8_t, 7> create_debug_message_2(const SystemData& system_da
         (system_data.failure_detection_.dc_voltage_ >> 16) & 0xFF,
         (system_data.failure_detection_.dc_voltage_ >> 8) & 0xFF,
         system_data.failure_detection_.dc_voltage_ & 0xFF,
-        system_data.digital_data_.pneumatic_line_pressure_1_ & 0x01,
-        system_data.digital_data_.pneumatic_line_pressure_2_ & 0x01
+        system_data.hardware_data_.pneumatic_line_pressure_1_ & 0x01,
+        system_data.hardware_data_.pneumatic_line_pressure_2_ & 0x01
     };
 }

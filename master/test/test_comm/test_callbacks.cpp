@@ -86,14 +86,14 @@ void test_c1(void) {
   msg.buf[3] = 0x00;
   msg.buf[4] = 0x00;
   communicator.parse_message(msg);
-  TEST_ASSERT_EQUAL(257, sd.sensors_._hydraulic_line_pressure);
+  TEST_ASSERT_EQUAL(257, sd.hardware_data_._hydraulic_line_pressure);
 
   msg.buf[0] = RIGHT_WHEEL_CODE;
   msg.buf[1] = 0x00;
   msg.buf[2] = 0x08;
   communicator.parse_message(msg);
 
-  if (sd.sensors_._right_wheel_rpm == 20.48)
+  if (sd.hardware_data_._right_wheel_rpm == 20.48)
     TEST_PASS();
   else
     TEST_FAIL();

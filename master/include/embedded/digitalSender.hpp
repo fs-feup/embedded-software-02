@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 
-#include "digitalSettings.hpp"
+#include "hardwareSettings.hpp"
 #include "metro.h"
 
 /**

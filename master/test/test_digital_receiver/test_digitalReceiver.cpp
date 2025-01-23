@@ -1,4 +1,4 @@
-#include "model/digitalData.hpp"
+#include "model/hardwareData.hpp"
 #include "unity.h"
 
 #define GREEN_LED_1 4
@@ -31,7 +31,7 @@
 #include "model/systemData.hpp"
 
 SystemData system_data;
-auto digitalRecv = DigitalReceiver(&system_data.digital_data_, &system_data.mission_);
+auto digitalRecv = DigitalReceiver(&system_data.hardware_data_, &system_data.mission_);
 
 /**
  * @attention PROTOCOL TEST

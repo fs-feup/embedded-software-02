@@ -145,15 +145,15 @@ void Communicator::init() {
 
 inline void Communicator::c1_callback(const uint8_t *buf) {
   if (buf[0] == HYDRAULIC_LINE) {
-    _systemData->sensors_._hydraulic_line_pressure = (buf[2] << 8) | buf[1];
+    _systemData->hardware_data_._hydraulic_line_pressure = (buf[2] << 8) | buf[1];
   } else if (buf[0] == RIGHT_WHEEL_CODE) {
     double right_wheel_rpm = (buf[4] << 24) | (buf[3] << 16) | (buf[2] << 8) | buf[1];
     right_wheel_rpm *= WHEEL_PRECISION;  // convert back adding decimal part
-    _systemData->sensors_._right_wheel_rpm = right_wheel_rpm;
+    _systemData->hardware_data_._right_wheel_rpm = right_wheel_rpm;
   } else if (buf[0] == LEFT_WHEEL_CODE) {
     double left_wheel_rpm = (buf[4] << 24) | (buf[3] << 16) | (buf[2] << 8) | buf[1];
     left_wheel_rpm *= WHEEL_PRECISION;  // convert back adding decimal part
-    _systemData->sensors_._left_wheel_rpm = left_wheel_rpm;
+    _systemData->hardware_data_._left_wheel_rpm = left_wheel_rpm;
   }
 }
 

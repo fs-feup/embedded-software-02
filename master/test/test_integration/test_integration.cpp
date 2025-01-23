@@ -26,14 +26,14 @@ void reset() {
  * @brief Auxiliary function to set state as ready
  */
 void to_ready() {
-  sd.digital_data_.asms_on_ = true;
+  sd.hardware_data_.asms_on_ = true;
   // sd.digitalData.watchdog_state = true;
-  sd.digital_data_.sdc_open_ = false;
+  sd.hardware_data_.sdc_open_ = false;
 
   uint8_t bamo_msg[] = {VDC_BUS, 0x00, BAMOCAR_VDC_HIGH};  // VDC_BUS fill
   communicator.bamocar_callback(bamo_msg);
 
-  sd.digital_data_.pneumatic_line_pressure_ = true;
+  sd.hardware_data_.pneumatic_line_pressure_ = true;
   uint8_t hydraulic_msg[] = {HYDRAULIC_LINE, HYDRAULIC_PRESSURE_HIGH, 0x00};
   communicator.c1_callback(hydraulic_msg);
 
@@ -84,14 +84,14 @@ void test_off_to_ready_recheck() {
   bool went_ready = false;
   TEST_ASSERT_EQUAL(State::AS_OFF, as_state.state_);
 
-  sd.digital_data_.asms_on_ = true;
+  sd.hardware_data_.asms_on_ = true;
   // sd.digitalData.watchdog_state = true;
-  sd.digital_data_.sdc_open_ = false;
+  sd.hardware_data_.sdc_open_ = false;
 
   uint8_t bamo_msg[] = {VDC_BUS, 0x00, BAMOCAR_VDC_HIGH};  // VDC_BUS fill
   communicator.bamocar_callback(bamo_msg);
 
-  sd.digital_data_.pneumatic_line_pressure_ = true;
+  sd.hardware_data_.pneumatic_line_pressure_ = true;
   uint8_t hydraulic_msg[] = {HYDRAULIC_LINE, HYDRAULIC_PRESSURE_HIGH, 0x00};
   communicator.c1_callback(hydraulic_msg);
 
@@ -102,7 +102,7 @@ void test_off_to_ready_recheck() {
   // }
 
   // sd.digitalData.watchdog_state = false;
-  sd.digital_data_.asms_on_ = false;  // switch previously checked condition
+  sd.hardware_data_.asms_on_ = false;  // switch previously checked condition
   TEST_ASSERT_EQUAL(State::AS_OFF, as_state.state_);
   // Wait for wd timeout
 
@@ -173,7 +173,7 @@ void test_ready_to_emg_to_off() {
     as_state.calculate_state();
   }
   TEST_ASSERT_EQUAL(State::AS_EMERGENCY, as_state.state_);
-  sd.digital_data_.asms_on_ = false;
+  sd.hardware_data_.asms_on_ = false;
   as_state.calculate_state();
   TEST_ASSERT_EQUAL(State::AS_OFF, as_state.state_);
 }
@@ -277,7 +277,7 @@ void test_ready_to_driving_to_emg2() {
   as_state.calculate_state();
   TEST_ASSERT_EQUAL(State::AS_DRIVING, as_state.state_);
 
-  sd.digital_data_.sdc_open_ = true;
+  sd.hardware_data_.sdc_open_ = true;
   as_state.calculate_state();
   TEST_ASSERT_EQUAL(State::AS_EMERGENCY, as_state.state_);
 }
@@ -300,7 +300,7 @@ void test_driving_to_finished_to_off() {
 
   uint8_t c1_msg[] = {RIGHT_WHEEL_CODE, 0x00, 0x01, 0x00, 0x00};  // value not 0
   communicator.c1_callback(c1_msg);                               // right wheel = msg
-  sd.sensors_._left_wheel_rpm = 0;
+  sd.hardware_data_._left_wheel_rpm = 0;
 
   as_state.calculate_state();
   TEST_ASSERT_EQUAL(State::AS_DRIVING, as_state.state_);
@@ -311,7 +311,7 @@ void test_driving_to_finished_to_off() {
   as_state.calculate_state();
   TEST_ASSERT_EQUAL(State::AS_FINISHED, as_state.state_);
 
-  sd.digital_data_.asms_on_ = false;
+  sd.hardware_data_.asms_on_ = false;
   as_state.calculate_state();
   TEST_ASSERT_EQUAL(State::AS_OFF, as_state.state_);
 }
@@ -328,8 +328,8 @@ void test_finished_to_emg() {
   sd.r2d_logics_.r2d = true;
   as_state.calculate_state();
   TEST_ASSERT_EQUAL(State::AS_DRIVING, as_state.state_);
-  sd.sensors_._left_wheel_rpm = 0;
-  sd.sensors_._right_wheel_rpm = 0;
+  sd.hardware_data_._left_wheel_rpm = 0;
+  sd.hardware_data_._right_wheel_rpm = 0;
   sd.mission_finished_ = true;
   as_state.calculate_state();
   TEST_ASSERT_EQUAL(State::AS_FINISHED, as_state.state_);
@@ -345,7 +345,7 @@ void test_finished_to_emg() {
 void test_off_to_manual_wayback() {
   reset();
   TEST_ASSERT_EQUAL(State::AS_OFF, as_state.state_);
-  sd.digital_data_.asms_on_ = false;
+  sd.hardware_data_.asms_on_ = false;
   as_state.calculate_state();
   TEST_ASSERT_EQUAL(State::AS_OFF, as_state.state_);
 
@@ -353,11 +353,11 @@ void test_off_to_manual_wayback() {
   as_state.calculate_state();
   TEST_ASSERT_EQUAL(State::AS_OFF, as_state.state_);
 
-  sd.digital_data_.pneumatic_line_pressure_ = false;
+  sd.hardware_data_.pneumatic_line_pressure_ = false;
   as_state.calculate_state();
   TEST_ASSERT_EQUAL(State::AS_MANUAL, as_state.state_);
 
-  sd.digital_data_.pneumatic_line_pressure_ = true;
+  sd.hardware_data_.pneumatic_line_pressure_ = true;
   as_state.calculate_state();
   TEST_ASSERT_EQUAL(State::AS_OFF, as_state.state_);
 }
@@ -396,14 +396,14 @@ void test_flow_ready() {
   reset();
   TEST_ASSERT_EQUAL(State::AS_OFF, as_state.state_);
 
-  sd.digital_data_.asms_on_ = true;
+  sd.hardware_data_.asms_on_ = true;
   // sd.digitalData.watchdog_state = true;
-  sd.digital_data_.sdc_open_ = false;
+  sd.hardware_data_.sdc_open_ = false;
 
   uint8_t bamo_msg[] = {VDC_BUS, 0x00, BAMOCAR_VDC_HIGH};
   communicator.bamocar_callback(bamo_msg);
 
-  sd.digital_data_.pneumatic_line_pressure_ = true;
+  sd.hardware_data_.pneumatic_line_pressure_ = true;
   uint8_t hydraulic_msg[] = {HYDRAULIC_LINE, HYDRAULIC_PRESSURE_HIGH, 0x00};
   // uint8_t hydraulic_msg2[] = {HYDRAULIC_LINE, HYDRAULIC_PRESSURE_LOW, 0x00}; // loose brake
   // activation
@@ -454,14 +454,14 @@ void test_flow_emergency() {
   as_state.calculate_state();
   TEST_ASSERT_EQUAL(State::AS_DRIVING, as_state.state_);
 
-  sd.digital_data_.sdc_open_ = true;  // ebs before finished checks
+  sd.hardware_data_.sdc_open_ = true;  // ebs before finished checks
 
   as_state.calculate_state();
   TEST_ASSERT_EQUAL(State::AS_EMERGENCY, as_state.state_);
 
   uint8_t pc_msg[] = {MISSION_FINISHED};
   communicator.pc_callback(pc_msg);
-  sd.sensors_._left_wheel_rpm = 0;
+  sd.hardware_data_._left_wheel_rpm = 0;
   uint8_t c1_msg[] = {RIGHT_WHEEL_CODE, 0x00, 0x00, 0x00, 0x00};
   communicator.c1_callback(c1_msg);  // right wheel = msg
   as_state.calculate_state();
@@ -482,13 +482,13 @@ void test_flow_finished() {
 
   uint8_t pc_msg[] = {MISSION_FINISHED};
   communicator.pc_callback(pc_msg);
-  sd.sensors_._left_wheel_rpm = 0;
+  sd.hardware_data_._left_wheel_rpm = 0;
   uint8_t c1_msg[] = {RIGHT_WHEEL_CODE, 0x00, 0x00, 0x00, 0x00};
   communicator.c1_callback(c1_msg);  // right wheel = msg
   as_state.calculate_state();
   TEST_ASSERT_EQUAL(State::AS_FINISHED, as_state.state_);
 
-  sd.digital_data_.sdc_open_ = true;
+  sd.hardware_data_.sdc_open_ = true;
   as_state.calculate_state();
   TEST_ASSERT_EQUAL(State::AS_FINISHED, as_state.state_);
 

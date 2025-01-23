@@ -6,8 +6,8 @@
 void test_shouldStayManualDriving_true() {
   SystemData systemData;
   systemData.mission_ = Mission::MANUAL;
-  systemData.digital_data_.pneumatic_line_pressure_ = false;
-  systemData.digital_data_.asms_on_ = false;
+  systemData.hardware_data_.pneumatic_line_pressure_ = false;
+  systemData.hardware_data_.asms_on_ = false;
 
   CheckupManager checkupManager(&systemData);
 
@@ -22,14 +22,14 @@ void test_shouldStayManualDriving_false() {
   TEST_ASSERT_FALSE(checkupManager.should_stay_manual_driving());
 
   systemData.mission_ = Mission::MANUAL;
-  systemData.digital_data_.pneumatic_line_pressure_ = true;
+  systemData.hardware_data_.pneumatic_line_pressure_ = true;
   TEST_ASSERT_FALSE(checkupManager.should_stay_manual_driving());
 
-  systemData.digital_data_.pneumatic_line_pressure_ = false;
-  systemData.digital_data_.asms_on_ = true;
+  systemData.hardware_data_.pneumatic_line_pressure_ = false;
+  systemData.hardware_data_.asms_on_ = true;
   TEST_ASSERT_FALSE(checkupManager.should_stay_manual_driving());
 
-  systemData.digital_data_.asms_on_ = false;
+  systemData.hardware_data_.asms_on_ = false;
   TEST_ASSERT_TRUE(checkupManager.should_stay_manual_driving());
 }
 
@@ -51,7 +51,7 @@ void test_initialCheckupSequence_states() {
   cm.initial_checkup_sequence(&digitalSender);
   TEST_ASSERT_EQUAL(CheckupManager::CheckupState::WAIT_FOR_ASMS, cm.checkupState);
 
-  sd.digital_data_.asms_on_ = true;
+  sd.hardware_data_.asms_on_ = true;
   cm.initial_checkup_sequence(&digitalSender);
   // TEST_ASSERT_EQUAL(CheckupManager::CheckupState::START_TOGGLING_WATCHDOG, cm.checkupState);
 
@@ -59,7 +59,7 @@ void test_initialCheckupSequence_states() {
   // TEST_ASSERT_EQUAL(CheckupManager::CheckupState::WAIT_FOR_WATCHDOG, cm.checkupState);
 
   // cm.getInitialCheckupTimestamp().reset();
-  // sd.digital_data_.watchdog_state = true;
+  // sd.hardware_data_.watchdog_state = true;
   // cm.initialCheckupSequence(&digitalSender);
   // TEST_ASSERT_EQUAL(CheckupManager::CheckupState::STOP_TOGGLING_WATCHDOG, cm.checkupState);
 
@@ -69,14 +69,14 @@ void test_initialCheckupSequence_states() {
   // Metro waitForWatchdogExpiration{1000};
   // while (!waitForWatchdogExpiration.check()) {
   // }
-  // sd.digital_data_.watchdog_state = false;
+  // sd.hardware_data_.watchdog_state = false;
   // cm.initialCheckupSequence(&digitalSender);
   TEST_ASSERT_EQUAL(CheckupManager::CheckupState::CLOSE_SDC, cm.checkupState);
 
   cm.initial_checkup_sequence(&digitalSender);
   TEST_ASSERT_EQUAL(CheckupManager::CheckupState::WAIT_FOR_AATS, cm.checkupState);
 
-  sd.digital_data_.sdc_open_ = false;
+  sd.hardware_data_.sdc_open_ = false;
   cm.initial_checkup_sequence(&digitalSender);
   TEST_ASSERT_EQUAL(CheckupManager::CheckupState::WAIT_FOR_TS, cm.checkupState);
 
@@ -84,8 +84,8 @@ void test_initialCheckupSequence_states() {
   cm.initial_checkup_sequence(&digitalSender);
   TEST_ASSERT_EQUAL(CheckupManager::CheckupState::TOGGLE_VALVE, cm.checkupState);
 
-  sd.digital_data_.pneumatic_line_pressure_ = true;
-  sd.sensors_._hydraulic_line_pressure = HYDRAULIC_BRAKE_THRESHOLD;
+  sd.hardware_data_.pneumatic_line_pressure_ = true;
+  sd.hardware_data_._hydraulic_line_pressure = HYDRAULIC_BRAKE_THRESHOLD;
   cm.initial_checkup_sequence(&digitalSender);
   TEST_ASSERT_EQUAL(CheckupManager::CheckupState::CHECK_PRESSURE, cm.checkupState);
 
@@ -113,38 +113,38 @@ void test_shouldStayReady() {
 
 void test_shouldEnterEmergency() {
   SystemData sd;
-  sd.digital_data_.sdc_open_ = false;
-  sd.digital_data_.pneumatic_line_pressure_ = true;
-  sd.digital_data_.asms_on_ = true;
-  sd.sensors_._hydraulic_line_pressure = HYDRAULIC_BRAKE_THRESHOLD + 1;
+  sd.hardware_data_.sdc_open_ = false;
+  sd.hardware_data_.pneumatic_line_pressure_ = true;
+  sd.hardware_data_.asms_on_ = true;
+  sd.hardware_data_._hydraulic_line_pressure = HYDRAULIC_BRAKE_THRESHOLD + 1;
   sd.failure_detection_.inversor_alive_timestamp_.reset();
   sd.failure_detection_.pc_alive_timestamp_.reset();
   sd.failure_detection_.steer_alive_timestamp_.reset();
   sd.failure_detection_.res_signal_loss_timestamp_.reset();
-  // sd.digital_data_.watchdogTimestamp.reset();
+  // sd.hardware_data_.watchdogTimestamp.reset();
   sd.failure_detection_.emergency_signal_ = false;
   sd.failure_detection_.ts_on_ = true;
 
   CheckupManager checkupManager(&sd);
 
   TEST_ASSERT_FALSE(checkupManager.shouldEnterEmergency(State::AS_READY));
-  sd.digital_data_.sdc_open_ = true;
+  sd.hardware_data_.sdc_open_ = true;
   TEST_ASSERT_TRUE(checkupManager.shouldEnterEmergency(State::AS_READY));
-  sd.digital_data_.sdc_open_ = false;
-  sd.digital_data_.pneumatic_line_pressure_ = false;
+  sd.hardware_data_.sdc_open_ = false;
+  sd.hardware_data_.pneumatic_line_pressure_ = false;
   while (!sd.r2d_logics_.releaseEbsTimestamp.checkWithoutReset());
   TEST_ASSERT_TRUE(checkupManager.shouldEnterEmergency(State::AS_READY));
-  sd.digital_data_.pneumatic_line_pressure_ = true;
-  sd.digital_data_.asms_on_ = false;
+  sd.hardware_data_.pneumatic_line_pressure_ = true;
+  sd.hardware_data_.asms_on_ = false;
   TEST_ASSERT_TRUE(checkupManager.shouldEnterEmergency(State::AS_READY));
-  sd.digital_data_.asms_on_ = true;
+  sd.hardware_data_.asms_on_ = true;
   sd.failure_detection_.ts_on_ = false;
   TEST_ASSERT_TRUE(checkupManager.shouldEnterEmergency(State::AS_READY));
   sd.failure_detection_.ts_on_ = true;
   sd.failure_detection_.emergency_signal_ = true;
   TEST_ASSERT_TRUE(checkupManager.shouldEnterEmergency(State::AS_READY));
   sd.failure_detection_.emergency_signal_ = false;
-  sd.sensors_._hydraulic_line_pressure = 1;
+  sd.hardware_data_._hydraulic_line_pressure = 1;
   TEST_ASSERT_TRUE(checkupManager.shouldEnterEmergency(State::AS_READY));
 
   sd.failure_detection_.inversor_alive_timestamp_.reset();
@@ -152,42 +152,42 @@ void test_shouldEnterEmergency() {
   sd.failure_detection_.steer_alive_timestamp_.reset();
   sd.failure_detection_.res_signal_loss_timestamp_.reset();
   TEST_ASSERT_FALSE(checkupManager.shouldEnterEmergency(State::AS_DRIVING));
-  sd.digital_data_.sdc_open_ = true;
+  sd.hardware_data_.sdc_open_ = true;
   TEST_ASSERT_TRUE(checkupManager.shouldEnterEmergency(State::AS_DRIVING));
-  sd.digital_data_.sdc_open_ = false;
-  sd.digital_data_.pneumatic_line_pressure_ = false;
+  sd.hardware_data_.sdc_open_ = false;
+  sd.hardware_data_.pneumatic_line_pressure_ = false;
   TEST_ASSERT_TRUE(checkupManager.shouldEnterEmergency(State::AS_DRIVING));
-  sd.digital_data_.pneumatic_line_pressure_ = true;
-  sd.digital_data_.asms_on_ = false;
+  sd.hardware_data_.pneumatic_line_pressure_ = true;
+  sd.hardware_data_.asms_on_ = false;
   TEST_ASSERT_TRUE(checkupManager.shouldEnterEmergency(State::AS_DRIVING));
-  sd.digital_data_.asms_on_ = true;
+  sd.hardware_data_.asms_on_ = true;
   sd.failure_detection_.ts_on_ = false;
   TEST_ASSERT_TRUE(checkupManager.shouldEnterEmergency(State::AS_READY));
   sd.failure_detection_.ts_on_ = true;
   sd.failure_detection_.emergency_signal_ = true;
   TEST_ASSERT_TRUE(checkupManager.shouldEnterEmergency(State::AS_DRIVING));
   sd.failure_detection_.emergency_signal_ = false;
-  sd.sensors_._hydraulic_line_pressure = HYDRAULIC_BRAKE_THRESHOLD + 1;
+  sd.hardware_data_._hydraulic_line_pressure = HYDRAULIC_BRAKE_THRESHOLD + 1;
 
   // // Metro wait{WATCHDOG_TIMEOUT};
   // while (!wait.check()) {
   // }
   // TEST_ASSERT_TRUE(checkupManager.shouldEnterEmergency(State::AS_READY));
-  sd.sensors_._hydraulic_line_pressure = HYDRAULIC_BRAKE_THRESHOLD + 1;
+  sd.hardware_data_._hydraulic_line_pressure = HYDRAULIC_BRAKE_THRESHOLD + 1;
   TEST_ASSERT_TRUE(checkupManager.shouldEnterEmergency(State::AS_DRIVING));
 }
 
 void test_shouldEnterEmergencyAsDrivingEBSValves() {
   SystemData sd;
-  sd.digital_data_.sdc_open_ = false;
-  sd.digital_data_.pneumatic_line_pressure_ = true;
-  sd.digital_data_.asms_on_ = true;
-  sd.sensors_._hydraulic_line_pressure = 1;
+  sd.hardware_data_.sdc_open_ = false;
+  sd.hardware_data_.pneumatic_line_pressure_ = true;
+  sd.hardware_data_.asms_on_ = true;
+  sd.hardware_data_._hydraulic_line_pressure = 1;
   sd.failure_detection_.inversor_alive_timestamp_.reset();
   sd.failure_detection_.pc_alive_timestamp_.reset();
   sd.failure_detection_.steer_alive_timestamp_.reset();
   sd.failure_detection_.res_signal_loss_timestamp_.checkWithoutReset();
-  // sd.digital_data_.watchdogTimestamp.reset();
+  // sd.hardware_data_.watchdogTimestamp.reset();
   sd.r2d_logics_.releaseEbsTimestamp.reset();
   sd.failure_detection_.emergency_signal_ = false;
   sd.failure_detection_.ts_on_ = true;
@@ -195,7 +195,7 @@ void test_shouldEnterEmergencyAsDrivingEBSValves() {
   CheckupManager checkupManager(&sd);
 
   TEST_ASSERT_FALSE(checkupManager.shouldEnterEmergency(State::AS_DRIVING));
-  sd.sensors_._hydraulic_line_pressure = HYDRAULIC_BRAKE_THRESHOLD + 1;
+  sd.hardware_data_._hydraulic_line_pressure = HYDRAULIC_BRAKE_THRESHOLD + 1;
   TEST_ASSERT_FALSE(checkupManager.shouldEnterEmergency(State::AS_DRIVING));
 
   Metro time3{RELEASE_EBS_TIMEOUT_MS + 10};
@@ -204,52 +204,52 @@ void test_shouldEnterEmergencyAsDrivingEBSValves() {
     sd.failure_detection_.pc_alive_timestamp_.reset();
     sd.failure_detection_.steer_alive_timestamp_.reset();
     sd.failure_detection_.res_signal_loss_timestamp_.reset();
-    // sd.digital_data_.watchdogTimestamp.reset();
+    // sd.hardware_data_.watchdogTimestamp.reset();
   }
 
   TEST_ASSERT_TRUE(checkupManager.shouldEnterEmergency(State::AS_DRIVING));
-  sd.sensors_._hydraulic_line_pressure = 1;
+  sd.hardware_data_._hydraulic_line_pressure = 1;
   TEST_ASSERT_FALSE(checkupManager.shouldEnterEmergency(State::AS_DRIVING));
 }
 
 void test_shouldStayDriving() {
   SystemData systemData;
-  systemData.sensors_._left_wheel_rpm = 0;
+  systemData.hardware_data_._left_wheel_rpm = 0;
   systemData.mission_finished_ = true;
 
   CheckupManager checkupManager(&systemData);
 
   TEST_ASSERT_FALSE(checkupManager.shouldStayDriving());
 
-  systemData.sensors_._left_wheel_rpm = 1;
+  systemData.hardware_data_._left_wheel_rpm = 1;
   TEST_ASSERT_TRUE(checkupManager.shouldStayDriving());
 
-  systemData.sensors_._left_wheel_rpm = 0;
+  systemData.hardware_data_._left_wheel_rpm = 0;
   systemData.mission_finished_ = false;
   TEST_ASSERT_TRUE(checkupManager.shouldStayDriving());
 }
 
 void test_shouldStayMissionFinished() {
   SystemData systemData;
-  systemData.digital_data_.asms_on_ = false;
+  systemData.hardware_data_.asms_on_ = false;
 
   CheckupManager checkupManager(&systemData);
 
   TEST_ASSERT_FALSE(checkupManager.shouldStayMissionFinished());
 
-  systemData.digital_data_.asms_on_ = true;
+  systemData.hardware_data_.asms_on_ = true;
   TEST_ASSERT_TRUE(checkupManager.shouldStayMissionFinished());
 }
 
 void test_emergencySequenceComplete() {
   SystemData systemData;
-  systemData.digital_data_.asms_on_ = true;
+  systemData.hardware_data_.asms_on_ = true;
 
   CheckupManager checkupManager(&systemData);
 
   TEST_ASSERT_FALSE(checkupManager.emergencySequenceComplete());
 
-  systemData.digital_data_.asms_on_ = false;
+  systemData.hardware_data_.asms_on_ = false;
   Metro waitForEbsSound{8500};
   while (!waitForEbsSound.check()) {
   }

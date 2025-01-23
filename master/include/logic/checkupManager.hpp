@@ -5,7 +5,7 @@
 #include "comm/communicatorSettings.hpp"
 #include "debugUtils.hpp"
 #include "embedded/digitalSender.hpp"
-#include "embedded/digitalSettings.hpp"
+#include "embedded/hardwareSettings.hpp"
 #include "model/systemData.hpp"
 
 // Also known as Orchestrator
@@ -121,8 +121,8 @@ inline void CheckupManager::reset_checkup_state() {
 
 inline bool CheckupManager::should_stay_manual_driving() const {
   if (_system_data_->mission_ != Mission::MANUAL ||
-     /*  _system_data_->digital_data_.pneumatic_line_pressure_ != 0 || */
-       _system_data_->digital_data_.asms_on_ ) {
+     /*  _system_data_->hardware_data_.pneumatic_line_pressure_ != 0 || */
+       _system_data_->hardware_data_.asms_on_ ) {
     return false;
   }
 
@@ -143,7 +143,7 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence(
   switch (checkup_state_) {
     case CheckupState::WAIT_FOR_ASMS:
       // ASMS Activated?
-      if (_system_data_->digital_data_.asms_on_) {
+      if (_system_data_->hardware_data_.asms_on_) {
         checkup_state_ = CheckupState::CLOSE_SDC;
       }
       break;
@@ -156,7 +156,7 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence(
     case CheckupState::WAIT_FOR_AATS:
 
       // AATS Activated?
-      if (!_system_data_->digital_data_.sdc_open_) {
+      if (!_system_data_->hardware_data_.sdc_open_) {
         // At this point, the emergency signal should be set to false, since it is
         // expected that the RES has already sent all initial emergency signals,
         // and if RES unexpectedly sends another emergency signal, it will be
@@ -182,8 +182,8 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence(
     case CheckupState::CHECK_PRESSURE:  // TODO (PedroRomao3): maybe back to toggle valve if
                                         // pressure is not ok , also add code to check we have
                                         // control over the pressure
-      if (_system_data_->sensors_._hydraulic_line_pressure >= HYDRAULIC_BRAKE_THRESHOLD &&
-          _system_data_->digital_data_.pneumatic_line_pressure_) {
+      if (_system_data_->hardware_data_._hydraulic_line_pressure >= HYDRAULIC_BRAKE_THRESHOLD &&
+          _system_data_->hardware_data_.pneumatic_line_pressure_) {
         checkup_state_ = CheckupState::CHECK_TIMESTAMPS;
       }
       break;
@@ -206,8 +206,8 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence(
 }
 
 inline bool CheckupManager::should_go_ready_from_off() const {
-  if (!_system_data_->digital_data_.asms_on_ || !_system_data_->failure_detection_.ts_on_ ||
-      _system_data_->digital_data_.sdc_open_) {
+  if (!_system_data_->hardware_data_.asms_on_ || !_system_data_->failure_detection_.ts_on_ ||
+      _system_data_->hardware_data_.sdc_open_) {
     return false;
   }
   _system_data_->r2d_logics_.enter_ready_state();
@@ -225,26 +225,26 @@ inline bool CheckupManager::should_stay_ready() const {
 inline bool CheckupManager::should_enter_emergency(State current_state) const {
   if (current_state == State::AS_READY) {
     return _system_data_->failure_detection_.emergency_signal_ ||
-          //  (_system_data_->digital_data_.pneumatic_line_pressure_ == 0 &&
+          //  (_system_data_->hardware_data_.pneumatic_line_pressure_ == 0 &&
           //   _system_data_->r2d_logics_.engageEbsTimestamp
           //       .checkWithoutReset()) ||  // 5 seconds have passed since ready state and line
           //                                 // pressure is 0
           //  _system_data_->failure_detection_.has_any_component_timed_out() ||
-           !_system_data_->digital_data_.asms_on_ || !_system_data_->failure_detection_.ts_on_ ||
-          //  (_system_data_->sensors_._hydraulic_line_pressure < HYDRAULIC_BRAKE_THRESHOLD &&
+           !_system_data_->hardware_data_.asms_on_ || !_system_data_->failure_detection_.ts_on_ ||
+          //  (_system_data_->hardware_data_._hydraulic_line_pressure < HYDRAULIC_BRAKE_THRESHOLD &&
           //   _system_data_->r2d_logics_.engageEbsTimestamp.checkWithoutReset()) ||
-           _system_data_->digital_data_.sdc_open_;
+           _system_data_->hardware_data_.sdc_open_;
   } else if (current_state == State::AS_DRIVING) {
     return _system_data_->failure_detection_.has_any_component_timed_out() ||
            _system_data_->failure_detection_.emergency_signal_ ||
-           _system_data_->digital_data_.sdc_open_ ||
-          //  (_system_data_->digital_data_.pneumatic_line_pressure_ == 0 &&
+           _system_data_->hardware_data_.sdc_open_ ||
+          //  (_system_data_->hardware_data_.pneumatic_line_pressure_ == 0 &&
           //   _system_data_->r2d_logics_.releaseEbsTimestamp
           //       .checkWithoutReset()) ||  // car has one second to make pneumatic pressure 1
-          //  (_system_data_->sensors_._hydraulic_line_pressure >= HYDRAULIC_BRAKE_THRESHOLD &&
+          //  (_system_data_->hardware_data_._hydraulic_line_pressure >= HYDRAULIC_BRAKE_THRESHOLD &&
           //   _system_data_->r2d_logics_.releaseEbsTimestamp
           //       .checkWithoutReset()) ||  // car has 1 second to reduce hydraulic pressure
-           !_system_data_->digital_data_.asms_on_ ||
+           !_system_data_->hardware_data_.asms_on_ ||
            !_system_data_->failure_detection_.ts_on_;
   }
 
@@ -252,22 +252,22 @@ inline bool CheckupManager::should_enter_emergency(State current_state) const {
 }
 
 inline bool CheckupManager::should_stay_driving() const {
-  if (abs(_system_data_->sensors_._left_wheel_rpm) < 0.1 &&
-      abs(_system_data_->sensors_._right_wheel_rpm) < 0.1 && _system_data_->mission_finished_) {
+  if (abs(_system_data_->hardware_data_._left_wheel_rpm) < 0.1 &&
+      abs(_system_data_->hardware_data_._right_wheel_rpm) < 0.1 && _system_data_->mission_finished_) {
     return false;
   }
   return true;
 }
 
 inline bool CheckupManager::should_stay_mission_finished() const {
-  if (_system_data_->digital_data_.asms_on_) {
+  if (_system_data_->hardware_data_.asms_on_) {
     return true;
   }
   return false;
 }
 
 inline bool CheckupManager::emergency_sequence_complete() const {
-  if (!_system_data_->digital_data_.asms_on_ && _ebs_sound_timestamp_.checkWithoutReset()) {
+  if (!_system_data_->hardware_data_.asms_on_ && _ebs_sound_timestamp_.checkWithoutReset()) {
     return true;
   }
   return false;
