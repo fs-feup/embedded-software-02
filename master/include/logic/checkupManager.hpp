@@ -225,17 +225,17 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence(
 
 inline void CheckupManager::handle_ebs_check() {
   switch (pressure_test_phase_) {
-    case 0:
+    case 0://activate
       DigitalSender::activate_ebs();
       pressure_test_phase_++;
       break;
-    case 1:
+    case 1://check and deactivate
       if (check_pressure_high()) {
         DigitalSender::deactivate_ebs();
         pressure_test_phase_++;
       }
       break;
-    case 2:
+    case 2://check and activate
       if (check_pressure_low()) {
         pressure_test_phase_ = 0;
         DigitalSender::activate_ebs();  // might not be necessary
