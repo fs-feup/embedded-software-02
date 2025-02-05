@@ -14,8 +14,12 @@ float read_ntc_temperature(int analog_value) {
   if (analog_value < 0 || analog_value > 1023) {
     return TEMPERATURE_DEFAULT_C;
   }
-  float volatge_divider = analog_value * (VDD / 1023.0);
-  float resistor_value = (RESISTOR_PULLUP * volatge_divider) / (VDD - volatge_divider);
+  //Serial.println(analog_value);
+  float voltage_divider = analog_value * (V_REF / 1023.0);
+  //Serial.println(voltage_divider);
+
+  float resistor_value = (RESISTOR_PULLUP * voltage_divider) / (VDD - voltage_divider);
+  //Serial.println(resistor_value);
   float temp_kelvin = 1.0f / ((1.0f / TEMPERATURE_DEFAULT_K) +
                               (log(resistor_value / RESISTOR_NTC_REFERNCE) / NTC_BETA));
   return temp_kelvin - 273.15f;  // return in celcius

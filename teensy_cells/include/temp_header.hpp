@@ -7,6 +7,7 @@
 #define DELAY_INTERVAL 500
 #define N_NTC 18
 #define VDD 5.0
+#define V_REF 3.3
 #define RESISTOR_PULLUP 10000.0
 #define RESISTOR_NTC_REFERNCE 10000.0  // Resistência a 25°C do NTC
 #define TEMPERATURE_DEFAULT_C 25.0
