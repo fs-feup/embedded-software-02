@@ -65,8 +65,6 @@ inline void ASState::calculate_state() {
       break;
 
     case State::AS_OFF:
-
-      // If manual driving checkup fails, the car can't be in OFF state, so it goes back to MANUAL
       if (!timer_has_started) {
         t1.begin(
             [] {
@@ -78,7 +76,10 @@ inline void ASState::calculate_state() {
               }
             },
             250'000);
+        //togglewatchdog
       }
+      // If manual driving checkup fails, the car can't be in OFF state, so it goes back to MANUAL
+
       if (_checkup_manager_.should_stay_manual_driving()) {
         DEBUG_PRINT("Entering MANUAL state from OFF");
         DigitalSender::enter_manual_state();
