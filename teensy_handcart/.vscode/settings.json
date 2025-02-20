@@ -1,0 +1,10 @@
+{
+    "sonarlint.pathToCompileCommands": "${workspaceFolder}/compile_commands.json",
+    "sonarlint.connectedMode.project": {
+        "connectionId": "fs-feup",
+        "projectKey": "fs-feup_embedded-software-02"
+    },
+    "files.associations": {
+        "*.tpp": "cpp"
+    }
+}
