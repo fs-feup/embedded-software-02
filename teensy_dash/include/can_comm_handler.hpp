@@ -24,7 +24,7 @@ private:
   SystemData& data;
   volatile SystemVolatileData& updatable_data;
   SystemVolatileData& updated_data;
-  FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> can1;
+  FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> can1;
   elapsedMillis can_timer;
   bool transmission_enabled = false;
   bool btb_ready = false;
@@ -73,7 +73,7 @@ void CanCommHandler::master_callback(const uint8_t* msg_data) {
   if (msg_data[0] == HYDRAULIC_LINE) {
     updatable_data.brake_pressure = (msg_data[2] << 8) | msg_data[1];
   }
-  if (msg_data[0] == ASMS) {//TODO: add this to master 
+  if (msg_data[0] == ASMS) {
     if (msg_data[1] == true) {//TODO: maybe chnage this to a specif byte define that master will send when asms on
       updatable_data.asms_on = true;
     }

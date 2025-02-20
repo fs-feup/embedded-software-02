@@ -1,65 +1,93 @@
 #pragma once
+#include <cstdint>
 
-#define APPS_1_PIN 0  // TODO: do not use defines
-#define APPS_2_PIN 0
+namespace pins {
+    namespace analog {
+        constexpr uint8_t APPS_1 = 22;
+        constexpr uint8_t APPS_2 = 20;
+        constexpr uint8_t BRAKE_PRESSURE = 19;
+        constexpr uint8_t ROTARY_SWITCH = 23;
+    }
 
-#define BMS_PIN 0
-#define IMD_PIN 0
-#define TS_OFF_PIN 0
-#define SDC_PIN 0
-#define BSPD_PIN 0
-#define INERTIA_PIN 0
+    namespace digital {
+        constexpr uint8_t TS = 21;
+        constexpr uint8_t BSPD = 7;
+        constexpr uint8_t INERTIA = 8;
+        constexpr uint8_t R2D = 4;
+        constexpr uint8_t ATS = 5;
+        constexpr uint8_t ATS_OUT = 9;
+    }
 
-constexpr int ADC_MAX = 1024;
-constexpr int NUM_MODES = 8;
-constexpr int SEGMENT_SIZE = ADC_MAX / NUM_MODES;
-constexpr int HYSTERESIS = 10;  // TODO: test sensor and ajust latr
+    namespace spi {
+        constexpr uint8_t CS = 10;
+        constexpr uint8_t MOSI = 11;
+        constexpr uint8_t MISO = 12;
+        constexpr uint8_t SCK = 13;
+    }
 
-#define APPS_1_UPPER_BOUND 0
-#define APPS_1_LOWER_BOUND 0
+    namespace output {
+        constexpr uint8_t RACE_LED = 14;
+        constexpr uint8_t BUZZER = 2;
+        constexpr uint8_t DISPLAY_MODE = 3;
+        constexpr uint8_t TS_LED = 13;
+        constexpr uint8_t BSPD_LED = 15;
+        constexpr uint8_t INERTIA_LED = 16;
+    }
 
-#define APPS_2_UPPER_BOUND 0
-#define APPS_2_LOWER_BOUND 0
+    namespace encoder {
+        constexpr uint8_t FRONT_RIGHT_WHEEL = 12;
+        constexpr uint8_t FRONT_LEFT_WHEEL = 11;
+    }
+}
 
-#define APPS1_DEAD_THRESHOLD 0
-#define APPS2_DEAD_THRESHOLD 0
+namespace config {
+    namespace adc {
+        constexpr int MAX_VALUE = 1024;
+        constexpr int NUM_MODES = 8;
+        constexpr int SEGMENT_SIZE = MAX_VALUE / NUM_MODES;
+        constexpr int HYSTERESIS = 10;
+    }
 
-#define APPS1_DEADZONE_EQUIVALENT 0
-#define APPS2_DEADZONE_EQUIVALENT 0
+    namespace apps {
+        constexpr uint16_t UPPER_BOUND_1 = 800;
+        constexpr uint16_t LOWER_BOUND_1 = 240;
+        constexpr uint16_t UPPER_BOUND_2 = 785;
+        constexpr uint16_t LOWER_BOUND_2 = 220;
+        
+        constexpr uint16_t DEAD_THRESHOLD_1 = 780;
+        constexpr uint16_t DEAD_THRESHOLD_2 = 240;
+        
+        constexpr uint16_t DEADZONE_EQUIVALENT_1 = 660;
+        constexpr uint16_t DEADZONE_EQUIVALENT_2 = 360;
+        
+        constexpr uint16_t LINEAR_OFFSET = 124;
+        constexpr uint16_t MAX = 770;
+        constexpr uint16_t MIN = 270;
+        
+        constexpr float MAX_ERROR_PERCENT = 0.15f;
+        constexpr uint16_t MAX_ERROR_ABS = UPPER_BOUND_1 * MAX_ERROR_PERCENT;
+        
+        constexpr uint8_t SAMPLES = 5;
+        constexpr uint16_t BRAKE_BLOCK_THRESHOLD = 250;
+        constexpr uint32_t IMPLAUSIBLE_TIMEOUT_MS = 200;
+        constexpr uint32_t BRAKE_PLAUSIBILITY_TIMEOUT_MS = 500;
+    }
 
-#define APPS_LINEAR_OFFSET 0
+    namespace brake {
+        constexpr uint16_t BLOCK_THRESHOLD = 250;
+    }
 
-#define APPS_MAX 0
-#define APPS_MIN 0
+    namespace wheel {
+        constexpr uint32_t LIMIT_RPM_INTERVAL = 500000;
+        constexpr uint8_t PULSES_PER_ROTATION = 36;
+    }
 
-#define APPS_MAX_ERROR_PERCENT (0)
-#define APPS_MAX_ERROR_ABS (APPS_1_UPPER_BOUND * APPS_MAX_ERROR_PERCENT / 100)
+    namespace r2d {
+        constexpr uint32_t TIMEOUT_MS = 15000;
+    }
 
-#define APPS_SAMPLES 5
-
-#define APPS_BLOCK_THRESHOLD 0
-#define APPS_IMPLAUSIBLE_TIMEOUT_MS 0
-#define APPS_BRAKE_PLAUSIBILITY_TIMEOUT_MS 0
-
-#define BRAKE_BLOCK_THRESHOLD 250
-#define BUZZER_PIN 0
-#define FRONT_RIGHT_WHEEL_ENCODER_PIN 0
-#define ROTARY_SWITCH_PIN 0
-#define FRONT_LEFT_WHEEL_ENCODER_PIN 0
-#define LIMIT_RPM_INTERVAL 500000
-#define WPS_PULSES_PER_ROTATION 36
-#define R2D_PIN 0
-#define R2D_TIMEOUT 0
-
-#define ATS_PIN 0
-#define ATS_SDC_PIN 0
-#define DISPLAY_PIN 0
-#define BMS_LED_PIN 0
-#define IMD_LED_PIN 0
-#define TS_OFF_LED_PIN 0
-#define SDC_LED_PIN 0
-#define BSPD_LED_PIN 0
-#define INERTIA_LED_PIN 0
-
-#define BAMOCAR_MAX 0
-#define BAMOCAR_MIN 0
+    namespace bamocar {
+        constexpr uint16_t MAX = 32760;
+        constexpr uint16_t MIN = 0;
+    }
+}

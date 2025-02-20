@@ -9,7 +9,7 @@ struct RPMValues {//TODO(PedroRomao3): better place this elsewhere
 void insert_value_queue(int value, std::deque<int>& queue) {
     queue.push_front(value);
 
-    if (queue.size() > APPS_SAMPLES) {
+    if (queue.size() > config::apps::SAMPLES) {
         queue.pop_back();
     }
 }

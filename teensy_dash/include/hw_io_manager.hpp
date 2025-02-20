@@ -49,8 +49,8 @@ void IOManager::manage() {
   ats_button.update();
   display_button.update();
   data.r2d_pressed = r2d_button.fell();
-  data.ats_pressed = ats_button.fell();          // TODO: check wtf this is for
-  data.display_pressed = display_button.fell();  // TODO: display stuff
+  data.ats_pressed = ats_button.fell();
+  data.display_pressed = display_button.fell();
   read_rotative_switch();
   read_pins_handle_leds();
   read_apps();
@@ -60,12 +60,12 @@ void IOManager::manage() {
 }
 
 void IOManager::read_rotative_switch() {
-  const int raw_value = analogRead(ROTARY_SWITCH_PIN);
-  const int mode_index = raw_value / SEGMENT_SIZE;
-  const int clamped_index = std::min(mode_index, NUM_MODES - 1);
+  const int raw_value = analogRead(pins::analog::ROTARY_SWITCH);
+  const int mode_index = raw_value / config::adc::SEGMENT_SIZE;
+  const int clamped_index = std::min(mode_index, config::adc::NUM_MODES - 1);
 
-  int boundary_low = clamped_index * SEGMENT_SIZE - HYSTERESIS;
-  int boundary_high = (clamped_index + 1) * SEGMENT_SIZE + HYSTERESIS;
+  int boundary_low = clamped_index * config::adc::SEGMENT_SIZE - config::adc::HYSTERESIS;
+  int boundary_high = (clamped_index + 1) * config::adc::SEGMENT_SIZE + config::adc::HYSTERESIS;
   if (raw_value >= boundary_low && raw_value < boundary_high) {
     data.switch_mode = static_cast<SwitchMode>(clamped_index);
     last_mode = data.switch_mode;
@@ -77,29 +77,20 @@ void IOManager::read_rotative_switch() {
 void IOManager::manage_ats() {
   if (data.ats_pressed && !updated_data.asms_on) {
     data.ats_pressed = false;
-    digitalWrite(ATS_SDC_PIN, HIGH);  // TODO: close the circuit, check if should be LOW
+    digitalWrite(pins::digital::ATS_OUT, HIGH);
   }
 }
 void IOManager::setup() {
   // TODO: botão rotativo
-  pinMode(ROTARY_SWITCH_PIN, INPUT);
-  pinMode(BMS_PIN, INPUT);  // TODO: make this a loop
-  pinMode(IMD_PIN, INPUT);
-  pinMode(TS_OFF_PIN, INPUT);
-  pinMode(SDC_PIN, INPUT);
-  pinMode(BSPD_PIN, INPUT);
-  pinMode(INERTIA_PIN, INPUT);
-  pinMode(APPS_1_PIN, INPUT);
-  pinMode(APPS_2_PIN, INPUT);
-  pinMode(BUZZER_PIN, OUTPUT);
-  pinMode(BMS_LED_PIN, OUTPUT);
-  pinMode(IMD_LED_PIN, OUTPUT);
-  pinMode(TS_OFF_LED_PIN, OUTPUT);
-  pinMode(SDC_LED_PIN, OUTPUT);
-  pinMode(BSPD_LED_PIN, OUTPUT);
-  pinMode(INERTIA_LED_PIN, OUTPUT);
+  pinMode(pins::digital::INERTIA, INPUT);
+  pinMode(pins::analog::APPS_1, INPUT);
+  pinMode(pins::analog::APPS_2, INPUT);
+  pinMode(pins::output::BUZZER, OUTPUT);
+  pinMode(pins::output::BSPD_LED, OUTPUT);
+  pinMode(pins::output::INERTIA_LED, OUTPUT);
+  pinMode(pins::digital::ATS_OUT, OUTPUT);
   attachInterrupt(
-      digitalPinToInterrupt(FRONT_RIGHT_WHEEL_ENCODER_PIN),
+      digitalPinToInterrupt(pins::encoder::FRONT_RIGHT_WHEEL),
       []() {
         IOManager::instance->updatable_data.second_to_last_wheel_pulse_fr =
             IOManager::instance->updatable_data.last_wheel_pulse_fr;
@@ -108,24 +99,24 @@ void IOManager::setup() {
       RISING);
 
   attachInterrupt(
-      digitalPinToInterrupt(FRONT_LEFT_WHEEL_ENCODER_PIN),
+      digitalPinToInterrupt(pins::encoder::FRONT_LEFT_WHEEL),
       []() {
         IOManager::instance->updatable_data.second_to_last_wheel_pulse_fl =
             IOManager::instance->updatable_data.last_wheel_pulse_fl;
         IOManager::instance->updatable_data.last_wheel_pulse_fl = micros();
       },
       RISING);
-  r2d_button.attach(R2D_PIN, INPUT);
+  r2d_button.attach(pins::digital::R2D, INPUT);
   r2d_button.interval(0.1);
-  ats_button.attach(ATS_PIN, INPUT);
+  ats_button.attach(pins::digital::ATS, INPUT);
   ats_button.interval(0.1);
-  display_button.attach(DISPLAY_PIN, INPUT);
+  display_button.attach(pins::output::DISPLAY_MODE, INPUT);
   display_button.interval(0.1);
 }
 
 void IOManager::read_apps() {
-  insert_value_queue(analogRead(APPS_1_PIN), data.apps1_readings);
-  insert_value_queue(analogRead(APPS_2_PIN), data.apps2_readings);
+  insert_value_queue(analogRead(pins::analog::APPS_1), data.apps1_readings);
+  insert_value_queue(analogRead(pins::analog::APPS_2), data.apps2_readings);
 }
 
 void IOManager::play_r2d_sound() { play_buzzer(1); }
@@ -134,23 +125,19 @@ void IOManager::play_buzzer(uint8_t duration_seconds) {
   data.buzzer_active = true;  // TODO: this is PWM now
   data.buzzer_start_time = millis();
   data.buzzer_duration_ms = duration_seconds * 1000;
-  digitalWrite(BUZZER_PIN, HIGH);
+  digitalWrite(pins::output::BUZZER, HIGH);
 }
 
 void IOManager::update_buzzer() {
   if (data.buzzer_active && (millis() - data.buzzer_start_time >= data.buzzer_duration_ms)) {
-    digitalWrite(BUZZER_PIN, LOW);
+    digitalWrite(pins::output::BUZZER, LOW);
     data.buzzer_active = false;
   }
 }
 
 inline void IOManager::read_pins_handle_leds() {
-  digitalWrite(BMS_LED_PIN, digitalRead(BMS_PIN));
-  digitalWrite(IMD_LED_PIN, digitalRead(IMD_PIN));
-  digitalWrite(TS_OFF_LED_PIN, digitalRead(TS_OFF_PIN));
-  digitalWrite(SDC_LED_PIN, digitalRead(SDC_PIN));
-  digitalWrite(BSPD_LED_PIN, digitalRead(BSPD_PIN));
-  digitalWrite(INERTIA_LED_PIN, digitalRead(INERTIA_PIN));
+  digitalWrite(pins::output::BSPD_LED, digitalRead(pins::digital::BSPD));
+  digitalWrite(pins::output::INERTIA_LED, digitalRead(pins::digital::INERTIA));
 }
 
 void IOManager::calculate_rpm() {
@@ -159,10 +146,10 @@ void IOManager::calculate_rpm() {
   unsigned long time_interval_fl =
       updated_data.last_wheel_pulse_fl - updated_data.second_to_last_wheel_pulse_fl;
 
-  data.fr_rpm = (micros() - updated_data.last_wheel_pulse_fr > LIMIT_RPM_INTERVAL)
+  data.fr_rpm = (micros() - updated_data.last_wheel_pulse_fr > config::wheel::LIMIT_RPM_INTERVAL)
                     ? 0.0
-                    : 1 / (time_interval_fr * 1e-6 * WPS_PULSES_PER_ROTATION) * 60;
-  data.fl_rpm = (micros() - updated_data.last_wheel_pulse_fl > LIMIT_RPM_INTERVAL)
+                    : 1 / (time_interval_fr * 1e-6 * config::wheel::PULSES_PER_ROTATION) * 60;
+  data.fl_rpm = (micros() - updated_data.last_wheel_pulse_fl > config::wheel::LIMIT_RPM_INTERVAL)
                     ? 0.0
-                    : 1 / (time_interval_fl * 1e-6 * WPS_PULSES_PER_ROTATION) * 60;
+                    : 1 / (time_interval_fl * 1e-6 * config::wheel::PULSES_PER_ROTATION) * 60;
 }
