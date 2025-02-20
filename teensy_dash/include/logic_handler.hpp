@@ -8,14 +8,14 @@
 class LogicHandler {
 public:
   LogicHandler(SystemData& system_data, SystemVolatileData& current_updated_data);
-  bool should_start_manual_driving();
-  bool should_start_as_driving();
-  bool should_go_idle();
-  int scale_apps2_to_apps1(int apps2);
+  bool should_start_manual_driving() const;
+  bool should_start_as_driving() const;
+  bool should_go_idle() const;
+  int scale_apps2_to_apps1(int apps2) const;
   int calculate_torque();
 
 private:
-  bool plausibility(int apps1, int apps2);
+  bool plausibility(int apps1, int apps2) const;
   int apps_to_bamocar_value(int apps1, int apps2);
   elapsedMillis implausibility_timer = 0;
   bool apps_timeout = false;
@@ -25,17 +25,17 @@ private:
 
 LogicHandler::LogicHandler(SystemData& system_data, SystemVolatileData& current_updated_data) : data(system_data), updated_data(current_updated_data) {}
 
-bool LogicHandler::should_start_manual_driving() {
+bool LogicHandler::should_start_manual_driving() const{
   return (data.r2d_pressed && updated_data.TSOn && data.R2DTimer < R2D_TIMEOUT);
 }
 
-bool LogicHandler::should_start_as_driving() { return (updated_data.TSOn && updated_data.as_ready); }
+bool LogicHandler::should_start_as_driving() const { return (updated_data.TSOn && updated_data.as_ready); }
 
-bool LogicHandler::should_go_idle() { return (!updated_data.TSOn); }
+bool LogicHandler::should_go_idle() const { return (!updated_data.TSOn); }
 
-int LogicHandler::scale_apps2_to_apps1(int apps2) { return apps2 + APPS_LINEAR_OFFSET; }
+int LogicHandler::scale_apps2_to_apps1(int apps2) const { return apps2 + APPS_LINEAR_OFFSET; }
 
-bool LogicHandler::plausibility(int apps1, int apps2) {
+bool LogicHandler::plausibility(int apps1, int apps2) const {
   if (apps1 < apps2) return false;
 
   if (apps1 > APPS_1_UPPER_BOUND || apps1 < APPS_1_LOWER_BOUND) return false;

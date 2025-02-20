@@ -1,6 +1,6 @@
 #pragma once
 
-#define APPS_1_PIN 0//TODO: do not use defines
+#define APPS_1_PIN 0  // TODO: do not use defines
 #define APPS_2_PIN 0
 
 #define BMS_PIN 0
@@ -10,6 +10,10 @@
 #define BSPD_PIN 0
 #define INERTIA_PIN 0
 
+constexpr int ADC_MAX = 1024;
+constexpr int NUM_MODES = 8;
+constexpr int SEGMENT_SIZE = ADC_MAX / NUM_MODES;
+constexpr int HYSTERESIS = 10;  // TODO: test sensor and ajust latr
 
 #define APPS_1_UPPER_BOUND 0
 #define APPS_1_LOWER_BOUND 0
@@ -56,7 +60,6 @@
 #define SDC_LED_PIN 0
 #define BSPD_LED_PIN 0
 #define INERTIA_LED_PIN 0
-
 
 #define BAMOCAR_MAX 0
 #define BAMOCAR_MIN 0

@@ -30,6 +30,7 @@ private:
   inline static IOManager* instance = nullptr;
   void update_buzzer();
   void read_pins_handle_leds();
+  SwitchMode last_mode = SwitchMode::MODE_0;
   Bounce r2d_button = Bounce();
   Bounce ats_button = Bounce();
   Bounce display_button = Bounce();
@@ -58,37 +59,19 @@ void IOManager::manage() {
   manage_ats();
 }
 
+void IOManager::read_rotative_switch() {
+  const int raw_value = analogRead(ROTARY_SWITCH_PIN);
+  const int mode_index = raw_value / SEGMENT_SIZE;
+  const int clamped_index = std::min(mode_index, NUM_MODES - 1);
 
-
-void IOManager::read_rotative_switch() {//TODO: check if this is correct
-    const int raw_value = analogRead(ROTARY_SWITCH_PIN);  // 0-1023???
-    const int segment_size = 1024 / 8;  // ~128 steps per mode
-
-    // Map ranges to modes
-    if (raw_value < segment_size) {
-        data.switch_mode = SwitchMode::MODE_0;        // 0-127
-    }
-    else if (raw_value < segment_size * 2) {
-        data.switch_mode = SwitchMode::MODE_1;        // 128-255
-    }
-    else if (raw_value < segment_size * 3) {
-        data.switch_mode = SwitchMode::MODE_2;        // 256-383
-    }
-    else if (raw_value < segment_size * 4) {
-        data.switch_mode = SwitchMode::MODE_3;        // 384-511
-    }
-    else if (raw_value < segment_size * 5) {
-        data.switch_mode = SwitchMode::MODE_4;        // 512-639
-    }
-    else if (raw_value < segment_size * 6) {
-        data.switch_mode = SwitchMode::MODE_5;        // 640-767
-    }
-    else if (raw_value < segment_size * 7) {
-        data.switch_mode = SwitchMode::MODE_6;        // 768-895
-    }
-    else {
-        data.switch_mode = SwitchMode::MODE_7;        // 896-1023
-    }
+  int boundary_low = clamped_index * SEGMENT_SIZE - HYSTERESIS;
+  int boundary_high = (clamped_index + 1) * SEGMENT_SIZE + HYSTERESIS;
+  if (raw_value >= boundary_low && raw_value < boundary_high) {
+    data.switch_mode = static_cast<SwitchMode>(clamped_index);
+    last_mode = data.switch_mode;
+  } else {
+    data.switch_mode = last_mode;
+  }
 }
 
 void IOManager::manage_ats() {
@@ -99,6 +82,7 @@ void IOManager::manage_ats() {
 }
 void IOManager::setup() {
   // TODO: botão rotativo
+  pinMode(ROTARY_SWITCH_PIN, INPUT);
   pinMode(BMS_PIN, INPUT);  // TODO: make this a loop
   pinMode(IMD_PIN, INPUT);
   pinMode(TS_OFF_PIN, INPUT);
@@ -147,7 +131,7 @@ void IOManager::read_apps() {
 void IOManager::play_r2d_sound() { play_buzzer(1); }
 
 void IOManager::play_buzzer(uint8_t duration_seconds) {
-  data.buzzer_active = true;
+  data.buzzer_active = true;  // TODO: this is PWM now
   data.buzzer_start_time = millis();
   data.buzzer_duration_ms = duration_seconds * 1000;
   digitalWrite(BUZZER_PIN, HIGH);

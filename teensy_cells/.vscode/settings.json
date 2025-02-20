@@ -1,7 +1,3 @@
 {
-    "files.associations": {
-        "*.tpp": "cpp",
-        "deque": "cpp"
-    },
     "sonarlint.pathToCompileCommands": "${workspaceFolder}/compile_commands.json"
 }

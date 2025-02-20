@@ -166,7 +166,7 @@ void CanCommHandler::init_bamocar() {
   no_disable.buf[1] = 0x00;
   no_disable.buf[2] = 0x00;
 
-  while (!transmission_enabled and can_timer > CAN_TIMEOUT_MS) {
+  while (!transmission_enabled && can_timer > CAN_TIMEOUT_MS) {
     can1.write(transmissionRequestEnable);
     can_timer = 0;
   }

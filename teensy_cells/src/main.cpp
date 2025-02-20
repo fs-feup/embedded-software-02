@@ -2,9 +2,9 @@
 
 FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> can1;
 
-int pinNTC_Temp[N_NTC] = {A4,  A5,  A6,  A7, A8, A9,  A2,  A3,  A10,
+u_int8_t pinNTC_Temp[N_NTC] = {A4,  A5,  A6,  A7, A8, A9,  A2,  A3,  A10,
                           A11, A12, A13, A0, A1, A17, A16, A15, A14};
-int ERROR_SIGNAL = 35;
+
 
 float CELL_TEMP[N_NTC];
 
@@ -14,12 +14,9 @@ float read_ntc_temperature(int analog_value) {
   if (analog_value < 0 || analog_value > 1023) {
     return TEMPERATURE_DEFAULT_C;
   }
-  //Serial.println(analog_value);
-  float voltage_divider = analog_value * (V_REF / 1023.0);
-  //Serial.println(voltage_divider);
+  float voltage_divider = static_cast<float>(analog_value) * (V_REF / 1023.0f);
 
   float resistor_value = (RESISTOR_PULLUP * voltage_divider) / (VDD - voltage_divider);
-  //Serial.println(resistor_value);
   float temp_kelvin = 1.0f / ((1.0f / TEMPERATURE_DEFAULT_K) +
                               (log(resistor_value / RESISTOR_NTC_REFERNCE) / NTC_BETA));
   return temp_kelvin - 273.15f;  // return in celcius
@@ -101,8 +98,8 @@ void send_to_BMS(int8_t global_min, int8_t global_max, int8_t global_avg) {
 void send_CAN_all_cell_temperatures() {
   CAN_message_t msg;
 
-  for (int msgIndex = 0; msgIndex < 3; msgIndex++) {
-    msg.id = BOARD_ID;  // TODO: change this to the correct ID if needed
+  for (u_int8_t msgIndex = 0; msgIndex < 3; msgIndex++) {
+    msg.id = BOARD_ID;  // TODO
     msg.len = 8;
 
     msg.buf[0] = BOARD_ID;
@@ -159,8 +156,8 @@ void can_sniffer(const CAN_message_t& msg) {
 }
 
 void calculate_global_stats(int8_t& global_min, int8_t& global_max, int8_t& global_avg) {
-  int sum = 0;
-  int valid_count = 0;
+  int8_t sum = 0;
+  u_int8_t valid_count = 0;
   global_min = MAX_INT8_T;
   global_max = MIN_INT8_T;
 
@@ -196,7 +193,9 @@ void loop() {
   if (!THIS_IS_MASTER) {
     send_CAN_max_min_avg_Temperatures();
   } else {
-    int8_t global_min, global_max, global_avg;
+    int8_t global_min;
+    int8_t global_max;
+    int8_t global_avg;
     calculate_global_stats(global_min, global_max, global_avg);
     send_to_BMS(global_min, global_max, global_avg);
   }
