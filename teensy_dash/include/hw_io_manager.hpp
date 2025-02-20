@@ -59,7 +59,7 @@ void IOManager::manage() {
   manage_ats();
 }
 
-void IOManager::read_rotative_switch() {
+void IOManager::read_rotative_switch() {//TODO:simplify
   const int raw_value = analogRead(pins::analog::ROTARY_SWITCH);
   const int mode_index = raw_value / config::adc::SEGMENT_SIZE;
   const int clamped_index = std::min(mode_index, config::adc::NUM_MODES - 1);
