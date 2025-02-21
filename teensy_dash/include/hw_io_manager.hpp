@@ -22,6 +22,7 @@ public:
   void calculate_rpm();
   void manage_ats();
   void read_rotative_switch();
+  void read_hydraulic_pressure();
 
 private:
   SystemData& data;
@@ -30,7 +31,6 @@ private:
   inline static IOManager* instance = nullptr;
   void update_buzzer();
   void read_pins_handle_leds();
-  SwitchMode last_mode = SwitchMode::MODE_0;
   Bounce r2d_button = Bounce();
   Bounce ats_button = Bounce();
   Bounce display_button = Bounce();
@@ -51,6 +51,7 @@ void IOManager::manage() {
   data.r2d_pressed = r2d_button.fell();
   data.ats_pressed = ats_button.fell();
   data.display_pressed = display_button.fell();
+  read_hydraulic_pressure();
   read_rotative_switch();
   read_pins_handle_leds();
   read_apps();
@@ -59,19 +60,9 @@ void IOManager::manage() {
   manage_ats();
 }
 
-void IOManager::read_rotative_switch() {//TODO:simplify
+void IOManager::read_rotative_switch() {
   const int raw_value = analogRead(pins::analog::ROTARY_SWITCH);
-  const int mode_index = raw_value / config::adc::SEGMENT_SIZE;
-  const int clamped_index = std::min(mode_index, config::adc::NUM_MODES - 1);
-
-  int boundary_low = clamped_index * config::adc::SEGMENT_SIZE - config::adc::HYSTERESIS;
-  int boundary_high = (clamped_index + 1) * config::adc::SEGMENT_SIZE + config::adc::HYSTERESIS;
-  if (raw_value >= boundary_low && raw_value < boundary_high) {
-    data.switch_mode = static_cast<SwitchMode>(clamped_index);
-    last_mode = data.switch_mode;
-  } else {
-    data.switch_mode = last_mode;
-  }
+  data.switch_mode = static_cast<SwitchMode>((raw_value + 73) * 7 / 1023);
 }
 
 void IOManager::manage_ats() {
@@ -81,10 +72,11 @@ void IOManager::manage_ats() {
   }
 }
 void IOManager::setup() {
-  // TODO: botão rotativo
   pinMode(pins::digital::INERTIA, INPUT);
   pinMode(pins::analog::APPS_1, INPUT);
   pinMode(pins::analog::APPS_2, INPUT);
+  pinMode(pins::analog::ROTARY_SWITCH, INPUT);
+  pinMode(pins::analog::BRAKE_PRESSURE, INPUT);
   pinMode(pins::output::BUZZER, OUTPUT);
   pinMode(pins::output::BSPD_LED, OUTPUT);
   pinMode(pins::output::INERTIA_LED, OUTPUT);

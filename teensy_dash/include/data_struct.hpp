@@ -2,21 +2,28 @@
 #include <deque>
 
 
-enum class SwitchMode {//TODO: proper naming, file and place
-    MODE_0,
-    MODE_1, 
-    MODE_2,
-    MODE_3,
-    MODE_4,
-    MODE_5,
-    MODE_6,
-    MODE_7
+enum class SwitchMode {
+    MANUAL,
+    INSPECTION, 
+    EBSTEST,
+    ACCELERATION,
+    AUTOCROSS,
+    SKIDPAD,
+    TRACKDRIVE,
+    WILDCARD,
 };
+
+struct RPMValues {
+    float fr_rpm;
+    float fl_rpm;
+};
+
+
 struct SystemData {
   bool r2d_pressed = false;
   bool ats_pressed = false;
   bool display_pressed = false;
-  SwitchMode switch_mode = SwitchMode::MODE_0;
+  SwitchMode switch_mode = SwitchMode::MANUAL;
   bool buzzer_active = false;
   unsigned long buzzer_start_time;
   unsigned long buzzer_duration_ms;

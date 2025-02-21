@@ -185,5 +185,5 @@ constexpr uint8_t BTB_READY = 0xE2;
 constexpr uint8_t VDC_BUS = 0xEB;
 constexpr uint16_t DC_THRESHOLD = 1890; // same as 60 volts
 
-constexpr float CAN_TIMEOUT_MS = 100;
+constexpr unsigned long CAN_TIMEOUT_MS = 100;
 #endif // CAN_IDS_H

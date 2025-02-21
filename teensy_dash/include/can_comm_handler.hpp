@@ -171,7 +171,7 @@ void CanCommHandler::init_bamocar() {
     can_timer = 0;
   }
 
-  while (!btb_ready and can_timer > CAN_TIMEOUT_MS) {
+  while (!btb_ready && can_timer > CAN_TIMEOUT_MS) {
     can1.write(BTBStatus);
     can_timer = 0;
   }

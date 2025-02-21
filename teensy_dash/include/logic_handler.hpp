@@ -84,7 +84,7 @@ int LogicHandler::calculate_torque() {
 
   bool plausible = plausibility(apps1_average, apps2_average);
 
-  if (!plausible and implausibility_timer > config::apps::IMPLAUSIBLE_TIMEOUT_MS) {
+  if (!plausible && implausibility_timer > config::apps::IMPLAUSIBLE_TIMEOUT_MS) {
     return 0;
   }
 
