@@ -23,6 +23,7 @@ public:
   void manage_ats();
   void read_rotative_switch();
   void read_hydraulic_pressure();
+  void update_R2D_timer();
 
 private:
   SystemData& data;
@@ -58,11 +59,23 @@ void IOManager::manage() {
   update_buzzer();
   calculate_rpm();
   manage_ats();
+  update_R2D_timer();
 }
 
 void IOManager::read_rotative_switch() {
   const int raw_value = analogRead(pins::analog::ROTARY_SWITCH);
-  data.switch_mode = static_cast<SwitchMode>((raw_value + 73) * 7 / 1023);
+  data.switch_mode = static_cast<SwitchMode>((raw_value + config::adc::HALF_JUMP) *
+                                             config::adc::NEW_SCALE_MAX / config::adc::MAX_VALUE);
+}
+
+void IOManager::read_hydraulic_pressure() {
+  insert_value_queue(analogRead(pins::analog::BRAKE_PRESSURE), data.brake_readings);
+}
+
+void update_R2D_timer() {
+  if (average_queue(data.brake_readings) > config::apps::BRAKE_BLOCK_THRESHOLD) {
+    data.R2DTimer = 0;
+  }
 }
 
 void IOManager::manage_ats() {

@@ -42,10 +42,9 @@ namespace pins {
 
 namespace config {
     namespace adc {
-        constexpr int MAX_VALUE = 1024;
-        constexpr int NUM_MODES = 8;
-        constexpr int SEGMENT_SIZE = MAX_VALUE / NUM_MODES;
-        constexpr int HYSTERESIS = 10;
+        constexpr int MAX_VALUE = 1023;
+        constexpr int NEW_SCALE_MAX = 7;
+        constexpr int HALF_JUMP = 73;
     }
 
     namespace apps {
@@ -75,6 +74,7 @@ namespace config {
 
     namespace brake {
         constexpr uint16_t BLOCK_THRESHOLD = 250;
+        constexpr uint16_t PRESSURE_THRESHOLD = 250;
     }
 
     namespace wheel {

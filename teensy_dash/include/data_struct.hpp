@@ -1,29 +1,27 @@
 #pragma once
 #include <deque>
 
-
 enum class SwitchMode {
-    MANUAL,
-    INSPECTION, 
-    EBSTEST,
-    ACCELERATION,
-    AUTOCROSS,
-    SKIDPAD,
-    TRACKDRIVE,
-    WILDCARD,
+  INVERTER_MODE0,
+  INVERTER_MODE1,
+  INVERTER_MODE2,
+  INVERTER_MODE3,
+  INVERTER_MODE4,
+  INVERTER_MODE5,
+  INVERTER_MODE6,
+  INVERTER_MODE7,
 };
 
 struct RPMValues {
-    float fr_rpm;
-    float fl_rpm;
+  float fr_rpm;
+  float fl_rpm;
 };
-
 
 struct SystemData {
   bool r2d_pressed = false;
   bool ats_pressed = false;
   bool display_pressed = false;
-  SwitchMode switch_mode = SwitchMode::MANUAL;
+  SwitchMode switch_mode = SwitchMode::INVERTER_MODE0;
   bool buzzer_active = false;
   unsigned long buzzer_start_time;
   unsigned long buzzer_duration_ms;
@@ -31,9 +29,10 @@ struct SystemData {
   std::deque<int> apps2_readings;
   float fr_rpm = 0;
   float fl_rpm = 0;
+  std::deque<int> brake_readings;
+
   elapsedMillis R2DTimer = 0;
 };
-
 
 struct SystemVolatileData {
   bool TSOn = false;
@@ -48,14 +47,14 @@ struct SystemVolatileData {
 };
 
 void copy_volatile_data(SystemVolatileData& dest, volatile SystemVolatileData const& src) {
-    noInterrupts();
-    dest.TSOn = src.TSOn;
-    dest.as_ready = src.as_ready;
-    dest.asms_on = src.asms_on;
-    dest.brake_pressure = src.brake_pressure;
-    dest.last_wheel_pulse_fr = src.last_wheel_pulse_fr;
-    dest.second_to_last_wheel_pulse_fr = src.second_to_last_wheel_pulse_fr;
-    dest.last_wheel_pulse_fl = src.last_wheel_pulse_fl;
-    dest.second_to_last_wheel_pulse_fl = src.second_to_last_wheel_pulse_fl;
-    interrupts();
+  noInterrupts();
+  dest.TSOn = src.TSOn;
+  dest.as_ready = src.as_ready;
+  dest.asms_on = src.asms_on;
+  dest.brake_pressure = src.brake_pressure;
+  dest.last_wheel_pulse_fr = src.last_wheel_pulse_fr;
+  dest.second_to_last_wheel_pulse_fr = src.second_to_last_wheel_pulse_fr;
+  dest.last_wheel_pulse_fl = src.last_wheel_pulse_fl;
+  dest.second_to_last_wheel_pulse_fl = src.second_to_last_wheel_pulse_fl;
+  interrupts();
 }
