@@ -39,6 +39,7 @@ struct SystemVolatileData {
   bool as_ready = false;
   bool asms_on = false;
   int brake_pressure = 0;
+  int speed = 0;
 
   unsigned long last_wheel_pulse_fr = 0;
   unsigned long second_to_last_wheel_pulse_fr = 0;

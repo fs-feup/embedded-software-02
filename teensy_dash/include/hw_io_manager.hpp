@@ -72,7 +72,7 @@ void IOManager::read_hydraulic_pressure() {
   insert_value_queue(analogRead(pins::analog::BRAKE_PRESSURE), data.brake_readings);
 }
 
-void update_R2D_timer() {
+void IOManager::update_R2D_timer() {
   if (average_queue(data.brake_readings) > config::apps::BRAKE_BLOCK_THRESHOLD) {
     data.R2DTimer = 0;
   }
@@ -81,7 +81,7 @@ void update_R2D_timer() {
 void IOManager::manage_ats() {
   if (data.ats_pressed && !updated_data.asms_on) {
     data.ats_pressed = false;
-    digitalWrite(pins::digital::ATS_OUT, HIGH);
+    digitalWrite(pins::digital::ATS_OUT, HIGH);//TODO: when does SDC close at ASATS?
   }
 }
 void IOManager::setup() {

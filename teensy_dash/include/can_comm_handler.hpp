@@ -30,6 +30,7 @@ private:
   bool btb_ready = false;
   static void can_sniffer(const CAN_message_t& msg);
   void master_callback(const uint8_t* msg_data);
+  void bamocar_callback(const uint8_t* msg_data);
   void write_rpm();
   void write_apps();
 };
@@ -60,10 +61,36 @@ void CanCommHandler::can_sniffer(const CAN_message_t& msg) {
     case BMS_ID:
       break;
     case BAMO_RESPONSE_ID:
+      instance->bamocar_callback(msg.buf);
       break;
     case MASTER_ID:
       instance->master_callback(msg.buf);
       break;
+    default:
+      break;
+  }
+}
+
+void CanCommHandler::bamocar_callback(const uint8_t* msg_data) {
+  switch (msg_data[0]) {
+    case DC_VOLTAGE: {
+      long dc_voltage = 0;
+      dc_voltage = (msg_data[2] << 8) | msg_data[1];
+      updatable_data.TSOn = (dc_voltage >= DC_THRESHOLD);
+      break;
+    }
+    case BTB_READY_0:
+      btb_ready = check_sequence(msg_data, BTB_READY_SEQUENCE);
+      break;
+
+    case ENABLE_0:
+      transmission_enabled = check_sequence(msg_data, ENABLE_SEQUENCE);
+      break;
+
+    case SPEED_VALUE:
+      updatable_data.speed = (msg_data[2] << 8) | msg_data[1];
+      break;
+
     default:
       break;
   }
@@ -74,7 +101,8 @@ void CanCommHandler::master_callback(const uint8_t* msg_data) {
     updatable_data.brake_pressure = (msg_data[2] << 8) | msg_data[1];
   }
   if (msg_data[0] == ASMS) {
-    if (msg_data[1] == true) {//TODO: maybe chnage this to a specif byte define that master will send when asms on
+    if (msg_data[1] == true) {  // TODO: maybe chnage this to a specif byte define that master will
+                                // send when asms on
       updatable_data.asms_on = true;
     }
   }
@@ -117,7 +145,7 @@ void CanCommHandler::write_apps() {
 
   CAN_message_t apps_message;
   apps_message.id = DASH_ID;
-  apps_message.len = 5;  
+  apps_message.len = 5;
 
   apps_message.buf[0] = 0x20;  // TODO: add define
 
@@ -132,12 +160,10 @@ void CanCommHandler::write_apps() {
   apps_message.buf[3] = (apps2 >> 16) & 0xFF;
   apps_message.buf[4] = (apps2 >> 24) & 0xFF;
   can1.write(apps_message);
-
-  
 }
 
 void CanCommHandler::init_bamocar() {
-  CAN_message_t clear_errors;//TODO: precreate msgs
+  CAN_message_t clear_errors;  // TODO: precreate msgs
   clear_errors.id = BAMO_COMMAND_ID;
   clear_errors.len = 3;
   clear_errors.buf[0] = 0x8E;
