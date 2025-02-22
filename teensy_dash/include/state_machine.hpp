@@ -42,6 +42,8 @@ void StateMachine::update() {
     case State::AS_DRIVING:
       handle_driving();
       break;
+    default:
+      break;
   }
 }
 

@@ -96,7 +96,7 @@ void CanCommHandler::bamocar_callback(const uint8_t* msg_data) {
   }
 }
 
-void CanCommHandler::master_callback(const uint8_t* msg_data) {
+void CanCommHandler::master_callback(const uint8_t* const msg_data) {
   if (msg_data[0] == HYDRAULIC_LINE) {
     updatable_data.brake_pressure = (msg_data[2] << 8) | msg_data[1];
   }
@@ -118,7 +118,7 @@ void CanCommHandler::write_rpm() {
   rpm_message.id = DASH_ID;
   rpm_message.len = 5;
 
-  char fr_rpm_byte[4];
+  char fr_rpm_byte[4] = {0, 0, 0, 0};
   rpm_2_byte(data.fr_rpm, fr_rpm_byte);
 
   rpm_message.buf[0] = 0x10;  // TODO: add define
@@ -128,7 +128,7 @@ void CanCommHandler::write_rpm() {
   rpm_message.buf[4] = fr_rpm_byte[3];
   can1.write(rpm_message);
 
-  char fl_rpm_byte[4];
+  char fl_rpm_byte[4] = {0, 0, 0, 0};
   rpm_2_byte(data.fl_rpm, fl_rpm_byte);
 
   rpm_message.buf[0] = 0x11;  // TODO: add define

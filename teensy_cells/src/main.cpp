@@ -2,24 +2,25 @@
 
 FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> can1;
 
-u_int8_t pinNTC_Temp[N_NTC] = {A4,  A5,  A6,  A7, A8, A9,  A2,  A3,  A10,
-                          A11, A12, A13, A0, A1, A17, A16, A15, A14};
-
+const u_int8_t pinNTC_Temp[N_NTC] = {A4,  A5,  A6,  A7, A8, A9,  A2,  A3,  A10,
+                                     A11, A12, A13, A0, A1, A17, A16, A15, A14};
 
 float CELL_TEMP[N_NTC];
 
 static BoardData board_temps[TOTAL_BOARDS];
 
-float read_ntc_temperature(int analog_value) {
-  if (analog_value < 0 || analog_value > 1023) {
-    return TEMPERATURE_DEFAULT_C;
-  }
-  float voltage_divider = static_cast<float>(analog_value) * (V_REF / 1023.0f);
+float read_ntc_temperature(const int analog_value) {
+  float temperature = TEMPERATURE_DEFAULT_C;
 
-  float resistor_value = (RESISTOR_PULLUP * voltage_divider) / (VDD - voltage_divider);
-  float temp_kelvin = 1.0f / ((1.0f / TEMPERATURE_DEFAULT_K) +
-                              (log(resistor_value / RESISTOR_NTC_REFERNCE) / NTC_BETA));
-  return temp_kelvin - 273.15f;  // return in celcius
+  if (analog_value >= 0 && analog_value <= 1023) {
+    const float voltage_divider = static_cast<float>(analog_value) * (V_REF / 1023.0f);
+    const float resistor_value = (RESISTOR_PULLUP * voltage_divider) / (VDD - voltage_divider);
+    const float temp_kelvin = 1.0f / ((1.0f / TEMPERATURE_DEFAULT_K) +
+                                      (log(resistor_value / RESISTOR_NTC_REFERNCE) / NTC_BETA));
+    temperature = temp_kelvin - 273.15f;
+  }
+
+  return temperature;
 }
 
 void read_Temperatures() {
@@ -33,17 +34,18 @@ void read_Temperatures() {
     max_temp = max(max_temp, CELL_TEMP[i]);
     sum_temp += CELL_TEMP[i];
   }
-  board_temps[BOARD_ID].min_temp = safeTemperatureCast(min_temp);
-  board_temps[BOARD_ID].max_temp = safeTemperatureCast(max_temp);
-  board_temps[BOARD_ID].avg_temp = safeTemperatureCast(sum_temp / N_NTC);
+  board_temps[BOARD_ID].temp_data.min_temp = safeTemperatureCast(min_temp);
+  board_temps[BOARD_ID].temp_data.max_temp = safeTemperatureCast(max_temp);
+  board_temps[BOARD_ID].temp_data.avg_temp = safeTemperatureCast(sum_temp / N_NTC);
   board_temps[BOARD_ID].valid = true;
 }
 
 void check_Temperatures() {
   bool error_flag = false;
-  for (int i = 0; i < N_NTC; i++) {
-    if (CELL_TEMP[i] > MAXIMUM_TEMPERATURE) {
+  for (const float& temp : CELL_TEMP) {
+    if (temp > MAXIMUM_TEMPERATURE) {
       error_flag = true;
+      break;
     }
   }
   if (error_flag) {
@@ -53,10 +55,18 @@ void check_Temperatures() {
   }
 }
 
-int8_t safeTemperatureCast(float temp) {
-  if (temp > 127.0f) return MAX_INT8_T;
-  if (temp < -128.0f) return MIN_INT8_T;
-  return static_cast<int8_t>(round(temp));
+int8_t safeTemperatureCast(const float temp) {
+  int8_t result;
+
+  if (temp > 127.0f) {
+    result = MAX_INT8_T;
+  } else if (temp < -128.0f) {
+    result = MIN_INT8_T;
+  } else {
+    result = static_cast<int8_t>(round(temp));
+  }
+
+  return result;
 }
 
 void send_CAN_max_min_avg_Temperatures() {
@@ -65,9 +75,9 @@ void send_CAN_max_min_avg_Temperatures() {
   msg.len = 4;
 
   msg.buf[0] = BOARD_ID;
-  msg.buf[1] = board_temps[BOARD_ID].min_temp;
-  msg.buf[2] = board_temps[BOARD_ID].max_temp;
-  msg.buf[3] = board_temps[BOARD_ID].avg_temp;
+  msg.buf[1] = board_temps[BOARD_ID].temp_data.min_temp;
+  msg.buf[2] = board_temps[BOARD_ID].temp_data.max_temp;
+  msg.buf[3] = board_temps[BOARD_ID].temp_data.avg_temp;
   can1.write(msg);
 
   Serial.print("CAN MSG - ID: 0x109 | Min: ");
@@ -77,14 +87,14 @@ void send_CAN_max_min_avg_Temperatures() {
   Serial.print("°C, Avg: ");
   Serial.println(static_cast<int8_t>(msg.buf[3]));
 }
-void send_to_BMS(int8_t global_min, int8_t global_max, int8_t global_avg) {
+void send_to_BMS(const TemperatureData& global_data) {
   CAN_message_t msg;
   msg.id = BMS_THERMISTOR_ID;
   msg.len = 8;
   msg.buf[0] = THERMISTOR_MODULE_NUMBER;
-  msg.buf[1] = global_min;
-  msg.buf[2] = global_max;
-  msg.buf[3] = global_avg;
+  msg.buf[1] = global_data.min_temp;
+  msg.buf[2] = global_data.max_temp;
+  msg.buf[3] = global_data.avg_temp;
   msg.buf[4] = NUMBER_OF_THERMISTORS;
   msg.buf[5] = HIGHEST_THERMISTOR_ID;
   msg.buf[6] = LOWEST_THERMISTOR_ID;
@@ -126,8 +136,8 @@ void send_CAN_all_cell_temperatures() {
 }
 
 void show_Temperatures() {
-  Serial.print("\033[2J");
-  Serial.print("\033[H");
+  Serial.print("\o{33}[2J");
+  Serial.print("\o{33}[H");
   Serial.println("----------- Temperaturas -----------");
   for (int i = 0; i < N_NTC; i++) {
     Serial.print("CELL ");
@@ -147,29 +157,33 @@ void can_sniffer(const CAN_message_t& msg) {
   if (msg.id == MASTER_CELL_ID && msg.len == 4) {
     uint8_t board = msg.buf[0];
     if (board < TOTAL_BOARDS) {
-      board_temps[board].min_temp = static_cast<int8_t>(msg.buf[1]);
-      board_temps[board].max_temp = static_cast<int8_t>(msg.buf[2]);
-      board_temps[board].avg_temp = static_cast<int8_t>(msg.buf[3]);
+      board_temps[board].temp_data.min_temp = static_cast<int8_t>(msg.buf[1]);
+      board_temps[board].temp_data.max_temp = static_cast<int8_t>(msg.buf[2]);
+      board_temps[board].temp_data.avg_temp = static_cast<int8_t>(msg.buf[3]);
       board_temps[board].valid = true;
     }
   }
 }
 
-void calculate_global_stats(int8_t& global_min, int8_t& global_max, int8_t& global_avg) {
+void calculate_global_stats(TemperatureData& global_data) {
   int8_t sum = 0;
   u_int8_t valid_count = 0;
-  global_min = MAX_INT8_T;
-  global_max = MIN_INT8_T;
+  global_data.min_temp = MAX_INT8_T;
+  global_data.max_temp = MIN_INT8_T;
 
   for (const auto& board : board_temps) {
     if (board.valid) {
-      global_min = min(global_min, board.min_temp);
-      global_max = max(global_max, board.max_temp);
-      sum += board.avg_temp;
+      global_data.min_temp = min(global_data.min_temp, board.temp_data.min_temp);
+      global_data.max_temp = max(global_data.max_temp, board.temp_data.max_temp);
+      sum += board.temp_data.avg_temp;
       valid_count++;
     }
   }
-  global_avg = valid_count > 0 ? sum / valid_count : 0;
+  if (valid_count > 0) {
+    global_data.avg_temp = sum / valid_count;
+  } else {
+    global_data.avg_temp = 0;
+  }
 }
 
 void setup() {
@@ -193,11 +207,9 @@ void loop() {
   if (!THIS_IS_MASTER) {
     send_CAN_max_min_avg_Temperatures();
   } else {
-    int8_t global_min;
-    int8_t global_max;
-    int8_t global_avg;
-    calculate_global_stats(global_min, global_max, global_avg);
-    send_to_BMS(global_min, global_max, global_avg);
+    TemperatureData global_data;
+    calculate_global_stats(global_data);
+    send_to_BMS(global_data);
   }
   show_Temperatures();
   delay(DELAY_INTERVAL);
