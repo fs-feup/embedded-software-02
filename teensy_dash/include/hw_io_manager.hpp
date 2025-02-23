@@ -62,7 +62,7 @@ void IOManager::manage() {
   update_R2D_timer();
 }
 
-void IOManager::read_rotative_switch() {
+void IOManager::read_rotative_switch() {//TODO:checkout map function
   const int raw_value = analogRead(pins::analog::ROTARY_SWITCH);
   data.switch_mode = static_cast<SwitchMode>((raw_value + config::adc::HALF_JUMP) *
                                              config::adc::NEW_SCALE_MAX / config::adc::MAX_VALUE);
@@ -74,7 +74,7 @@ void IOManager::read_hydraulic_pressure() {
 
 void IOManager::update_R2D_timer() {
   if (average_queue(data.brake_readings) > config::apps::BRAKE_BLOCK_THRESHOLD) {
-    data.R2DTimer = 0;
+    data.r2d_brake_timer = 0;
   }
 }
 
@@ -130,12 +130,12 @@ void IOManager::play_buzzer(uint8_t duration_seconds) {
   data.buzzer_active = true;  // TODO: this is PWM now
   data.buzzer_start_time = millis();
   data.buzzer_duration_ms = duration_seconds * 1000;
-  digitalWrite(pins::output::BUZZER, HIGH);
+  tone(pins::output::BUZZER, config::buzzer::BUZZER_FREQUENCY);//TODO: tone has time limite maybe timer not needed
 }
 
 void IOManager::update_buzzer() {
   if (data.buzzer_active && (millis() - data.buzzer_start_time >= data.buzzer_duration_ms)) {
-    digitalWrite(pins::output::BUZZER, LOW);
+    noTone(pins::output::BUZZER);
     data.buzzer_active = false;
   }
 }

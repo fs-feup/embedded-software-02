@@ -46,6 +46,9 @@ namespace config {
         constexpr int NEW_SCALE_MAX = 7;
         constexpr int HALF_JUMP = 73;
     }
+    namespace buzzer {
+        constexpr uint32_t BUZZER_FREQUENCY = 500;
+    }
 
     namespace apps {
         constexpr uint16_t UPPER_BOUND_APPS1 = 800;

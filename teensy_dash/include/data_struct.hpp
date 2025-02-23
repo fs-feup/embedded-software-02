@@ -31,7 +31,7 @@ struct SystemData {
   float fl_rpm = 0;
   std::deque<int> brake_readings;
 
-  elapsedMillis R2DTimer = 0;
+  elapsedMillis r2d_brake_timer = 0;
 };
 
 struct SystemVolatileData {

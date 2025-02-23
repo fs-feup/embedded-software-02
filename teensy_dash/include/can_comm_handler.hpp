@@ -46,7 +46,7 @@ CanCommHandler::CanCommHandler(SystemData& system_data,
 
 void CanCommHandler::setup() {
   can1.begin();
-  can1.setBaudRate(500000);
+  can1.setBaudRate(500'000);
   can1.enableFIFO();
   can1.enableFIFOInterrupt();
   can1.setFIFOFilter(REJECT_ALL);
@@ -104,6 +104,12 @@ void CanCommHandler::master_callback(const uint8_t* const msg_data) {
     if (msg_data[1] == true) {  // TODO: maybe chnage this to a specif byte define that master will
                                 // send when asms on
       updatable_data.asms_on = true;
+    }
+  }
+  if (msg_data[0] == 0x31) {
+    if (msg_data[1] == 2) {
+      // ASState = ASReady
+      updatable_data.as_ready = true;//TODO: emergency n buzzer logic 
     }
   }
 }

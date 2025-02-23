@@ -27,7 +27,7 @@ LogicHandler::LogicHandler(SystemData& system_data, SystemVolatileData& current_
     : data(system_data), updated_data(current_updated_data) {}
 
 bool LogicHandler::should_start_manual_driving() const {
-  return (data.r2d_pressed && updated_data.TSOn && data.R2DTimer < config::r2d::TIMEOUT_MS);
+  return (data.r2d_pressed && updated_data.TSOn && data.r2d_brake_timer < config::r2d::TIMEOUT_MS);
 }
 
 bool LogicHandler::should_start_as_driving() const {
@@ -77,20 +77,15 @@ int LogicHandler::apps_to_bamocar_value(const int apps1, const int apps2) {
     torque_value = scale_apps2_to_apps1(apps2);
   }
 
-  const int bamo_max = config::bamocar::MAX;
-  const int bamo_min = config::bamocar::MIN;
-  const int apps_max = config::apps::MAX;  // TODO(PedroRomao3): vars needed ?
-  const int apps_min = config::apps::MIN;
-
-  if (torque_value > apps_max) {
-    torque_value = apps_max;
+  if (torque_value > config::apps::MAX) {
+    torque_value = config::apps::MAX;
   }
-  if (torque_value < apps_min) {
-    torque_value = apps_min;
+  if (torque_value < config::apps::MIN) {
+    torque_value = config::apps::MIN;
   }
 
-  // maps sensor value to bamocar range
-  torque_value = map(torque_value, apps_min, apps_max, bamo_min, bamo_max);
+  torque_value = map(torque_value, config::apps::MIN, config::apps::MAX, config::bamocar::MIN,
+                     config::bamocar::MAX);
 
   if (torque_value >= config::bamocar::MAX) {
     return config::bamocar::MAX;
