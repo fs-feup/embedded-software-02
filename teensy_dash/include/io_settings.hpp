@@ -48,23 +48,23 @@ namespace config {
     }
 
     namespace apps {
-        constexpr uint16_t UPPER_BOUND_1 = 800;
-        constexpr uint16_t LOWER_BOUND_1 = 240;
-        constexpr uint16_t UPPER_BOUND_2 = 785;
-        constexpr uint16_t LOWER_BOUND_2 = 220;
+        constexpr uint16_t UPPER_BOUND_APPS1 = 800;
+        constexpr uint16_t LOWER_BOUND_APPS1 = 240;
+        constexpr uint16_t UPPER_BOUND_APPS2 = 785;
+        constexpr uint16_t LOWER_BOUND_APPS2 = 220;
         
-        constexpr uint16_t DEAD_THRESHOLD_1 = 780;
-        constexpr uint16_t DEAD_THRESHOLD_2 = 240;
+        constexpr uint16_t DEAD_THRESHOLD_APPS1 = 780;
+        constexpr uint16_t DEAD_THRESHOLD_APPS2 = 240;
         
-        constexpr uint16_t DEADZONE_EQUIVALENT_1 = 660;
-        constexpr uint16_t DEADZONE_EQUIVALENT_2 = 360;
+        constexpr uint16_t DEADZONE_EQUIVALENT_APPS1 = 660;
+        constexpr uint16_t DEADZONE_EQUIVALENT_APPS2 = 360;
         
         constexpr uint16_t LINEAR_OFFSET = 124;
         constexpr uint16_t MAX = 770;
         constexpr uint16_t MIN = 270;
         
         constexpr float MAX_ERROR_PERCENT = 0.15f;
-        constexpr uint16_t MAX_ERROR_ABS = UPPER_BOUND_1 * MAX_ERROR_PERCENT;
+        constexpr uint16_t MAX_ERROR_ABS = UPPER_BOUND_APPS1 * MAX_ERROR_PERCENT;
         
         constexpr uint8_t SAMPLES = 5;
         constexpr uint16_t BRAKE_BLOCK_THRESHOLD = 250;
@@ -78,16 +78,16 @@ namespace config {
     }
 
     namespace wheel {
-        constexpr uint32_t LIMIT_RPM_INTERVAL = 500000;
+        constexpr uint32_t LIMIT_RPM_INTERVAL = 500'000;
         constexpr uint8_t PULSES_PER_ROTATION = 36;
     }
 
     namespace r2d {
-        constexpr uint32_t TIMEOUT_MS = 15000;
+        constexpr uint32_t TIMEOUT_MS = 15'000;
     }
 
     namespace bamocar {
-        constexpr uint16_t MAX = 32760;
+        constexpr uint16_t MAX = 32'760;
         constexpr uint16_t MIN = 0;
     }
 }

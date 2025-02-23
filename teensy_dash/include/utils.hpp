@@ -4,7 +4,7 @@
 
 #include "io_settings.hpp"
 
-void insert_value_queue(int value, std::deque<int>& queue) {
+void insert_value_queue(const int value, std::deque<int>& queue) {
   queue.push_front(value);
 
   if (queue.size() > config::apps::SAMPLES) {
@@ -13,11 +13,12 @@ void insert_value_queue(int value, std::deque<int>& queue) {
 }
 
 int average_queue(const std::deque<int>& queue) {
-  if (queue.empty()) {
-    return 0;
+  int avg = 0;
+  if (!queue.empty()) {
+    const double sum = std::accumulate(queue.begin(), queue.end(), 0);
+    avg = static_cast<int>(sum / queue.size());
   }
-  double sum = std::accumulate(queue.begin(), queue.end(), 0);
-  return static_cast<int>(sum / queue.size());
+  return avg;
 }
 
 bool check_sequence(const uint8_t* data, const std::array<uint8_t, 3>& expected) {
@@ -29,7 +30,7 @@ union float2bytes {
   char output[4];
 };
 
-void rpm_2_byte(float rr_rpm, char* rr_rpm_byte) {
+void rpm_2_byte(const float rr_rpm,const char* rr_rpm_byte) {
   float2bytes data;
   /*
   1st we multiply rpm by 100 to get a 2 decimal place value.

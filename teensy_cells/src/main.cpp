@@ -56,7 +56,7 @@ void check_Temperatures() {
 }
 
 int8_t safeTemperatureCast(const float temp) {
-  int8_t result;
+  int8_t result = 0;
 
   if (temp > 127.0f) {
     result = MAX_INT8_T;
@@ -117,7 +117,11 @@ void send_CAN_all_cell_temperatures() {
 
     for (int i = 0; i < CELLS_PER_MESSAGE; i++) {
       int cellIndex = (msgIndex * CELLS_PER_MESSAGE) + i;
-      msg.buf[i + 2] = cellIndex < N_NTC ? safeTemperatureCast(CELL_TEMP[cellIndex]) : 0;
+      if (cellIndex < N_NTC) {
+        msg.buf[i + 2] = safeTemperatureCast(CELL_TEMP[cellIndex]);
+      } else {
+        msg.buf[i + 2] = 0;
+      }
     }
 
     can1.write(msg);

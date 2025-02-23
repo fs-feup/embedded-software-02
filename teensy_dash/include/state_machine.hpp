@@ -54,6 +54,8 @@ void StateMachine::handle_idle() {
   } else if (logic_handler.should_start_as_driving()) {
     transition_to_as_driving();
     current_state_ = State::AS_DRIVING;
+  } else {
+    Serial.println("chillin");
   }
 }
 

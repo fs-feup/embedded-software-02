@@ -36,54 +36,51 @@ bool LogicHandler::should_start_as_driving() const {
 
 bool LogicHandler::should_go_idle() const { return (!updated_data.TSOn); }
 
-int LogicHandler::scale_apps2_to_apps1(int apps2) const {
+int LogicHandler::scale_apps2_to_apps1(const int apps2) const {
   return apps2 + config::apps::LINEAR_OFFSET;
 }
 
-bool LogicHandler::plausibility(int apps1, int apps2) const {
-  if (apps1 < apps2) {
+bool LogicHandler::plausibility(const int apps1, const int apps2) const {
+  bool valid_input = (apps1 >= apps2) && (apps1 <= config::apps::UPPER_BOUND_APPS1) &&
+                     (apps1 >= config::apps::LOWER_BOUND_APPS1) &&
+                     (apps2 <= config::apps::UPPER_BOUND_APPS2) &&
+                     (apps2 >= config::apps::LOWER_BOUND_APPS2);
+
+  if (!valid_input) {
     return false;
   }
 
-  if (apps1 > config::apps::UPPER_BOUND_1 || apps1 < config::apps::LOWER_BOUND_1) {
-    return false;
+  bool is_plausible = false;
+
+  if (apps1 >= config::apps::DEAD_THRESHOLD_APPS1) {
+    is_plausible =
+        (apps2 >= config::apps::DEADZONE_EQUIVALENT_APPS1 - config::apps::MAX_ERROR_ABS &&
+         apps2 <= config::apps::UPPER_BOUND_APPS2);
+  } else if (apps2 <= config::apps::DEAD_THRESHOLD_APPS2) {
+    is_plausible = (apps1 >= config::apps::LOWER_BOUND_APPS1 &&
+                    apps1 <= config::apps::DEADZONE_EQUIVALENT_APPS2 + config::apps::MAX_ERROR_ABS);
+  } else {
+    const int apps2_updated = scale_apps2_to_apps1(apps2);
+    const int plausibility_value = abs(apps2_updated - apps1) * 100 / apps1;
+    is_plausible = (plausibility_value < config::apps::MAX_ERROR_PERCENT * 100);
   }
 
-  if (apps2 > config::apps::UPPER_BOUND_2 || apps2 < config::apps::LOWER_BOUND_2) {
-    return false;
-  }
-
-  if (apps1 >= config::apps::DEAD_THRESHOLD_1) {
-    return apps2 >= config::apps::DEADZONE_EQUIVALENT_1 - config::apps::MAX_ERROR_ABS &&
-           apps2 <= config::apps::UPPER_BOUND_2;
-  }
-
-  if (apps2 <= config::apps::DEAD_THRESHOLD_2) {
-    return apps1 >= config::apps::LOWER_BOUND_1 &&
-           apps1 <= config::apps::DEADZONE_EQUIVALENT_2 + config::apps::MAX_ERROR_ABS;
-  }
-
-  // TODO(PedroRomao3): check if 2 conditions above are needed
-
-  int apps2_updated = scale_apps2_to_apps1(apps2);
-  int plausibility_value = abs(apps2_updated - apps1) * 100 / apps1;
-
-  return (plausibility_value < config::apps::MAX_ERROR_PERCENT * 100);
+  return is_plausible;
 }
 
-int LogicHandler::apps_to_bamocar_value(int apps1, int apps2) {
+int LogicHandler::apps_to_bamocar_value(const int apps1, const int apps2) {
   int torque_value = 0;
 
-  if (apps2 <= config::apps::DEAD_THRESHOLD_2) {
+  if (apps2 <= config::apps::DEAD_THRESHOLD_APPS2) {
     torque_value = apps1;
   } else {
     torque_value = scale_apps2_to_apps1(apps2);
   }
 
-  int bamo_max = config::bamocar::MAX;
-  int bamo_min = config::bamocar::MIN;
-  int apps_max = config::apps::MAX;  // TODO(PedroRomao3): vars needed ?
-  int apps_min = config::apps::MIN;
+  const int bamo_max = config::bamocar::MAX;
+  const int bamo_min = config::bamocar::MIN;
+  const int apps_max = config::apps::MAX;  // TODO(PedroRomao3): vars needed ?
+  const int apps_min = config::apps::MIN;
 
   if (torque_value > apps_max) {
     torque_value = apps_max;
@@ -95,7 +92,10 @@ int LogicHandler::apps_to_bamocar_value(int apps1, int apps2) {
   // maps sensor value to bamocar range
   torque_value = map(torque_value, apps_min, apps_max, bamo_min, bamo_max);
 
-  return torque_value >= config::bamocar::MAX ? config::bamocar::MAX : torque_value;
+  if (torque_value >= config::bamocar::MAX) {
+    return config::bamocar::MAX;
+  }
+  return torque_value;
 }
 
 int LogicHandler::calculate_torque() {
