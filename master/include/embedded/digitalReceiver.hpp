@@ -34,21 +34,25 @@ public:
   DigitalReceiver(HardwareData *digital_data, Mission *mission)
       : hardware_data_(digital_data), mission_(mission) {
     pinMode(SDC_BSPD_STATE_PIN, INPUT);
-    pinMode(MISSION_ACCELERATION_PIN, INPUT);
-    pinMode(MISSION_AUTOCROSS_PIN, INPUT);
-    pinMode(MISSION_EBSTEST_PIN, INPUT);
-    pinMode(MISSION_INSPECTION_PIN, INPUT);
-    pinMode(MISSION_MANUAL_PIN, INPUT);
-    pinMode(MISSION_SKIDPAD_PIN, INPUT);
-    pinMode(MISSION_TRACKDRIVE_PIN, INPUT);
+    pinMode(AMI, INPUT);
     pinMode(ASMS_IN_PIN, INPUT);
-    pinMode(SENSOR_PRESSURE_1_PIN, INPUT);
-    // pinMode(SENSOR_PRESSURE_2_PIN, INPUT);
+    pinMode(EBS_SENSOR2, INPUT);
+    pinMode(EBS_SENSOR1, INPUT);
+
+    pinMode(RL_WSS, INPUT);
+    pinMode(RR_WSS, INPUT);
+    pinMode(BRAKE_SENSOR, INPUT);
+    pinMode(SOC, INPUT);
+    pinMode(ATS, INPUT);
+    pinMode(ASATS, INPUT);
+    pinMode(WD_READY, INPUT);
+    pinMode(WD_SDC_RELAY, INPUT);
+
   }
 
 private:
   HardwareData *hardware_data_;  ///< Pointer to the digital data storage
-  Mission *mission_;           ///< Pointer to the current mission status
+  Mission *mission_;             ///< Pointer to the current mission status
 
   unsigned int asms_change_counter_ = 0;          ///< counter to avoid noise on asms
   unsigned int aats_change_counter_ = 0;          ///< counter to avoid noise on aats
@@ -89,8 +93,8 @@ inline void DigitalReceiver::digital_reads() {
 }
 
 inline void DigitalReceiver::read_pneumatic_line() {
-  // bool pneumatic1 = digitalRead(SENSOR_PRESSURE_1_PIN);
-  bool pneumatic2 = digitalRead(SENSOR_PRESSURE_2_PIN);  // TODO: maybe poorly read
+  // bool pneumatic1 = digitalRead(EBS_SENSOR2);
+  bool pneumatic2 = digitalRead(EBS_SENSOR1);  // TODO: maybe poorly read
 
   // hardware_data_->pneumatic_line_pressure_1_ = pneumatic1;
   hardware_data_->pneumatic_line_pressure_2_ = pneumatic2;

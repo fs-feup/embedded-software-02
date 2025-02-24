@@ -10,8 +10,7 @@ constexpr int INITIAL_CHECKUP_STEP_TIMEOUT = 500;
 constexpr unsigned long READY_TIMEOUT_MS = 5000;
 constexpr unsigned long RELEASE_EBS_TIMEOUT_MS = 1000;
 constexpr unsigned long ENGAGE_EBS_TIMEOUT_MS = 5000;
-// #define WATCHDOG_TOGGLE_FREQUENCY 100
-// #define WATCHDOG_TIMEOUT 500
+constexpr int WD_TIMEOUT_MS = 500;
 
 constexpr int WHEEL_MEASUREMENT_INTERVAL_MS = 30;  // 30ms // TODO: change to adequate value
 constexpr int WHEEL_MEASUREMENT_INTERVAL_MIN = (WHEEL_MEASUREMENT_INTERVAL_MS / 60000.0);
@@ -20,8 +19,8 @@ constexpr int PULSES_PER_ROTATION = 48;
 // Number of consecutive different values of a digital input to consider change
 // (to avoid noise)
 constexpr int DIGITAL_INPUT_COUNTER_LIMIT = 5;
-constexpr int WD_PULSE_INTERVAL_MS = 10;
-// TODO(andre): confirm wd timer values
+constexpr int WD_PULSE_INTERVAL_MS = 50;
+// TODO: confirm wd timer values
 
 /*
  * ===========
@@ -32,20 +31,16 @@ constexpr int WD_PULSE_INTERVAL_MS = 10;
 constexpr int ASSI_BLUE_PIN = 25;
 constexpr int ASSI_YELLOW_PIN = 12;
 
-constexpr int SDC_LOGIC_CLOSE_SDC_PIN = 8;
-// #define SDC_LOGIC_WATCHDOG_OUT_PIN 10
-constexpr int EBS_VALVE_1_PIN = 25;
-constexpr int EBS_VALVE_2_PIN = 30;
-constexpr int MASTER_SDC_OUT_PIN = 31;
+constexpr int EBS_VALVE_1_PIN = 17;
+constexpr int EBS_VALVE_2_PIN = 13;
 
-constexpr int EBS_SOLENOID_1 = 17;
-constexpr int EBS_SOLENOID_2 = 13;
 constexpr int CLOSE_SDC = 21;
-constexpr int BRAKE_LIGHT = 2;
+// #define SDC_LOGIC_WATCHDOG_OUT_PIN 10
 constexpr int SDC_BSPD_OUT = 14;
+
+constexpr int BRAKE_LIGHT = 2;
 constexpr int WD_SDC_CLOSE = 40;
 constexpr int WD_ALIVE = 15;
-
 
 /*
  * ==========
@@ -53,35 +48,20 @@ constexpr int WD_ALIVE = 15;
  * ==========
  */
 
-constexpr int RL_WSS = 4;
-constexpr int RR_WSS = 5;
-constexpr int AMI = 23;
-constexpr int BRAKE_SENSOR = 38;
-constexpr int SOC = 24;//TODO: send to dash via can
-constexpr int ATS = 16;//TODO: id asms on close sdc
-constexpr int ASATS = 20;//TODO: if asms on close sdc
+constexpr int ASMS_IN_PIN = 18;
+constexpr int AMI = 23;  // TODO
+
+// When pressure on the line passes the threshold defined, pin is set to HIGH
 constexpr int EBS_SENSOR1 = 41;
 constexpr int EBS_SENSOR2 = 39;
 constexpr int SDC_BSPD_STATE_PIN = 22;
+
+
+constexpr int RL_WSS = 4;
+constexpr int RR_WSS = 5;
+constexpr int BRAKE_SENSOR = 38;
+constexpr int SOC = 24;    // TODO: send to dash via can
+constexpr int ATS = 16;    // TODO: id asms on close sdc
+constexpr int ASATS = 20;  // TODO: if asms on close sdc
 constexpr int WD_READY = 37;
 constexpr int WD_SDC_RELAY = 33;
-constexpr int ASMS_IN_PIN = 18;
-
-
-// When pressure on the line passes the threshold defined, pin is set to HIGH
-constexpr int SENSOR_PRESSURE_2_PIN = 6;
-constexpr int SENSOR_PRESSURE_1_PIN = 5;
-
-// Mission pins
-
-constexpr int MISSION_MANUAL_PIN = 39;
-constexpr int MISSION_AUTOCROSS_PIN = 41;
-constexpr int MISSION_TRACKDRIVE_PIN = 14;
-constexpr int MISSION_SKIDPAD_PIN = 16;
-constexpr int MISSION_INSPECTION_PIN = 18;
-constexpr int MISSION_ACCELERATION_PIN = 20;
-constexpr int MISSION_EBSTEST_PIN = 21;
-
-
-
-

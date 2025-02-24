@@ -24,8 +24,8 @@ private:
 public:
   // Array of valid output pins
   static constexpr std::array<int, 9> validOutputPins = {
-      ASSI_BLUE_PIN,   ASSI_YELLOW_PIN,    EBS_VALVE_1_PIN,
-      EBS_VALVE_2_PIN, MASTER_SDC_OUT_PIN, SDC_LOGIC_CLOSE_SDC_PIN,
+      ASSI_BLUE_PIN, ASSI_YELLOW_PIN, EBS_VALVE_1_PIN, EBS_VALVE_2_PIN, SDC_BSPD_OUT,
+      CLOSE_SDC,     BRAKE_LIGHT,     WD_SDC_CLOSE,    WD_ALIVE
       // SDC_LOGIC_WATCHDOG_OUT_PIN
   };
 
@@ -98,13 +98,13 @@ public:
 };
 
 inline void DigitalSender::open_sdc() {
-  digitalWrite(SDC_LOGIC_CLOSE_SDC_PIN, LOW);
-  digitalWrite(MASTER_SDC_OUT_PIN, LOW);
+  digitalWrite(CLOSE_SDC, LOW);
+  digitalWrite(SDC_BSPD_OUT, LOW);
 }
 
 inline void DigitalSender::close_sdc() {
-  digitalWrite(SDC_LOGIC_CLOSE_SDC_PIN, HIGH);
-  digitalWrite(MASTER_SDC_OUT_PIN, HIGH);
+  digitalWrite(CLOSE_SDC, HIGH);
+  digitalWrite(SDC_BSPD_OUT, HIGH);
 }
 
 inline void DigitalSender::activate_ebs() {
