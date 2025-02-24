@@ -111,14 +111,7 @@ inline void DigitalReceiver::read_pneumatic_line() {
 }
 
 inline void DigitalReceiver::read_mission() {
-  Mission latest_mission = static_cast<Mission>(
-      digitalRead(MISSION_MANUAL_PIN) * to_underlying(Mission::MANUAL) |
-      digitalRead(MISSION_ACCELERATION_PIN) * to_underlying(Mission::ACCELERATION) |
-      digitalRead(MISSION_SKIDPAD_PIN) * to_underlying(Mission::SKIDPAD) |
-      digitalRead(MISSION_AUTOCROSS_PIN) * to_underlying(Mission::AUTOCROSS) |
-      digitalRead(MISSION_TRACKDRIVE_PIN) * to_underlying(Mission::TRACKDRIVE) |
-      digitalRead(MISSION_EBSTEST_PIN) * to_underlying(Mission::EBS_TEST) |
-      digitalRead(MISSION_INSPECTION_PIN) * to_underlying(Mission::INSPECTION));
+  Mission latest_mission = static_cast<Mission>(5);
 
   mission_change_counter_ = (latest_mission == *mission_) && (latest_mission == last_tried_mission_)
                                 ? 0
