@@ -179,6 +179,26 @@ inline bool CheckupManager::should_stay_off(DigitalSender *digital_sender) {
 inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence(
     DigitalSender *digital_sender) {
   switch (checkup_state_) {
+    // case CheckupState::START_TOGGLING_WATCHDOG:
+    //   DigitalSender::toggle_watchdog();
+    //   checkup_state_ = CheckupState::WAIT_FOR_WATCHDOG;
+    //   break;
+    // case CheckupState::WAIT_FOR_WATCHDOG:
+    //   if (_system_data_->failure_detection_.pc_alive_timestamp_.checkWithoutReset()) {
+    //     checkup_state_ = CheckupState::STOP_TOGGLING_WATCHDOG;
+    //   }
+    //   break;
+    // case CheckupState::STOP_TOGGLING_WATCHDOG:
+    //   DigitalSender::toggle_watchdog();
+    //   checkup_state_ = CheckupState::CHECK_WATCHDOG;
+    //   break;
+    // case CheckupState::CHECK_WATCHDOG:
+    //   if (_system_data_->failure_detection_.pc_alive_timestamp_.checkWithoutReset()) {
+    //     return CheckupError::ERROR;
+    //   }
+    //   checkup_state_ = CheckupState::WAIT_FOR_ASMS;
+    //   break;
+    
     case CheckupState::WAIT_FOR_ASMS:
       if (_system_data_->hardware_data_.asms_on_) {
         checkup_state_ = CheckupState::CLOSE_SDC;

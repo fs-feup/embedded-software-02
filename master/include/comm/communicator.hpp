@@ -39,7 +39,7 @@ inline std::array<Code, 1> fifoExtendedCodes = {{
 class Communicator {
 private:
   // Static FlexCAN_T4 object for CAN2 interface with RX and TX buffer sizes specified
-  inline static FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> can2;
+  inline static FlexCAN_T4<CAN3, RX_SIZE_256, TX_SIZE_16> can2;
 
 public:
   // Pointer to SystemData instance for storing system-related data

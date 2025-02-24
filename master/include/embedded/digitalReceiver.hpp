@@ -33,7 +33,7 @@ public:
    */
   DigitalReceiver(HardwareData *digital_data, Mission *mission)
       : hardware_data_(digital_data), mission_(mission) {
-    pinMode(SDC_STATE_PIN, INPUT);
+    pinMode(SDC_BSPD_STATE_PIN, INPUT);
     pinMode(MISSION_ACCELERATION_PIN, INPUT);
     pinMode(MISSION_AUTOCROSS_PIN, INPUT);
     pinMode(MISSION_EBSTEST_PIN, INPUT);
@@ -139,7 +139,7 @@ inline void DigitalReceiver::read_asms_switch() {
 
 inline void DigitalReceiver::read_aats_state() {
   // AATS is on if SDC is closed (SDC STATE PIN AS HIGH)
-  bool is_sdc_closed = !digitalRead(SDC_STATE_PIN);
+  bool is_sdc_closed = !digitalRead(SDC_BSPD_STATE_PIN);
   aats_change_counter_ = is_sdc_closed == hardware_data_->sdc_open_ ? 0 : aats_change_counter_ + 1;
   if (aats_change_counter_ >= DIGITAL_INPUT_COUNTER_LIMIT) {
     hardware_data_->sdc_open_ = is_sdc_closed;  // both need to be True
