@@ -47,7 +47,6 @@ public:
     pinMode(ASATS, INPUT);
     pinMode(WD_READY, INPUT);
     pinMode(WD_SDC_RELAY, INPUT);
-
   }
 
 private:
@@ -56,6 +55,7 @@ private:
 
   unsigned int asms_change_counter_ = 0;          ///< counter to avoid noise on asms
   unsigned int aats_change_counter_ = 0;          ///< counter to avoid noise on aats
+  unsigned int sdc_change_counter_ = 0;           ///< counter to avoid noise on sdc
   unsigned int pneumatic_change_counter_ = 0;     ///< counter to avoid noise on pneumatic line
   unsigned int mission_change_counter_ = 0;       ///< counter to avoid noise on mission change
   Mission last_tried_mission_ = Mission::MANUAL;  ///< Last attempted mission state
@@ -79,45 +79,56 @@ private:
   void read_asms_switch();
 
   /**
+   * @brief Reads the SDC state and updates the HardwareData object.
+   * Debounces input changes to avoid spurious transitions.
+   */
+  void read_sdc_state();
+  /**
    * @brief Reads the AATS state and updates the HardwareData object.
    * Debounces input changes to avoid spurious transitions.
    */
-  void read_aats_state();
+  void read_asats_state();
 };
 
 inline void DigitalReceiver::digital_reads() {
   read_pneumatic_line();
   read_mission();
   read_asms_switch();
-  read_aats_state();
+  read_sdc_state();
+  read_asats_state();
 }
 
 inline void DigitalReceiver::read_pneumatic_line() {
-  // bool pneumatic1 = digitalRead(EBS_SENSOR2);
-  bool pneumatic2 = digitalRead(EBS_SENSOR1);  // TODO: maybe poorly read
+  bool pneumatic1 = digitalRead(EBS_SENSOR2);
+  bool pneumatic2 = digitalRead(EBS_SENSOR1);
 
-  // hardware_data_->pneumatic_line_pressure_1_ = pneumatic1;
+  hardware_data_->pneumatic_line_pressure_1_ = pneumatic1;
   hardware_data_->pneumatic_line_pressure_2_ = pneumatic2;
-  bool latest_pneumatic_pressure = pneumatic2;
+  bool latest_pneumatic_pressure = pneumatic2 && pneumatic1;
 
   // Only change the value if it has been different 5 times in a row
-  pneumatic_change_counter_ = latest_pneumatic_pressure == hardware_data_->pneumatic_line_pressure_
-                                  ? 0
-                                  : pneumatic_change_counter_ + 1;
-  if (pneumatic_change_counter_ >= DIGITAL_INPUT_COUNTER_LIMIT) {
+  if (latest_pneumatic_pressure == hardware_data_->pneumatic_line_pressure_) {
+    pneumatic_change_counter_ = 0;
+  } else {
+    pneumatic_change_counter_ = pneumatic_change_counter_ + 1;
+  }
+  if (pneumatic_change_counter_ >= CHANGE_COUNTER_LIMIT) {
     hardware_data_->pneumatic_line_pressure_ = latest_pneumatic_pressure;  // both need to be True
     pneumatic_change_counter_ = 0;
   }
 }
 
 inline void DigitalReceiver::read_mission() {
-  Mission latest_mission = static_cast<Mission>(5);
+  const int raw_value = analogRead(AMI);
+  Mission latest_mission = static_cast<Mission>(map(raw_value, 0, 1023, 0, 7));
 
-  mission_change_counter_ = (latest_mission == *mission_) && (latest_mission == last_tried_mission_)
-                                ? 0
-                                : mission_change_counter_ + 1;
+  if ((latest_mission == *mission_) && (latest_mission == last_tried_mission_)) {
+    mission_change_counter_ = 0;
+  } else {
+    mission_change_counter_ = mission_change_counter_ + 1;
+  }
   this->last_tried_mission_ = latest_mission;
-  if (mission_change_counter_ >= DIGITAL_INPUT_COUNTER_LIMIT) {
+  if (mission_change_counter_ >= CHANGE_COUNTER_LIMIT) {
     *mission_ = latest_mission;
     mission_change_counter_ = 0;
   }
@@ -126,20 +137,39 @@ inline void DigitalReceiver::read_mission() {
 inline void DigitalReceiver::read_asms_switch() {
   bool latest_asms_status = digitalRead(ASMS_IN_PIN);
 
-  asms_change_counter_ =
-      latest_asms_status == hardware_data_->asms_on_ ? 0 : asms_change_counter_ + 1;
-  if (asms_change_counter_ >= DIGITAL_INPUT_COUNTER_LIMIT) {
+  if (latest_asms_status == hardware_data_->asms_on_) {
+    asms_change_counter_ = 0;
+  } else {
+    asms_change_counter_ = asms_change_counter_ + 1;
+  }
+  if (asms_change_counter_ >= CHANGE_COUNTER_LIMIT) {
     hardware_data_->asms_on_ = latest_asms_status;
     asms_change_counter_ = 0;
   }
 }
 
-inline void DigitalReceiver::read_aats_state() {
-  // AATS is on if SDC is closed (SDC STATE PIN AS HIGH)
-  bool is_sdc_closed = !digitalRead(SDC_BSPD_STATE_PIN);
-  aats_change_counter_ = is_sdc_closed == hardware_data_->sdc_open_ ? 0 : aats_change_counter_ + 1;
-  if (aats_change_counter_ >= DIGITAL_INPUT_COUNTER_LIMIT) {
-    hardware_data_->sdc_open_ = is_sdc_closed;  // both need to be True
+inline void DigitalReceiver::read_asats_state() {
+  bool asats_pressed = digitalRead(SDC_BSPD_STATE_PIN);
+  if (asats_pressed == hardware_data_->asats_pressed_) {
     aats_change_counter_ = 0;
+  } else {
+    aats_change_counter_ = aats_change_counter_ + 1;
+  }
+  if (aats_change_counter_ >= CHANGE_COUNTER_LIMIT) {
+    hardware_data_->asats_pressed_ = asats_pressed;
+    aats_change_counter_ = 0;
+  }
+}
+
+inline void DigitalReceiver::read_sdc_state() {
+  bool is_sdc_closed = !digitalRead(SDC_BSPD_STATE_PIN);
+  if (is_sdc_closed == hardware_data_->sdc_open_) {
+    sdc_change_counter_ = 0;
+  } else {
+    sdc_change_counter_ = sdc_change_counter_ + 1;
+  }
+  if (sdc_change_counter_ >= CHANGE_COUNTER_LIMIT) {
+    hardware_data_->sdc_open_ = is_sdc_closed;  // both need to be True
+    sdc_change_counter_ = 0;
   }
 }

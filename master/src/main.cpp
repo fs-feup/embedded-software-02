@@ -52,7 +52,7 @@ void loop() {
     previous_checkup_state = current_checkup_state;
     previous_mission = current_mission;
 
-    Communicator::publish_debug_log(system_data, current_master_state, current_checkup_state);
+    Communicator::publish_debug_log_not_wood(system_data, current_master_state, current_checkup_state);
   }
 
   if (mission_timer.check()) {

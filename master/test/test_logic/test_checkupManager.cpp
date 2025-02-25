@@ -74,7 +74,7 @@ void test_initialCheckupSequence_states() {
   TEST_ASSERT_EQUAL(CheckupManager::CheckupState::CLOSE_SDC, cm.checkupState);
 
   cm.initial_checkup_sequence(&digitalSender);
-  TEST_ASSERT_EQUAL(CheckupManager::CheckupState::WAIT_FOR_AATS, cm.checkupState);
+  TEST_ASSERT_EQUAL(CheckupManager::CheckupState::WAIT_FOR_ASATS, cm.checkupState);
 
   sd.hardware_data_.sdc_open_ = false;
   cm.initial_checkup_sequence(&digitalSender);

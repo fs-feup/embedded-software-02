@@ -71,7 +71,7 @@ public:
     STOP_TOGGLING_WATCHDOG,
     CHECK_WATCHDOG,
     CLOSE_SDC,
-    WAIT_FOR_AATS,
+    WAIT_FOR_ASATS,
     WAIT_FOR_TS,
     EBS_CHECKS, /** activate and deactivate ebs and -> check pressures are correct */
     CHECK_TIMESTAMPS,
@@ -178,27 +178,27 @@ inline bool CheckupManager::should_stay_off(DigitalSender *digital_sender) {
 
 inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence(
     DigitalSender *digital_sender) {
-  switch (checkup_state_) {
-    // case CheckupState::START_TOGGLING_WATCHDOG:
-    //   DigitalSender::toggle_watchdog();
-    //   checkup_state_ = CheckupState::WAIT_FOR_WATCHDOG;
-    //   break;
-    // case CheckupState::WAIT_FOR_WATCHDOG:
-    //   if (_system_data_->failure_detection_.pc_alive_timestamp_.checkWithoutReset()) {
-    //     checkup_state_ = CheckupState::STOP_TOGGLING_WATCHDOG;
-    //   }
-    //   break;
-    // case CheckupState::STOP_TOGGLING_WATCHDOG:
-    //   DigitalSender::toggle_watchdog();
-    //   checkup_state_ = CheckupState::CHECK_WATCHDOG;
-    //   break;
-    // case CheckupState::CHECK_WATCHDOG:
-    //   if (_system_data_->failure_detection_.pc_alive_timestamp_.checkWithoutReset()) {
-    //     return CheckupError::ERROR;
-    //   }
-    //   checkup_state_ = CheckupState::WAIT_FOR_ASMS;
-    //   break;
-    
+  switch (checkup_state_) {//TODO
+      // case CheckupState::START_TOGGLING_WATCHDOG:
+      //   DigitalSender::toggle_watchdog();
+      //   checkup_state_ = CheckupState::WAIT_FOR_WATCHDOG;
+      //   break;
+      // case CheckupState::WAIT_FOR_WATCHDOG:
+      //   if (_system_data_->failure_detection_.pc_alive_timestamp_.checkWithoutReset()) {
+      //     checkup_state_ = CheckupState::STOP_TOGGLING_WATCHDOG;
+      //   }
+      //   break;
+      // case CheckupState::STOP_TOGGLING_WATCHDOG:
+      //   DigitalSender::toggle_watchdog();
+      //   checkup_state_ = CheckupState::CHECK_WATCHDOG;
+      //   break;
+      // case CheckupState::CHECK_WATCHDOG:
+      //   if (_system_data_->failure_detection_.pc_alive_timestamp_.checkWithoutReset()) {
+      //     return CheckupError::ERROR;
+      //   }
+      //   checkup_state_ = CheckupState::WAIT_FOR_ASMS;
+      //   break;
+
     case CheckupState::WAIT_FOR_ASMS:
       if (_system_data_->hardware_data_.asms_on_) {
         checkup_state_ = CheckupState::CLOSE_SDC;
@@ -206,13 +206,12 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence(
       break;
     case CheckupState::CLOSE_SDC:
       DigitalSender::close_sdc();
-      checkup_state_ = CheckupState::WAIT_FOR_AATS;
+      checkup_state_ = CheckupState::WAIT_FOR_ASATS;
 
       break;
-    case CheckupState::WAIT_FOR_AATS:
+    case CheckupState::WAIT_FOR_ASATS:
 
-      // AATS Activated?
-      if (!_system_data_->hardware_data_.sdc_open_) {
+      if (_system_data_->hardware_data_.asats_pressed_) {
         _system_data_->failure_detection_.emergency_signal_ = false;
         checkup_state_ = CheckupState::WAIT_FOR_TS;
       }
@@ -245,17 +244,17 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence(
 
 inline void CheckupManager::handle_ebs_check() {
   switch (pressure_test_phase_) {
-    case 0://activate
+    case 0:  // activate
       DigitalSender::activate_ebs();
       pressure_test_phase_++;
       break;
-    case 1://check and deactivate
+    case 1:  // check and deactivate
       if (check_pressure_high()) {
         DigitalSender::deactivate_ebs();
         pressure_test_phase_++;
       }
       break;
-    case 2://check and activate
+    case 2:  // check and activate
       if (check_pressure_low()) {
         pressure_test_phase_ = 0;
         DigitalSender::activate_ebs();  // might not be necessary
@@ -267,7 +266,7 @@ inline void CheckupManager::handle_ebs_check() {
 
 inline bool CheckupManager::should_go_ready_from_off() const {
   if (!_system_data_->hardware_data_.asms_on_ || !_system_data_->failure_detection_.ts_on_ ||
-      _system_data_->hardware_data_.sdc_open_) {
+      !_system_data_->hardware_data_.asats_pressed_ || _system_data_->hardware_data_.sdc_open_) {
     return false;
   }
   _system_data_->r2d_logics_.enter_ready_state();
