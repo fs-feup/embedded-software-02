@@ -163,13 +163,13 @@ inline void DigitalReceiver::read_asats_state() {
 
 inline void DigitalReceiver::read_sdc_state() {
   bool is_sdc_closed = !digitalRead(SDC_BSPD_STATE_PIN);
-  if (is_sdc_closed == hardware_data_->sdc_open_) {
+  if (is_sdc_closed == hardware_data_->bspd_sdc_open_) {
     sdc_change_counter_ = 0;
   } else {
     sdc_change_counter_ = sdc_change_counter_ + 1;
   }
   if (sdc_change_counter_ >= CHANGE_COUNTER_LIMIT) {
-    hardware_data_->sdc_open_ = is_sdc_closed;  // both need to be True
+    hardware_data_->bspd_sdc_open_ = is_sdc_closed;  // both need to be True
     sdc_change_counter_ = 0;
   }
 }

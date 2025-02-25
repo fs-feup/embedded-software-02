@@ -28,7 +28,7 @@ void reset() {
 void to_ready() {
   sd.hardware_data_.asms_on_ = true;
   // sd.digitalData.watchdog_state = true;
-  sd.hardware_data_.sdc_open_ = false;
+  sd.hardware_data_.bspd_sdc_open_ = false;
 
   uint8_t bamo_msg[] = {VDC_BUS, 0x00, BAMOCAR_VDC_HIGH};  // VDC_BUS fill
   communicator.bamocar_callback(bamo_msg);
@@ -86,7 +86,7 @@ void test_off_to_ready_recheck() {
 
   sd.hardware_data_.asms_on_ = true;
   // sd.digitalData.watchdog_state = true;
-  sd.hardware_data_.sdc_open_ = false;
+  sd.hardware_data_.bspd_sdc_open_ = false;
 
   uint8_t bamo_msg[] = {VDC_BUS, 0x00, BAMOCAR_VDC_HIGH};  // VDC_BUS fill
   communicator.bamocar_callback(bamo_msg);
@@ -277,7 +277,7 @@ void test_ready_to_driving_to_emg2() {
   as_state.calculate_state();
   TEST_ASSERT_EQUAL(State::AS_DRIVING, as_state.state_);
 
-  sd.hardware_data_.sdc_open_ = true;
+  sd.hardware_data_.bspd_sdc_open_ = true;
   as_state.calculate_state();
   TEST_ASSERT_EQUAL(State::AS_EMERGENCY, as_state.state_);
 }
@@ -398,7 +398,7 @@ void test_flow_ready() {
 
   sd.hardware_data_.asms_on_ = true;
   // sd.digitalData.watchdog_state = true;
-  sd.hardware_data_.sdc_open_ = false;
+  sd.hardware_data_.bspd_sdc_open_ = false;
 
   uint8_t bamo_msg[] = {VDC_BUS, 0x00, BAMOCAR_VDC_HIGH};
   communicator.bamocar_callback(bamo_msg);
@@ -454,7 +454,7 @@ void test_flow_emergency() {
   as_state.calculate_state();
   TEST_ASSERT_EQUAL(State::AS_DRIVING, as_state.state_);
 
-  sd.hardware_data_.sdc_open_ = true;  // ebs before finished checks
+  sd.hardware_data_.bspd_sdc_open_ = true;  // ebs before finished checks
 
   as_state.calculate_state();
   TEST_ASSERT_EQUAL(State::AS_EMERGENCY, as_state.state_);
@@ -488,7 +488,7 @@ void test_flow_finished() {
   as_state.calculate_state();
   TEST_ASSERT_EQUAL(State::AS_FINISHED, as_state.state_);
 
-  sd.hardware_data_.sdc_open_ = true;
+  sd.hardware_data_.bspd_sdc_open_ = true;
   as_state.calculate_state();
   TEST_ASSERT_EQUAL(State::AS_FINISHED, as_state.state_);
 

@@ -76,7 +76,7 @@ void test_initialCheckupSequence_states() {
   cm.initial_checkup_sequence(&digitalSender);
   TEST_ASSERT_EQUAL(CheckupManager::CheckupState::WAIT_FOR_ASATS, cm.checkupState);
 
-  sd.hardware_data_.sdc_open_ = false;
+  sd.hardware_data_.bspd_sdc_open_ = false;
   cm.initial_checkup_sequence(&digitalSender);
   TEST_ASSERT_EQUAL(CheckupManager::CheckupState::WAIT_FOR_TS, cm.checkupState);
 
@@ -113,7 +113,7 @@ void test_shouldStayReady() {
 
 void test_shouldEnterEmergency() {
   SystemData sd;
-  sd.hardware_data_.sdc_open_ = false;
+  sd.hardware_data_.bspd_sdc_open_ = false;
   sd.hardware_data_.pneumatic_line_pressure_ = true;
   sd.hardware_data_.asms_on_ = true;
   sd.hardware_data_._hydraulic_line_pressure = HYDRAULIC_BRAKE_THRESHOLD + 1;
@@ -128,9 +128,9 @@ void test_shouldEnterEmergency() {
   CheckupManager checkupManager(&sd);
 
   TEST_ASSERT_FALSE(checkupManager.shouldEnterEmergency(State::AS_READY));
-  sd.hardware_data_.sdc_open_ = true;
+  sd.hardware_data_.bspd_sdc_open_ = true;
   TEST_ASSERT_TRUE(checkupManager.shouldEnterEmergency(State::AS_READY));
-  sd.hardware_data_.sdc_open_ = false;
+  sd.hardware_data_.bspd_sdc_open_ = false;
   sd.hardware_data_.pneumatic_line_pressure_ = false;
   while (!sd.r2d_logics_.releaseEbsTimestamp.checkWithoutReset());
   TEST_ASSERT_TRUE(checkupManager.shouldEnterEmergency(State::AS_READY));
@@ -152,9 +152,9 @@ void test_shouldEnterEmergency() {
   sd.failure_detection_.steer_alive_timestamp_.reset();
   sd.failure_detection_.res_signal_loss_timestamp_.reset();
   TEST_ASSERT_FALSE(checkupManager.shouldEnterEmergency(State::AS_DRIVING));
-  sd.hardware_data_.sdc_open_ = true;
+  sd.hardware_data_.bspd_sdc_open_ = true;
   TEST_ASSERT_TRUE(checkupManager.shouldEnterEmergency(State::AS_DRIVING));
-  sd.hardware_data_.sdc_open_ = false;
+  sd.hardware_data_.bspd_sdc_open_ = false;
   sd.hardware_data_.pneumatic_line_pressure_ = false;
   TEST_ASSERT_TRUE(checkupManager.shouldEnterEmergency(State::AS_DRIVING));
   sd.hardware_data_.pneumatic_line_pressure_ = true;
@@ -179,7 +179,7 @@ void test_shouldEnterEmergency() {
 
 void test_shouldEnterEmergencyAsDrivingEBSValves() {
   SystemData sd;
-  sd.hardware_data_.sdc_open_ = false;
+  sd.hardware_data_.bspd_sdc_open_ = false;
   sd.hardware_data_.pneumatic_line_pressure_ = true;
   sd.hardware_data_.asms_on_ = true;
   sd.hardware_data_._hydraulic_line_pressure = 1;

@@ -266,7 +266,7 @@ inline void CheckupManager::handle_ebs_check() {
 
 inline bool CheckupManager::should_go_ready_from_off() const {
   if (!_system_data_->hardware_data_.asms_on_ || !_system_data_->failure_detection_.ts_on_ ||
-      !_system_data_->hardware_data_.asats_pressed_ || _system_data_->hardware_data_.sdc_open_) {
+      !_system_data_->hardware_data_.asats_pressed_ || _system_data_->hardware_data_.bspd_sdc_open_) {
     return false;
   }
   _system_data_->r2d_logics_.enter_ready_state();
@@ -295,13 +295,13 @@ bool CheckupManager::should_enter_emergency_in_ready_state() const {
          failed_to_build_pneumatic_pressure_in_engage_time() ||
          _system_data_->failure_detection_.has_any_component_timed_out() ||
          !_system_data_->hardware_data_.asms_on_ || !_system_data_->failure_detection_.ts_on_ ||
-         failed_to_build_hydraulic_pressure_in_time() || _system_data_->hardware_data_.sdc_open_;
+         failed_to_build_hydraulic_pressure_in_time() || _system_data_->hardware_data_.bspd_sdc_open_;
 }
 
 bool CheckupManager::should_enter_emergency_in_driving_state() const {
   return _system_data_->failure_detection_.has_any_component_timed_out() ||
          _system_data_->failure_detection_.emergency_signal_ ||
-         _system_data_->hardware_data_.sdc_open_ ||
+         _system_data_->hardware_data_.bspd_sdc_open_ ||
          failed_to_build_pneumatic_pressure_in_release_time() ||
          failed_to_reduce_hydraulic_pressure_in_time() || !_system_data_->hardware_data_.asms_on_ ||
          !_system_data_->failure_detection_.ts_on_;

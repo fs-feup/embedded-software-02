@@ -35,7 +35,7 @@ inline std::array<uint8_t, 8> create_debug_message_1(const SystemData& system_da
         (system_data.failure_detection_.res_dead_ & 0x01),
         (system_data.hardware_data_.asms_on_ & 0x01) << 7 | 
         (system_data.failure_detection_.ts_on_ & 0x01) << 6 | 
-        (system_data.hardware_data_.sdc_open_ & 0x01) << 5 |
+        (system_data.hardware_data_.bspd_sdc_open_ & 0x01) << 5 |
         (state_checkup & 0x0F),
         (to_underlying(system_data.mission_) & 0x0F) | ((state & 0x0F) << 4)
     };
