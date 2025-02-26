@@ -10,6 +10,8 @@ struct HardwareData {
   bool asms_on_ = false;
   bool asats_pressed_ = false;
   bool bspd_sdc_open_{true};
+  int hydraulic_pressure_ = 0;
+  int soc_ = 0;
   double _right_wheel_rpm = 0;
   double _left_wheel_rpm = 0;
   int _hydraulic_line_pressure = 0;

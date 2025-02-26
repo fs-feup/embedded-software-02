@@ -99,23 +99,18 @@ public:
    * @param pin The pin to blink.
    */
   void blink_led(int pin);
+  void turn_on_brake_light();
+  void turn_off_brake_light();
+  void toggle_watchdog();
 };
 
-inline void DigitalSender::open_sdc() {
-  digitalWrite(CLOSE_SDC, LOW);
-}
+inline void DigitalSender::open_sdc() { digitalWrite(CLOSE_SDC, LOW); }
 
-inline void DigitalSender::close_sdc() {
-  digitalWrite(CLOSE_SDC, HIGH);
-}
+inline void DigitalSender::close_sdc() { digitalWrite(CLOSE_SDC, HIGH); }
 
-inline void DigitalSender::activate_bspd_error() {
-  digitalWrite(SDC_BSPD_OUT, HIGH);
-}
+inline void DigitalSender::activate_bspd_error() { digitalWrite(SDC_BSPD_OUT, HIGH); }
 
-inline void DigitalSender::deactivate_bspd_error() {
-  digitalWrite(SDC_BSPD_OUT, LOW);
-}
+inline void DigitalSender::deactivate_bspd_error() { digitalWrite(SDC_BSPD_OUT, LOW); }
 
 inline void DigitalSender::activate_ebs() {
   digitalWrite(EBS_VALVE_1_PIN, HIGH);
@@ -178,4 +173,14 @@ inline void DigitalSender::blink_led(const int pin) {
     blink_state = !blink_state;
     analogWrite(pin, blink_state * 1023);
   }
+}
+
+inline void DigitalSender::turn_on_brake_light() { digitalWrite(BRAKE_LIGHT, HIGH); }
+
+inline void DigitalSender::turn_off_brake_light() { digitalWrite(BRAKE_LIGHT, LOW); }
+
+inline void DigitalSender::toggle_watchdog() {
+  static bool wd_state = false;
+  wd_state = !wd_state;
+  digitalWrite(WD_ALIVE, wd_state);
 }

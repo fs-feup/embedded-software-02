@@ -115,7 +115,7 @@ public:
   /**
    * @brief Publish AS Mission to CAN
    */
-  static int publish_debug_log_not_wood(const SystemData& system_data, uint8_t sate, uint8_t state_checkup);
+  static int publish_debug_morning_log(const SystemData& system_data, uint8_t sate, uint8_t state_checkup);
 
   /**
    * @brief Publish rl wheel rpm to CAN
@@ -265,7 +265,7 @@ inline int Communicator::publish_mission(int mission_id) {
   return 0;
 }
 //TODO: publish asms/SOC/ to dash
-inline int Communicator::publish_debug_log_not_wood(const SystemData& system_data, uint8_t state,
+inline int Communicator::publish_debug_morning_log(const SystemData& system_data, uint8_t state,
                                            uint8_t state_checkup) {
   send_message(8, create_debug_message_1(system_data, state, state_checkup), MASTER_ID);
   send_message(7, create_debug_message_2(system_data), MASTER_ID);

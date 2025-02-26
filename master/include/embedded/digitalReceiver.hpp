@@ -7,6 +7,7 @@
 #include <model/structure.hpp>
 
 #include "debugUtils.hpp"
+#include "utils.hpp"
 #include "hardwareSettings.hpp"
 
 /**
@@ -53,6 +54,7 @@ private:
   HardwareData *hardware_data_;  ///< Pointer to the digital data storage
   Mission *mission_;             ///< Pointer to the current mission status
 
+  std::deque<int> brake_readings;  ///< Buffer for brake sensor readings
   unsigned int asms_change_counter_ = 0;          ///< counter to avoid noise on asms
   unsigned int aats_change_counter_ = 0;          ///< counter to avoid noise on aats
   unsigned int sdc_change_counter_ = 0;           ///< counter to avoid noise on sdc
@@ -88,6 +90,21 @@ private:
    * Debounces input changes to avoid spurious transitions.
    */
   void read_asats_state();
+
+  /**
+   * @brief Reads the wheel speed sensors and updates the HardwareData object.
+   * Debounces input changes to avoid spurious transitions.
+   */
+  void read_wheel_speed_sensors();
+
+  /**
+   * @brief Reads the brake sensor and updates the HardwareData object.
+   * Debounces input changes to avoid spurious transitions.
+   */
+  void read_brake_sensor();
+  
+  void read_soc();
+
 };
 
 inline void DigitalReceiver::digital_reads() {
@@ -96,8 +113,19 @@ inline void DigitalReceiver::digital_reads() {
   read_asms_switch();
   read_sdc_state();
   read_asats_state();
+  read_soc();
 }
 
+inline void DigitalReceiver::read_soc() {
+  const int raw_value = analogRead(SOC);
+  hardware_data_->soc_ = map(raw_value, 0, 1023, 0, 100);
+}
+
+inline void DigitalReceiver::read_brake_sensor() {
+  int hydraulic_pressure = analogRead(BRAKE_SENSOR);
+  insert_value_queue(hydraulic_pressure, brake_readings);
+  hardware_data_->hydraulic_pressure_ = average_queue(brake_readings);  
+}
 inline void DigitalReceiver::read_pneumatic_line() {
   bool pneumatic1 = digitalRead(EBS_SENSOR2);
   bool pneumatic2 = digitalRead(EBS_SENSOR1);

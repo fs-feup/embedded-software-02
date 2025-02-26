@@ -11,6 +11,8 @@ constexpr unsigned long READY_TIMEOUT_MS = 5000;
 constexpr unsigned long RELEASE_EBS_TIMEOUT_MS = 1000;
 constexpr unsigned long ENGAGE_EBS_TIMEOUT_MS = 5000;
 constexpr int WD_TIMEOUT_MS = 500;
+constexpr int BRAKE_PRESSURE_LOWER_THRESHOLD = 120;
+constexpr int BRAKE_PRESSURE_UPPER_THRESHOLD = 510;
 
 constexpr int WHEEL_MEASUREMENT_INTERVAL_MS = 30;  // 30ms // TODO: change to adequate value
 constexpr int WHEEL_MEASUREMENT_INTERVAL_MIN = (WHEEL_MEASUREMENT_INTERVAL_MS / 60'000.0);
