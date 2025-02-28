@@ -1,21 +1,20 @@
 #pragma once
 
-#include <model/sensors.hpp>
-#include <model/systemDiagnostics.hpp>
+#include <model/hardwareData.hpp>
 #include <model/structure.hpp>
-#include <model/digitalData.hpp>
+#include <model/systemDiagnostics.hpp>
 
 /**
  * @brief The whole model of the system:
  * holds all the data necessary
-*/
+ */
 struct SystemData {
-    R2DLogics r2dLogics;
-    FailureDetection failureDetection;
-    Sensors sensors;
+  R2DLogics r2d_logics_;
+  FailureDetection failure_detection_;
 
-    DigitalData digitalData;
-    Mission mission{MANUAL};
+  HardwareData hardware_data_;
+  Mission mission_{Mission::MANUAL};
 
-    bool ready2Drive{false}, missionFinished{false};
+  bool ready_2_drive_{false};
+  bool mission_finished_{false};
 };
