@@ -106,4 +106,11 @@ private:
       digital_sender_->no_bspd_error();
     }
   }
+  void dash_ats_update(uint8_t current_master_state) {
+    if (system_data_->hardware_data_.ats_pressed_ && current_master_state == to_underlying(State::AS_MANUAL)) {
+      digital_sender_->close_sdc();
+    } else {
+      digital_sender_->open_sdc();
+    }
+  }
 };

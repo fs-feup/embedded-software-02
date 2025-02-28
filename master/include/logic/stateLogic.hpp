@@ -56,7 +56,9 @@ public:
 inline void ASState::calculate_state() {
   switch (state_) {
     case State::AS_MANUAL:
-      if (_checkup_manager_.should_stay_manual_driving()) break;
+      if (_checkup_manager_.should_stay_manual_driving()) {
+        break;
+      }
 
       DEBUG_PRINT("Entering OFF state from MANUAL");
       DigitalSender::enter_off_state();

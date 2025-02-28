@@ -7,8 +7,8 @@
 #include <model/structure.hpp>
 
 #include "debugUtils.hpp"
-#include "utils.hpp"
 #include "hardwareSettings.hpp"
+#include "utils.hpp"
 
 /**
  * @brief Class responsible for the reading of the digital
@@ -54,13 +54,14 @@ private:
   HardwareData *hardware_data_;  ///< Pointer to the digital data storage
   Mission *mission_;             ///< Pointer to the current mission status
 
-  std::deque<int> brake_readings;  ///< Buffer for brake sensor readings
+  std::deque<int> brake_readings;                 ///< Buffer for brake sensor readings
   unsigned int asms_change_counter_ = 0;          ///< counter to avoid noise on asms
   unsigned int aats_change_counter_ = 0;          ///< counter to avoid noise on aats
   unsigned int sdc_change_counter_ = 0;           ///< counter to avoid noise on sdc
   unsigned int pneumatic_change_counter_ = 0;     ///< counter to avoid noise on pneumatic line
   unsigned int mission_change_counter_ = 0;       ///< counter to avoid noise on mission change
   unsigned int sdc_bspd_change_counter_ = 0;      ///< counter to avoid noise on sdc bspd
+  unsigned int ats_change_counter_ = 0;           ///< counter to avoid noise on ats
   Mission last_tried_mission_ = Mission::MANUAL;  ///< Last attempted mission state
 
   /**
@@ -80,12 +81,6 @@ private:
    * Debounces input changes to avoid spurious transitions.
    */
   void read_asms_switch();
-
-  /**
-   * @brief Reads the SDC state and updates the HardwareData object.
-   * Debounces input changes to avoid spurious transitions.
-   */
-  void read_sdc_state();
   /**
    * @brief Reads the AATS state and updates the HardwareData object.
    * Debounces input changes to avoid spurious transitions.
@@ -109,43 +104,45 @@ private:
    * Debounces input changes to avoid spurious transitions.
    */
   void read_brake_sensor();
-  
+
+  /**
+   * @brief Reads the state of charge and updates the HardwareData object.
+   */
   void read_soc();
 
+  /**
+   * @brief Reads the ats and updates the HardwareData object.
+   * Debounces input changes to avoid spurious transitions.
+   */
+  void read_ats();
 };
 
 inline void DigitalReceiver::digital_reads() {
   read_pneumatic_line();
   read_mission();
   read_asms_switch();
-  read_sdc_state();
   read_asats_state();
   read_soc();
+  read_brake_sensor();
+  read_ats();
+  read_bspd_sdc();
 }
 
 inline void DigitalReceiver::read_soc() {
   const int raw_value = analogRead(SOC);
-  int mapped_value = map(raw_value, 0, 1023, 0, 100);
-  mapped_value = constrain(mapped_value, 0, 100);//constrain to 0-100, just in case
+  int mapped_value = map(raw_value, 0, ADC_MAX_VALUE, 0, SOC_PERCENT_MAX);
+  mapped_value = constrain(mapped_value, 0, SOC_PERCENT_MAX);  // constrain to 0-100, just in case
   hardware_data_->soc_ = static_cast<uint8_t>(mapped_value);
 }
 
 inline void DigitalReceiver::read_bspd_sdc() {
-  bool is_sdc_open = !digitalRead(SDC_BSPD_STATE_PIN);//low when sdc/bspd open
-  if (is_sdc_open == hardware_data_->bspd_sdc_open_) {
-    sdc_bspd_change_counter_ = 0;
-  } else {
-    sdc_bspd_change_counter_ = sdc_bspd_change_counter_ + 1;
-  }
-  if (sdc_bspd_change_counter_ >= CHANGE_COUNTER_LIMIT) {
-    hardware_data_->bspd_sdc_open_ = is_sdc_open;  // both need to be True
-    sdc_bspd_change_counter_ = 0;
-  }
+  bool is_sdc_open = !digitalRead(SDC_BSPD_STATE_PIN);  // low when sdc/bspd open
+  debounce(is_sdc_open, hardware_data_->bspd_sdc_open_, sdc_bspd_change_counter_);
 }
 inline void DigitalReceiver::read_brake_sensor() {
   int hydraulic_pressure = analogRead(BRAKE_SENSOR);
   insert_value_queue(hydraulic_pressure, brake_readings);
-  hardware_data_->hydraulic_pressure_ = average_queue(brake_readings);  
+  hardware_data_->hydraulic_pressure_ = average_queue(brake_readings);
 }
 inline void DigitalReceiver::read_pneumatic_line() {
   bool pneumatic1 = digitalRead(EBS_SENSOR2);
@@ -155,21 +152,14 @@ inline void DigitalReceiver::read_pneumatic_line() {
   hardware_data_->pneumatic_line_pressure_2_ = pneumatic2;
   bool latest_pneumatic_pressure = pneumatic2 && pneumatic1;
 
-  // Only change the value if it has been different 5 times in a row
-  if (latest_pneumatic_pressure == hardware_data_->pneumatic_line_pressure_) {
-    pneumatic_change_counter_ = 0;
-  } else {
-    pneumatic_change_counter_ = pneumatic_change_counter_ + 1;
-  }
-  if (pneumatic_change_counter_ >= CHANGE_COUNTER_LIMIT) {
-    hardware_data_->pneumatic_line_pressure_ = latest_pneumatic_pressure;  // both need to be True
-    pneumatic_change_counter_ = 0;
-  }
+  debounce(latest_pneumatic_pressure, hardware_data_->pneumatic_line_pressure_,
+           pneumatic_change_counter_);
 }
 
 inline void DigitalReceiver::read_mission() {
   const int raw_value = analogRead(AMI);
-  Mission latest_mission = static_cast<Mission>(map(raw_value, 0, 1023, 0, 7));
+  int mapped_value = constrain(map(raw_value, 0, ADC_MAX_VALUE, 0, MAX_MISSION), 0, MAX_MISSION);//constrain just in case
+  Mission latest_mission = static_cast<Mission>(mapped_value);
 
   if ((latest_mission == *mission_) && (latest_mission == last_tried_mission_)) {
     mission_change_counter_ = 0;
@@ -185,40 +175,15 @@ inline void DigitalReceiver::read_mission() {
 
 inline void DigitalReceiver::read_asms_switch() {
   bool latest_asms_status = digitalRead(ASMS_IN_PIN);
-
-  if (latest_asms_status == hardware_data_->asms_on_) {
-    asms_change_counter_ = 0;
-  } else {
-    asms_change_counter_ = asms_change_counter_ + 1;
-  }
-  if (asms_change_counter_ >= CHANGE_COUNTER_LIMIT) {
-    hardware_data_->asms_on_ = latest_asms_status;
-    asms_change_counter_ = 0;
-  }
+  debounce(latest_asms_status, hardware_data_->asms_on_, asms_change_counter_);
 }
 
 inline void DigitalReceiver::read_asats_state() {
   bool asats_pressed = digitalRead(ASATS);
-  if (asats_pressed == hardware_data_->asats_pressed_) {
-    aats_change_counter_ = 0;
-  } else {
-    aats_change_counter_ = aats_change_counter_ + 1;
-  }
-  if (aats_change_counter_ >= CHANGE_COUNTER_LIMIT) {
-    hardware_data_->asats_pressed_ = asats_pressed;
-    aats_change_counter_ = 0;
-  }
+  debounce(asats_pressed, hardware_data_->asats_pressed_, aats_change_counter_);
 }
 
-inline void DigitalReceiver::read_sdc_state() {
-  bool is_sdc_closed = !digitalRead(SDC_BSPD_STATE_PIN);
-  if (is_sdc_closed == hardware_data_->bspd_sdc_open_) {
-    sdc_change_counter_ = 0;
-  } else {
-    sdc_change_counter_ = sdc_change_counter_ + 1;
-  }
-  if (sdc_change_counter_ >= CHANGE_COUNTER_LIMIT) {
-    hardware_data_->bspd_sdc_open_ = is_sdc_closed;
-    sdc_change_counter_ = 0;
-  }
+inline void DigitalReceiver::read_ats() {
+  bool ats_pressed = digitalRead(ATS);
+  debounce(ats_pressed, hardware_data_->ats_pressed_, ats_change_counter_);
 }

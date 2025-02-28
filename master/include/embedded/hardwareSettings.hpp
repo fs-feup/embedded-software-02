@@ -14,6 +14,10 @@ constexpr int WD_TIMEOUT_MS = 500;
 constexpr int BRAKE_PRESSURE_LOWER_THRESHOLD = 120;
 constexpr int BRAKE_PRESSURE_UPPER_THRESHOLD = 510;
 
+constexpr int ADC_MAX_VALUE = 1023;
+constexpr int SOC_PERCENT_MAX = 100;
+constexpr int MAX_MISSION = 7;
+
 constexpr int WHEEL_MEASUREMENT_INTERVAL_MS = 30;  // 30ms // TODO: change to adequate value
 constexpr int WHEEL_MEASUREMENT_INTERVAL_MIN = (WHEEL_MEASUREMENT_INTERVAL_MS / 60'000.0);
 constexpr int PULSES_PER_ROTATION = 48;
@@ -59,10 +63,10 @@ constexpr int EBS_SENSOR2 = 39;
 constexpr int SDC_BSPD_STATE_PIN = 22;
 
 constexpr int RL_WSS = 4;
-constexpr int RR_WSS = 5;//TODO
+constexpr int RR_WSS = 5;  // TODO
 constexpr int BRAKE_SENSOR = 38;
 constexpr int SOC = 24;
-constexpr int ATS = 16;    // TODO: id asms on close sdc
-constexpr int ASATS = 20;  // TODO: if asms on close sdc
+constexpr int ATS = 16;
+constexpr int ASATS = 20;
 constexpr int WD_READY = 37;
 constexpr int WD_SDC_RELAY = 33;

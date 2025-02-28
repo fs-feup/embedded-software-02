@@ -201,20 +201,21 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence(
 
     case CheckupState::WAIT_FOR_ASMS:
       if (_system_data_->hardware_data_.asms_on_) {
+        checkup_state_ = CheckupState::WAIT_FOR_ASATS;
+      }
+      break;
+
+    case CheckupState::WAIT_FOR_ASATS:
+
+      if (_system_data_->hardware_data_.asats_pressed_) {
+        _system_data_->failure_detection_.emergency_signal_ = false;
         checkup_state_ = CheckupState::CLOSE_SDC;
       }
       break;
     case CheckupState::CLOSE_SDC:
       DigitalSender::close_sdc();
-      checkup_state_ = CheckupState::WAIT_FOR_ASATS;
+      checkup_state_ = CheckupState::WAIT_FOR_TS;
 
-      break;
-    case CheckupState::WAIT_FOR_ASATS:
-
-      if (_system_data_->hardware_data_.asats_pressed_) {
-        _system_data_->failure_detection_.emergency_signal_ = false;
-        checkup_state_ = CheckupState::WAIT_FOR_TS;
-      }
       break;
     case CheckupState::WAIT_FOR_TS:
       if (_system_data_->failure_detection_.ts_on_) {

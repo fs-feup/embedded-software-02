@@ -1,7 +1,7 @@
 #pragma once
+#include <cstdint>
 #include <deque>
 #include <numeric>
-#include <cstdint>
 
 void insert_value_queue(const int value, std::deque<int>& queue) {
   queue.push_front(value);
@@ -29,8 +29,7 @@ union float2bytes {
   char output[4];
 };
 
-
-void rpm_2_byte(const float rr_rpm,/* const */ char* rr_rpm_byte) {
+void rpm_2_byte(const float rr_rpm, /* const */ char* rr_rpm_byte) {
   float2bytes data;
   /*
   1st we multiply rpm by 100 to get a 2 decimal place value.
@@ -46,4 +45,29 @@ void rpm_2_byte(const float rr_rpm,/* const */ char* rr_rpm_byte) {
   std::copy(std::begin(data.output), std::end(data.output), rr_rpm_byte);
 
   return;
+}
+
+/**
+ * @brief debounce function to avoid sporadic changes (and repeating the code everywhere)
+ *
+ * @param new_value The newly read value
+ * @param stored_value Reference to the stored value that will be updated
+ * @param counter Reference to the counter for this specific input
+ * @param counter_limit Number of consecutive different readings before accepting change
+ */
+void debounce(const bool new_value, bool& stored_value, unsigned int& counter,
+              const unsigned int counter_limit) {
+  if (new_value == stored_value) {
+    counter = 0;
+  } else {
+    counter++;
+    if (counter >= counter_limit) {
+      stored_value = new_value;
+      counter = 0;
+    }
+  }
+}
+
+void debounce(const bool new_value, bool& stored_value, unsigned int& counter) {
+  debounce(new_value, stored_value, counter, CHANGE_COUNTER_LIMIT);
 }
