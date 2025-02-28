@@ -39,10 +39,12 @@ public:
   }
 
   void process(uint8_t current_master_state, uint8_t current_checkup_state) {
+    send_soc();
+    send_asms();
     send_debug_on_state_change(current_master_state, current_checkup_state);
     send_mission_update();
     send_state_update(current_master_state);
-    update_physical_outputs(current_master_state);
+    update_physical_outputs();
   }
 
 private:
@@ -61,6 +63,14 @@ private:
     }
   }
 
+  void send_soc() {
+    Communicator::publish_soc(system_data_->hardware_data_.soc_);
+  }
+
+  void send_asms(){
+    Communicator::publish_asms_on(system_data_->hardware_data_.asms_on_);
+  }
+
   void send_mission_update() {
     if (mission_timer_.check()) {
       Communicator::publish_mission(to_underlying(system_data_->mission_));
@@ -75,13 +85,25 @@ private:
     }
   }
 
-  void update_physical_outputs(uint8_t current_master_state) {
+  void update_physical_outputs() {
+    brake_light_update();
+    bsdp_sdc_update();
+  }
+
+  void brake_light_update() {
     int brake_val = system_data_->hardware_data_.hydraulic_pressure_;
     if (brake_val >= BRAKE_PRESSURE_LOWER_THRESHOLD &&
         brake_val <= BRAKE_PRESSURE_UPPER_THRESHOLD) {
       digital_sender_->turn_on_brake_light();
     } else {
       digital_sender_->turn_off_brake_light();
+    }
+  }
+  void bsdp_sdc_update() {
+    if (system_data_->hardware_data_.bspd_sdc_open_) {
+      digital_sender_->bspd_error();
+    } else {
+      digital_sender_->no_bspd_error();
     }
   }
 };

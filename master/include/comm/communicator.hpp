@@ -111,11 +111,19 @@ public:
    * @brief Publish AS Mission to CAN
    */
   static int publish_mission(int mission_id);
-
+  /**
+   * @brief Publish SOC to CAN
+   */
+  static int publish_soc(uint8_t soc);
+  /**
+   * @brief Publish ASMS state to CAN
+   */
+  static int publish_asms_on(bool asms_on);
   /**
    * @brief Publish AS Mission to CAN
    */
-  static int publish_debug_morning_log(const SystemData& system_data, uint8_t sate, uint8_t state_checkup);
+  static int publish_debug_morning_log(const SystemData &system_data, uint8_t sate,
+                                       uint8_t state_checkup);
 
   /**
    * @brief Publish rl wheel rpm to CAN
@@ -264,12 +272,24 @@ inline int Communicator::publish_mission(int mission_id) {
   send_message(2, msg, MASTER_ID);
   return 0;
 }
-//TODO: publish asms/SOC/ to dash
-inline int Communicator::publish_debug_morning_log(const SystemData& system_data, uint8_t state,
-                                           uint8_t state_checkup) {
+inline int Communicator::publish_debug_morning_log(const SystemData &system_data, uint8_t state,
+                                                   uint8_t state_checkup) {
   send_message(8, create_debug_message_1(system_data, state, state_checkup), MASTER_ID);
   send_message(7, create_debug_message_2(system_data), MASTER_ID);
   return 0;
+}
+
+inline int Communicator::publish_soc(uint8_t soc) {
+  const std::array<uint8_t, 2> msg = {SOC_MSG, soc};
+  send_message(2, msg, MASTER_ID);
+  return 0;
+}
+
+inline int Communicator::publish_asms_on(bool asms_on) {
+  const std::array<uint8_t, 2> msg = {ASMS_ON, asms_on};
+  send_message(2, msg, MASTER_ID);
+  return 0;
+  
 }
 
 inline int Communicator::publish_left_wheel_rpm(double value) {

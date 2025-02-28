@@ -38,7 +38,7 @@ constexpr int EBS_VALVE_2_PIN = 13;
 
 constexpr int CLOSE_SDC = 21;
 // #define SDC_LOGIC_WATCHDOG_OUT_PIN 10
-constexpr int SDC_BSPD_OUT = 14;//TODO
+constexpr int SDC_BSPD_OUT = 14;
 
 constexpr int BRAKE_LIGHT = 2;
 constexpr int WD_SDC_CLOSE = 40;
@@ -61,7 +61,7 @@ constexpr int SDC_BSPD_STATE_PIN = 22;
 constexpr int RL_WSS = 4;
 constexpr int RR_WSS = 5;//TODO
 constexpr int BRAKE_SENSOR = 38;
-constexpr int SOC = 24;    // TODO: send to dash via can ,include in logging class
+constexpr int SOC = 24;
 constexpr int ATS = 16;    // TODO: id asms on close sdc
 constexpr int ASATS = 20;  // TODO: if asms on close sdc
 constexpr int WD_READY = 37;

@@ -60,6 +60,7 @@ private:
   unsigned int sdc_change_counter_ = 0;           ///< counter to avoid noise on sdc
   unsigned int pneumatic_change_counter_ = 0;     ///< counter to avoid noise on pneumatic line
   unsigned int mission_change_counter_ = 0;       ///< counter to avoid noise on mission change
+  unsigned int sdc_bspd_change_counter_ = 0;      ///< counter to avoid noise on sdc bspd
   Mission last_tried_mission_ = Mission::MANUAL;  ///< Last attempted mission state
 
   /**
@@ -98,6 +99,12 @@ private:
   void read_wheel_speed_sensors();
 
   /**
+   * @brief Reads the bspd pin and updates the HardwareData object.
+   * Debounces input changes to avoid spurious transitions.
+   */
+  void read_bspd_sdc();
+
+  /**
    * @brief Reads the brake sensor and updates the HardwareData object.
    * Debounces input changes to avoid spurious transitions.
    */
@@ -118,9 +125,23 @@ inline void DigitalReceiver::digital_reads() {
 
 inline void DigitalReceiver::read_soc() {
   const int raw_value = analogRead(SOC);
-  hardware_data_->soc_ = map(raw_value, 0, 1023, 0, 100);
+  int mapped_value = map(raw_value, 0, 1023, 0, 100);
+  mapped_value = constrain(mapped_value, 0, 100);//constrain to 0-100, just in case
+  hardware_data_->soc_ = static_cast<uint8_t>(mapped_value);
 }
 
+inline void DigitalReceiver::read_bspd_sdc() {
+  bool is_sdc_open = !digitalRead(SDC_BSPD_STATE_PIN);//low when sdc/bspd open
+  if (is_sdc_open == hardware_data_->bspd_sdc_open_) {
+    sdc_bspd_change_counter_ = 0;
+  } else {
+    sdc_bspd_change_counter_ = sdc_bspd_change_counter_ + 1;
+  }
+  if (sdc_bspd_change_counter_ >= CHANGE_COUNTER_LIMIT) {
+    hardware_data_->bspd_sdc_open_ = is_sdc_open;  // both need to be True
+    sdc_bspd_change_counter_ = 0;
+  }
+}
 inline void DigitalReceiver::read_brake_sensor() {
   int hydraulic_pressure = analogRead(BRAKE_SENSOR);
   insert_value_queue(hydraulic_pressure, brake_readings);
@@ -177,7 +198,7 @@ inline void DigitalReceiver::read_asms_switch() {
 }
 
 inline void DigitalReceiver::read_asats_state() {
-  bool asats_pressed = digitalRead(SDC_BSPD_STATE_PIN);
+  bool asats_pressed = digitalRead(ASATS);
   if (asats_pressed == hardware_data_->asats_pressed_) {
     aats_change_counter_ = 0;
   } else {
@@ -197,7 +218,7 @@ inline void DigitalReceiver::read_sdc_state() {
     sdc_change_counter_ = sdc_change_counter_ + 1;
   }
   if (sdc_change_counter_ >= CHANGE_COUNTER_LIMIT) {
-    hardware_data_->bspd_sdc_open_ = is_sdc_closed;  // both need to be True
+    hardware_data_->bspd_sdc_open_ = is_sdc_closed;
     sdc_change_counter_ = 0;
   }
 }

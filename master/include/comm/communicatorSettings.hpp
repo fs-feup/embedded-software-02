@@ -2,6 +2,8 @@
 
 // IDS
 constexpr auto MASTER_ID = 0x300;
+constexpr auto SOC_MSG = 0x200;
+constexpr auto ASMS_ON = 0x201;
 constexpr auto BMS_ID = 0x666;
 constexpr auto BAMO_RESPONSE_ID = 0x181;
 constexpr auto C1_ID = 0x123;

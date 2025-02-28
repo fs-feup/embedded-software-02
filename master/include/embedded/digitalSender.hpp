@@ -101,6 +101,8 @@ public:
   void blink_led(int pin);
   void turn_on_brake_light();
   void turn_off_brake_light();
+  void bspd_error();
+  void no_bspd_error();
   void toggle_watchdog();
 };
 
@@ -178,6 +180,10 @@ inline void DigitalSender::blink_led(const int pin) {
 inline void DigitalSender::turn_on_brake_light() { digitalWrite(BRAKE_LIGHT, HIGH); }
 
 inline void DigitalSender::turn_off_brake_light() { digitalWrite(BRAKE_LIGHT, LOW); }
+
+inline void DigitalSender::bspd_error() { digitalWrite(SDC_BSPD_OUT, HIGH); }
+
+inline void DigitalSender::no_bspd_error() { digitalWrite(SDC_BSPD_OUT, LOW); }
 
 inline void DigitalSender::toggle_watchdog() {
   static bool wd_state = false;
