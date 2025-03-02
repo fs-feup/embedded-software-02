@@ -293,6 +293,10 @@ inline int Communicator::publish_asms_on(bool asms_on) {
 }
 
 inline int Communicator::publish_left_wheel_rpm(double value) {
+  // char rr_rpm_byte[4];
+  // char rl_rpm_byte[4];
+  // rpm_2_byte(rr_rpm, rr_rpm_byte);
+  // rpm_2_byte(rl_rpm, rl_rpm_byte);TODO
   std::array<uint8_t, 5> msg;
   create_left_wheel_msg(msg, value);
 

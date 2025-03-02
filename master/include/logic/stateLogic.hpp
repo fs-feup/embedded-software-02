@@ -73,6 +73,11 @@ inline void ASState::calculate_state() {
         t1.begin(
             [] {
               instance->timer_started();
+              if (instance->_checkup_manager_
+                      .should_toggle_watchdog()) {  // TODO: check if this really is te right
+                                                    // approach considering the new hardware
+                instance->_digital_sender_->toggle_watchdog();
+              }
               if (instance->_checkup_manager_.should_enter_emergency(instance->state_)) {
                 instance->_digital_sender_->enter_emergency_state();
                 instance->_checkup_manager_._ebs_sound_timestamp_.reset();

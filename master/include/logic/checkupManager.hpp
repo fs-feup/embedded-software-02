@@ -17,8 +17,10 @@ private:
   SystemData *_system_data_;  ///< Pointer to the system data object containing system status and
                               ///< sensor information.
   uint8_t pressure_test_phase_{0};
-  // Metro initialCheckupTimestamp{INITIAL_CHECKUP_STEP_TIMEOUT}; ///< Timer for the initial checkup
-  // sequence.
+  Metro _watchdog_toggle_timer_{WATCHDOG_TOGGLE_DURATION};  ///< Timer for watchdog toggle sequence
+  Metro _watchdog_test_timer_{WATCHDOG_TEST_DURATION};      ///< Timer for watchdog verification
+  bool _watchdog_toggle_in_timer_{false};  ///< Flag to indicate if the watchdog toggle is in
+                                           ///< progress in the interrupt timer.
   bool check_pressure_high() {
     return _system_data_->hardware_data_._hydraulic_line_pressure >= HYDRAULIC_BRAKE_THRESHOLD &&
            _system_data_->hardware_data_.pneumatic_line_pressure_;
@@ -55,6 +57,8 @@ private:
    */
   void handle_ebs_check();
 
+  
+
 public:
   Metro _ebs_sound_timestamp_{EBS_BUZZER_TIMEOUT};  ///< Timer for the EBS buzzer sound check.
 
@@ -66,8 +70,8 @@ public:
    */
   enum class CheckupState {
     WAIT_FOR_ASMS,
-    START_TOGGLING_WATCHDOG,
-    WAIT_FOR_WATCHDOG,
+    START_WATCHDOG,
+    TOGGLING_WATCHDOG,
     STOP_TOGGLING_WATCHDOG,
     CHECK_WATCHDOG,
     CLOSE_SDC,
@@ -150,6 +154,8 @@ public:
    *
    */
   [[nodiscard]] bool res_triggered() const;
+
+  [[nodiscard]] bool should_toggle_watchdog();
 };
 
 inline void CheckupManager::reset_checkup_state() {
@@ -179,32 +185,54 @@ inline bool CheckupManager::should_stay_off(DigitalSender *digital_sender) {
 inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence(
     DigitalSender *digital_sender) {
   switch (checkup_state_) {  // TODO
-    case CheckupState::START_TOGGLING_WATCHDOG:
-      digital_sender->toggle_watchdog();
-      checkup_state_ = CheckupState::WAIT_FOR_WATCHDOG;
+    case CheckupState::START_WATCHDOG:
+      if (_system_data_->hardware_data_.wd_ready_) {
+        checkup_state_ = CheckupState::TOGGLING_WATCHDOG;
+        _watchdog_toggle_timer_.reset();
+        DEBUG_PRINT("Watchdog ready, starting toggle sequence");
+        break;
+      }
+      digital_sender->start_watchdog();
       break;
-    case CheckupState::WAIT_FOR_WATCHDOG:
-      if (_system_data_->failure_detection_.pc_alive_timestamp_.checkWithoutReset()) {
+
+    case CheckupState::TOGGLING_WATCHDOG:
+      // Fail immediately if WD_READY goes low during toggling
+      if (!_system_data_->hardware_data_.wd_ready_) {
+        DEBUG_PRINT("Watchdog error: WD_READY went low during toggling phase");
+        return CheckupError::ERROR;  // TODO: return specific error
+      }
+
+      digital_sender->toggle_watchdog();
+
+      // Toggle for the specified duration
+      if (_watchdog_toggle_timer_.checkWithoutReset()) {
         checkup_state_ = CheckupState::STOP_TOGGLING_WATCHDOG;
+        _watchdog_test_timer_.reset();
+        DEBUG_PRINT("Watchdog toggle complete, stopping watchdog");
       }
       break;
+
     case CheckupState::STOP_TOGGLING_WATCHDOG:
-      digital_sender->toggle_watchdog();
+      // Just reset the timer and transition to the check state
+      _watchdog_test_timer_.reset();
       checkup_state_ = CheckupState::CHECK_WATCHDOG;
+      DEBUG_PRINT("Stopping watchdog toggle, beginning verification");
       break;
+
     case CheckupState::CHECK_WATCHDOG:
-      if (_system_data_->failure_detection_.pc_alive_timestamp_.checkWithoutReset()) {
+      // Check if WD_READY goes low during this state
+      if (!_system_data_->hardware_data_.wd_ready_) {
+        _watchdog_toggle_in_timer_ = true;
+        digital_sender->close_watchdog_sdc();
+        checkup_state_ = CheckupState::WAIT_FOR_ASATS;
+        DEBUG_PRINT("Watchdog no longer ready - verification successful");
+      }
+      if (_watchdog_test_timer_.checkWithoutReset()) {
+        DEBUG_PRINT("Watchdog test failed - WD_READY did not go low during verification time");
         return CheckupError::ERROR;
       }
-      checkup_state_ = CheckupState::WAIT_FOR_ASMS;
-      break;
 
-    case CheckupState::WAIT_FOR_ASMS:
-      if (_system_data_->hardware_data_.asms_on_) {
-        checkup_state_ = CheckupState::WAIT_FOR_ASATS;
-      }
       break;
-
     case CheckupState::WAIT_FOR_ASATS:
 
       if (_system_data_->hardware_data_.asats_pressed_) {
@@ -357,3 +385,5 @@ inline bool CheckupManager::res_triggered() const {
   }
   return false;
 }
+
+inline bool CheckupManager::should_toggle_watchdog() { return _watchdog_toggle_in_timer_; }

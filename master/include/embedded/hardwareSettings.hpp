@@ -13,19 +13,19 @@ constexpr unsigned long ENGAGE_EBS_TIMEOUT_MS = 5000;
 constexpr int WD_TIMEOUT_MS = 500;
 constexpr int BRAKE_PRESSURE_LOWER_THRESHOLD = 120;
 constexpr int BRAKE_PRESSURE_UPPER_THRESHOLD = 510;
+constexpr int LIMIT_RPM_INTERVAL = 500000;
 
 constexpr int ADC_MAX_VALUE = 1023;
 constexpr int SOC_PERCENT_MAX = 100;
 constexpr int MAX_MISSION = 7;
-
-constexpr int WHEEL_MEASUREMENT_INTERVAL_MS = 30;  // 30ms // TODO: change to adequate value
-constexpr int WHEEL_MEASUREMENT_INTERVAL_MIN = (WHEEL_MEASUREMENT_INTERVAL_MS / 60'000.0);
-constexpr int PULSES_PER_ROTATION = 48;
+constexpr int PULSES_PER_ROTATION = 48;//TODO: adjust
 
 // Number of consecutive different values of a digital input to consider change
 // (to avoid noise)
 constexpr int CHANGE_COUNTER_LIMIT = 5;
 constexpr int WD_PULSE_INTERVAL_MS = 50;
+constexpr int WATCHDOG_TOGGLE_DURATION = 1000;
+constexpr int WATCHDOG_TEST_DURATION = 1000;
 // TODO: confirm wd timer values
 
 /*
@@ -45,7 +45,7 @@ constexpr int CLOSE_SDC = 21;
 constexpr int SDC_BSPD_OUT = 14;
 
 constexpr int BRAKE_LIGHT = 2;
-constexpr int WD_SDC_CLOSE = 40;
+constexpr int WD_SDC_CLOSE = 40;//high if bspd is high (sdc closed)?
 constexpr int WD_ALIVE = 15;
 
 /*

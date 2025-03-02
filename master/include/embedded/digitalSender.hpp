@@ -104,6 +104,8 @@ public:
   void bspd_error();
   void no_bspd_error();
   void toggle_watchdog();
+  void start_watchdog();
+  void close_watchdog_sdc();
 };
 
 inline void DigitalSender::open_sdc() { digitalWrite(CLOSE_SDC, LOW); }
@@ -190,3 +192,7 @@ inline void DigitalSender::toggle_watchdog() {
   wd_state = !wd_state;
   digitalWrite(WD_ALIVE, wd_state);
 }
+
+inline void DigitalSender::start_watchdog() { digitalWrite(WD_ALIVE, HIGH); }
+
+inline void DigitalSender::close_watchdog_sdc() { digitalWrite(WD_SDC_CLOSE, HIGH); }

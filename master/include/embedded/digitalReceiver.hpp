@@ -16,8 +16,14 @@
  */
 class DigitalReceiver {
 public:
-  static double _current_left_wheel_rpm;  // Class variable to store the left wheel RPM (non-static)
-  static unsigned long last_wheel_pulse_ts;  // Timestamp of the last pulse for RPM calculation
+  static uint32_t
+      last_wheel_pulse_rl;  // Timestamp of the last pulse for left wheel RPM calculation
+  static uint32_t second_to_last_wheel_pulse_rl;  // Timestamp of the second to last pulse for left
+                                                  // wheel RPM calculation
+  static uint32_t
+      last_wheel_pulse_rr;  // Timestamp of the last pulse for right wheel RPM calculation
+  static uint32_t second_to_last_wheel_pulse_rr;  // Timestamp of the second to last pulse for right
+                                                  // wheel RPM calculation
 
   /**
    * @brief read all digital inputs
@@ -48,6 +54,21 @@ public:
     pinMode(ASATS, INPUT);
     pinMode(WD_READY, INPUT);
     pinMode(WD_SDC_RELAY, INPUT);
+
+    attachInterrupt(
+        digitalPinToInterrupt(RIGHT_WHEEL_ENCODER_PIN),
+        []() {
+          second_to_last_wheel_pulse_rr = last_wheel_pulse_rr;
+          last_wheel_pulse_rr = micros();
+        },
+        RISING);
+    attachInterrupt(
+        digitalPinToInterrupt(LEFT_WHEEL_ENCODER_PIN),
+        []() {
+          second_to_last_wheel_pulse_rl = last_wheel_pulse_rl;
+          last_wheel_pulse_rl = micros();
+        },
+        RISING);
   }
 
 private:
@@ -62,6 +83,7 @@ private:
   unsigned int mission_change_counter_ = 0;       ///< counter to avoid noise on mission change
   unsigned int sdc_bspd_change_counter_ = 0;      ///< counter to avoid noise on sdc bspd
   unsigned int ats_change_counter_ = 0;           ///< counter to avoid noise on ats
+  unsigned int wd_ready_change_counter_ = 0;      ///< counter to avoid noise on wd ready
   Mission last_tried_mission_ = Mission::MANUAL;  ///< Last attempted mission state
 
   /**
@@ -115,6 +137,16 @@ private:
    * Debounces input changes to avoid spurious transitions.
    */
   void read_ats();
+
+  /**
+   * @brief Reads the watchdog ready pin and updates the HardwareData object.
+   */
+  void read_watchdog_ready();
+
+  /**
+   * @brief Reads the rpm of the wheels and updates the HardwareData object.
+   */
+  void read_rpm();
 };
 
 inline void DigitalReceiver::digital_reads() {
@@ -126,6 +158,8 @@ inline void DigitalReceiver::digital_reads() {
   read_brake_sensor();
   read_ats();
   read_bspd_sdc();
+  read_watchdog_ready();
+  read_rpm();
 }
 
 inline void DigitalReceiver::read_soc() {
@@ -158,7 +192,8 @@ inline void DigitalReceiver::read_pneumatic_line() {
 
 inline void DigitalReceiver::read_mission() {
   const int raw_value = analogRead(AMI);
-  int mapped_value = constrain(map(raw_value, 0, ADC_MAX_VALUE, 0, MAX_MISSION), 0, MAX_MISSION);//constrain just in case
+  int mapped_value = constrain(map(raw_value, 0, ADC_MAX_VALUE, 0, MAX_MISSION), 0,
+                               MAX_MISSION);  // constrain just in case
   Mission latest_mission = static_cast<Mission>(mapped_value);
 
   if ((latest_mission == *mission_) && (latest_mission == last_tried_mission_)) {
@@ -186,4 +221,24 @@ inline void DigitalReceiver::read_asats_state() {
 inline void DigitalReceiver::read_ats() {
   bool ats_pressed = digitalRead(ATS);
   debounce(ats_pressed, hardware_data_->ats_pressed_, ats_change_counter_);
+}
+
+inline void DigitalReceiver::read_watchdog_ready() {
+  bool wd_ready = digitalRead(WD_READY);
+  debounce(wd_ready, hardware_data_->wd_ready_, wd_ready_change_counter_);
+}
+
+inline void DigitalReceiver::read_rpm() {
+  unsigned long time_interval_rr = (last_wheel_pulse_rr - second_to_last_wheel_pulse_rr);
+  unsigned long time_interval_rl = (last_wheel_pulse_rl - second_to_last_wheel_pulse_rl);
+  if (micros() - last_wheel_pulse_rr > LIMIT_RPM_INTERVAL) {
+    hardware_data_->rr_wheel_rpm = 0.0;
+  } else {
+    hardware_data_->rr_wheel_rpm = 1 / (time_interval_rr * 1e-6 * PULSES_PER_ROTATION) * 60;
+  }
+  if (micros() - last_wheel_pulse_rl > LIMIT_RPM_INTERVAL) {
+    hardware_data_->rl_wheel_rpm = 0.0;
+  } else {
+    hardware_data_->rl_wheel_rpm = 1 / (time_interval_rl * 1e-6 * PULSES_PER_ROTATION) * 60;
+  }
 }
