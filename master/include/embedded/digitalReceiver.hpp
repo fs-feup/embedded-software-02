@@ -2,186 +2,246 @@
 #pragma once
 
 #include <Bounce2.h>
-#include <model/digitalData.hpp>
+
+#include <model/hardwareData.hpp>
 #include <model/structure.hpp>
 
-#include "digitalSettings.hpp"
 #include "debugUtils.hpp"
+#include "hardwareSettings.hpp"
+#include "utils.hpp"
 
 /**
  * @brief Class responsible for the reading of the digital
- * inputs into the Master teensy 
-*/
+ * inputs into the Master teensy
+ */
 class DigitalReceiver {
 public:
-    static double _current_left_wheel_rpm; // Class variable to store the left wheel RPM (non-static)
-    static unsigned long last_wheel_pulse_ts; // Timestamp of the last pulse for RPM calculation
+  inline static uint32_t last_wheel_pulse_rl =
+      0;  // Timestamp of the last pulse for left wheel RPM calculation
+  inline static uint32_t second_to_last_wheel_pulse_rl = 0;  // Timestamp of the second to last
+                                                             // pulse for left wheel RPM calculation
+  inline static uint32_t last_wheel_pulse_rr =
+      0;  // Timestamp of the last pulse for right wheel RPM calculation
+  inline static uint32_t second_to_last_wheel_pulse_rr =
+      0;  // Timestamp of the second to last pulse for right
+          // wheel RPM calculation
 
-    /**
-     * @brief read all digital inputs
-    */
-    void digitalReads();
+  /**
+   * @brief read all digital inputs
+   */
+  void digital_reads();
 
-    /**
-     * @brief callback to update rl wheel rpm
-    */
-    static void updateLeftWheelRpm(); 
+  /**
+   * @brief callback to update rl wheel rpm
+   */
+  static void updateLeftWheelRpm();
 
-    /**
-     * @brief Constructor for the class, sets pintmodes and buttons
-    */
-    DigitalReceiver(DigitalData *digitalData, Mission *mission)
-        : digitalData(digitalData), mission(mission) {
-        pinMode(SDC_STATE_PIN, INPUT);
-        pinMode(SDC_LOGIC_WATCHDOG_IN_PIN, INPUT);
-        pinMode(SDC_LOGIC_WATCHDOG_OUT_PIN, OUTPUT);
-        pinMode(MISSION_ACCELERATION_PIN, INPUT);
-        pinMode(MISSION_AUTOCROSS_PIN, INPUT);
-        pinMode(MISSION_EBSTEST_PIN, INPUT);
-        pinMode(MISSION_INSPECTION_PIN, INPUT);
-        pinMode(MISSION_MANUAL_PIN, INPUT);
-        pinMode(MISSION_SKIDPAD_PIN, INPUT);
-        pinMode(MISSION_TRACKDRIVE_PIN, INPUT);
-        pinMode(ASMS_IN_PIN, INPUT);
-        pinMode(SENSOR_PRESSURE_1_PIN, INPUT);
-        pinMode(SENSOR_PRESSURE_2_PIN, INPUT);
+  /**
+   * @brief Constructor for the class, sets pintmodes and buttons
+   */
+  DigitalReceiver(HardwareData *digital_data, Mission *mission)
+      : hardware_data_(digital_data), mission_(mission) {
+    pinMode(SDC_BSPD_STATE_PIN, INPUT);
+    pinMode(AMI, INPUT);
+    pinMode(ASMS_IN_PIN, INPUT);
+    pinMode(EBS_SENSOR2, INPUT);
+    pinMode(EBS_SENSOR1, INPUT);
 
-        // attachInterrupt(digitalPinToInterrupt(LWSS_PIN), DigitalReceiver::updateLeftWheelRpm, RISING);
-    }
+    pinMode(RL_WSS, INPUT);
+    pinMode(RR_WSS, INPUT);
+    pinMode(BRAKE_SENSOR, INPUT);
+    pinMode(SOC, INPUT);
+    pinMode(ATS, INPUT);
+    pinMode(ASATS, INPUT);
+    pinMode(WD_READY, INPUT);
+    pinMode(WD_SDC_RELAY, INPUT);
+
+    attachInterrupt(
+        digitalPinToInterrupt(RR_WSS),
+        []() {
+          second_to_last_wheel_pulse_rr = last_wheel_pulse_rr;
+          last_wheel_pulse_rr = micros();
+        },
+        RISING);
+    attachInterrupt(
+        digitalPinToInterrupt(RL_WSS),
+        []() {
+          second_to_last_wheel_pulse_rl = last_wheel_pulse_rl;
+          last_wheel_pulse_rl = micros();
+        },
+        RISING);
+  }
 
 private:
-    DigitalData *digitalData; ///< Pointer to the digital data storage
-    Mission *mission; ///< Pointer to the current mission status
+  HardwareData *hardware_data_;  ///< Pointer to the digital data storage
+  Mission *mission_;             ///< Pointer to the current mission status
 
-    unsigned int asms_change_counter = 0; ///< counter to avoid noise on asms
-    unsigned int aats_change_counter = 0; ///< counter to avoid noise on aats
-    unsigned int pneumatic_change_counter = 0; ///< counter to avoid noise on pneumatic line
-    unsigned int mission_change_counter = 0; ///< counter to avoid noise on mission change
-    Mission last_tried_mission_ = MANUAL; ///< Last attempted mission state
+  std::deque<int> brake_readings;                 ///< Buffer for brake sensor readings
+  unsigned int asms_change_counter_ = 0;          ///< counter to avoid noise on asms
+  unsigned int aats_change_counter_ = 0;          ///< counter to avoid noise on aats
+  unsigned int sdc_change_counter_ = 0;           ///< counter to avoid noise on sdc
+  unsigned int pneumatic_change_counter_ = 0;     ///< counter to avoid noise on pneumatic line
+  unsigned int mission_change_counter_ = 0;       ///< counter to avoid noise on mission change
+  unsigned int sdc_bspd_change_counter_ = 0;      ///< counter to avoid noise on sdc bspd
+  unsigned int ats_change_counter_ = 0;           ///< counter to avoid noise on ats
+  unsigned int wd_ready_change_counter_ = 0;      ///< counter to avoid noise on wd ready
+  Mission last_tried_mission_ = Mission::MANUAL;  ///< Last attempted mission state
 
-    /**
-     * @brief Reads the pneumatic line pressure states and updates the DigitalData object.
-     * Debounces input changes to avoid spurious transitions.
-     */
-    void readPneumaticLine();
+  /**
+   * @brief Reads the pneumatic line pressure states and updates the HardwareData object.
+   * Debounces input changes to avoid spurious transitions.
+   */
+  void read_pneumatic_line();
 
-    /**
-     * @brief Reads the current mission state based on input pins and updates the mission object.
-     * Debounces input changes to avoid spurious transitions.
-     */
-    void readMission();
+  /**
+   * @brief Reads the current mission state based on input pins and updates the mission object.
+   * Debounces input changes to avoid spurious transitions.
+   */
+  void read_mission();
 
-    /**
-     * @brief Reads the ASMS switch state and updates the DigitalData object.
-     * Debounces input changes to avoid spurious transitions.
-     */
-    void readAsmsSwitch();
+  /**
+   * @brief Reads the ASMS switch state and updates the HardwareData object.
+   * Debounces input changes to avoid spurious transitions.
+   */
+  void read_asms_switch();
+  /**
+   * @brief Reads the AATS state and updates the HardwareData object.
+   * Debounces input changes to avoid spurious transitions.
+   */
+  void read_asats_state();
 
-    /**
-     * @brief Reads the AATS state and updates the DigitalData object.
-     * Debounces input changes to avoid spurious transitions.
-     */
-    void readAatsState();
+  /**
+   * @brief Reads the wheel speed sensors and updates the HardwareData object.
+   * Debounces input changes to avoid spurious transitions.
+   */
+  void read_wheel_speed_sensors();
 
-    /**
-     * @brief Reads the watchdog state and updates the DigitalData object.
-     * Resets the watchdog timer if the state is high.
-     */
-    void readWatchdog();
+  /**
+   * @brief Reads the bspd pin and updates the HardwareData object.
+   * Debounces input changes to avoid spurious transitions.
+   */
+  void read_bspd_sdc();
 
+  /**
+   * @brief Reads the brake sensor and updates the HardwareData object.
+   * Debounces input changes to avoid spurious transitions.
+   */
+  void read_brake_sensor();
+
+  /**
+   * @brief Reads the state of charge and updates the HardwareData object.
+   */
+  void read_soc();
+
+  /**
+   * @brief Reads the ats and updates the HardwareData object.
+   * Debounces input changes to avoid spurious transitions.
+   */
+  void read_ats();
+
+  /**
+   * @brief Reads the watchdog ready pin and updates the HardwareData object.
+   */
+  void read_watchdog_ready();
+
+  /**
+   * @brief Reads the rpm of the wheels and updates the HardwareData object.
+   */
+  void read_rpm();
 };
 
-// double DigitalReceiver::_current_left_wheel_rpm = 0.0;
-// unsigned long DigitalReceiver::last_wheel_pulse_ts = millis();
-
-// inline void DigitalReceiver::updateLeftWheelRpm() {
-//     // rpm = 1 / ([dT seconds] * No. Pulses in Rotation) * [60 seconds]
-//     unsigned long now = micros();
-//     unsigned long time_interval_s = (now - last_wheel_pulse_ts);
-//     _current_left_wheel_rpm = 1 / (time_interval_s * 1e-6 * PULSES_PER_ROTATION) * 60;  
-//     last_wheel_pulse_ts = now; // refresh timestamp
-// //     DEBUG_PRINT_VAR(_current_left_wheel_rpm);
-// }
-
-inline void DigitalReceiver::digitalReads() {
-    readPneumaticLine();
-    readMission();
-    readAsmsSwitch();
-    readAatsState();
-    readWatchdog();
-    // digitalData->_left_wheel_rpm = _current_left_wheel_rpm;
+inline void DigitalReceiver::digital_reads() {
+  read_pneumatic_line();
+  read_mission();
+  read_asms_switch();
+  read_asats_state();
+  read_soc();
+  read_brake_sensor();
+  read_ats();
+  read_bspd_sdc();
+  read_watchdog_ready();
+  read_rpm();
 }
 
-inline void DigitalReceiver::readPneumaticLine() {
-    bool pneumatic1 = digitalRead(SENSOR_PRESSURE_1_PIN);
-    bool pneumatic2 = digitalRead(SENSOR_PRESSURE_2_PIN);
-    if (pneumatic1 == 0) {
-        // DEBUG_PRINT_VAR(digitalRead(SENSOR_PRESSURE_1_PIN));
-    }
-    if (pneumatic2 == 0) {
-        // DEBUG_PRINT_VAR(digitalRead(SENSOR_PRESSURE_2_PIN));
-    }
-    bool temp_res = pneumatic1 && pneumatic2;
-
-    // Only change the value if it has been different 5 times in a row
-    pneumatic_change_counter = temp_res == digitalData->pneumatic_line_pressure ? 0 : pneumatic_change_counter + 1;
-    if (pneumatic_change_counter >= DIGITAL_INPUT_COUNTER_LIMIT) {
-        digitalData->pneumatic_line_pressure = temp_res; // both need to be True
-        pneumatic_change_counter = 0;
-    }
-    // DEBUG_PRINT_VAR(digitalData->pneumatic_line_pressure);
-
+inline void DigitalReceiver::read_soc() {
+  const int raw_value = analogRead(SOC);
+  int mapped_value = map(raw_value, 0, ADC_MAX_VALUE, 0, SOC_PERCENT_MAX);
+  mapped_value = constrain(mapped_value, 0, SOC_PERCENT_MAX);  // constrain to 0-100, just in case
+  hardware_data_->soc_ = static_cast<uint8_t>(mapped_value);
 }
 
-inline void DigitalReceiver::readMission() {
+inline void DigitalReceiver::read_bspd_sdc() {
+  bool is_sdc_open = !digitalRead(SDC_BSPD_STATE_PIN);  // low when sdc/bspd open
+  debounce(is_sdc_open, hardware_data_->bspd_sdc_open_, sdc_bspd_change_counter_);
+}
+inline void DigitalReceiver::read_brake_sensor() {
+  int hydraulic_pressure = analogRead(BRAKE_SENSOR);
+  insert_value_queue(hydraulic_pressure, brake_readings);
+  hardware_data_->hydraulic_pressure_ = average_queue(brake_readings);
+}
+inline void DigitalReceiver::read_pneumatic_line() {
+  bool pneumatic1 = digitalRead(EBS_SENSOR2);
+  bool pneumatic2 = digitalRead(EBS_SENSOR1);
 
-    Mission temp_res = static_cast<Mission>(
-        digitalRead(MISSION_MANUAL_PIN) * MANUAL |
-        digitalRead(MISSION_ACCELERATION_PIN) * ACCELERATION |
-        digitalRead(MISSION_SKIDPAD_PIN) * SKIDPAD |
-        digitalRead(MISSION_AUTOCROSS_PIN) * AUTOCROSS |
-        digitalRead(MISSION_TRACKDRIVE_PIN) * TRACKDRIVE |
-        digitalRead(MISSION_EBSTEST_PIN) * EBS_TEST |
-        digitalRead(MISSION_INSPECTION_PIN) * INSPECTION);
+  hardware_data_->pneumatic_line_pressure_1_ = pneumatic1;
+  hardware_data_->pneumatic_line_pressure_2_ = pneumatic2;
+  bool latest_pneumatic_pressure = pneumatic2 && pneumatic1;
 
-    mission_change_counter = (temp_res == *mission) && 
-                                (temp_res == last_tried_mission_) ? 
-                                0 : mission_change_counter + 1;
-    this->last_tried_mission_ = temp_res;
-    if (mission_change_counter >= DIGITAL_INPUT_COUNTER_LIMIT) {
-        *mission = temp_res;
-        mission_change_counter = 0;
-    }
-    // DEBUG_PRINT_VAR(*mission);
+  debounce(latest_pneumatic_pressure, hardware_data_->pneumatic_line_pressure_,
+           pneumatic_change_counter_);
 }
 
-inline void DigitalReceiver::readAsmsSwitch() {
-    bool temp_res = digitalRead(ASMS_IN_PIN);
+inline void DigitalReceiver::read_mission() {
+  const int raw_value = analogRead(AMI);
+  int mapped_value = constrain(map(raw_value, 0, ADC_MAX_VALUE, 0, MAX_MISSION), 0,
+                               MAX_MISSION);  // constrain just in case
+  Mission latest_mission = static_cast<Mission>(mapped_value);
 
-    // Only change the value if it has been different 5 times in a row
-    asms_change_counter = temp_res == digitalData->asms_on ? 0 : asms_change_counter + 1;
-    if (asms_change_counter >= DIGITAL_INPUT_COUNTER_LIMIT) {
-        digitalData->asms_on = temp_res;
-        asms_change_counter = 0;
-    }
+  if ((latest_mission == *mission_) && (latest_mission == last_tried_mission_)) {
+    mission_change_counter_ = 0;
+  } else {
+    mission_change_counter_ = mission_change_counter_ + 1;
+  }
+  this->last_tried_mission_ = latest_mission;
+  if (mission_change_counter_ >= CHANGE_COUNTER_LIMIT) {
+    *mission_ = latest_mission;
+    mission_change_counter_ = 0;
+  }
 }
 
-inline void DigitalReceiver::readAatsState() {
-    // AATS is on if SDC is closed (SDC STATE PIN AS HIGH)
-    bool temp_res = !digitalRead(SDC_STATE_PIN);
-    // Only change the value if it has been different 5 times in a row
-    aats_change_counter = temp_res == digitalData->sdcState_OPEN ? 0 : aats_change_counter + 1;
-    if (aats_change_counter >= DIGITAL_INPUT_COUNTER_LIMIT) {
-        digitalData->sdcState_OPEN = temp_res; // both need to be True
-        aats_change_counter = 0;
-    }
-    // DEBUG_PRINT_VAR(digitalData->sdcState_OPEN);
+inline void DigitalReceiver::read_asms_switch() {
+  bool latest_asms_status = digitalRead(ASMS_IN_PIN);
+  debounce(latest_asms_status, hardware_data_->asms_on_, asms_change_counter_);
 }
 
-inline void DigitalReceiver::readWatchdog() {
-    digitalData->watchdog_state = digitalRead(SDC_LOGIC_WATCHDOG_IN_PIN);
-    if (digitalData->watchdog_state) {
-        digitalData->watchdogTimestamp.reset();
-    }
-    // DEBUG_PRINT_VAR(digitalData->watchdog_state);
+inline void DigitalReceiver::read_asats_state() {
+  bool asats_pressed = digitalRead(ASATS);
+  debounce(asats_pressed, hardware_data_->asats_pressed_, aats_change_counter_);
+}
+
+inline void DigitalReceiver::read_ats() {
+  bool ats_pressed = digitalRead(ATS);
+  debounce(ats_pressed, hardware_data_->ats_pressed_, ats_change_counter_);
+}
+
+inline void DigitalReceiver::read_watchdog_ready() {
+  bool wd_ready = digitalRead(WD_READY);
+  debounce(wd_ready, hardware_data_->wd_ready_, wd_ready_change_counter_);
+}
+
+inline void DigitalReceiver::read_rpm() {
+  unsigned long time_interval_rr = (last_wheel_pulse_rr - second_to_last_wheel_pulse_rr);
+  unsigned long time_interval_rl = (last_wheel_pulse_rl - second_to_last_wheel_pulse_rl);
+  if (micros() - last_wheel_pulse_rr > LIMIT_RPM_INTERVAL) {
+    hardware_data_->rr_wheel_rpm = 0.0;
+  } else {
+    hardware_data_->rr_wheel_rpm =
+        1 / (time_interval_rr * MICRO_TO_SECONDS * PULSES_PER_ROTATION) * SECONDS_IN_MINUTE;
+  }
+  if (micros() - last_wheel_pulse_rl > LIMIT_RPM_INTERVAL) {
+    hardware_data_->rl_wheel_rpm = 0.0;
+  } else {
+    hardware_data_->rl_wheel_rpm =
+        1 / (time_interval_rl * MICRO_TO_SECONDS * PULSES_PER_ROTATION) * SECONDS_IN_MINUTE;
+  }
 }
