@@ -10,6 +10,7 @@
 #include "debugUtils.hpp"
 #include "enum_utils.hpp"
 #include "model/systemData.hpp"
+#include "utils.hpp"
 
 /**
  * @brief Array of standard CAN message codes to be used for FIFO filtering
@@ -128,7 +129,7 @@ public:
   /**
    * @brief Publish rl wheel rpm to CAN
    */
-  static int publish_left_wheel_rpm(double value);
+  static int publish_left_wheel_rpm();
 };
 
 inline Communicator::Communicator(SystemData *system_data) { _systemData = system_data; }
@@ -289,18 +290,29 @@ inline int Communicator::publish_asms_on(bool asms_on) {
   const std::array<uint8_t, 2> msg = {ASMS_ON, asms_on};
   send_message(2, msg, MASTER_ID);
   return 0;
-  
 }
 
-inline int Communicator::publish_left_wheel_rpm(double value) {
-  // char rr_rpm_byte[4];
-  // char rl_rpm_byte[4];
-  // rpm_2_byte(rr_rpm, rr_rpm_byte);
-  // rpm_2_byte(rl_rpm, rl_rpm_byte);TODO
-  std::array<uint8_t, 5> msg;
-  create_left_wheel_msg(msg, value);
+inline int Communicator::publish_left_wheel_rpm() {
+  std::array<uint8_t, 5> rl_rpm_msg = {0};
+  std::array<uint8_t, 5> rr_rpm_msg = {0};
 
-  send_message(5, msg, MASTER_ID);
+  char rr_rpm_byte[4];
+  char rl_rpm_byte[4];
+  rpm_2_byte(_systemData->hardware_data_._left_wheel_rpm, rl_rpm_byte);
+  rpm_2_byte(_systemData->hardware_data_._right_wheel_rpm, rr_rpm_byte);
+
+  rl_rpm_msg[0] = LEFT_WHEEL_CODE;
+  for (int i = 0; i < 4; i++) {
+    rl_rpm_msg[i + 1] = rl_rpm_byte[i];
+  }
+
+  rr_rpm_msg[0] = RIGHT_WHEEL_CODE;
+  for (int i = 0; i < 4; i++) {
+    rr_rpm_msg[i + 1] = rr_rpm_byte[i];
+  }
+  send_message(5, rl_rpm_msg, MASTER_ID);
+  send_message(5, rr_rpm_msg, MASTER_ID);
+
   return 0;
 }
 

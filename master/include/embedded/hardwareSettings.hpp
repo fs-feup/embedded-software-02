@@ -18,7 +18,9 @@ constexpr int LIMIT_RPM_INTERVAL = 500000;
 constexpr int ADC_MAX_VALUE = 1023;
 constexpr int SOC_PERCENT_MAX = 100;
 constexpr int MAX_MISSION = 7;
-constexpr int PULSES_PER_ROTATION = 48;//TODO: adjust
+constexpr int PULSES_PER_ROTATION = 48;  // TODO: adjust
+constexpr int SECONDS_IN_MINUTE = 60;
+constexpr float MICRO_TO_SECONDS = 1e-6f;
 
 // Number of consecutive different values of a digital input to consider change
 // (to avoid noise)
@@ -45,7 +47,7 @@ constexpr int CLOSE_SDC = 21;
 constexpr int SDC_BSPD_OUT = 14;
 
 constexpr int BRAKE_LIGHT = 2;
-constexpr int WD_SDC_CLOSE = 40;//high if bspd is high (sdc closed)?
+constexpr int WD_SDC_CLOSE = 40;  // high if bspd is high (sdc closed)?
 constexpr int WD_ALIVE = 15;
 
 /*

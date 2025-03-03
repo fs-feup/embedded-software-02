@@ -234,11 +234,11 @@ inline void DigitalReceiver::read_rpm() {
   if (micros() - last_wheel_pulse_rr > LIMIT_RPM_INTERVAL) {
     hardware_data_->rr_wheel_rpm = 0.0;
   } else {
-    hardware_data_->rr_wheel_rpm = 1 / (time_interval_rr * 1e-6 * PULSES_PER_ROTATION) * 60;
+    hardware_data_->rr_wheel_rpm = 1 / (time_interval_rr * MICRO_TO_SECONDS * PULSES_PER_ROTATION) * SECONDS_IN_MINUTE;
   }
   if (micros() - last_wheel_pulse_rl > LIMIT_RPM_INTERVAL) {
     hardware_data_->rl_wheel_rpm = 0.0;
   } else {
-    hardware_data_->rl_wheel_rpm = 1 / (time_interval_rl * 1e-6 * PULSES_PER_ROTATION) * 60;
+    hardware_data_->rl_wheel_rpm = 1 / (time_interval_rl * MICRO_TO_SECONDS * PULSES_PER_ROTATION) * SECONDS_IN_MINUTE;
   }
 }
