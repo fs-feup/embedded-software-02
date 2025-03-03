@@ -174,10 +174,9 @@ inline void Communicator::res_state_callback(const uint8_t *buf) {
 
 inline void Communicator::res_ready_callback() {
   // If res sends boot message, activate it
-  unsigned id = RES_ACTIVATE;
   std::array<uint8_t, 2> msg = {0x01, NODE_ID};  // 0x00 in byte 2 for all nodes
 
-  send_message(2, msg, id);
+  send_message(2, msg, RES_ACTIVATE);
 }
 
 inline void Communicator::bamocar_callback(const uint8_t *buf) {
