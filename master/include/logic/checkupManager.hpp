@@ -2,7 +2,6 @@
 
 #include <cstdlib>
 
-#include "comm/communicatorSettings.hpp"
 #include "debugUtils.hpp"
 #include "embedded/digitalSender.hpp"
 #include "embedded/hardwareSettings.hpp"

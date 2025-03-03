@@ -39,12 +39,15 @@ public:
   }
 
   void process(uint8_t current_master_state, uint8_t current_checkup_state) {
+    //TODO: timer
     send_soc();
     send_asms();
     send_debug_on_state_change(current_master_state, current_checkup_state);
     send_mission_update();
     send_state_update(current_master_state);
+    dash_ats_update(current_master_state);
     update_physical_outputs();
+    send_rpm();
   }
 
 private:
@@ -112,5 +115,8 @@ private:
     } else {
       digital_sender_->open_sdc();
     }
+  }
+  void send_rpm() {
+    Communicator::publish_rpm();
   }
 };

@@ -16,14 +16,15 @@
  */
 class DigitalReceiver {
 public:
-  static uint32_t
-      last_wheel_pulse_rl;  // Timestamp of the last pulse for left wheel RPM calculation
-  static uint32_t second_to_last_wheel_pulse_rl;  // Timestamp of the second to last pulse for left
-                                                  // wheel RPM calculation
-  static uint32_t
-      last_wheel_pulse_rr;  // Timestamp of the last pulse for right wheel RPM calculation
-  static uint32_t second_to_last_wheel_pulse_rr;  // Timestamp of the second to last pulse for right
-                                                  // wheel RPM calculation
+  inline static uint32_t last_wheel_pulse_rl =
+      0;  // Timestamp of the last pulse for left wheel RPM calculation
+  inline static uint32_t second_to_last_wheel_pulse_rl = 0;  // Timestamp of the second to last
+                                                             // pulse for left wheel RPM calculation
+  inline static uint32_t last_wheel_pulse_rr =
+      0;  // Timestamp of the last pulse for right wheel RPM calculation
+  inline static uint32_t second_to_last_wheel_pulse_rr =
+      0;  // Timestamp of the second to last pulse for right
+          // wheel RPM calculation
 
   /**
    * @brief read all digital inputs
@@ -56,14 +57,14 @@ public:
     pinMode(WD_SDC_RELAY, INPUT);
 
     attachInterrupt(
-        digitalPinToInterrupt(RIGHT_WHEEL_ENCODER_PIN),
+        digitalPinToInterrupt(RR_WSS),
         []() {
           second_to_last_wheel_pulse_rr = last_wheel_pulse_rr;
           last_wheel_pulse_rr = micros();
         },
         RISING);
     attachInterrupt(
-        digitalPinToInterrupt(LEFT_WHEEL_ENCODER_PIN),
+        digitalPinToInterrupt(RL_WSS),
         []() {
           second_to_last_wheel_pulse_rl = last_wheel_pulse_rl;
           last_wheel_pulse_rl = micros();
@@ -234,11 +235,13 @@ inline void DigitalReceiver::read_rpm() {
   if (micros() - last_wheel_pulse_rr > LIMIT_RPM_INTERVAL) {
     hardware_data_->rr_wheel_rpm = 0.0;
   } else {
-    hardware_data_->rr_wheel_rpm = 1 / (time_interval_rr * MICRO_TO_SECONDS * PULSES_PER_ROTATION) * SECONDS_IN_MINUTE;
+    hardware_data_->rr_wheel_rpm =
+        1 / (time_interval_rr * MICRO_TO_SECONDS * PULSES_PER_ROTATION) * SECONDS_IN_MINUTE;
   }
   if (micros() - last_wheel_pulse_rl > LIMIT_RPM_INTERVAL) {
     hardware_data_->rl_wheel_rpm = 0.0;
   } else {
-    hardware_data_->rl_wheel_rpm = 1 / (time_interval_rl * MICRO_TO_SECONDS * PULSES_PER_ROTATION) * SECONDS_IN_MINUTE;
+    hardware_data_->rl_wheel_rpm =
+        1 / (time_interval_rl * MICRO_TO_SECONDS * PULSES_PER_ROTATION) * SECONDS_IN_MINUTE;
   }
 }

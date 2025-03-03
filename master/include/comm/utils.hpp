@@ -1,7 +1,7 @@
 #pragma once
 #include <Arduino.h>
 
-#include "comm/communicatorSettings.hpp"
+#include "../../CAN_IDs.h"
 #include "model/systemData.hpp"
 #include "enum_utils.hpp"
 
