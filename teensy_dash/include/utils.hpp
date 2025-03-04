@@ -30,7 +30,7 @@ union float2bytes {
   char output[4];
 };
 
-void rpm_2_byte(const float rr_rpm,const char* rr_rpm_byte) {
+void rpm_2_byte(const float rr_rpm, char* rr_rpm_byte) {
   float2bytes data;
   /*
   1st we multiply rpm by 100 to get a 2 decimal place value.

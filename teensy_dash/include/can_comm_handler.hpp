@@ -104,12 +104,19 @@ void CanCommHandler::master_callback(const uint8_t* const msg_data) {
     if (msg_data[1] == true) {  // TODO: maybe chnage this to a specif byte define that master will
                                 // send when asms on
       updatable_data.asms_on = true;
+    } else {
+      updatable_data.asms_on = false;
     }
   }
-  if (msg_data[0] == 0x31) {
+  if(msg_data[0] == SOC_MSG){
+    updatable_data.soc = msg_data[1];
+
+
+  }
+  if (msg_data[0] == STATE_MSG) {
     if (msg_data[1] == 2) {
       // ASState = ASReady
-      updatable_data.as_ready = true;//TODO: emergency n buzzer logic 
+      updatable_data.as_ready = true;  // TODO: emergency n buzzer logic
     }
   }
 }
