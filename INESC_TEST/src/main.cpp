@@ -5,6 +5,11 @@
 
 FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> can1;
 
+CAN_message_t clearErrors = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0x8E, 0x44, 0x4D}};
+CAN_message_t enableTransmission = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, 0xE8, 0x00}};
+CAN_message_t checkBTBStatus = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, 0xE2, 0x00}};
+CAN_message_t removeDisable = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0x51, 0x00, 0x00}};
+
 enum InitState {
   STATE_CLEAR_ERRORS,
   STATE_ENABLE_TRANSMISSION,
@@ -22,6 +27,36 @@ const unsigned long actionInterval = 10;   // 10 ms interval for sending command
 const unsigned long timeout = 300;         // 100 ms timeout for responses
 const unsigned long torqueInterval = 100;  // 100 ms interval for torque commands
 bool commandSent = false;                  // Tracks if a one-time command has been sent
+bool transmissionEnabled = false;          // Tracks if the transmission is enabled
+bool BTBReady = false;                     // Tracks if the BTB is ready
+
+bool check_sequence(const uint8_t* data, const std::array<uint8_t, 3>& expected) {
+  return (data[1] == expected[0] && data[2] == expected[1] && data[3] == expected[2]);
+}
+
+void bamocar_callback(const uint8_t* msg_data) {
+  switch (msg_data[0]) {
+    case BTB_READY_0:
+      BTBReady = check_sequence(msg_data, BTB_READY_SEQUENCE);
+      break;
+
+    case ENABLE_0:
+      transmissionEnabled = check_sequence(msg_data, ENABLE_SEQUENCE);
+      break;
+    default:
+      break;
+  }
+}
+
+void can_snifflas(const CAN_message_t& msg) {
+  switch (msg.id) {
+    case BAMO_RESPONSE_ID:
+      bamocar_callback(msg.buf);
+      break;
+    default:
+      break;
+  }
+}
 
 void canSetup() {
   can1.begin();
@@ -30,7 +65,7 @@ void canSetup() {
   can1.enableFIFOInterrupt();
   can1.setFIFOFilter(REJECT_ALL);
   can1.setFIFOFilter(0, BAMO_RESPONSE_ID, STD);
-  can1.onReceive(can_sniffer);
+  can1.onReceive(can_snifflas);
 }
 
 void sendTorque(int torque) {
@@ -48,33 +83,10 @@ void sendTorque(int torque) {
   can1.write(torque_message);
 }
 
-void bamocar_callback(const uint8_t *msg_data) {
-  switch (msg_data[0]) {
-    case BTB_READY_0:
-      btb_ready = check_sequence(msg_data, BTB_READY_SEQUENCE);
-      break;
-
-    case ENABLE_0:
-      transmission_enabled = check_sequence(msg_data, ENABLE_SEQUENCE);
-      break;
-    default:
-      break;
-  }
-}
-
-void can_sniffer(const CAN_message_t &msg) {
-  switch (msg.id) {
-    case BAMO_RESPONSE_ID:
-      bamocar_callback(msg.buf);
-      break;
-    default:
-      break;
-  }
-}
 
 void setup() {
   Serial.begin(115200);
-  canSetup();  // Initialize CAN bus (assumed to be defined)
+  canSetup();
 }
 
 void loop() {
@@ -139,7 +151,7 @@ void loop() {
       // torque commands periodically
       if (currentTime - lastTorqueTime >= torqueInterval) {
         if (BTBReady && transmissionEnabled) {
-          int torqueValue = 1000;  
+          int torqueValue = 1000;
           sendTorque(torqueValue);
           lastTorqueTime = currentTime;
         }
