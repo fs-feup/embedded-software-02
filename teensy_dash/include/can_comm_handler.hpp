@@ -50,9 +50,9 @@ void CanCommHandler::setup() {
   can1.enableFIFO();
   can1.enableFIFOInterrupt();
   can1.setFIFOFilter(REJECT_ALL);
-  can1.setFIFOFilter(2, BMS_ID, STD);
-  can1.setFIFOFilter(3, BAMO_RESPONSE_ID, STD);
-  can1.setFIFOFilter(4, MASTER_ID, STD);
+  can1.setFIFOFilter(0, BMS_ID, STD);
+  can1.setFIFOFilter(1, BAMO_RESPONSE_ID, STD);
+  can1.setFIFOFilter(2, MASTER_ID, STD);
   can1.onReceive(can_sniffer);
 }
 
