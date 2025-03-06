@@ -21,7 +21,7 @@ void setup(){
   digitalWrite(AIRp_pin, LOW);
   digitalWrite(PRE_pin, LOW);
 
-  Serial.begin(9600);
+  //Serial.begin(9600);
 };
 
 typedef enum
@@ -37,7 +37,7 @@ typedef enum
 
 
 bool AIRn = 0, AIRp = 0, PRE = 0;                               //saidas de comando
-bool charge_state = 1, airn_closed = 1, begin_pre = 0;          //entradas logicas
+bool charge_state = 0, airn_closed = 0, begin_pre = 0;          //entradas logicas como estava bool charge_state = 1, airn_closed = 1, begin_pre = 0;
 
 unsigned int tempo = 0;                                         //utilizado para definir 
 
@@ -83,7 +83,7 @@ void maquina()
   }
   case massa:
   {
-    if(airn_closed == 0)
+    if(airn_closed == 1)
     {
       ProximoEstado = precharge;
     }
@@ -95,10 +95,10 @@ void maquina()
   }
   case precharge:
   {
-    if(charge_state == 0)
+    if(charge_state == 1)
     {
-      ProximoEstado = precharge_complete;
       tempo = millis();
+      ProximoEstado = precharge_complete;
     }
     if(begin_pre == 0)
     {
@@ -108,7 +108,7 @@ void maquina()
   }
   case precharge_complete:
   {
-    if(millis() >= tempo + 50)
+    if(millis() >= tempo + 100)
     {
       ProximoEstado = OHGROSSA;
     }
@@ -154,8 +154,13 @@ void loop(){
     maquina();
 
     AIRn = ((EstadoAtual == massa) || (EstadoAtual == precharge)) || ((EstadoAtual == precharge_complete) || (EstadoAtual == OHGROSSA));
-    AIRp = ((EstadoAtual == precharge_complete) || (EstadoAtual == OHGROSSA));
     PRE =  ((EstadoAtual == precharge) || (EstadoAtual == precharge_complete));
+    AIRp = ((EstadoAtual == precharge_complete) || (EstadoAtual == OHGROSSA));
+    
+
+    //AIRn = LOW;
+    //AIRp = LOW;
+    //PRE = LOW;
 
     // printestados();
     EstadoAtual = ProximoEstado;
