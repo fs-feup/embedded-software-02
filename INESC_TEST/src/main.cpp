@@ -20,6 +20,7 @@ CAN_message_t tempBAMO;
 CAN_message_t torque_motor;
 CAN_message_t VoltageMotor;
 CAN_message_t battery_voltage;
+
 CAN_message_t disable;
 CAN_message_t statusRequest;
 CAN_message_t DCVoltageRequest;
@@ -108,8 +109,7 @@ void bamocar_callback(const uint8_t* msg_data) {
       }
       break;
     case ENABLE_0:
-      if (msg_data[1] == ENABLE_1 && msg_data[2] == ENABLE_2 /* &&
-          msg_data[3] == ENABLE_3 */) {
+      if (msg_data[1] == ENABLE_1 && msg_data[2] == ENABLE_2 && msg_data[3] == ENABLE_3) {
         transmissionEnabled = true;
         Serial.println("Transmission enabled");
       }
@@ -138,6 +138,26 @@ void canSetup() {
   can1.setFIFOFilter(REJECT_ALL);
   can1.setFIFOFilter(0, BAMO_RESPONSE_ID, STD);  // Filter for BAMO_RESPONSE_ID (0x181)
   can1.onReceive(can_snifflas);
+}
+
+void initializeMessages() {
+  statusRequest.id = BAMO_COMMAND_ID;
+  statusRequest.len = 3;
+  statusRequest.buf[0] = 0x3D;
+  statusRequest.buf[1] = 0x40;
+  statusRequest.buf[2] = 0x00;
+
+  disable.id = BAMO_COMMAND_ID;
+  disable.len = 3;
+  disable.buf[0] = 0x51;
+  disable.buf[1] = 0x04;
+  disable.buf[2] = 0x00;
+
+  DCVoltageRequest.id = BAMO_COMMAND_ID;
+  DCVoltageRequest.len = 3;
+  DCVoltageRequest.buf[0] = 0x3D;
+  DCVoltageRequest.buf[1] = 0xEB;
+  DCVoltageRequest.buf[2] = 0x64;
 }
 
 void sendTorque(int torqueValue) {
@@ -182,6 +202,7 @@ void checkSerialInput() {
 void setup() {
   Serial.begin(115200);
   canSetup();
+  initializeMessages();
 
   Serial.println("Enter torque value and press Enter to change the torque command.");
   Serial.println("Default torque is 1000.");
@@ -204,26 +225,10 @@ void loop() {
         stateStartTime = currentTime;
       }
       if (currentTime - stateStartTime >= 100) {
-        currentState = ENABLE_TRANSMISSION;
-        commandSent = false;
-        stateStartTime = currentTime;
-        lastActionTime = currentTime;
-      }
-      break;
-
-    case ENABLE_TRANSMISSION:
-      if (currentTime - lastActionTime >= actionInterval) {
-        can1.write(enableTransmission);
-        lastActionTime = currentTime;
-      }
-      if (transmissionEnabled) {
         currentState = CHECK_BTB;
         commandSent = false;
         stateStartTime = currentTime;
         lastActionTime = currentTime;
-      } else if (currentTime - stateStartTime >= timeout) {
-        Serial.println("Timeout enabling transmission");
-        currentState = ERROR;
       }
       break;
 
@@ -233,10 +238,26 @@ void loop() {
         lastActionTime = currentTime;
       }
       if (BTBReady) {
-        currentState = REMOVE_DISABLE;
+        currentState = ENABLE_TRANSMISSION;
         commandSent = false;
       } else if (currentTime - stateStartTime >= timeout) {
         Serial.println("Timeout checking BTB");
+        currentState = ERROR;
+      }
+      break;
+
+    case ENABLE_TRANSMISSION:
+      if (currentTime - lastActionTime >= actionInterval) {
+        can1.write(enableTransmission);
+        lastActionTime = currentTime;
+      }
+      if (transmissionEnabled) {
+        currentState = REMOVE_DISABLE;
+        commandSent = false;
+        stateStartTime = currentTime;
+        lastActionTime = currentTime;
+      } else if (currentTime - stateStartTime >= timeout) {
+        Serial.println("Timeout enabling transmission");
         currentState = ERROR;
       }
       break;
