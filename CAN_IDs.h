@@ -125,14 +125,14 @@ constexpr uint16_t RES_READY = (0x700 + NODE_ID);
 constexpr uint16_t RES_ACTIVATE = 0x000;
 
 // Bamocar
-constexpr uint8_t BTB_READY_0 = 0xE2;
-constexpr uint8_t BTB_READY_1 = 0x01;
-constexpr uint8_t BTB_READY_2 = 0x00;
-constexpr uint8_t BTB_READY_3 = 0x00;
-constexpr uint8_t ENABLE_0 = 0xE8;
-constexpr uint8_t ENABLE_1 = 0x01;
-constexpr uint8_t ENABLE_2 = 0x00;
-constexpr uint8_t ENABLE_3 = 0x00;
+constexpr uint8_t BTB_READY_0 = 0xE2;//0xE2;
+constexpr uint8_t BTB_READY_1 = 0x01;//0x01;
+constexpr uint8_t BTB_READY_2 = 0x00;//0x00;
+constexpr uint8_t BTB_READY_3 = 0x00;//0x00;
+constexpr uint8_t ENABLE_0 = 0xE8;//0xE8;
+constexpr uint8_t ENABLE_1 = 0x01;//0x01;
+constexpr uint8_t ENABLE_2 = 0x00;//0x00;
+constexpr uint8_t ENABLE_3 = 0x00;//0x00;
 constexpr std::array<uint8_t, 3> BTB_READY_SEQUENCE = {BTB_READY_1, BTB_READY_2, BTB_READY_3};
 constexpr std::array<uint8_t, 3> ENABLE_SEQUENCE = {ENABLE_1, ENABLE_2, ENABLE_3};
 constexpr uint8_t DC_VOLTAGE = 0xEB;

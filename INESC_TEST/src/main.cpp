@@ -9,39 +9,107 @@ CAN_message_t clearErrors = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0x8E, 0x44
 CAN_message_t enableTransmission = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, 0xE8, 0x00}};
 CAN_message_t checkBTBStatus = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, 0xE2, 0x00}};
 CAN_message_t removeDisable = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0x51, 0x00, 0x00}};
+CAN_message_t torqueCommand = {
+    .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x90, 0xE8, 0x03}};  // Torque = 1000
 
-enum InitState {
-  STATE_CLEAR_ERRORS,
-  STATE_ENABLE_TRANSMISSION,
-  STATE_CHECK_BTB,
-  STATE_REMOVE_DISABLE,
-  STATE_INITIALIZED,
-  STATE_ERROR
-};
+CAN_message_t rpmRequest;
+CAN_message_t speedRequest;
+CAN_message_t currentMOTOR;
+CAN_message_t tempMOTOR;
+CAN_message_t tempBAMO;
+CAN_message_t torque_motor;
+CAN_message_t VoltageMotor;
+CAN_message_t battery_voltage;
+CAN_message_t disable;
+CAN_message_t statusRequest;
+CAN_message_t DCVoltageRequest;
 
-InitState currentState = STATE_CLEAR_ERRORS;
-unsigned long stateStartTime = 0;          // Tracks when the current state began
-unsigned long lastActionTime = 0;          // Tracks the last command send time
-unsigned long lastTorqueTime = 0;          // Tracks the last torque command time
-const unsigned long actionInterval = 10;   // 10 ms interval for sending commands
-const unsigned long timeout = 300;         // 100 ms timeout for responses
-const unsigned long torqueInterval = 100;  // 100 ms interval for torque commands
-bool commandSent = false;                  // Tracks if a one-time command has been sent
-bool transmissionEnabled = false;          // Tracks if the transmission is enabled
-bool BTBReady = false;                     // Tracks if the BTB is ready
+enum InitState { CLEAR_ERRORS, ENABLE_TRANSMISSION, CHECK_BTB, REMOVE_DISABLE, INITIALIZED, ERROR };
 
-bool check_sequence(const uint8_t* data, const std::array<uint8_t, 3>& expected) {
-  return (data[1] == expected[0] && data[2] == expected[1] && data[3] == expected[2]);
+InitState currentState = CLEAR_ERRORS;
+unsigned long stateStartTime = 0;           // Tracks when the current state began
+unsigned long lastActionTime = 0;           // Tracks the last command send time
+unsigned long lastTorqueTime = 0;           // Tracks the last torque command time
+const unsigned long actionInterval = 10;    // 10 ms interval for sending commands
+const unsigned long timeout = 300;          // 300 ms timeout for responses
+const unsigned long torqueInterval = 1000;  // 1000 ms (1 second) interval for torque commands
+bool commandSent = false;                   // Tracks if a one-time command has been sent
+bool transmissionEnabled = false;           // Tracks if the transmission is enabled
+bool BTBReady = false;                      // Tracks if the BTB is ready
+
+void request_dataLOG_messages() {
+  rpmRequest.id = BAMO_COMMAND_ID;
+  rpmRequest.len = 3;
+  rpmRequest.buf[0] = 0x3D;
+  rpmRequest.buf[1] = 0xCE;
+  rpmRequest.buf[2] = 0x0A;
+  can1.write(rpmRequest);
+
+  speedRequest.id = BAMO_COMMAND_ID;
+  speedRequest.len = 3;
+  speedRequest.buf[0] = 0x3D;
+  speedRequest.buf[1] = 0x30;
+  speedRequest.buf[2] = 0x0A;
+  can1.write(speedRequest);
+
+  currentMOTOR.id = BAMO_COMMAND_ID;
+  currentMOTOR.len = 3;
+  currentMOTOR.buf[0] = 0x3D;
+  currentMOTOR.buf[1] = 0x5f;
+  currentMOTOR.buf[2] = 0x0A;
+  can1.write(currentMOTOR);
+
+  tempMOTOR.id = BAMO_COMMAND_ID;
+  tempMOTOR.len = 3;
+  tempMOTOR.buf[0] = 0x3D;
+  tempMOTOR.buf[1] = 0x49;
+  tempMOTOR.buf[2] = 0x0A;
+  can1.write(tempMOTOR);
+
+  tempBAMO.id = BAMO_COMMAND_ID;
+  tempBAMO.len = 3;
+  tempBAMO.buf[0] = 0x3D;
+  tempBAMO.buf[1] = 0x4A;
+  tempBAMO.buf[2] = 0x0A;
+  can1.write(tempBAMO);
+
+  torque_motor.id = BAMO_COMMAND_ID;
+  torque_motor.len = 3;
+  torque_motor.buf[0] = 0x3D;
+  torque_motor.buf[1] = 0xA0;
+  torque_motor.buf[2] = 0x0A;
+  can1.write(torque_motor);
+
+  VoltageMotor.id = BAMO_COMMAND_ID;
+  VoltageMotor.len = 3;
+  VoltageMotor.buf[0] = 0x3D;
+  VoltageMotor.buf[1] = 0x8A;
+  VoltageMotor.buf[2] = 0x0A;
+  can1.write(VoltageMotor);
+
+  battery_voltage.id = BAMO_COMMAND_ID;
+  battery_voltage.len = 3;
+  battery_voltage.buf[0] = 0x3D;
+  battery_voltage.buf[1] = 0xeb;
+  battery_voltage.buf[2] = 0x0A;
+  can1.write(battery_voltage);
 }
 
 void bamocar_callback(const uint8_t* msg_data) {
   switch (msg_data[0]) {
     case BTB_READY_0:
-      BTBReady = check_sequence(msg_data, BTB_READY_SEQUENCE);
+      if (msg_data[1] == BTB_READY_1 && msg_data[2] == BTB_READY_2 && msg_data[3] == BTB_READY_3) {
+        BTBReady = true;
+        Serial.println("BTB ready");
+      }
       break;
-
     case ENABLE_0:
-      transmissionEnabled = check_sequence(msg_data, ENABLE_SEQUENCE);
+      if (msg_data[1] == ENABLE_1 && msg_data[2] == ENABLE_2 /* &&
+          msg_data[3] == ENABLE_3 */) {
+        transmissionEnabled = true;
+        Serial.println("Transmission enabled");
+      }
+      break;
       break;
     default:
       break;
@@ -60,105 +128,105 @@ void can_snifflas(const CAN_message_t& msg) {
 
 void canSetup() {
   can1.begin();
-  can1.setBaudRate(500'000);
+  can1.setBaudRate(500'000);  // Matches Unitek default 500 kBaud
   can1.enableFIFO();
   can1.enableFIFOInterrupt();
   can1.setFIFOFilter(REJECT_ALL);
-  can1.setFIFOFilter(0, BAMO_RESPONSE_ID, STD);
+  can1.setFIFOFilter(0, BAMO_RESPONSE_ID, STD);  // Filter for BAMO_RESPONSE_ID (0x181)
   can1.onReceive(can_snifflas);
 }
 
-void sendTorque(int torque) {
+void sendTorque() {
   CAN_message_t torque_message;
-  torque_message.id = BAMO_COMMAND_ID;
-  torque_message.len = 3;
-  torque_message.buf[0] = 0x90;
-
-  uint8_t torque_byte1 = (torque >> 8) & 0xFF;  // MSB
-  uint8_t torque_byte2 = torque & 0xFF;         // LSB
-
-  torque_message.buf[1] = torque_byte2;
-  torque_message.buf[2] = torque_byte1;
+  torque_message.id = BAMO_COMMAND_ID;  // 0x201 for sending to BAMOCAR
+  torque_message.len = 3;               // REGID + 2 bytes for 16-bit torque value
+  torque_message.buf[0] = 0x90;         // REGID for TORQUE_SETPOINT
+  torque_message.buf[1] = 0xE8;         // Lower byte of 1000 (0x03E8)
+  torque_message.buf[2] = 0x03;         // Upper byte of 1000 (0x03E8)
 
   can1.write(torque_message);
 }
 
-
 void setup() {
   Serial.begin(115200);
   canSetup();
+
+  delay(10000);
+
+  can1.write(disable);
+  can1.write(statusRequest);
+  can1.write(DCVoltageRequest);
 }
 
 void loop() {
   unsigned long currentTime = millis();  // Get current time
 
   switch (currentState) {
-    case STATE_CLEAR_ERRORS:
-
+    case CLEAR_ERRORS:
       if (!commandSent) {
         can1.write(clearErrors);
         commandSent = true;
         stateStartTime = currentTime;
       }
       if (currentTime - stateStartTime >= 100) {
-        currentState = STATE_ENABLE_TRANSMISSION;
+        currentState = ENABLE_TRANSMISSION;
         commandSent = false;
         stateStartTime = currentTime;
         lastActionTime = currentTime;
       }
       break;
 
-    case STATE_ENABLE_TRANSMISSION:
-      // Periodically send enableTransmission until response or timeout
+    case ENABLE_TRANSMISSION:
       if (currentTime - lastActionTime >= actionInterval) {
         can1.write(enableTransmission);
         lastActionTime = currentTime;
       }
       if (transmissionEnabled) {
-        currentState = STATE_CHECK_BTB;
+        currentState = CHECK_BTB;
         commandSent = false;
         stateStartTime = currentTime;
         lastActionTime = currentTime;
       } else if (currentTime - stateStartTime >= timeout) {
         Serial.println("Timeout enabling transmission");
-        currentState = STATE_ERROR;
+        currentState = ERROR;
       }
       break;
 
-    case STATE_CHECK_BTB:
+    case CHECK_BTB:
       if (currentTime - lastActionTime >= actionInterval) {
         can1.write(checkBTBStatus);
         lastActionTime = currentTime;
       }
       if (BTBReady) {
-        currentState = STATE_REMOVE_DISABLE;
+        currentState = REMOVE_DISABLE;
         commandSent = false;
       } else if (currentTime - stateStartTime >= timeout) {
         Serial.println("Timeout checking BTB");
-        currentState = STATE_ERROR;
+        currentState = ERROR;
       }
       break;
 
-    case STATE_REMOVE_DISABLE:
+    case REMOVE_DISABLE:
       if (!commandSent) {
         can1.write(removeDisable);
         commandSent = true;
-        currentState = STATE_INITIALIZED;
+        currentState = INITIALIZED;
+        request_dataLOG_messages();
       }
       break;
 
-    case STATE_INITIALIZED:
-      // torque commands periodically
+    case INITIALIZED:
+      // Send torque command every 1 second if BTBReady and transmissionEnabled
       if (currentTime - lastTorqueTime >= torqueInterval) {
         if (BTBReady && transmissionEnabled) {
-          int torqueValue = 1000;
-          sendTorque(torqueValue);
+          sendTorque();
+          Serial.println("Torque command sent: 1000");
           lastTorqueTime = currentTime;
         }
       }
       break;
 
-    case STATE_ERROR:
+    case ERROR:
       Serial.println("Error during initialization");
       break;
   }
