@@ -85,6 +85,7 @@ void maquina()
   {
     if(airn_closed == 1)
     {
+      tempo = 0;
       ProximoEstado = precharge;
     }
     if(begin_pre == 0)
@@ -108,7 +109,7 @@ void maquina()
   }
   case precharge_complete:
   {
-    if(millis() >= tempo + 100)
+    if(millis() >= tempo + 500)
     {
       ProximoEstado = OHGROSSA;
     }
