@@ -37,6 +37,10 @@ bool commandSent = false;                   // Tracks if a one-time command has 
 bool transmissionEnabled = false;           // Tracks if the transmission is enabled
 bool BTBReady = false;                      // Tracks if the BTB is ready
 
+int userTorque = 1000;    // Default torque value (non-zero)
+String inputBuffer = "";  // Buffer to store incoming characters
+bool newInput = false;    // Flag to indicate new input is available
+
 void request_dataLOG_messages() {
   rpmRequest.id = BAMO_COMMAND_ID;
   rpmRequest.len = 3;
@@ -136,20 +140,51 @@ void canSetup() {
   can1.onReceive(can_snifflas);
 }
 
-void sendTorque() {
+void sendTorque(int torqueValue) {
   CAN_message_t torque_message;
-  torque_message.id = BAMO_COMMAND_ID;  // 0x201 for sending to BAMOCAR
-  torque_message.len = 3;               // REGID + 2 bytes for 16-bit torque value
-  torque_message.buf[0] = 0x90;         // REGID for TORQUE_SETPOINT
-  torque_message.buf[1] = 0xE8;         // Lower byte of 1000 (0x03E8)
-  torque_message.buf[2] = 0x03;         // Upper byte of 1000 (0x03E8)
+  torque_message.id = BAMO_COMMAND_ID;                // 0x201 for sending to BAMOCAR
+  torque_message.len = 3;                             // REGID + 2 bytes for 16-bit torque value
+  torque_message.buf[0] = 0x90;                       // REGID for TORQUE_SETPOINT
+  torque_message.buf[1] = torqueValue & 0xFF;         // Lower byte
+  torque_message.buf[2] = (torqueValue >> 8) & 0xFF;  // Upper byte
 
   can1.write(torque_message);
+}
+
+void checkSerialInput() {
+  while (Serial.available() > 0) {
+    char incomingChar = Serial.read();
+
+    // Process on newline (Enter key)
+    if (incomingChar == '\n' || incomingChar == '\r') {
+      if (inputBuffer.length() > 0) {
+        // Convert string to integer
+        int newTorque = inputBuffer.toInt();
+
+        if (newTorque != 0) {  // Ignore if input was just "0" or invalid
+          userTorque = newTorque;
+          Serial.print("New torque value set: ");
+          Serial.println(userTorque);
+        }
+
+        // Clear the buffer for next input
+        inputBuffer = "";
+      }
+    } else {
+      // Add character to buffer if it's a digit
+      if (isDigit(incomingChar)) {
+        inputBuffer += incomingChar;
+      }
+    }
+  }
 }
 
 void setup() {
   Serial.begin(115200);
   canSetup();
+
+  Serial.println("Enter torque value and press Enter to change the torque command.");
+  Serial.println("Default torque is 1000.");
 
   delay(10000);
 
@@ -217,10 +252,12 @@ void loop() {
 
     case INITIALIZED:
       // Send torque command every 1 second if BTBReady and transmissionEnabled
+      checkSerialInput();
       if (currentTime - lastTorqueTime >= torqueInterval) {
         if (BTBReady && transmissionEnabled) {
-          sendTorque();
-          Serial.println("Torque command sent: 1000");
+          sendTorque(userTorque);
+          Serial.print("Torque command sent: ");
+          Serial.println(userTorque);
           lastTorqueTime = currentTime;
         }
       }
