@@ -50,10 +50,6 @@ public:
    */
   static void close_sdc();
 
-  static void activate_bspd_error();
-
-  static void deactivate_bspd_error();
-
   /**
    * @brief Activates the solenoid EBS valves.
    */
@@ -111,10 +107,6 @@ public:
 inline void DigitalSender::open_sdc() { digitalWrite(CLOSE_SDC, LOW); }
 
 inline void DigitalSender::close_sdc() { digitalWrite(CLOSE_SDC, HIGH); }
-
-inline void DigitalSender::activate_bspd_error() { digitalWrite(SDC_BSPD_OUT, HIGH); }
-
-inline void DigitalSender::deactivate_bspd_error() { digitalWrite(SDC_BSPD_OUT, LOW); }
 
 inline void DigitalSender::activate_ebs() {
   digitalWrite(EBS_VALVE_1_PIN, HIGH);
@@ -190,7 +182,7 @@ inline void DigitalSender::no_bspd_error() { digitalWrite(SDC_BSPD_OUT, LOW); }
 inline void DigitalSender::toggle_watchdog() {
   static bool wd_state = false;
   wd_state = !wd_state;
-  digitalWrite(WD_ALIVE, wd_state);
+  digitalWrite(WD_ALIVE, wd_state);//TODO wd routine review
 }
 
 inline void DigitalSender::start_watchdog() { digitalWrite(WD_ALIVE, HIGH); }

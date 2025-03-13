@@ -84,7 +84,7 @@ inline void ASState::calculate_state() {
                 instance->state_ = State::AS_EMERGENCY;
               }
             },
-            250'000);
+            250'000);//2 timers probably best
       }
       if (_checkup_manager_.should_stay_manual_driving()) {
         DEBUG_PRINT("Entering MANUAL state from OFF");

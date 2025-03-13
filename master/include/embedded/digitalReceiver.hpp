@@ -32,11 +32,6 @@ public:
   void digital_reads();
 
   /**
-   * @brief callback to update rl wheel rpm
-   */
-  static void updateLeftWheelRpm();
-
-  /**
    * @brief Constructor for the class, sets pintmodes and buttons
    */
   DigitalReceiver(HardwareData *digital_data, Mission *mission)
