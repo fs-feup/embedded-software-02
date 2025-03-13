@@ -12,50 +12,47 @@ static BoardData board_temps[TOTAL_BOARDS];
 float read_ntc_temperature(const int analog_value) {
   float temperature = TEMPERATURE_DEFAULT_C;
 
-  if (analog_value >= 0 && analog_value <= 1023) {
-    const float voltage_divider = static_cast<float>(analog_value) * (V_REF / 1023.0f);
-    const float resistor_value = (RESISTOR_PULLUP * voltage_divider) / (VDD - voltage_divider);
-    const float temp_kelvin = 1.0f / ((1.0f / TEMPERATURE_DEFAULT_K) +
-                                      (log(resistor_value / RESISTOR_NTC_REFERNCE) / NTC_BETA));
-    temperature = temp_kelvin - 273.15f;
+  if (analog_value < ANALOG_MIN || analog_value > ANALOG_MAX) {
+    Serial.print("Invalid analog value: ");
+    Serial.println(analog_value);
+    return temperature;
   }
+
+  const float voltage_divider = static_cast<float>(analog_value) * (V_REF / 1023.0f);
+  const float resistor_value = (RESISTOR_PULLUP * voltage_divider) / (VDD - voltage_divider);
+  const float temp_kelvin = 1.0f / ((1.0f / TEMPERATURE_DEFAULT_K) +
+                                    (log(resistor_value / RESISTOR_NTC_REFERNCE) / NTC_BETA));
+  temperature = temp_kelvin - 273.15f;
 
   return temperature;
 }
 
-void read_Temperatures() {
+void read_check_temperatures() {
   float sum_temp = 0.0;
-  float min_temp = 100.0f;
-  float max_temp = -100.0f;
+  float min_temp = TEMPERATURE_MIN_C;
+  float max_temp = TEMPERATURE_MAX_C;
+  bool error_flag = false;
 
   for (int i = 0; i < N_NTC; i++) {
     CELL_TEMP[i] = read_ntc_temperature(analogRead(pinNTC_Temp[i]));
     min_temp = min(min_temp, CELL_TEMP[i]);
     max_temp = max(max_temp, CELL_TEMP[i]);
     sum_temp += CELL_TEMP[i];
-  }
-  board_temps[BOARD_ID].temp_data.min_temp = safeTemperatureCast(min_temp);
-  board_temps[BOARD_ID].temp_data.max_temp = safeTemperatureCast(max_temp);
-  board_temps[BOARD_ID].temp_data.avg_temp = safeTemperatureCast(sum_temp / N_NTC);
-  board_temps[BOARD_ID].valid = true;
-}
-
-void check_Temperatures() {
-  bool error_flag = false;
-  for (const float& temp : CELL_TEMP) {
-    if (temp > MAXIMUM_TEMPERATURE) {
+    if (CELL_TEMP[i] > MAXIMUM_TEMPERATURE && !error_flag) {
       error_flag = true;
-      break;
     }
   }
-  if (error_flag) {
-    digitalWrite(ERROR_SIGNAL, HIGH);
-  } else {
-    digitalWrite(ERROR_SIGNAL, LOW);
-  }
+  board_temps[BOARD_ID].temp_data.min_temp = safe_temperature_cast(min_temp);
+  board_temps[BOARD_ID].temp_data.max_temp = safe_temperature_cast(max_temp);
+  board_temps[BOARD_ID].temp_data.avg_temp = safe_temperature_cast(sum_temp / N_NTC);
+  board_temps[BOARD_ID].valid = true;
+
+  digitalWrite(ERROR_SIGNAL, error_flag ? HIGH : LOW);
 }
 
-int8_t safeTemperatureCast(const float temp) {
+
+
+int8_t safe_temperature_cast(const float temp) {
   int8_t result = 0;
 
   if (temp > 127.0f) {
@@ -69,25 +66,37 @@ int8_t safeTemperatureCast(const float temp) {
   return result;
 }
 
-void send_CAN_max_min_avg_Temperatures() {
+bool send_can_message(CAN_message_t& msg) {
+  for (uint8_t attempt = 0; attempt < MAX_RETRIES; attempt++) {
+    if (can1.write(msg)) {
+      return true;
+    }
+    delay(5);  // Short delay before retry
+  }
+  Serial.println("CAN send failed after retries");
+  return false;
+}
+
+void send_can_max_min_avg_temperatures() {
   CAN_message_t msg;
-  msg.id = MASTER_CELL_ID;
+  msg.id = CELL_TEMPS_BASE_ID + BOARD_ID;
   msg.len = 4;
 
   msg.buf[0] = BOARD_ID;
   msg.buf[1] = board_temps[BOARD_ID].temp_data.min_temp;
   msg.buf[2] = board_temps[BOARD_ID].temp_data.max_temp;
   msg.buf[3] = board_temps[BOARD_ID].temp_data.avg_temp;
-  can1.write(msg);
 
-  Serial.print("CAN MSG - ID: 0x109 | Min: ");
-  Serial.print(static_cast<int8_t>(msg.buf[1]));
-  Serial.print("°C, Max: ");
-  Serial.print(static_cast<int8_t>(msg.buf[2]));
-  Serial.print("°C, Avg: ");
-  Serial.println(static_cast<int8_t>(msg.buf[3]));
+  if (send_CAN_message(msg)) {
+    Serial.print("CAN MSG - ID: 0x109 | Min: ");
+    Serial.print(static_cast<int8_t>(msg.buf[1]));
+    Serial.print("°C, Max: ");
+    Serial.print(static_cast<int8_t>(msg.buf[2]));
+    Serial.print("°C, Avg: ");
+    Serial.println(static_cast<int8_t>(msg.buf[3]));
+  }
 }
-void send_to_BMS(const TemperatureData& global_data) {
+void send_to_bms(const TemperatureData& global_data) {
   CAN_message_t msg;
   msg.id = BMS_THERMISTOR_ID;
   msg.len = 8;
@@ -105,7 +114,7 @@ void send_to_BMS(const TemperatureData& global_data) {
   // year only this one was used and worked fine
 }
 
-void send_CAN_all_cell_temperatures() {
+void send_can_all_cell_temperatures() {
   CAN_message_t msg;
 
   for (u_int8_t msgIndex = 0; msgIndex < 3; msgIndex++) {
@@ -139,9 +148,9 @@ void send_CAN_all_cell_temperatures() {
   }
 }
 
-void show_Temperatures() {
-  Serial.print("\o{33}[2J");
-  Serial.print("\o{33}[H");
+void show_temperatures() {
+  Serial.write("\033[2J");  // Clear screen
+  Serial.write("\033[H");   // Home cursor
   Serial.println("----------- Temperaturas -----------");
   for (int i = 0; i < N_NTC; i++) {
     Serial.print("CELL ");
@@ -157,20 +166,32 @@ void code_reset() {
   digitalWrite(ERROR_SIGNAL, LOW);
 }
 
-void can_sniffer(const CAN_message_t& msg) {
-  if (msg.id == MASTER_CELL_ID && msg.len == 4) {
-    uint8_t board = msg.buf[0];
-    if (board < TOTAL_BOARDS) {
-      board_temps[board].temp_data.min_temp = static_cast<int8_t>(msg.buf[1]);
-      board_temps[board].temp_data.max_temp = static_cast<int8_t>(msg.buf[2]);
-      board_temps[board].temp_data.avg_temp = static_cast<int8_t>(msg.buf[3]);
-      board_temps[board].valid = true;
+void can_snifflas(const CAN_message_t& msg) {
+  if (msg.id >= CELL_TEMPS_BASE_ID && msg.id < CELL_TEMPS_BASE_ID + TOTAL_BOARDS && msg.len == 4) {
+    uint8_t board_from_id = msg.id - CELL_TEMPS_BASE_ID;
+    uint8_t board_from_buf = msg.buf[0];
+
+    if (board_from_id != board_from_buf) {
+      Serial.print("Warning: Board ID mismatch - ID from message: ");
+      Serial.print(board_from_id);
+      Serial.print(", ID from payload: ");
+      Serial.println(board_from_buf);
+    }
+
+    if (board_from_id < TOTAL_BOARDS) {
+      board_temps[board_from_id].temp_data.min_temp = static_cast<int8_t>(msg.buf[1]);
+      board_temps[board_from_id].temp_data.max_temp = static_cast<int8_t>(msg.buf[2]);
+      board_temps[board_from_id].temp_data.avg_temp = static_cast<int8_t>(msg.buf[3]);
+      board_temps[board_from_id].valid = true;
+    } else {
+      Serial.print("Error: Invalid board ID: ");
+      Serial.println(board_from_id);
     }
   }
 }
 
 void calculate_global_stats(TemperatureData& global_data) {
-  int8_t sum = 0;
+  int16_t sum = 0;
   u_int8_t valid_count = 0;
   global_data.min_temp = MAX_INT8_T;
   global_data.max_temp = MIN_INT8_T;
@@ -199,22 +220,26 @@ void setup() {
     can1.enableFIFO();
     can1.enableFIFOInterrupt();
     can1.setFIFOFilter(REJECT_ALL);
-    can1.setFIFOFilter(0, MASTER_CELL_ID, STD);
-    can1.onReceive(can_sniffer);
+
+    for (uint8_t i = 0; i < min(8, TOTAL_BOARDS); i++) {  // FlexCAN typically supports 8 filters
+      can1.setFIFOFilter(i, CELL_TEMPS_BASE_ID + i, STD);
+    }
+
+    can1.onReceive(can_snifflas);
+    Serial.println("CAN filters configured for all board IDs");
   }
 }
 
 void loop() {
-  read_Temperatures();
-  check_Temperatures();
+  read_check_temperatures();
 
   if (!THIS_IS_MASTER) {
-    send_CAN_max_min_avg_Temperatures();
+    send_can_max_min_avg_temperatures();
   } else {
     TemperatureData global_data;
     calculate_global_stats(global_data);
-    send_to_BMS(global_data);
+    send_to_bms(global_data);
   }
-  show_Temperatures();
+  show_temperatures();
   delay(DELAY_INTERVAL);
 }

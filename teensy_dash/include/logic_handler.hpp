@@ -40,7 +40,7 @@ int LogicHandler::scale_apps2_to_apps1(const int apps2) const {
   return apps2 + config::apps::LINEAR_OFFSET;
 }
 
-bool LogicHandler::plausibility(const int apps1, const int apps2) const {
+bool LogicHandler::plausibility(const int apps1, const int apps2) const {//unit test, todo
   bool valid_input = (apps1 >= apps2) && (apps1 <= config::apps::UPPER_BOUND_APPS1) &&
                      (apps1 >= config::apps::LOWER_BOUND_APPS1) &&
                      (apps2 <= config::apps::UPPER_BOUND_APPS2) &&
@@ -61,7 +61,7 @@ bool LogicHandler::plausibility(const int apps1, const int apps2) const {
                     apps1 <= config::apps::DEADZONE_EQUIVALENT_APPS2 + config::apps::MAX_ERROR_ABS);
   } else {
     const int apps2_updated = scale_apps2_to_apps1(apps2);
-    const int plausibility_value = abs(apps2_updated - apps1) * 100 / apps1;
+    const int plausibility_value = abs(apps2_updated - apps1) * 100 / apps1;//rmv 2x 100 ? todo
     is_plausible = (plausibility_value < config::apps::MAX_ERROR_PERCENT * 100);
   }
 
@@ -93,7 +93,7 @@ int LogicHandler::apps_to_bamocar_value(const int apps1, const int apps2) {
   return torque_value;
 }
 
-int LogicHandler::calculate_torque() {
+int LogicHandler::calculate_torque() { //TODO: Refactor this function
   int apps1_average = average_queue(data.apps1_readings);
   int apps2_average = average_queue(data.apps2_readings);
 

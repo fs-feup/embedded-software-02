@@ -46,7 +46,7 @@ CanCommHandler::CanCommHandler(SystemData& system_data,
 
 void CanCommHandler::setup() {
   can1.begin();
-  can1.setBaudRate(500'000);
+  can1.setBaudRate(1'000'000);
   can1.enableFIFO();
   can1.enableFIFOInterrupt();
   can1.setFIFOFilter(REJECT_ALL);
@@ -74,7 +74,7 @@ void CanCommHandler::can_sniffer(const CAN_message_t& msg) {
 void CanCommHandler::bamocar_callback(const uint8_t* msg_data) {
   switch (msg_data[0]) {
     case DC_VOLTAGE: {
-      long dc_voltage = 0;
+      uint16_t dc_voltage = 0;
       dc_voltage = (msg_data[2] << 8) | msg_data[1];
       updatable_data.TSOn = (dc_voltage >= DC_THRESHOLD);
       break;

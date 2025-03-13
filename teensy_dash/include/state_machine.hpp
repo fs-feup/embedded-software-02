@@ -22,8 +22,6 @@ private:
 
   State current_state_ = State::IDLE;
 
-  void handle_idle();
-
   void transition_to_driving();
 
   void transition_to_as_driving();
@@ -34,7 +32,15 @@ private:
 void StateMachine::update() {
   switch (current_state_) {
     case State::IDLE:
-      handle_idle();
+      if (logic_handler.should_start_manual_driving()) {
+        transition_to_driving();
+        current_state_ = State::DRIVING;
+      } else if (logic_handler.should_start_as_driving()) {
+        transition_to_as_driving();
+        current_state_ = State::AS_DRIVING;
+      } else {
+        Serial.println("chillin");
+      }
       break;
     case State::DRIVING:
       handle_driving();
@@ -44,18 +50,6 @@ void StateMachine::update() {
       break;
     default:
       break;
-  }
-}
-
-void StateMachine::handle_idle() {
-  if (logic_handler.should_start_manual_driving()) {
-    transition_to_driving();
-    current_state_ = State::DRIVING;
-  } else if (logic_handler.should_start_as_driving()) {
-    transition_to_as_driving();
-    current_state_ = State::AS_DRIVING;
-  } else {
-    Serial.println("chillin");
   }
 }
 

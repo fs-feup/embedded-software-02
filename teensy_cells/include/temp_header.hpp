@@ -9,7 +9,9 @@ constexpr uint8_t TOTAL_BOARDS = 6;
 constexpr uint16_t DELAY_INTERVAL = 500;
 constexpr uint8_t N_NTC = 18;
 constexpr uint16_t ANALOG_MAX = 1023;
+constexpr uint16_t ANALOG_MIN = 0;
 constexpr int ERROR_SIGNAL = 35;
+constexpr uint8_t MAX_RETRIES = 3;
 
 // Voltage and Resistor Configuration
 constexpr float VDD = 5.0;
@@ -19,6 +21,8 @@ constexpr float RESISTOR_NTC_REFERNCE = 10'000.0;  // NTC resistance at 25°C
 
 // Temperature Constants
 constexpr float TEMPERATURE_DEFAULT_C = 25.0;
+constexpr float TEMPERATURE_MIN_C = -100.0;
+constexpr float TEMPERATURE_MAX_C = 100.0;
 constexpr float TEMPERATURE_DEFAULT_K = 298.15f;
 constexpr float NTC_BETA = 3971.0;
 constexpr float MAXIMUM_TEMPERATURE = 60.0;
@@ -50,13 +54,12 @@ struct BoardData {
 };
 
 float read_ntc_temperature(int analog_value);
-void read_Temperatures();
-void check_Temperatures();
-int8_t safeTemperatureCast(float temp);
-void send_CAN_max_min_avg_Temperatures();
-void send_to_BMS(const TemperatureData& global_data);
-void send_CAN_all_cell_temperatures();
-void show_Temperatures();
+void read_check_temperatures();
+int8_t safe_temperature_cast(float temp);
+void send_can_max_min_avg_temperatures();
+void send_to_bms(const TemperatureData& global_data);
+void send_can_all_cell_temperatures();
+void show_temperatures();
 void code_reset();
-void can_sniffer(const CAN_message_t& msg);
+void can_snifflas(const CAN_message_t& msg);
 void calculate_global_stats(TemperatureData& global_data);

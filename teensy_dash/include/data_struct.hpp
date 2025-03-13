@@ -12,11 +12,6 @@ enum class SwitchMode {
   INVERTER_MODE7,
 };
 
-struct RPMValues {
-  float fr_rpm;
-  float fl_rpm;
-};
-
 struct SystemData {
   bool r2d_pressed = false;
   bool ats_pressed = false;
