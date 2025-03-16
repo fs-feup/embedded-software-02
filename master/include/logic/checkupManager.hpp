@@ -184,7 +184,7 @@ inline bool CheckupManager::should_stay_off() {
 }
 
 inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
-  switch (checkup_state_) {  // TODO
+  switch (checkup_state_) {
     case CheckupState::WAIT_FOR_ASMS:
       if (_system_data_->hardware_data_.asms_on_) {
         checkup_state_ = CheckupState::START_WATCHDOG;

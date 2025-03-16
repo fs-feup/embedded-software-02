@@ -8,13 +8,13 @@
 #include "model/systemData.hpp"
 #include "timings.hpp"
 
-SystemData system_data;  // Model
+SystemData system_data;
 SystemData
     system_data_copy;  // Copy of the model for Communicator (where interrupt updates are stored)
 Communicator communicator = Communicator(&system_data_copy);  // CAN
 DigitalReceiver digital_receiver = DigitalReceiver(&system_data_copy.hardware_data_,
-                                                   &system_data_copy.mission_);  // Digital inputs
-DigitalSender digital_sender = DigitalSender();                                  // Digital outputs
+                                                   &system_data_copy.mission_);  
+DigitalSender digital_sender = DigitalSender();
 OutputCoordinator output_coordinator =
     OutputCoordinator(&system_data, &communicator, &digital_sender);
 ASState as_state = ASState(&system_data, &communicator, &output_coordinator);
