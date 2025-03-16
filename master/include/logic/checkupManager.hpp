@@ -20,15 +20,19 @@ private:
   Metro _watchdog_test_timer_{WATCHDOG_TEST_DURATION};      ///< Timer for watchdog verification
   bool _watchdog_toggle_in_timer_{false};  ///< Flag to indicate if the watchdog toggle is in
                                            ///< progress in the interrupt timer.
-  bool check_pressure_high() {
-    return _system_data_->hardware_data_._hydraulic_line_pressure >= HYDRAULIC_BRAKE_THRESHOLD &&
-           _system_data_->hardware_data_.pneumatic_line_pressure_;
-  }
 
-  bool check_pressure_low() {
-    return _system_data_->hardware_data_._hydraulic_line_pressure < HYDRAULIC_BRAKE_THRESHOLD &&
-           _system_data_->hardware_data_.pneumatic_line_pressure_ == 0;
-  }
+  /**
+   * @brief Checks if the pneumatic pressure is high enough, meaning EBS worked.
+   * @return True if the pressure is high enough, false otherwise.
+   */
+  bool check_pressure_high() const;
+
+  /**
+   * @brief Checks if the pneumatic pressure is low enough, meaning EBS retracted.
+   * @return True if the pressure is low enough, false otherwise.
+   */
+  bool check_pressure_low() const;
+
   /**
    * @brief Checks if the vehicle has failed to build pneumatic pressure in the limit time
    * (definido em engage ebs timestamp).
@@ -55,8 +59,6 @@ private:
    * @brief Handles the EBS checkup.
    */
   void handle_ebs_check();
-
-  
 
 public:
   Metro _ebs_sound_timestamp_{EBS_BUZZER_TIMEOUT};  ///< Timer for the EBS buzzer sound check.
@@ -108,12 +110,12 @@ public:
   /**
    * @brief Performs an off checkup.
    */
-  bool should_stay_off(DigitalSender *digital_sender);
+  bool should_stay_off();
 
   /**
    * @brief Performs an initial checkup.
    */
-  CheckupError initial_checkup_sequence(DigitalSender *digital_sender);
+  CheckupError initial_checkup_sequence();
 
   /**
    * @brief Performs a last re-check for off to ready transition.
@@ -172,8 +174,8 @@ inline bool CheckupManager::should_stay_manual_driving() const {
   return true;
 }
 
-inline bool CheckupManager::should_stay_off(DigitalSender *digital_sender) {
-  CheckupError init_sequence_state = initial_checkup_sequence(digital_sender);
+inline bool CheckupManager::should_stay_off() {
+  CheckupError init_sequence_state = initial_checkup_sequence();
 
   if (init_sequence_state != CheckupError::SUCCESS) {
     return true;
@@ -181,9 +183,14 @@ inline bool CheckupManager::should_stay_off(DigitalSender *digital_sender) {
   return false;
 }
 
-inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence(
-    DigitalSender *digital_sender) {
+inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
   switch (checkup_state_) {  // TODO
+    case CheckupState::WAIT_FOR_ASMS:
+      if (_system_data_->hardware_data_.asms_on_) {
+        checkup_state_ = CheckupState::START_WATCHDOG;
+        DEBUG_PRINT("ASMS activated, starting watchdog check");
+      }
+      break;
     case CheckupState::START_WATCHDOG:
       if (_system_data_->hardware_data_.wd_ready_) {
         checkup_state_ = CheckupState::TOGGLING_WATCHDOG;
@@ -191,7 +198,7 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence(
         DEBUG_PRINT("Watchdog ready, starting toggle sequence");
         break;
       }
-      digital_sender->start_watchdog();
+      DigitalSender::start_watchdog();
       break;
 
     case CheckupState::TOGGLING_WATCHDOG:
@@ -201,7 +208,7 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence(
         return CheckupError::ERROR;  // TODO: return specific error
       }
 
-      digital_sender->toggle_watchdog();
+      DigitalSender::toggle_watchdog();
 
       // Toggle for the specified duration
       if (_watchdog_toggle_timer_.checkWithoutReset()) {
@@ -222,7 +229,7 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence(
       // Check if WD_READY goes low during this state
       if (!_system_data_->hardware_data_.wd_ready_) {
         _watchdog_toggle_in_timer_ = true;
-        digital_sender->close_watchdog_sdc();
+        DigitalSender::close_watchdog_sdc();
         checkup_state_ = CheckupState::WAIT_FOR_ASATS;
         DEBUG_PRINT("Watchdog no longer ready - verification successful");
       }
@@ -335,6 +342,16 @@ bool CheckupManager::should_enter_emergency_in_driving_state() const {
          failed_to_build_pneumatic_pressure_in_release_time() ||
          failed_to_reduce_hydraulic_pressure_in_time() || !_system_data_->hardware_data_.asms_on_ ||
          !_system_data_->failure_detection_.ts_on_;
+}
+
+inline bool CheckupManager::check_pressure_high() const {
+  return _system_data_->hardware_data_._hydraulic_line_pressure >= HYDRAULIC_BRAKE_THRESHOLD &&
+         _system_data_->hardware_data_.pneumatic_line_pressure_;
+}
+
+inline bool CheckupManager::check_pressure_low() const {
+  return _system_data_->hardware_data_._hydraulic_line_pressure < HYDRAULIC_BRAKE_THRESHOLD &&
+         _system_data_->hardware_data_.pneumatic_line_pressure_;
 }
 
 bool CheckupManager::failed_to_build_pneumatic_pressure_in_engage_time() const {

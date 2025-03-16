@@ -4,11 +4,16 @@
 #include "debugUtils.hpp"
 #include "embedded/digitalSender.hpp"
 #include "enum_utils.hpp"
+#include "metro.h"
 #include "model/systemData.hpp"
 #include "timings.hpp"
+#include "TeensyTimerTool.h"
 
 class OutputCoordinator {
 private:
+  TeensyTimerTool::PeriodicTimer watchdog_timer_;
+  Metro blink_timer_{LED_BLINK_INTERVAL};  ///< Timer for blinking LED
+
   SystemData* system_data_;
   Communicator* communicator_;
   DigitalSender* digital_sender_;
@@ -39,7 +44,7 @@ public:
   }
 
   void process(uint8_t current_master_state, uint8_t current_checkup_state) {
-    //TODO: timer
+    // TODO: timer
     send_soc();
     send_asms();
     send_debug_on_state_change(current_master_state, current_checkup_state);
@@ -48,6 +53,78 @@ public:
     dash_ats_update(current_master_state);
     update_physical_outputs();
     send_rpm();
+  }
+
+  void blink_emergency_led() {
+    if (blink_timer_.check()) {
+      digital_sender_->blink_led(ASSI_BLUE_PIN);
+    }
+  }
+
+  void blink_driving_led() {
+    if (blink_timer_.check()) {
+      digital_sender_->blink_led(ASSI_YELLOW_PIN);
+    }
+  }
+
+  /**
+   * @brief ASSI LEDs blue flashing, sdc open and buzzer ringing.
+   */
+  void enter_emergency_state() {
+    digital_sender_->turn_off_assi();
+    blink_timer_.reset();
+    digital_sender_->activate_ebs();
+    digital_sender_->open_sdc();
+  }
+
+  /**
+   * @brief Everything off, sdc closed.
+   */
+  void enter_manual_state() {
+    digital_sender_->turn_off_assi();
+    digital_sender_->deactivate_ebs();
+    digital_sender_->close_sdc();
+  }
+
+  /**
+   * @brief Everything off, sdc open.
+   */
+  void enter_off_state() {
+    digital_sender_->turn_off_assi();
+    digital_sender_->deactivate_ebs();
+    digital_sender_->open_sdc();
+  }
+
+  /**
+   * @brief ASSI yellow LED on, ebs valves activated, sdc closed.
+   */
+  void enter_ready_state() {
+    watchdog_timer_.begin([] { DigitalSender::toggle_watchdog(); }, 50'000);
+
+    digital_sender_->turn_off_assi();
+    digital_sender_->turn_on_yellow();
+    digital_sender_->activate_ebs();
+    digital_sender_->close_sdc();
+  }
+
+  /**
+   * @brief ASSI LEDs yellow flashing, ebs valves deactivated, sdc closed.
+   */
+  void enter_driving_state() {
+    digital_sender_->turn_off_assi();
+    blink_timer_.reset();
+    digital_sender_->deactivate_ebs();
+    digital_sender_->close_sdc();
+  }
+
+  /**
+   * @brief ASSI blue LED on, ebs valves activated, sdc open.
+   */
+  void enter_finish_state() {
+    digital_sender_->turn_off_assi();
+    digital_sender_->turn_on_blue();
+    digital_sender_->activate_ebs();
+    digital_sender_->open_sdc();
   }
 
 private:
@@ -66,13 +143,9 @@ private:
     }
   }
 
-  void send_soc() {
-    Communicator::publish_soc(system_data_->hardware_data_.soc_);
-  }
+  void send_soc() { Communicator::publish_soc(system_data_->hardware_data_.soc_); }
 
-  void send_asms(){
-    Communicator::publish_asms_on(system_data_->hardware_data_.asms_on_);
-  }
+  void send_asms() { Communicator::publish_asms_on(system_data_->hardware_data_.asms_on_); }
 
   void send_mission_update() {
     if (mission_timer_.check()) {
@@ -110,13 +183,12 @@ private:
     }
   }
   void dash_ats_update(uint8_t current_master_state) {
-    if (system_data_->hardware_data_.ats_pressed_ && current_master_state == to_underlying(State::AS_MANUAL)) {
+    if (system_data_->hardware_data_.ats_pressed_ &&
+        current_master_state == to_underlying(State::AS_MANUAL)) {
       digital_sender_->close_sdc();
     } else {
       digital_sender_->open_sdc();
     }
   }
-  void send_rpm() {
-    Communicator::publish_rpm();
-  }
+  void send_rpm() { Communicator::publish_rpm(); }
 };

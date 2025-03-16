@@ -14,12 +14,6 @@
  */
 class DigitalSender {
 private:
-  Metro blink_imer_{LED_BLINK_INTERVAL};  ///< Timer for blinking LED
-
-  /**
-   * @brief Turns off both ASSI LEDs (yellow and blue).
-   */
-  static void turn_off_assi();
 
 public:
   // Array of valid output pins
@@ -39,7 +33,10 @@ public:
       pinMode(pin, OUTPUT);
     }
   }
-
+  /**
+   * @brief Turns off both ASSI LEDs (yellow and blue).
+   */
+  static void turn_off_assi();
   /**
    * @brief Opens the SDC in Master and SDC Logic.
    */
@@ -61,47 +58,46 @@ public:
   static void deactivate_ebs();
 
   /**
-   * @brief ASSI LEDs blue flashing, sdc open and buzzer ringing.
-   */
-  void enter_emergency_state();
-
-  /**
-   * @brief Everything off, sdc closed.
-   */
-  static void enter_manual_state();
-
-  /**
-   * @brief Everything off, sdc open.
-   */
-  static void enter_off_state();
-
-  /**
-   * @brief ASSI yellow LED on, ebs valves activated, sdc closed.
-   */
-  static void enter_ready_state();
-
-  /**
-   * @brief ASSI LEDs yellow flashing, ebs valves deactivated, sdc closed.
-   */
-  void enter_driving_state();
-
-  /**
-   * @brief ASSI blue LED on, ebs valves activated, sdc open.
-   */
-  static void enter_finish_state();
-
-  /**
    * @brief Blinks the LED at the given pin.
    * @param pin The pin to blink.
    */
   void blink_led(int pin);
+  /**
+   * @brief Turns on the brake light.
+   */
   void turn_on_brake_light();
+  /**
+   * @brief Turns off the brake light.
+   */
   void turn_off_brake_light();
+  /**
+   * @brief Turns on the BSPD error signal.
+   */
   void bspd_error();
+  /**
+   * @brief Turns off the BSPD error signal.
+   */
   void no_bspd_error();
-  void toggle_watchdog();
-  void start_watchdog();
-  void close_watchdog_sdc();
+  /**
+   * @brief Toggles the watchdog signal.
+   */
+  static void toggle_watchdog();
+  /**
+   * @brief Starts the watchdog signal.
+   */
+  static void start_watchdog();
+  /**
+   * @brief Closes the watchdog signal for SDC.
+   */
+  static void close_watchdog_sdc();
+  /**
+   * @brief Turns on the yellow ASSI LED.
+   */
+  void turn_on_yellow();
+  /**
+   * @brief Turns on the blue ASSI LED.
+   */
+  void turn_on_blue();
 };
 
 inline void DigitalSender::open_sdc() { digitalWrite(CLOSE_SDC, LOW); }
@@ -123,52 +119,15 @@ inline void DigitalSender::turn_off_assi() {
   analogWrite(ASSI_BLUE_PIN, LOW);
 }
 
-inline void DigitalSender::enter_emergency_state() {
-  turn_off_assi();
-  blink_imer_.reset();
-  activate_ebs();
-  open_sdc();
-}
+inline void DigitalSender::turn_on_yellow() { analogWrite(ASSI_YELLOW_PIN, 1023); }
 
-inline void DigitalSender::enter_manual_state() {
-  turn_off_assi();
-  deactivate_ebs();
-  close_sdc();
-}
-
-inline void DigitalSender::enter_off_state() {
-  turn_off_assi();
-  deactivate_ebs();
-  open_sdc();
-}
-
-inline void DigitalSender::enter_ready_state() {
-  turn_off_assi();
-  analogWrite(ASSI_YELLOW_PIN, 1023);
-  activate_ebs();
-  close_sdc();
-}
-
-inline void DigitalSender::enter_driving_state() {
-  turn_off_assi();
-  blink_imer_.reset();
-  deactivate_ebs();
-  close_sdc();
-}
-
-inline void DigitalSender::enter_finish_state() {
-  turn_off_assi();
-  analogWrite(ASSI_BLUE_PIN, 1023);
-  activate_ebs();
-  open_sdc();
-}
+inline void DigitalSender::turn_on_blue() { analogWrite(ASSI_BLUE_PIN, 1023); }
 
 inline void DigitalSender::blink_led(const int pin) {
   static bool blink_state = false;
-  if (blink_imer_.check()) {
-    blink_state = !blink_state;
-    analogWrite(pin, blink_state * 1023);
-  }
+  blink_state = !blink_state;
+  analogWrite(pin, blink_state * 1023);
+  
 }
 
 inline void DigitalSender::turn_on_brake_light() { digitalWrite(BRAKE_LIGHT, HIGH); }
@@ -182,7 +141,7 @@ inline void DigitalSender::no_bspd_error() { digitalWrite(SDC_BSPD_OUT, LOW); }
 inline void DigitalSender::toggle_watchdog() {
   static bool wd_state = false;
   wd_state = !wd_state;
-  digitalWrite(WD_ALIVE, wd_state);//TODO wd routine review
+  digitalWrite(WD_ALIVE, wd_state);  // TODO wd routine review
 }
 
 inline void DigitalSender::start_watchdog() { digitalWrite(WD_ALIVE, HIGH); }
