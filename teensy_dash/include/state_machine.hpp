@@ -71,6 +71,13 @@ void StateMachine::handle_driving() {
   // TODO(PedroRomao3): timer needed?
   if (current_state_ == State::DRIVING) {
     int torque_from_apps = logic_handler.calculate_torque();
+    if(torque_from_apps == config::apps::ERROR_PLAUSIBILITY){
+      can_handler.stop_bamocar();
+      current_state_ = State::IDLE;
+      //open sdc? todo
+      // log error 
+      return;
+    }
     can_handler.send_torque(torque_from_apps);
   }
 }

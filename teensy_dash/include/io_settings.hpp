@@ -51,23 +51,25 @@ namespace config {
     }
 
     namespace apps {
-        constexpr uint16_t UPPER_BOUND_APPS1 = 800;
-        constexpr uint16_t LOWER_BOUND_APPS1 = 240;
-        constexpr uint16_t UPPER_BOUND_APPS2 = 785;
-        constexpr uint16_t LOWER_BOUND_APPS2 = 220;
+        constexpr uint16_t UPPER_BOUND_APPS_HIGHER = 800;
+        constexpr uint16_t LOWER_BOUND_APPS_HIGHER = 240;
+        constexpr uint16_t UPPER_BOUND_APPS_LOWER = 785;
+        constexpr uint16_t LOWER_BOUND_APPS_LOWER = 220;
         
-        constexpr uint16_t DEAD_THRESHOLD_APPS1 = 780;
-        constexpr uint16_t DEAD_THRESHOLD_APPS2 = 240;
+        constexpr uint16_t DEAD_THRESHOLD_APPS_HIGHER = 780;
+        constexpr uint16_t DEAD_THRESHOLD_APPS_LOWER = 240;
         
-        constexpr uint16_t DEADZONE_EQUIVALENT_APPS1 = 660;
-        constexpr uint16_t DEADZONE_EQUIVALENT_APPS2 = 360;
+        constexpr uint16_t APPS_HIGHER_DEADZONE_IN_APPS_LOWER_SCALE = 660;
+        constexpr uint16_t APPS_LOWER_DEADZONE_IN_APPS_HIGHER_SCALE = 360;
         
         constexpr uint16_t LINEAR_OFFSET = 124;
         constexpr uint16_t MAX = 770;
         constexpr uint16_t MIN = 270;
         
-        constexpr float MAX_ERROR_PERCENT = 0.15f;
-        constexpr uint16_t MAX_ERROR_ABS = UPPER_BOUND_APPS1 * MAX_ERROR_PERCENT;
+        constexpr int8_t ERROR_PLAUSIBILITY = -4;
+
+        constexpr uint8_t MAX_ERROR_PERCENT = 15;
+        constexpr uint16_t MAX_ERROR_ABS = UPPER_BOUND_APPS_HIGHER * MAX_ERROR_PERCENT/100;
         
         constexpr uint8_t SAMPLES = 5;
         constexpr uint16_t BRAKE_BLOCK_THRESHOLD = 250;

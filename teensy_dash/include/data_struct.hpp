@@ -20,11 +20,11 @@ struct SystemData {
   bool buzzer_active = false;
   unsigned long buzzer_start_time;
   unsigned long buzzer_duration_ms;
-  std::deque<int> apps1_readings;
-  std::deque<int> apps2_readings;
+  std::deque<uint16_t> apps_higher_readings;
+  std::deque<uint16_t> apps_lower_readings;
   float fr_rpm = 0;
   float fl_rpm = 0;
-  std::deque<int> brake_readings;
+  std::deque<uint16_t> brake_readings;
 
   elapsedMillis r2d_brake_timer = 0;
 };

@@ -4,7 +4,7 @@
 
 #include "io_settings.hpp"
 
-void insert_value_queue(const int value, std::deque<int>& queue) {
+void insert_value_queue(const uint16_t value, std::deque<uint16_t>& queue) {
   queue.push_front(value);
 
   if (queue.size() > config::apps::SAMPLES) {
@@ -12,11 +12,11 @@ void insert_value_queue(const int value, std::deque<int>& queue) {
   }
 }
 
-int average_queue(const std::deque<int>& queue) {
-  int avg = 0;
+uint16_t average_queue(const std::deque<uint16_t>& queue) {
+  uint16_t avg = 0;
   if (!queue.empty()) {
     const double sum = std::accumulate(queue.begin(), queue.end(), 0);
-    avg = static_cast<int>(sum / queue.size());
+    avg = static_cast<uint16_t>(sum / queue.size());
   }
   return avg;
 }

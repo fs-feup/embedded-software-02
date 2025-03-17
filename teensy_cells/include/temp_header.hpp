@@ -6,7 +6,7 @@
 
 // System Configuration
 constexpr uint8_t TOTAL_BOARDS = 6;
-constexpr uint16_t DELAY_INTERVAL = 500;
+constexpr uint16_t DELAY_INTERVAL = 100;
 constexpr uint8_t N_NTC = 18;
 constexpr uint16_t ANALOG_MAX = 1023;
 constexpr uint16_t ANALOG_MIN = 0;
@@ -23,11 +23,13 @@ constexpr float RESISTOR_NTC_REFERNCE = 10'000.0;  // NTC resistance at 25°C
 constexpr float TEMPERATURE_DEFAULT_C = 25.0;
 constexpr float TEMPERATURE_MIN_C = -100.0;
 constexpr float TEMPERATURE_MAX_C = 100.0;
+constexpr float KELVIN_OFFSET = 273.15f;
 constexpr float TEMPERATURE_DEFAULT_K = 298.15f;
 constexpr float NTC_BETA = 3971.0;
 constexpr float MAXIMUM_TEMPERATURE = 60.0;
 constexpr int8_t MAX_INT8_T = 127;
 constexpr int8_t MIN_INT8_T = -128;
+constexpr uint16_t MAX_TEMP_DELAY_MS = 500;
 
 // CAN Communication
 constexpr uint32_t MASTER_CELL_ID = 0x109;
@@ -51,6 +53,7 @@ struct TemperatureData {
 struct BoardData {
     TemperatureData temp_data;
     bool valid = false;
+    unsigned long last_update_ms;
 };
 
 float read_ntc_temperature(int analog_value);
@@ -63,3 +66,4 @@ void show_temperatures();
 void code_reset();
 void can_snifflas(const CAN_message_t& msg);
 void calculate_global_stats(TemperatureData& global_data);
+bool check_temperture_timeout();

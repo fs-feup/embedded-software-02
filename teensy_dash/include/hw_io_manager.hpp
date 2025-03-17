@@ -120,8 +120,8 @@ void IOManager::setup() {
 }
 
 void IOManager::read_apps() {
-  insert_value_queue(analogRead(pins::analog::APPS_1), data.apps1_readings);
-  insert_value_queue(analogRead(pins::analog::APPS_2), data.apps2_readings);
+  insert_value_queue(analogRead(pins::analog::APPS_1), data.apps_higher_readings);
+  insert_value_queue(analogRead(pins::analog::APPS_2), data.apps_lower_readings);
 }
 
 void IOManager::play_r2d_sound() { play_buzzer(1); }

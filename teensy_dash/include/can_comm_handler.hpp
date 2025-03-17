@@ -153,8 +153,8 @@ void CanCommHandler::write_rpm() {
 }
 
 void CanCommHandler::write_apps() {
-  int32_t apps1 = average_queue(data.apps1_readings);
-  int32_t apps2 = average_queue(data.apps2_readings);
+  int32_t apps_higher = average_queue(data.apps_higher_readings);
+  int32_t apps_lower = average_queue(data.apps_lower_readings);
 
   CAN_message_t apps_message;
   apps_message.id = DASH_ID;
@@ -162,16 +162,16 @@ void CanCommHandler::write_apps() {
 
   apps_message.buf[0] = 0x20;  // TODO: add define
 
-  apps_message.buf[1] = (apps1 >> 0) & 0xFF;
-  apps_message.buf[2] = (apps1 >> 8) & 0xFF;
-  apps_message.buf[3] = (apps1 >> 16) & 0xFF;
-  apps_message.buf[4] = (apps1 >> 24) & 0xFF;
+  apps_message.buf[1] = (apps_higher >> 0) & 0xFF;
+  apps_message.buf[2] = (apps_higher >> 8) & 0xFF;
+  apps_message.buf[3] = (apps_higher >> 16) & 0xFF;
+  apps_message.buf[4] = (apps_higher >> 24) & 0xFF;
   can1.write(apps_message);
 
-  apps_message.buf[1] = (apps2 >> 0) & 0xFF;
-  apps_message.buf[2] = (apps2 >> 8) & 0xFF;
-  apps_message.buf[3] = (apps2 >> 16) & 0xFF;
-  apps_message.buf[4] = (apps2 >> 24) & 0xFF;
+  apps_message.buf[1] = (apps_lower >> 0) & 0xFF;
+  apps_message.buf[2] = (apps_lower >> 8) & 0xFF;
+  apps_message.buf[3] = (apps_lower >> 16) & 0xFF;
+  apps_message.buf[4] = (apps_lower >> 24) & 0xFF;
   can1.write(apps_message);
 }
 

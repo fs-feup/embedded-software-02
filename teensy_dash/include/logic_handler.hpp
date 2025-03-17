@@ -11,16 +11,19 @@ public:
   bool should_start_manual_driving() const;
   bool should_start_as_driving() const;
   bool should_go_idle() const;
-  int scale_apps2_to_apps1(int apps2) const;
-  int calculate_torque();
+  uint16_t scale_apps_lower_to_apps_higher(const uint16_t apps_lower) const;
+  uint16_t calculate_torque();
 
 private:
-  bool plausibility(int apps1, int apps2) const;
-  int apps_to_bamocar_value(int apps1, int apps2);
-  elapsedMillis implausibility_timer = 0;
+  bool plausibility(int apps_higher, int apps_lower) const;
+  uint16_t apps_to_bamocar_value(const uint16_t apps_higher, const uint16_t apps_lower);
+  elapsedMillis brake_implausibility_timer = 0;
+  elapsedMillis apps_implausibility_timer = 0;
   bool apps_timeout = false;
   SystemData& data;
   SystemVolatileData& updated_data;
+  bool check_brake_plausibility(const uint16_t bamocar_value);
+  bool check_apps_plausibility(const uint16_t apps_higher_avg, const uint16_t apps_lower_avg);
 };
 
 LogicHandler::LogicHandler(SystemData& system_data, SystemVolatileData& current_updated_data)
@@ -36,15 +39,15 @@ bool LogicHandler::should_start_as_driving() const {
 
 bool LogicHandler::should_go_idle() const { return (!updated_data.TSOn); }
 
-int LogicHandler::scale_apps2_to_apps1(const int apps2) const {
-  return apps2 + config::apps::LINEAR_OFFSET;
+uint16_t LogicHandler::scale_apps_lower_to_apps_higher(const uint16_t apps_lower) const {
+  return apps_lower + config::apps::LINEAR_OFFSET;
 }
 
-bool LogicHandler::plausibility(const int apps1, const int apps2) const {//unit test, todo
-  bool valid_input = (apps1 >= apps2) && (apps1 <= config::apps::UPPER_BOUND_APPS1) &&
-                     (apps1 >= config::apps::LOWER_BOUND_APPS1) &&
-                     (apps2 <= config::apps::UPPER_BOUND_APPS2) &&
-                     (apps2 >= config::apps::LOWER_BOUND_APPS2);
+bool LogicHandler::plausibility(const int apps_higher, const int apps_lower) const {  // unit test, todo
+  bool valid_input = (apps_higher >= apps_lower) && (apps_higher <= config::apps::UPPER_BOUND_APPS_HIGHER) &&
+                     (apps_higher >= config::apps::LOWER_BOUND_APPS_HIGHER) &&
+                     (apps_lower <= config::apps::UPPER_BOUND_APPS_LOWER) &&
+                     (apps_lower >= config::apps::LOWER_BOUND_APPS_LOWER);
 
   if (!valid_input) {
     return false;
@@ -52,81 +55,90 @@ bool LogicHandler::plausibility(const int apps1, const int apps2) const {//unit 
 
   bool is_plausible = false;
 
-  if (apps1 >= config::apps::DEAD_THRESHOLD_APPS1) {
+  if (apps_higher >= config::apps::DEAD_THRESHOLD_APPS_HIGHER) {
     is_plausible =
-        (apps2 >= config::apps::DEADZONE_EQUIVALENT_APPS1 - config::apps::MAX_ERROR_ABS &&
-         apps2 <= config::apps::UPPER_BOUND_APPS2);
-  } else if (apps2 <= config::apps::DEAD_THRESHOLD_APPS2) {
-    is_plausible = (apps1 >= config::apps::LOWER_BOUND_APPS1 &&
-                    apps1 <= config::apps::DEADZONE_EQUIVALENT_APPS2 + config::apps::MAX_ERROR_ABS);
+        (apps_lower >= config::apps::APPS_HIGHER_DEADZONE_IN_APPS_LOWER_SCALE - config::apps::MAX_ERROR_ABS &&
+         apps_lower <= config::apps::UPPER_BOUND_APPS_LOWER);
+  } else if (apps_lower <= config::apps::DEAD_THRESHOLD_APPS_LOWER) {
+    is_plausible =
+        (apps_higher >= config::apps::LOWER_BOUND_APPS_HIGHER &&
+         apps_higher <= config::apps::APPS_LOWER_DEADZONE_IN_APPS_HIGHER_SCALE + config::apps::MAX_ERROR_ABS);
   } else {
-    const int apps2_updated = scale_apps2_to_apps1(apps2);
-    const int plausibility_value = abs(apps2_updated - apps1) * 100 / apps1;//rmv 2x 100 ? todo
-    is_plausible = (plausibility_value < config::apps::MAX_ERROR_PERCENT * 100);
+    const int apps_lower_updated = scale_apps_lower_to_apps_higher(apps_lower);
+    const int plausibility_value = abs(apps_lower_updated - apps_higher) * 100 / apps_higher;
+    is_plausible = (plausibility_value < config::apps::MAX_ERROR_PERCENT);
   }
 
   return is_plausible;
 }
 
-int LogicHandler::apps_to_bamocar_value(const int apps1, const int apps2) {
-  int torque_value = 0;
+uint16_t LogicHandler::apps_to_bamocar_value(const uint16_t apps_higher, const uint16_t apps_lower) {
+  uint16_t torque_value = 0;
 
-  if (apps2 <= config::apps::DEAD_THRESHOLD_APPS2) {
-    torque_value = apps1;
+  if (apps_lower <= config::apps::DEAD_THRESHOLD_APPS_LOWER) {
+    torque_value = apps_higher;
   } else {
-    torque_value = scale_apps2_to_apps1(apps2);
+    torque_value = scale_apps_lower_to_apps_higher(apps_lower);
   }
 
-  if (torque_value > config::apps::MAX) {
-    torque_value = config::apps::MAX;
-  }
-  if (torque_value < config::apps::MIN) {
-    torque_value = config::apps::MIN;
-  }
+  torque_value = constrain(torque_value, config::apps::MIN, config::apps::MAX);
 
   torque_value = map(torque_value, config::apps::MIN, config::apps::MAX, config::bamocar::MIN,
                      config::bamocar::MAX);
 
-  if (torque_value >= config::bamocar::MAX) {
-    return config::bamocar::MAX;
-  }
-  return torque_value;
+  return min(torque_value, config::bamocar::MAX);
 }
 
-int LogicHandler::calculate_torque() { //TODO: Refactor this function
-  int apps1_average = average_queue(data.apps1_readings);
-  int apps2_average = average_queue(data.apps2_readings);
+bool LogicHandler::check_brake_plausibility(uint16_t bamocar_value) {
+  float pedal_travel_percentage = ((float)bamocar_value / config::bamocar::MAX) * 100.0;
 
-  bool plausible = plausibility(apps1_average, apps2_average);
-
-  if (!plausible && implausibility_timer > config::apps::IMPLAUSIBLE_TIMEOUT_MS) {
-    return 0;
+  if (updated_data.brake_pressure >= config::apps::BRAKE_BLOCK_THRESHOLD &&
+      pedal_travel_percentage >= 25.0) {
+    if (brake_implausibility_timer > config::apps::BRAKE_PLAUSIBILITY_TIMEOUT_MS) {
+      apps_timeout = true;
+      return false;
+    }
+  } else {
+    brake_implausibility_timer = 0;
   }
 
-  if (plausible) {
-    implausibility_timer = 0;
+  return true;
+}
+
+bool LogicHandler::check_apps_plausibility(uint16_t apps_higher_avg, uint16_t apps_lower_avg) {
+  bool plausible = plausibility(apps_higher_avg, apps_lower_avg);
+
+  if (!plausible) {
+    if (apps_implausibility_timer > config::apps::IMPLAUSIBLE_TIMEOUT_MS) {
+      return false;
+    }
+  } else {
+    apps_implausibility_timer = 0;
   }
 
-  int bamocar_value = apps_to_bamocar_value(apps1_average, apps2_average);
+  return true;
+}
+
+uint16_t LogicHandler::calculate_torque() {
+  uint16_t apps_higher_average = average_queue(data.apps_higher_readings);
+  uint16_t apps_lower_average = average_queue(data.apps_lower_readings);
+
+  if (!check_apps_plausibility(apps_higher_average, apps_lower_average)) {
+    return config::apps::ERROR_PLAUSIBILITY;  // shutdown ?
+  }
+
+  uint16_t bamocar_value = apps_to_bamocar_value(apps_higher_average, apps_lower_average);
 
   if (apps_timeout) {
-    if (bamocar_value == 0) {
+    if (bamocar_value == 0) {  // Pedal released
       apps_timeout = false;
     } else {
       return 0;
     }
   }
 
-  float pedal_travel_percentage = ((float)bamocar_value / config::bamocar::MAX) * 100.0;
-
-  if (updated_data.brake_pressure >= config::apps::BRAKE_BLOCK_THRESHOLD &&
-      pedal_travel_percentage >= 25.0) {
-    if (implausibility_timer > config::apps::BRAKE_PLAUSIBILITY_TIMEOUT_MS) {
-      apps_timeout = true;
-      return 0;
-    }
-  } else {
-    implausibility_timer = 0;
+  if (!check_brake_plausibility(bamocar_value)) {
+    return 0;
   }
 
   return bamocar_value;

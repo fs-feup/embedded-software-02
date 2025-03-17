@@ -9,6 +9,8 @@
 SystemData data;
 SystemVolatileData updated_data;
 volatile SystemVolatileData updatable_data;
+elapsedMillis loop_timer;
+constexpr uint8_t MAIN_LOOP_INTERVAL = 100;
 
 IOManager io_manager(data, updatable_data, updated_data);
 CanCommHandler can_comm_handler(data, updatable_data, updated_data);
@@ -21,9 +23,12 @@ void setup() {
 }
 
 void loop() {
-  // TODO: timer for periodic messages
-  io_manager.manage();
-  can_comm_handler.write_periodic_messages();
-  copy_volatile_data(updated_data, updatable_data);
-  state_machine.update();
+  if (loop_timer >= 100) {
+    io_manager.manage();
+    can_comm_handler.write_periodic_messages();
+    copy_volatile_data(updated_data, updatable_data);
+    state_machine.update();
+
+    loop_timer = 0;
+  }
 }
