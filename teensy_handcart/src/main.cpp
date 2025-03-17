@@ -11,39 +11,37 @@ elapsedMillis step;
 
 PARAMETERS param;
 
-bool request = 0;         // BMS request
-bool shutdownStatus = 0;  // Charging shutdown status
-bool latchingStatus = 0;  // Latching error status
+bool request = 0;          // BMS request
+bool shutdown_status = 0;  // Charging shutdown status, 1 for shutdown
+bool latching_status = 0;  // Latching error status, 0 means error (open)
 
+Status charger_status;       // current state machine status
+Status next_charger_status;  // next state machine status
 
-
-Status CH_Status;     // current state machine status
-Status NX_CH_Status;  // next state machine status
-
-void extractValue(uint32_t &paramValue, const uint8_t *buf) {
-  paramValue = 0;
-  paramValue |= buf[4] << 24;
-  paramValue |= buf[5] << 16;
-  paramValue |= buf[6] << 8;
-  paramValue |= buf[7];
+void extract_value(uint32_t &param_value, const uint8_t *buf) {
+  param_value = 0;
+  param_value |= buf[4] << 24;
+  param_value |= buf[5] << 16;
+  param_value |= buf[6] << 8;
+  param_value |= buf[7];
 }
 
-void printValue(const char *label, const uint32_t value) {
+void print_value(const char *label, const uint32_t value) {
   Serial.print(label);
   Serial.print(value);
 }
 
-void handleSetDataResponse(const CAN_message_t &message) {
+void handle_set_data_response(const CAN_message_t &message) {
   switch (message.buf[1]) {
     case SET_VOLTAGE_RESPONSE: {
-      extractValue(param.setVoltage, message.buf);
-      printValue("Voltage Set= ", param.setVoltage);
+      extract_value(param.set_voltage, message.buf);
+      print_value("Voltage Set= ", param.set_voltage);
       break;
     }
 
     case SET_CURRENT_RESPONSE: {
-      extractValue(param.setCurrent, message.buf);
-      printValue("Current Set= ", param.setCurrent);
+      extract_value(param.set_current, message.buf);
+      print_value("Current Set= ", param.set_current);
       break;
     }
 
@@ -53,17 +51,17 @@ void handleSetDataResponse(const CAN_message_t &message) {
   }
 }
 
-void handleReadDataResponse(const CAN_message_t &message) {
+void handle_read_data_response(const CAN_message_t &message) {
   switch (message.buf[1]) {
     case CURRENT_VOLTAGE_RESPONSE: {
-      extractValue(param.currVoltage, message.buf);
-      printValue("Current voltage= ", param.currVoltage);
+      extract_value(param.current_voltage, message.buf);
+      print_value("Current voltage= ", param.current_voltage);
       break;
     }
 
     case CURRENT_CURRENT_RESPONSE: {
-      extractValue(param.currCurrent, message.buf);
-      printValue("Current Current= ", param.currCurrent);
+      extract_value(param.current_current, message.buf);
+      print_value("Current Current= ", param.current_current);
       break;
     }
 
@@ -73,15 +71,15 @@ void handleReadDataResponse(const CAN_message_t &message) {
   }
 }
 
-void parseChargerMessage(const CAN_message_t &message) {
+void parse_charger_message(const CAN_message_t &message) {
   switch (message.buf[0]) {
     case SET_DATA_RESPONSE: {
-      handleSetDataResponse(message);
+      handle_set_data_response(message);
       break;
     }
 
     case READ_DATA_RESPONSE: {
-      handleReadDataResponse(message);
+      handle_read_data_response(message);
       break;
     }
 
@@ -91,10 +89,10 @@ void parseChargerMessage(const CAN_message_t &message) {
   }
 }
 
-void parseMessage(const CAN_message_t &message) {
+void can_snifflas(const CAN_message_t &message) {
   switch (message.id) {
     case CHARGER_ID: {
-      parseChargerMessage(message);
+      parse_charger_message(message);
       break;
     }
 
@@ -103,10 +101,10 @@ void parseMessage(const CAN_message_t &message) {
       break;
     }
 
-    case TEMPERATURES_ID: {//TBD
+    case TEMPERATURES_ID: {  // todo read each board (id) temperature
       int offset = (message.buf[0] & 0xF) * 7;
       for (int i = 0; i < 7 && (i + offset) < 60; i++) {
-        param.temp[i + offset] = message.buf[i + 1];
+        param.temperature[i + offset] = message.buf[i + 1];
       }
       break;
     }
@@ -117,10 +115,9 @@ void parseMessage(const CAN_message_t &message) {
   }
 }
 
-void canint(const CAN_message_t &message) { parseMessage(message); }
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(115200);
+  Serial.begin(115'200);
   Serial.println("startup");
 
   pinMode(CH_SAFETY_PIN, INPUT);
@@ -136,26 +133,27 @@ void setup() {
   can1.setFIFOFilter(1, BMS_ID_CCL, STD);
   can1.setFIFOFilter(2, BMS_ID_ERR, STD);
   can1.setFIFOFilter(3, TEMPERATURES_ID, STD);
-  can1.onReceive(canint);
+  can1.onReceive(can_snifflas);
 
-  param.setVoltage = MAX_VOLTAGE;
+  param.set_voltage = MAX_VOLTAGE;
 }
 
-void chargerMachine() {
-  switch (CH_Status) {
+void charger_machine() {
+  next_charger_status = charger_status;
+  switch (charger_status) {
     case Status::IDLE: {
-      if (shutdownStatus) {
-        NX_CH_Status = Status::SHUTDOWN;
-      } else if (request == 1 and latchingStatus == 1) {
-        NX_CH_Status = Status::CHARGING;
+      if (shutdown_status) {
+        next_charger_status = Status::SHUTDOWN;
+      } else if (request == 1 && latching_status == 1) {
+        next_charger_status = Status::CHARGING;
       }
       break;
     }
     case Status::CHARGING: {
-      if (shutdownStatus) {
-        NX_CH_Status = Status::SHUTDOWN;
-      } else if (request == 0 or latchingStatus == 0) {
-        NX_CH_Status = Status::IDLE;
+      if (shutdown_status) {
+        next_charger_status = Status::SHUTDOWN;
+      } else if (request == 0 || latching_status == 0) {
+        next_charger_status = Status::IDLE;
       }
       break;
     }
@@ -169,12 +167,12 @@ void chargerMachine() {
   }
 }
 
-void readInputs() {
-  shutdownStatus = digitalRead(SHUTDOWN_PIN);
-  latchingStatus = digitalRead(LATCHING_ERROR_PIN);
+void read_inputs() {
+  shutdown_status = digitalRead(SHUTDOWN_PIN);
+  latching_status = digitalRead(LATCHING_ERROR_PIN);
 }
 
-void powerOnModule(const bool OnOff) {
+void power_on_module(const bool OnOff) {
   CAN_message_t powerMsg;
 
   powerMsg.id = CHARGER_ID;
@@ -196,7 +194,7 @@ void powerOnModule(const bool OnOff) {
   can1.write(powerMsg);  // send message
 }
 
-void setVoltage(uint32_t voltage) {
+void set_voltage(uint32_t voltage) {
   CAN_message_t voltageMsg;
 
   voltageMsg.id = CHARGER_ID;
@@ -214,61 +212,61 @@ void setVoltage(uint32_t voltage) {
   can1.write(voltageMsg);  // send message
 }
 
-void setCurrent(const uint32_t current) {
-  CAN_message_t currentMsg;
+void set_current(const uint32_t current) {
+  CAN_message_t current_msg;
 
-  currentMsg.id = CHARGER_ID;
-  currentMsg.flags.extended = 1;
-  currentMsg.len = 8;
-  currentMsg.buf[0] = 0x10;
-  currentMsg.buf[1] = 0x03;
-  currentMsg.buf[2] = 0x00;
-  currentMsg.buf[3] = 0x00;
-  currentMsg.buf[4] = current >> 24 & 0xff;
-  currentMsg.buf[5] = current >> 16 & 0xff;
-  currentMsg.buf[6] = current >> 8 & 0xff;
-  currentMsg.buf[7] = current & 0xff;
+  current_msg.id = CHARGER_ID;
+  current_msg.flags.extended = 1;
+  current_msg.len = 8;
+  current_msg.buf[0] = 0x10;
+  current_msg.buf[1] = 0x03;
+  current_msg.buf[2] = 0x00;
+  current_msg.buf[3] = 0x00;
+  current_msg.buf[4] = current >> 24 & 0xff;
+  current_msg.buf[5] = current >> 16 & 0xff;
+  current_msg.buf[6] = current >> 8 & 0xff;
+  current_msg.buf[7] = current & 0xff;
 
-  can1.write(currentMsg);  // send message
+  can1.write(current_msg);  // send message
 }
 
-void setLOW() {
-  CAN_message_t LowMsg;
+void set_low() {
+  CAN_message_t low_msg;
 
-  LowMsg.id = CHARGER_ID;
-  LowMsg.flags.extended = 1;
-  LowMsg.len = 8;
-  LowMsg.buf[0] = 0x10;
-  LowMsg.buf[1] = 0x5f;
-  LowMsg.buf[2] = 0x00;
-  LowMsg.buf[3] = 0x00;
-  LowMsg.buf[4] = 0x00;
-  LowMsg.buf[5] = 0x00;
-  LowMsg.buf[6] = 0x00;
-  LowMsg.buf[7] = 0x00;
+  low_msg.id = CHARGER_ID;
+  low_msg.flags.extended = 1;
+  low_msg.len = 8;
+  low_msg.buf[0] = 0x10;
+  low_msg.buf[1] = 0x5f;
+  low_msg.buf[2] = 0x00;
+  low_msg.buf[3] = 0x00;
+  low_msg.buf[4] = 0x00;
+  low_msg.buf[5] = 0x00;
+  low_msg.buf[6] = 0x00;
+  low_msg.buf[7] = 0x00;
 
-  can1.write(LowMsg);  // send message
+  can1.write(low_msg);  // send message
 }
 
-void readCurrent() {
-  CAN_message_t requestMsg;
-  requestMsg.id = REQUEST_CURRENT_ID;
-  requestMsg.len = 8;
-  requestMsg.buf[0] = 0x12;  // Byte0: GroupAddress and MessageType
-  requestMsg.buf[1] = 0x01;  // Byte1: CommandType (Read current)
-  requestMsg.buf[2] = 0x00;  // Byte2: Reserved
-  requestMsg.buf[3] = 0x00;  // Byte3: Reserved
-  requestMsg.buf[4] = 0x00;  // Byte4: Reserved
-  requestMsg.buf[5] = 0x00;  // Byte5: Reserved
-  requestMsg.buf[6] = 0x00;  // Byte6: Reserved
-  requestMsg.buf[7] = 0x00;  // Byte7: Reserved
+void read_current() {
+  CAN_message_t request_msg;
+  request_msg.id = REQUEST_CURRENT_ID;
+  request_msg.len = 8;
+  request_msg.buf[0] = 0x12;  // Byte0: GroupAddress and MessageType
+  request_msg.buf[1] = 0x01;  // Byte1: CommandType (Read current)
+  request_msg.buf[2] = 0x00;  // Byte2: Reserved
+  request_msg.buf[3] = 0x00;  // Byte3: Reserved
+  request_msg.buf[4] = 0x00;  // Byte4: Reserved
+  request_msg.buf[5] = 0x00;  // Byte5: Reserved
+  request_msg.buf[6] = 0x00;  // Byte6: Reserved
+  request_msg.buf[7] = 0x00;  // Byte7: Reserved
 
-  can1.write(requestMsg);
+  can1.write(request_msg);
 }
-void updateCharger(Status CH_Status) {
-  setCurrent(param.allowedCurrent);
-  setVoltage(MAX_VOLTAGE);
-  powerOnModule(CH_Status == Status::CHARGING);
+void update_charger(Status charger_status) {
+  set_current(param.allowed_current);
+  set_voltage(MAX_VOLTAGE);
+  power_on_module(charger_status == Status::CHARGING);
 }
 
 void loop() {
@@ -278,33 +276,33 @@ void loop() {
 
   step = 0;
 
-  readInputs();
-  chargerMachine();
-  CH_Status = NX_CH_Status;
+  read_inputs();
+  charger_machine();
+  charger_status = next_charger_status;
 
   if (param.ccl < MAX_CURRENT) {
-    param.allowedCurrent = param.ccl;
+    param.allowed_current = param.ccl;
   } else {
-    param.allowedCurrent = MAX_CURRENT;
+    param.allowed_current = MAX_CURRENT;
   }
 
   for (int i = 0; i < 60; i++) {
-    Serial.print("temp");
+    Serial.print("temperature");
     Serial.print(i);
     Serial.print(": ");
 
     if (i == 20 || i == 21 || i == 29) {
-      Serial.println(param.temp[19]);
+      Serial.println(param.temperature[19]);
       continue;
     }
-    if (param.temp[i] == 0) {
+    if (param.temperature[i] == 0) {
       Serial.println("Thermistor turned off");
     } else {
-      Serial.println(param.temp[i]);
+      Serial.println(param.temperature[i]);
     }
   }
 
-  updateCharger(CH_Status);
+  update_charger(charger_status);
 
   Serial.printf("ccl: %d\n", param.ccl);
 

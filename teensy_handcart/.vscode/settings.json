@@ -5,6 +5,17 @@
         "projectKey": "fs-feup_embedded-software-02"
     },
     "files.associations": {
-        "*.tpp": "cpp"
+        "*.tpp": "cpp",
+        "*.tcc": "cpp",
+        "algorithm": "cpp",
+        "memory": "cpp",
+        "random": "cpp",
+        "initializer_list": "cpp",
+        "numeric": "cpp",
+        "ostream": "cpp",
+        "streambuf": "cpp",
+        "array": "cpp",
+        "functional": "cpp",
+        "tuple": "cpp"
     }
 }

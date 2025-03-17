@@ -13,7 +13,7 @@
 #define CHARGER_SAFETY_BIT_MASK 0x04
 #define BMS_ID_ERR 0x123
 #define CHARGER_ID 0x02207446
-#define TEMPERATURES_ID 0x301
+#define TEMPERATURES_ID 0x301 //todo change to correct id 100 + BOARD_ID
 #define BMS_ID 0x639
 
 #define SHUTDOWN_PIN 32
