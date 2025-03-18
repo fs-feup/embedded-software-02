@@ -14,8 +14,7 @@
 class CheckupManager {
 private:
   SystemData *_system_data_;  ///< Pointer to the system data object containing system status and
-                              ///< sensor information.
-  uint8_t pressure_test_phase_{0};
+  ///< sensor information.
   Metro _watchdog_toggle_timer_{WATCHDOG_TOGGLE_DURATION};  ///< Timer for watchdog toggle sequence
   Metro _watchdog_test_timer_{WATCHDOG_TEST_DURATION};      ///< Timer for watchdog verification
   bool _watchdog_toggle_in_timer_{false};  ///< Flag to indicate if the watchdog toggle is in
@@ -71,10 +70,12 @@ public:
    */
   enum class CheckupState {
     WAIT_FOR_ASMS,
-    START_WATCHDOG,
+    START_TOGGLING_WATCHDOG,
     TOGGLING_WATCHDOG,
     STOP_TOGGLING_WATCHDOG,
     CHECK_WATCHDOG,
+    CHECK_EBS_STORAGE,
+    CHECK_BRAKE_PRESSURE,
     CLOSE_SDC,
     WAIT_FOR_ASATS,
     WAIT_FOR_TS,
@@ -83,13 +84,32 @@ public:
     CHECKUP_COMPLETE
   };
 
+  enum class EbsPressureTestPhase {
+    DISABLE_ACTUATOR_1,
+    CHECK_ACTUATOR_2,
+    ENABLE_ACTUATOR_1,
+    DISABLE_ACTUATOR_2,
+    CHECK_ACTUATOR_1,
+    ENABLE_ACTUATOR_2,
+    COMPLETE
+  };
+
   /**
    * This is for easier debugging in case initial checkup fails
    */
-  enum class CheckupError { WAITING_FOR_RESPONSE, ERROR, SUCCESS };
+  enum class CheckupError {
+    WAITING_FOR_RESPONSE,
+    ERROR_WD_STAYED_READY,
+    ERROR_WD_TOGGLE,
+    ERROR_TIMESTAMPS_EMERGENCY,
+    ERROR,
+    SUCCESS
+  };
 
   CheckupState checkup_state_{
       CheckupState::WAIT_FOR_ASMS};  ///< Current state of the checkup process.
+
+  EbsPressureTestPhase pressure_test_phase_{EbsPressureTestPhase::ACTIVATE};
 
   /**
    * @brief Constructor for the CheckupManager class.
@@ -187,25 +207,25 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
   switch (checkup_state_) {
     case CheckupState::WAIT_FOR_ASMS:
       if (_system_data_->hardware_data_.asms_on_) {
-        checkup_state_ = CheckupState::START_WATCHDOG;
+        checkup_state_ = CheckupState::START_TOGGLING_WATCHDOG;
         DEBUG_PRINT("ASMS activated, starting watchdog check");
       }
       break;
-    case CheckupState::START_WATCHDOG:
+    case CheckupState::START_TOGGLING_WATCHDOG:
       if (_system_data_->hardware_data_.wd_ready_) {
         checkup_state_ = CheckupState::TOGGLING_WATCHDOG;
         _watchdog_toggle_timer_.reset();
         DEBUG_PRINT("Watchdog ready, starting toggle sequence");
         break;
       }
-      DigitalSender::start_watchdog();
+      DigitalSender::toggle_watchdog();
       break;
 
     case CheckupState::TOGGLING_WATCHDOG:
       // Fail immediately if WD_READY goes low during toggling
       if (!_system_data_->hardware_data_.wd_ready_) {
         DEBUG_PRINT("Watchdog error: WD_READY went low during toggling phase");
-        return CheckupError::ERROR;  // TODO: return specific error
+        return CheckupError::ERROR_WD_TOGGLE;
       }
 
       DigitalSender::toggle_watchdog();
@@ -219,14 +239,12 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
       break;
 
     case CheckupState::STOP_TOGGLING_WATCHDOG:
-      // Just reset the timer and transition to the check state
       _watchdog_test_timer_.reset();
       checkup_state_ = CheckupState::CHECK_WATCHDOG;
       DEBUG_PRINT("Stopping watchdog toggle, beginning verification");
       break;
 
     case CheckupState::CHECK_WATCHDOG:
-      // Check if WD_READY goes low during this state
       if (!_system_data_->hardware_data_.wd_ready_) {
         _watchdog_toggle_in_timer_ = true;
         DigitalSender::close_watchdog_sdc();
@@ -235,9 +253,17 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
       }
       if (_watchdog_test_timer_.checkWithoutReset()) {
         DEBUG_PRINT("Watchdog test failed - WD_READY did not go low during verification time");
-        return CheckupError::ERROR;
+        return CheckupError::ERROR_WD_STAYED_READY;
       }
-
+    case CheckupState::CHECK_EBS_STORAGE:
+      if (_system_data_->hardware_data_.pneumatic_line_pressure_) {
+        checkup_state_ = CheckupState::CHECK_BRAKE_PRESSURE;
+      }
+      break;
+    case CheckupState::CHECK_BRAKE_PRESSURE:
+      if (_system_data_->hardware_data_._hydraulic_line_pressure >= HYDRAULIC_BRAKE_THRESHOLD) {
+        checkup_state_ = CheckupState::WAIT_FOR_ASATS;
+      }
       break;
     case CheckupState::WAIT_FOR_ASATS:
 
@@ -262,10 +288,9 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
       handle_ebs_check();
       break;
     case CheckupState::CHECK_TIMESTAMPS: {
-      // Check if all components have responded and no emergency signal has been sent
       if (_system_data_->failure_detection_.has_any_component_timed_out() ||
           _system_data_->failure_detection_.emergency_signal_) {
-        return CheckupError::ERROR;
+        return CheckupError::ERROR_TIMESTAMPS_EMERGENCY;
       }
       checkup_state_ = CheckupState::CHECKUP_COMPLETE;
       DEBUG_PRINT("Checkup complete and returning success");
@@ -279,22 +304,55 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
 
 inline void CheckupManager::handle_ebs_check() {
   switch (pressure_test_phase_) {
-    case 0:  // activate
-      DigitalSender::activate_ebs();
-      pressure_test_phase_++;
+    case EbsPressureTestPhase::DISABLE_ACTUATOR_1:
+      // Step 10: Disable EBS actuator 1
+      DEBUG_PRINT("Disabling EBS actuator 1");
+      DigitalSender::disable_ebs_actuator_1();
+      pressure_test_phase_ = EbsPressureTestPhase::CHECK_ACTUATOR_2;
       break;
-    case 1:  // check and deactivate
+
+    case EbsPressureTestPhase::CHECK_ACTUATOR_2:
       if (check_pressure_high()) {
-        DigitalSender::deactivate_ebs();
-        pressure_test_phase_++;
+        DEBUG_PRINT("Pressure high confirmed with only actuator 2");
+        pressure_test_phase_ = EbsPressureTestPhase::ENABLE_ACTUATOR_1;
       }
       break;
-    case 2:  // check and activate
-      if (check_pressure_low()) {
-        pressure_test_phase_ = 0;
-        DigitalSender::activate_ebs();  // might not be necessary
-        checkup_state_ = CheckupState::CHECK_TIMESTAMPS;
+
+    case EbsPressureTestPhase::ENABLE_ACTUATOR_1:
+      // Step 12: Enable EBS actuator 1 again
+      DEBUG_PRINT("Re-enabling EBS actuator 1");
+      DigitalSender::enable_ebs_actuator_1();
+      pressure_test_phase_ = EbsPressureTestPhase::DISABLE_ACTUATOR_2;
+      break;
+
+    case EbsPressureTestPhase::DISABLE_ACTUATOR_2:
+      // Step 13: Disable EBS actuator 2
+      DEBUG_PRINT("Disabling EBS actuator 2");
+      DigitalSender::disable_ebs_actuator_2();
+      pressure_test_phase_ = EbsPressureTestPhase::CHECK_ACTUATOR_1;
+      break;
+
+    case EbsPressureTestPhase::CHECK_ACTUATOR_1:
+      // Step 14: Check that the brake pressure is still built up correctly
+      if (check_pressure_high()) {
+        DEBUG_PRINT("Pressure high confirmed with only actuator 1");
+        pressure_test_phase_ = EbsPressureTestPhase::ENABLE_ACTUATOR_2;
       }
+      break;
+
+    case EbsPressureTestPhase::ENABLE_ACTUATOR_2:
+      // Step 15: Enable EBS actuator 2 again
+      DEBUG_PRINT("Re-enabling EBS actuator 2");
+      DigitalSender::enable_ebs_actuator_2();
+      pressure_test_phase_ = EbsPressureTestPhase::COMPLETE;
+      break;
+
+    case EbsPressureTestPhase::COMPLETE:
+      // Step 16: Transition to ready state (isto n fazemos já mas vamos checkar as timestamps e
+      // entramos ready dps)
+      DEBUG_PRINT("EBS check complete, transitioning to next state");
+      pressure_test_phase_ = EbsPressureTestPhase::DISABLE_ACTUATOR_1;
+      checkup_state_ = CheckupState::CHECK_TIMESTAMPS;
       break;
   }
 }
@@ -313,7 +371,7 @@ inline bool CheckupManager::should_stay_ready() const {
   if (!_system_data_->r2d_logics_.r2d) {
     return true;
   }
-  _system_data_->r2d_logics_.enter_driving_state();
+  _system_data_->r2d_logics_.reset_ebs_timestamp();
   return false;
 }
 

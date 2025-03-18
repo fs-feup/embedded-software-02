@@ -1,5 +1,6 @@
 #pragma once
 
+#include "TeensyTimerTool.h"
 #include "comm/communicator.hpp"
 #include "debugUtils.hpp"
 #include "embedded/digitalSender.hpp"
@@ -7,7 +8,6 @@
 #include "metro.h"
 #include "model/systemData.hpp"
 #include "timings.hpp"
-#include "TeensyTimerTool.h"
 
 class OutputCoordinator {
 private:
@@ -20,6 +20,7 @@ private:
 
   Metro mission_timer_;
   Metro state_timer_;
+  Metro process_timer_{PROCESS_INTERVAL};
 
   uint8_t previous_master_state_;
   uint8_t previous_checkup_state_;
@@ -44,15 +45,17 @@ public:
   }
 
   void process(uint8_t current_master_state, uint8_t current_checkup_state) {
-    // TODO: timer
-    send_soc();
-    send_asms();
-    send_debug_on_state_change(current_master_state, current_checkup_state);
-    send_mission_update();
-    send_state_update(current_master_state);
-    dash_ats_update(current_master_state);
-    update_physical_outputs();
-    send_rpm();
+    if (process_timer_.check()) {
+      send_soc();
+      send_asms();
+      send_debug_on_state_change(current_master_state, current_checkup_state);
+      send_mission_update();
+      send_state_update(current_master_state);
+      dash_ats_update(current_master_state);
+      update_physical_outputs();
+      send_rpm();
+      process_timer_.reset();
+    }
   }
 
   void blink_emergency_led() {

@@ -31,7 +31,7 @@ struct R2DLogics {
   /**
    * @brief resets timestamps for driving
    */
-  void enter_driving_state() { releaseEbsTimestamp.reset(); }
+  void reset_ebs_timestamp() { releaseEbsTimestamp.reset(); }
 
   /**
    * @brief Processes the go signal.

@@ -14,7 +14,6 @@
  */
 class DigitalSender {
 private:
-
 public:
   // Array of valid output pins
   static constexpr std::array<int, 9> validOutputPins = {
@@ -56,7 +55,27 @@ public:
    * @brief Deactivates the solenoid EBS valves.
    */
   static void deactivate_ebs();
+  // Add these function declarations in the public section of the DigitalSender class:
 
+  /**
+   * @brief Disables EBS actuator 1.
+   */
+  static void disable_ebs_actuator_1();
+
+  /**
+   * @brief Enables EBS actuator 1.
+   */
+  static void enable_ebs_actuator_1();
+
+  /**
+   * @brief Disables EBS actuator 2.
+   */
+  static void disable_ebs_actuator_2();
+
+  /**
+   * @brief Enables EBS actuator 2.
+   */
+  static void enable_ebs_actuator_2();
   /**
    * @brief Blinks the LED at the given pin.
    * @param pin The pin to blink.
@@ -82,10 +101,6 @@ public:
    * @brief Toggles the watchdog signal.
    */
   static void toggle_watchdog();
-  /**
-   * @brief Starts the watchdog signal.
-   */
-  static void start_watchdog();
   /**
    * @brief Closes the watchdog signal for SDC.
    */
@@ -114,6 +129,14 @@ inline void DigitalSender::deactivate_ebs() {
   digitalWrite(EBS_VALVE_2_PIN, LOW);
 }
 
+inline void DigitalSender::disable_ebs_actuator_1() { digitalWrite(EBS_VALVE_1_PIN, LOW); }
+
+inline void DigitalSender::enable_ebs_actuator_1() { digitalWrite(EBS_VALVE_1_PIN, HIGH); }
+
+inline void DigitalSender::disable_ebs_actuator_2() { digitalWrite(EBS_VALVE_2_PIN, LOW); }
+
+inline void DigitalSender::enable_ebs_actuator_2() { digitalWrite(EBS_VALVE_2_PIN, HIGH); }
+
 inline void DigitalSender::turn_off_assi() {
   analogWrite(ASSI_YELLOW_PIN, LOW);
   analogWrite(ASSI_BLUE_PIN, LOW);
@@ -127,7 +150,6 @@ inline void DigitalSender::blink_led(const int pin) {
   static bool blink_state = false;
   blink_state = !blink_state;
   analogWrite(pin, blink_state * 1023);
-  
 }
 
 inline void DigitalSender::turn_on_brake_light() { digitalWrite(BRAKE_LIGHT, HIGH); }
@@ -141,9 +163,7 @@ inline void DigitalSender::no_bspd_error() { digitalWrite(SDC_BSPD_OUT, LOW); }
 inline void DigitalSender::toggle_watchdog() {
   static bool wd_state = false;
   wd_state = !wd_state;
-  digitalWrite(WD_ALIVE, wd_state);  // TODO wd routine review
+  digitalWrite(WD_ALIVE, wd_state);
 }
-
-inline void DigitalSender::start_watchdog() { digitalWrite(WD_ALIVE, HIGH); }
 
 inline void DigitalSender::close_watchdog_sdc() { digitalWrite(WD_SDC_CLOSE, HIGH); }

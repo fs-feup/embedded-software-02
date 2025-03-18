@@ -78,7 +78,7 @@ inline void ASState::calculate_state() {
                 instance->state_ = State::AS_EMERGENCY;
               }
             },
-            250'000);
+            150'000);
       }
       // If manual driving checkup fails, the car can't be in OFF state, so it goes back to MANUAL
       if (_checkup_manager_.should_stay_manual_driving()) {
