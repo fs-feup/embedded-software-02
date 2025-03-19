@@ -64,7 +64,7 @@ bool commandSent = false;                   // Tracks if a one-time command has 
 bool transmissionEnabled = false;           // Tracks if the transmission is enabled
 bool BTBReady = false;                      // Tracks if the BTB is ready
 unsigned long currentTime = 0;              // Tracks the current time
-int userControl = 1000;    // Default torque value (non-zero)
+int userControl = 0;    // Default torque value (non-zero)
 String inputBuffer = "";  // Buffer to store incoming characters
 bool newInput = false;    // Flag to indicate new input is available
 uint16_t rawSpeed = 0;
@@ -160,7 +160,7 @@ void bamocar_callback(const uint8_t* msg_data) {
       break;
     case 0xA0:
       Serial.print("Motor torque: ");
-      Serial.println(msg_data[1] | (msg_data[2] << 8) | (msg_data[3] << 16));
+      Serial.print(msg_data[1] | (msg_data[2] << 8) | (msg_data[3] << 16));
       Serial.print(" OR ");
       Serial.println(msg_data[3] | (msg_data[2] << 8) | (msg_data[1] << 16));
       break;
