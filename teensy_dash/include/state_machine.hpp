@@ -34,7 +34,7 @@ void StateMachine::update() {
     case State::IDLE:
       if (logic_handler.should_start_manual_driving()) {
         transition_to_driving();
-        current_state_ = State::DRIVING;
+        current_state_ = State::DRIVING;                                                                                                                                                                        /* comi o cu de quem leu */
       } else if (logic_handler.should_start_as_driving()) {
         transition_to_as_driving();
         current_state_ = State::AS_DRIVING;
@@ -54,7 +54,7 @@ void StateMachine::update() {
 }
 
 void StateMachine::transition_to_driving() {
-  io_manager.play_r2d_sound();
+  io_manager.play_r2d_sound(); // tapem os ouvidos!
   can_handler.init_bamocar();
 }
 
@@ -67,9 +67,10 @@ void StateMachine::handle_driving() {
   if (logic_handler.should_go_idle()) {
     current_state_ = State::IDLE;
     can_handler.stop_bamocar();
+    return;
   }
   // TODO(PedroRomao3): timer needed?
-  if (current_state_ == State::DRIVING) {
+  else if (current_state_ == State::DRIVING) {
     int torque_from_apps = logic_handler.calculate_torque();
     if(torque_from_apps == config::apps::ERROR_PLAUSIBILITY){
       can_handler.stop_bamocar();

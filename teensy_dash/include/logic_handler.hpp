@@ -43,8 +43,10 @@ uint16_t LogicHandler::scale_apps_lower_to_apps_higher(const uint16_t apps_lower
   return apps_lower + config::apps::LINEAR_OFFSET;
 }
 
-bool LogicHandler::plausibility(const int apps_higher, const int apps_lower) const {  // unit test, todo
-  bool valid_input = (apps_higher >= apps_lower) && (apps_higher <= config::apps::UPPER_BOUND_APPS_HIGHER) &&
+bool LogicHandler::plausibility(const int apps_higher,
+                                const int apps_lower) const {  // unit test, todo
+  bool valid_input = (apps_higher >= apps_lower) &&
+                     (apps_higher <= config::apps::UPPER_BOUND_APPS_HIGHER) &&
                      (apps_higher >= config::apps::LOWER_BOUND_APPS_HIGHER) &&
                      (apps_lower <= config::apps::UPPER_BOUND_APPS_LOWER) &&
                      (apps_lower >= config::apps::LOWER_BOUND_APPS_LOWER);
@@ -53,23 +55,23 @@ bool LogicHandler::plausibility(const int apps_higher, const int apps_lower) con
     return false;
   }
 
-  bool is_plausible = false;
-
   if (apps_higher >= config::apps::DEAD_THRESHOLD_APPS_HIGHER) {
-    is_plausible =
-        (apps_lower >= config::apps::APPS_HIGHER_DEADZONE_IN_APPS_LOWER_SCALE - config::apps::MAX_ERROR_ABS &&
-         apps_lower <= config::apps::UPPER_BOUND_APPS_LOWER);
-  } else if (apps_lower <= config::apps::DEAD_THRESHOLD_APPS_LOWER) {
-    is_plausible =
-        (apps_higher >= config::apps::LOWER_BOUND_APPS_HIGHER &&
-         apps_higher <= config::apps::APPS_LOWER_DEADZONE_IN_APPS_HIGHER_SCALE + config::apps::MAX_ERROR_ABS);
-  } else {
-    const int apps_lower_updated = scale_apps_lower_to_apps_higher(apps_lower);
-    const int plausibility_value = abs(apps_lower_updated - apps_higher) * 100 / apps_higher;
-    is_plausible = (plausibility_value < config::apps::MAX_ERROR_PERCENT);
+    const int min_expected_apps_lower =
+        config::apps::APPS_HIGHER_DEADZONE_IN_APPS_LOWER_SCALE - config::apps::MAX_ERROR_ABS;
+    return (apps_lower >= min_expected_apps_lower);
   }
 
-  return is_plausible;
+  if (apps_lower <= config::apps::DEAD_THRESHOLD_APPS_LOWER) {
+    const int max_expected_apps_higher =
+        config::apps::APPS_LOWER_DEADZONE_IN_APPS_HIGHER_SCALE + config::apps::MAX_ERROR_ABS;
+    return (apps_higher <= max_expected_apps_higher);
+  }
+
+  const int scaled_apps_lower = scale_apps_lower_to_apps_higher(apps_lower);
+  const int difference = abs(scaled_apps_lower - apps_higher);
+  const int percentage_difference = (difference * 100) / apps_higher;
+
+  return (percentage_difference < config::apps::MAX_ERROR_PERCENT);
 }
 
 uint16_t LogicHandler::apps_to_bamocar_value(const uint16_t apps_higher, const uint16_t apps_lower) {
@@ -108,10 +110,8 @@ bool LogicHandler::check_brake_plausibility(uint16_t bamocar_value) {
 bool LogicHandler::check_apps_plausibility(uint16_t apps_higher_avg, uint16_t apps_lower_avg) {
   bool plausible = plausibility(apps_higher_avg, apps_lower_avg);
 
-  if (!plausible) {
-    if (apps_implausibility_timer > config::apps::IMPLAUSIBLE_TIMEOUT_MS) {
-      return false;
-    }
+  if (!plausible && apps_implausibility_timer > config::apps::IMPLAUSIBLE_TIMEOUT_MS) {
+    return false;
   } else {
     apps_implausibility_timer = 0;
   }
