@@ -48,11 +48,6 @@ enum InitState {
   ERROR
 };
 
-enum ControlMode {
-  TORQUE_MODE,
-  SPEED_MODE
-};
-
 InitState currentState = CLEAR_ERRORS;
 unsigned long stateStartTime = 0;           // Tracks when the current state began
 unsigned long lastActionTime = 0;           // Tracks the last command send time
