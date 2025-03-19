@@ -132,7 +132,7 @@ void CanCommHandler::write_rpm() {
   rpm_message.len = 5;
 
   char fr_rpm_byte[4] = {0, 0, 0, 0};
-  rpm_2_byte(data.fr_rpm, fr_rpm_byte);
+  rpm_to_bytes(data.fr_rpm, fr_rpm_byte);
 
   rpm_message.buf[0] = 0x10;  // TODO: add define
   rpm_message.buf[1] = fr_rpm_byte[0];
@@ -142,7 +142,7 @@ void CanCommHandler::write_rpm() {
   can1.write(rpm_message);
 
   char fl_rpm_byte[4] = {0, 0, 0, 0};
-  rpm_2_byte(data.fl_rpm, fl_rpm_byte);
+  rpm_to_bytes(data.fl_rpm, fl_rpm_byte);
 
   rpm_message.buf[0] = 0x11;  // TODO: add define
   rpm_message.buf[1] = fl_rpm_byte[0];

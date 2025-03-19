@@ -3,8 +3,8 @@
 
 namespace pins {
     namespace analog {
-        constexpr uint8_t APPS_1 = 22;
-        constexpr uint8_t APPS_2 = 20;
+        constexpr uint8_t APPS_HIGHER = 22;
+        constexpr uint8_t APPS_LOWER = 20;
         constexpr uint8_t BRAKE_PRESSURE = 19;
         constexpr uint8_t ROTARY_SWITCH = 23;
     }

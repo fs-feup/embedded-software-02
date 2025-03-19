@@ -49,6 +49,8 @@ void copy_volatile_data(SystemVolatileData& dest, volatile SystemVolatileData co
   dest.as_ready = src.as_ready;
   dest.asms_on = src.asms_on;
   dest.brake_pressure = src.brake_pressure;
+  dest.speed = src.speed;
+  dest.soc = src.soc;
   dest.last_wheel_pulse_fr = src.last_wheel_pulse_fr;
   dest.second_to_last_wheel_pulse_fr = src.second_to_last_wheel_pulse_fr;
   dest.last_wheel_pulse_fl = src.last_wheel_pulse_fl;

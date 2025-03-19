@@ -86,8 +86,8 @@ void IOManager::manage_ats() {
 }
 void IOManager::setup() {
   pinMode(pins::digital::INERTIA, INPUT);
-  pinMode(pins::analog::APPS_1, INPUT);
-  pinMode(pins::analog::APPS_2, INPUT);
+  pinMode(pins::analog::APPS_HIGHER, INPUT);
+  pinMode(pins::analog::APPS_LOWER, INPUT);
   pinMode(pins::analog::ROTARY_SWITCH, INPUT);
   pinMode(pins::analog::BRAKE_PRESSURE, INPUT);
   pinMode(pins::output::BUZZER, OUTPUT);
@@ -120,8 +120,8 @@ void IOManager::setup() {
 }
 
 void IOManager::read_apps() {
-  insert_value_queue(analogRead(pins::analog::APPS_1), data.apps_higher_readings);
-  insert_value_queue(analogRead(pins::analog::APPS_2), data.apps_lower_readings);
+  insert_value_queue(analogRead(pins::analog::APPS_HIGHER), data.apps_higher_readings);
+  insert_value_queue(analogRead(pins::analog::APPS_LOWER), data.apps_lower_readings);
 }
 
 void IOManager::play_r2d_sound() { play_buzzer(1); }
@@ -146,15 +146,43 @@ inline void IOManager::read_pins_handle_leds() {
 }
 
 void IOManager::calculate_rpm() {
-  unsigned long time_interval_fr =
-      updated_data.last_wheel_pulse_fr - updated_data.second_to_last_wheel_pulse_fr;
-  unsigned long time_interval_fl =
-      updated_data.last_wheel_pulse_fl - updated_data.second_to_last_wheel_pulse_fl;
-
-  data.fr_rpm = (micros() - updated_data.last_wheel_pulse_fr > config::wheel::LIMIT_RPM_INTERVAL)
-                    ? 0.0
-                    : 1 / (time_interval_fr * 1e-6 * config::wheel::PULSES_PER_ROTATION) * 60;
-  data.fl_rpm = (micros() - updated_data.last_wheel_pulse_fl > config::wheel::LIMIT_RPM_INTERVAL)
-                    ? 0.0
-                    : 1 / (time_interval_fl * 1e-6 * config::wheel::PULSES_PER_ROTATION) * 60;
+  constexpr float MICROSEC_TO_MIN = 60.0f / 1000000.0f; // Convert μs to minutes
+  const unsigned long current_time = micros();
+  
+  // Front right wheelLIMIT_RPM_INTERVAL
+  unsigned long time_since_last_pulse_fr = current_time - updated_data.last_wheel_pulse_fr;
+  if (time_since_last_pulse_fr > config::wheel::LIMIT_RPM_INTERVAL) {
+    // No recent pulses, wheel stopped
+    data.fr_rpm = 0.0f;
+  } else {
+    // Check if time_interval calculation would overflow
+    unsigned long time_interval_fr = 
+        (updated_data.last_wheel_pulse_fr >= updated_data.second_to_last_wheel_pulse_fr) ?
+        updated_data.last_wheel_pulse_fr - updated_data.second_to_last_wheel_pulse_fr :
+        0; // Handle overflow case
+    
+    // Avoid division by zero
+    if (time_interval_fr > 0) {
+      data.fr_rpm = (MICROSEC_TO_MIN / (time_interval_fr * config::wheel::PULSES_PER_ROTATION));
+    } else {
+      data.fr_rpm = 0.0f; // Invalid interval
+    }
+  }
+  
+  // Front left wheel (same logic)
+  unsigned long time_since_last_pulse_fl = current_time - updated_data.last_wheel_pulse_fl;
+  if (time_since_last_pulse_fl > config::wheel::LIMIT_RPM_INTERVAL) {
+    data.fl_rpm = 0.0f;
+  } else {
+    unsigned long time_interval_fl = 
+        (updated_data.last_wheel_pulse_fl >= updated_data.second_to_last_wheel_pulse_fl) ?
+        updated_data.last_wheel_pulse_fl - updated_data.second_to_last_wheel_pulse_fl :
+        0;
+    
+    if (time_interval_fl > 0) {
+      data.fl_rpm = (MICROSEC_TO_MIN / (time_interval_fl * config::wheel::PULSES_PER_ROTATION));
+    } else {
+      data.fl_rpm = 0.0f;
+    }
+  }
 }
