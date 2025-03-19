@@ -12,11 +12,11 @@ CAN_message_t removeDisable = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0x51, 0x
 CAN_message_t rampAccRequest = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0x35, 0xF4, 0x01}};
 CAN_message_t rampDecRequest = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0xED, 0xE8, 0x03}};
 CAN_message_t speedRequestFirst = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0x31, 0xD4, 0x03}};
-CAN_message_t actualSpeedRequest = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, 0x30, 0x64}};
+CAN_message_t actualSpeedRequest = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, 0x30, 0xFE}}; // every 0xFE mseconds (254)
 CAN_message_t speedRequestZero = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0x31, 0x00, 0x00}};
 
 CAN_message_t torqueRequestFirst = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0x90, 0xFC, 0x3F}};
-CAN_message_t actualTorqueRequest = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, 0xA0, 0x64}};
+CAN_message_t actualTorqueRequest = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, 0xA0, 0xFE}}; // every 0xFE mseconds (254)
 CAN_message_t torqueRequestZero = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0x90, 0x00, 0x00}};
 
 
@@ -48,6 +48,11 @@ enum InitState {
   ERROR
 };
 
+enum ControlMode {
+  TORQUE_MODE,
+  SPEED_MODE
+};
+
 InitState currentState = CLEAR_ERRORS;
 unsigned long stateStartTime = 0;           // Tracks when the current state began
 unsigned long lastActionTime = 0;           // Tracks the last command send time
@@ -62,6 +67,8 @@ unsigned long currentTime = 0;              // Tracks the current time
 int userControl = 1000;    // Default torque value (non-zero)
 String inputBuffer = "";  // Buffer to store incoming characters
 bool newInput = false;    // Flag to indicate new input is available
+uint16_t rawSpeed = 0;
+float speedPercentage = 0.0f;
 
 void request_dataLOG_messages() {
   rpmRequest.id = BAMO_COMMAND_ID;
@@ -147,11 +154,15 @@ void bamocar_callback(const uint8_t* msg_data) {
       break;
     case 0x30:
       Serial.print("Motor speed: ");
-      Serial.println((msg_data[1]) | msg_data[2] << 8 | msg_data[3] << 16);
+      Serial.print(msg_data[1] | (msg_data[2] << 8) | (msg_data[3] << 16));
+      Serial.print(" OR ");
+      Serial.println(msg_data[3] | (msg_data[2] << 8) | (msg_data[1] << 16));
       break;
     case 0xA0:
       Serial.print("Motor torque: ");
-      Serial.println((msg_data[1]) | msg_data[2] << 8 | msg_data[3] << 16);
+      Serial.println(msg_data[1] | (msg_data[2] << 8) | (msg_data[3] << 16));
+      Serial.print(" OR ");
+      Serial.println(msg_data[3] | (msg_data[2] << 8) | (msg_data[1] << 16));
       break;
     default:
       break;
@@ -185,7 +196,8 @@ void sendTorque(int torqueValue) {
   torque_message.buf[0] = 0x90;                       // REGID for TORQUE_SETPOINT
   torque_message.buf[1] = torqueValue & 0xFF;         // Lower byte
   torque_message.buf[2] = (torqueValue >> 8) & 0xFF;  // Upper byte
-
+  Serial.print("Sending torque: ");
+  Serial.println(torqueValue);
   can1.write(torque_message);
 }
 
@@ -196,7 +208,8 @@ void sendSpeed(int speedValue) {
   speed_message.buf[0] = 0x31;                       // REGID for TORQUE_SETPOINT
   speed_message.buf[1] = speedValue & 0xFF;          // Lower byte
   speed_message.buf[2] = (speedValue >> 8) & 0xFF;   // Upper byte
-
+  Serial.print("Sending speed: ");
+  Serial.println(speedValue);
   can1.write(speed_message);
 }
 
@@ -243,114 +256,6 @@ int checkSerialInput() {
   return 0;
 }
 
-void speedSM(){
-  switch (currentState) {
-    case CLEAR_ERRORS:
-      if (!commandSent) {
-        can1.write(clearErrors);
-        commandSent = true;
-        stateStartTime = currentTime;
-      }
-      if (currentTime - stateStartTime >= 100) {
-        currentState = CHECK_BTB;
-        Serial.println("Errors cleared, enabling transmission");
-        commandSent = false;
-        stateStartTime = currentTime;
-        lastActionTime = currentTime;
-      }
-      break;
-
-    case CHECK_BTB:
-      if (currentTime - lastActionTime >= actionInterval) {
-        can1.write(checkBTBStatus);
-        lastActionTime = currentTime;
-      }
-      if (BTBReady) {
-        currentState = DISABLE;
-        commandSent = false;
-      } else if (currentTime - stateStartTime >= timeout) {
-        Serial.println("Timeout checking BTB");
-        Serial.println("Error during initialization");
-        currentState = ERROR;
-      }
-      break;
-
-    case DISABLE:
-      //can1.write(disable); /* TRY THIS - 1 (there's 3) */
-      currentState = ENABLE_TRANSMISSION;
-    case ENABLE_TRANSMISSION:
-      if (currentTime - lastActionTime >= actionInterval) {
-        Serial.println("Enabling transmission");
-        can1.write(enableTransmission);
-        lastActionTime = currentTime;
-      }
-      if (transmissionEnabled) {
-        currentState = REMOVE_DISABLE;
-        commandSent = false;
-        stateStartTime = currentTime;
-        lastActionTime = currentTime;
-      } else if (currentTime - stateStartTime >= timeout) {
-        Serial.println("Timeout enabling transmission");
-        Serial.println("Error during initialization");
-        currentState = ERROR;
-      }
-      break;
-
-    case REMOVE_DISABLE:
-      if (!commandSent) {
-        can1.write(removeDisable);
-        commandSent = true;
-        currentState = ACC_RAMP;
-        // request_dataLOG_messages();
-      }
-      break;
-
-    case ACC_RAMP:
-      can1.write(rampAccRequest);
-      currentState = DEC_RAMP;
-      break;
-
-    case DEC_RAMP:
-      can1.write(rampDecRequest);
-      currentState = CONTROL_VALUE_INIT;
-      break;
-    
-    case CONTROL_VALUE_INIT:
-      can1.write(speedRequestFirst);
-      currentState = ACTUAL_CONTROL_REQUEST ;
-      break;
-    case ACTUAL_CONTROL_REQUEST:
-      can1.write(actualSpeedRequest);
-      currentState = INITIALIZED;
-      break;
-    case INITIALIZED:
-      // Send torque command every 1 second if BTBReady and transmissionEnabled
-      if (checkSerialInput()) {
-        can1.write(speedRequestZero);
-        delay(1000);
-        can1.write(disable);
-        // exit program
-        currentState = END;
-        break;
-      }
-      if (currentTime - lastTorqueTime >= torqueInterval) {
-        if (BTBReady && transmissionEnabled) {
-          // sendTorque(userControl);
-          sendSpeed(userControl);
-          Serial.print("Torque command sent: ");
-          Serial.println(userControl);
-          lastTorqueTime = currentTime;
-        }
-      }
-      break;
-    case END:
-      Serial.println("Program ended");
-      break;
-    case ERROR:
-      break;
-  }
-}
-
 void torqueSM(){
   switch (currentState) {
     case CLEAR_ERRORS:
@@ -370,6 +275,7 @@ void torqueSM(){
 
     case CHECK_BTB:
       if (currentTime - lastActionTime >= actionInterval) {
+        Serial.println("Checking BTB status");
         can1.write(checkBTBStatus);
         lastActionTime = currentTime;
       }
@@ -384,7 +290,8 @@ void torqueSM(){
       break;
 
     case DISABLE:
-      //can1.write(disable); /* TRY THIS TOO - 2  */
+      Serial.println("Disabling");
+      can1.write(disable);
       currentState = ENABLE_TRANSMISSION;
     case ENABLE_TRANSMISSION:
       if (currentTime - lastActionTime >= actionInterval) {
@@ -406,6 +313,7 @@ void torqueSM(){
 
     case REMOVE_DISABLE:
       if (!commandSent) {
+        Serial.println("Removing disable");
         can1.write(removeDisable);
         commandSent = true;
         currentState = ACC_RAMP;
@@ -414,27 +322,43 @@ void torqueSM(){
       break;
 
     case ACC_RAMP:
+      Serial.print("Transmitting acceleration ramp: ");
+      Serial.print(rampAccRequest.buf[1] | (rampAccRequest.buf[2] << 8));
+      Serial.print("ms");
       can1.write(rampAccRequest);
       currentState = DEC_RAMP;
       break;
 
     case DEC_RAMP:
+      Serial.print("Transmitting deceleration ramp: ");
+      Serial.print(rampDecRequest.buf[1] | (rampDecRequest.buf[2] << 8));
+      Serial.print("ms");
       can1.write(rampDecRequest);
       currentState = CONTROL_VALUE_INIT;
       break;
     
     case CONTROL_VALUE_INIT:
-      can1.write(torqueRequestFirst);
-      currentState = ACTUAL_CONTROL_REQUEST ;
+      rawSpeed = (torqueRequestFirst.buf[2] << 8) | torqueRequestFirst.buf[1];
+      speedPercentage = (rawSpeed * 100.0f) / 32767.0f;
+      Serial.print("Transmitting first torque request: Raw=");
+      Serial.print(rawSpeed);
+      Serial.print(" (");
+      Serial.print(speedPercentage, 2); // Print with 2 decimal places
+      Serial.println("%)");
+
+      sendTorque(0x03D4);
+      currentState = ACTUAL_CONTROL_REQUEST;
       break;
     case ACTUAL_CONTROL_REQUEST:
+      Serial.print("Requesting actual torque: ");
+      Serial.print(actualTorqueRequest.buf[1] | (actualTorqueRequest.buf[2] << 8));
       can1.write(actualTorqueRequest);
       currentState = INITIALIZED;
       break;
     case INITIALIZED:
       // Send torque command every 1 second if BTBReady and transmissionEnabled
-      if (checkSerialInput()) {
-        can1.write(torqueRequestZero);
+      if (checkSerialInput()) { // if user typed "exit" in serial monitor
+        sendTorque(0);
         delay(1000);
         can1.write(disable);
         // exit program
@@ -443,8 +367,7 @@ void torqueSM(){
       }
       if (currentTime - lastTorqueTime >= torqueInterval) {
         if (BTBReady && transmissionEnabled) {
-          // sendTorque(userControl);
-          sendSpeed(userControl);
+          sendTorque(userControl);
           Serial.print("Torque command sent: ");
           Serial.println(userControl);
           lastTorqueTime = currentTime;
@@ -476,7 +399,6 @@ void setup() {
 
 void loop() {
   currentTime = millis();  // Get current time
-  speedSM();
-  //torqueSM();
+  torqueSM();
   
 }
