@@ -14,11 +14,10 @@
 class CheckupManager {
 private:
   SystemData *_system_data_;  ///< Pointer to the system data object containing system status and
+  TeensyTimerTool::PeriodicTimer watchdog_timer_;
   ///< sensor information.
   Metro _watchdog_toggle_timer_{WATCHDOG_TOGGLE_DURATION};  ///< Timer for watchdog toggle sequence
   Metro _watchdog_test_timer_{WATCHDOG_TEST_DURATION};      ///< Timer for watchdog verification
-  bool _watchdog_toggle_in_timer_{false};  ///< Flag to indicate if the watchdog toggle is in
-                                           ///< progress in the interrupt timer.
 
   /**
    * @brief Checks if the pneumatic pressure is high enough, meaning EBS worked.
@@ -74,6 +73,7 @@ public:
     TOGGLING_WATCHDOG,
     STOP_TOGGLING_WATCHDOG,
     CHECK_WATCHDOG,
+    START_TOGGLING_WATCHDOG_AGAIN,
     CHECK_EBS_STORAGE,
     CHECK_BRAKE_PRESSURE,
     CLOSE_SDC,
@@ -109,7 +109,7 @@ public:
   CheckupState checkup_state_{
       CheckupState::WAIT_FOR_ASMS};  ///< Current state of the checkup process.
 
-  EbsPressureTestPhase pressure_test_phase_{EbsPressureTestPhase::ACTIVATE};
+  EbsPressureTestPhase pressure_test_phase_{EbsPressureTestPhase::DISABLE_ACTUATOR_1};
 
   /**
    * @brief Constructor for the CheckupManager class.
@@ -246,15 +246,21 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
 
     case CheckupState::CHECK_WATCHDOG:
       if (!_system_data_->hardware_data_.wd_ready_) {
-        _watchdog_toggle_in_timer_ = true;
         DigitalSender::close_watchdog_sdc();
-        checkup_state_ = CheckupState::WAIT_FOR_ASATS;
+
+        checkup_state_ = CheckupState::START_TOGGLING_WATCHDOG_AGAIN;
         DEBUG_PRINT("Watchdog no longer ready - verification successful");
+        break;
       }
       if (_watchdog_test_timer_.checkWithoutReset()) {
         DEBUG_PRINT("Watchdog test failed - WD_READY did not go low during verification time");
         return CheckupError::ERROR_WD_STAYED_READY;
       }
+      break;
+    case CheckupState::START_TOGGLING_WATCHDOG_AGAIN:
+      watchdog_timer_.begin([] { DigitalSender::toggle_watchdog(); }, 50'000);
+      checkup_state_ = CheckupState::CHECK_EBS_STORAGE;
+      break;
     case CheckupState::CHECK_EBS_STORAGE:
       if (_system_data_->hardware_data_.pneumatic_line_pressure_) {
         checkup_state_ = CheckupState::CHECK_BRAKE_PRESSURE;
@@ -375,6 +381,9 @@ inline bool CheckupManager::should_stay_ready() const {
   return false;
 }
 
+// ----------------------------------------------------------
+// this is ugly as fuck but I don't care >:(
+// ----------------------------------------------------------
 inline bool CheckupManager::should_enter_emergency(State current_state) const {
   if (current_state == State::AS_READY) {
     return should_enter_emergency_in_ready_state();

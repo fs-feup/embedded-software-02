@@ -11,7 +11,6 @@
 
 class OutputCoordinator {
 private:
-  TeensyTimerTool::PeriodicTimer watchdog_timer_;
   Metro blink_timer_{LED_BLINK_INTERVAL};  ///< Timer for blinking LED
 
   SystemData* system_data_;
@@ -102,8 +101,6 @@ public:
    * @brief ASSI yellow LED on, ebs valves activated, sdc closed.
    */
   void enter_ready_state() {
-    watchdog_timer_.begin([] { DigitalSender::toggle_watchdog(); }, 50'000);
-
     digital_sender_->turn_off_assi();
     digital_sender_->turn_on_yellow();
     digital_sender_->activate_ebs();

@@ -156,7 +156,7 @@ inline void Communicator::res_state_callback(const uint8_t *buf) {
 
   if (go_button || go_switch)
     _systemData->r2d_logics_.process_go_signal();
-  else if (!emg_stop1 && !emg_stop2) {
+  else if (!(emg_stop1 || emg_stop2)) { // If both are false 
     _systemData->failure_detection_.emergency_signal_ = true;
   }
 
@@ -190,12 +190,17 @@ inline void Communicator::bamocar_callback(const uint8_t *buf) {
     unsigned dc_voltage = (buf[2] << 8) | buf[1];
     _systemData->failure_detection_.dc_voltage_ = dc_voltage;
 
+    // Voltage hysteresis:
     if (dc_voltage < DC_THRESHOLD) {
+      // When voltage drops/is below threshold: 
+      // Reset hold timer and check if voltage has been below threshold long enough
       _systemData->failure_detection_.dc_voltage_hold_timestamp_.reset();
       if (_systemData->failure_detection_.dc_voltage_drop_timestamp_.checkWithoutReset()) {
         _systemData->failure_detection_.ts_on_ = false;
       }
     } else {
+      // When voltage is above threshold:
+      // Reset drop timer and check if voltage has been above threshold long enough
       _systemData->failure_detection_.dc_voltage_drop_timestamp_.reset();
       if (_systemData->failure_detection_.dc_voltage_hold_timestamp_.checkWithoutReset()) {
         _systemData->failure_detection_.ts_on_ = true;
