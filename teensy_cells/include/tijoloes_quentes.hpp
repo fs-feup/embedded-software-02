@@ -7,12 +7,12 @@
 // System Configuration
 constexpr uint8_t TOTAL_BOARDS = 6;
 constexpr uint16_t DELAY_INTERVAL = 100;
-constexpr uint8_t N_NTC = 18;
+constexpr uint8_t NTC_SENSOR_COUNT = 18;
 constexpr uint16_t ANALOG_MAX = 1023;
 constexpr uint16_t ANALOG_MIN = 0;
 constexpr int ERROR_SIGNAL = 35;
 constexpr uint8_t MAX_RETRIES = 3;
-
+constexpr uint8_t MAX_NUM_ERRORS = 4;
 // Voltage and Resistor Configuration
 constexpr float VDD = 5.0;
 constexpr float V_REF = 3.3f;

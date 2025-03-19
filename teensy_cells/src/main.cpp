@@ -2,13 +2,14 @@
 
 FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> can1;
 
-const u_int8_t pin_ntc_temp[N_NTC] = {A4,  A5,  A6,  A7, A8, A9,  A2,  A3,  A10,
-                                     A11, A12, A13, A0, A1, A17, A16, A15, A14};
+const u_int8_t pin_ntc_temp[NTC_SENSOR_COUNT] = {A4,  A5,  A6,  A7, A8, A9,  A2,  A3,  A10,
+                                                 A11, A12, A13, A0, A1, A17, A16, A15, A14};
 
-float cell_temps[N_NTC];
+float cell_temps[NTC_SENSOR_COUNT];
 
 unsigned long last_reading_time = 0;
-
+uint8_t error_count = 0;
+uint8_t no_error_iterations = 0;
 static BoardData board_temps[TOTAL_BOARDS];
 
 float read_ntc_temperature(const int analog_value) {
@@ -33,35 +34,37 @@ void read_check_temperatures() {
   float sum_temp = 0.0;
   float min_temp = TEMPERATURE_MIN_C;
   float max_temp = TEMPERATURE_MAX_C;
-  bool error_flag = false;
+  bool error = false;
 
-  for (int i = 0; i < N_NTC; i++) {
+  for (int i = 0; i < NTC_SENSOR_COUNT; i++) {
     cell_temps[i] = read_ntc_temperature(analogRead(pin_ntc_temp[i]));
     min_temp = min(min_temp, cell_temps[i]);
     max_temp = max(max_temp, cell_temps[i]);
     sum_temp += cell_temps[i];
-    if (cell_temps[i] > MAXIMUM_TEMPERATURE && !error_flag) {
-      error_flag = true;
-    }
-  }
-  board_temps[BOARD_ID].temp_data.min_temp = safe_temperature_cast(min_temp);
-  board_temps[BOARD_ID].temp_data.max_temp = safe_temperature_cast(max_temp);
-  board_temps[BOARD_ID].temp_data.avg_temp = safe_temperature_cast(sum_temp / N_NTC);
-  board_temps[BOARD_ID].valid = true;
 
-  digitalWrite(ERROR_SIGNAL, error_flag ? HIGH : LOW);
+    if (cell_temps[i] > MAXIMUM_TEMPERATURE && !error) {
+      error_count++;
+      error = true;
+    }
+
+    board_temps[BOARD_ID].temp_data.min_temp = safe_temperature_cast(min_temp);
+    board_temps[BOARD_ID].temp_data.max_temp = safe_temperature_cast(max_temp);
+    board_temps[BOARD_ID].temp_data.avg_temp = safe_temperature_cast(sum_temp / NTC_SENSOR_COUNT);
+    board_temps[BOARD_ID].valid = true;
+
+    digitalWrite(ERROR_SIGNAL, error_count >= MAX_NUM_ERRORS ? HIGH : LOW);
+  }
+  if(!error){
+    no_error_iterations++;
+  }
 }
 
 bool check_temperature_timeouts() {
-  if (!THIS_IS_MASTER) {
-    return false;
-  }
 
   const unsigned long current_time = millis();
   bool timeout_detected = false;
 
-  for (uint8_t board_id = (BOARD_ID == 0) ? 1 : 0; board_id < TOTAL_BOARDS; board_id++) {
-    if (board_id == BOARD_ID) continue;
+  for (uint8_t board_id = 1; board_id < TOTAL_BOARDS; board_id++) {
 
     const BoardData& board = board_temps[board_id];
 
@@ -162,7 +165,7 @@ void send_can_all_cell_temperatures() {
 
     for (int i = 0; i < CELLS_PER_MESSAGE; i++) {
       int cellIndex = (msgIndex * CELLS_PER_MESSAGE) + i;
-      if (cellIndex < N_NTC) {
+      if (cellIndex < NTC_SENSOR_COUNT) {
         msg.buf[i + 2] = safe_temperature_cast(cell_temps[cellIndex]);
       } else {
         msg.buf[i + 2] = 0;
@@ -178,7 +181,7 @@ void send_can_all_cell_temperatures() {
     Serial.print(" | Cells ");
     Serial.print(msgIndex * CELLS_PER_MESSAGE + 1);
     Serial.print("-");
-    Serial.println(min((msgIndex + 1) * CELLS_PER_MESSAGE, N_NTC));
+    Serial.println(min((msgIndex + 1) * CELLS_PER_MESSAGE, NTC_SENSOR_COUNT));
 
     delay(100);
   }
@@ -188,7 +191,7 @@ void show_temperatures() {
   Serial.write("\033[2J");  // Clear screen
   Serial.write("\033[H");   // Home cursor
   Serial.println("----------- Temperaturas -----------");
-  for (int i = 0; i < N_NTC; i++) {
+  for (int i = 0; i < NTC_SENSOR_COUNT; i++) {
     Serial.print("CELL ");
     Serial.print(i + 1);
     Serial.print(": ");
@@ -212,6 +215,7 @@ void can_snifflas(const CAN_message_t& msg) {
       Serial.print(board_from_id);
       Serial.print(", ID from payload: ");
       Serial.println(board_from_buf);
+      return;
     }
 
     if (board_from_id < TOTAL_BOARDS) {
@@ -253,48 +257,57 @@ void setup() {
   code_reset();
   can1.begin();
   can1.setBaudRate(CAN_BAUD_RATE);
-  if (THIS_IS_MASTER) {
-    unsigned long current_time = millis();
-    for (uint8_t i = 0; i < TOTAL_BOARDS; i++) {
-      if (i != BOARD_ID) {
-        board_temps[i].last_update_ms = current_time;
-      }
+
+#ifdef THIS_IS_MASTER
+  unsigned long current_time = millis();
+  for (uint8_t i = 0; i < TOTAL_BOARDS; i++) {
+    if (i != BOARD_ID) {
+      board_temps[i].last_update_ms = current_time;
     }
-
-    can1.enableFIFO();
-    can1.enableFIFOInterrupt();
-    can1.setFIFOFilter(REJECT_ALL);
-
-    for (uint8_t i = 0; i < min(8, TOTAL_BOARDS); i++) {  // FlexCAN typically supports 8 filters
-      can1.setFIFOFilter(i, CELL_TEMPS_BASE_ID + i, STD);
-    }
-
-    can1.onReceive(can_snifflas);
-    Serial.println("CAN filters configured for all board IDs");
   }
+
+  can1.enableFIFO();
+  can1.enableFIFOInterrupt();
+  can1.setFIFOFilter(REJECT_ALL);
+
+  for (uint8_t i = 0; i < min(8, TOTAL_BOARDS); i++) {  // FlexCAN typically supports 8 filters
+    can1.setFIFOFilter(i, CELL_TEMPS_BASE_ID + i, STD);
+  }
+
+  can1.onReceive(can_snifflas);
+  Serial.println("CAN filters configured for all board IDs");
+#endif
 }
 
 void loop() {
   unsigned long current_time = millis();
+  
 
   if (current_time - last_reading_time > DELAY_INTERVAL) {
     last_reading_time = current_time;
     read_check_temperatures();
 
-    if (!THIS_IS_MASTER) {
-      send_can_max_min_avg_temperatures();
-    } else {
-      bool timeout_detected = check_temperature_timeouts();
+#ifndef THIS_IS_MASTER
+    send_can_max_min_avg_temperatures();
+#endif
 
-      if (timeout_detected) {
-        Serial.println("EMERGENCY SHUTDOWN: Temperature data timeout detected!");
-        digitalWrite(ERROR_SIGNAL, HIGH);
-      }
+#ifdef THIS_IS_MASTER
+    bool timeout_detected = check_temperature_timeouts();
 
-      TemperatureData global_data;
-      calculate_global_stats(global_data);
-      send_to_bms(global_data);
+    if (timeout_detected) {
+      Serial.println("EMERGENCY SHUTDOWN: Temperature data timeout detected!");
+      digitalWrite(ERROR_SIGNAL, HIGH);
     }
+
+    TemperatureData global_data;
+    calculate_global_stats(global_data);
+    send_to_bms(global_data);
+#endif
     show_temperatures();
   }
+  if (no_error_iterations >= 50) {
+    error_count = 0;
+    
+  }
+  
 }
