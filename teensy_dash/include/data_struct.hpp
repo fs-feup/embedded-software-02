@@ -31,7 +31,7 @@ struct SystemData {
 
 struct SystemVolatileData {
   bool TSOn = false;
-  bool as_ready = false;
+  uint8_t as_state = 0;
   bool asms_on = false;
   int brake_pressure = 0;
   int speed = 0;
@@ -46,7 +46,7 @@ struct SystemVolatileData {
 void copy_volatile_data(SystemVolatileData& dest, volatile SystemVolatileData const& src) {
   noInterrupts();
   dest.TSOn = src.TSOn;
-  dest.as_ready = src.as_ready;
+  dest.as_state = src.as_state;
   dest.asms_on = src.asms_on;
   dest.brake_pressure = src.brake_pressure;
   dest.speed = src.speed;

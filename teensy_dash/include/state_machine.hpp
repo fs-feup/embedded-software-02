@@ -30,11 +30,12 @@ private:
 };
 
 void StateMachine::update() {
+  int torque_from_apps = 0;
   switch (current_state_) {
     case State::IDLE:
       if (logic_handler.should_start_manual_driving()) {
         transition_to_driving();
-        current_state_ = State::DRIVING;                                                                                                                                                                        /* comi o cu de quem leu */
+        current_state_ = State::DRIVING; /* comi o cu de quem leu */
       } else if (logic_handler.should_start_as_driving()) {
         transition_to_as_driving();
         current_state_ = State::AS_DRIVING;
@@ -43,10 +44,31 @@ void StateMachine::update() {
       }
       break;
     case State::DRIVING:
-      handle_driving();
+      torque_from_apps = logic_handler.calculate_torque();
+      if (logic_handler.should_go_idle()) {
+        current_state_ = State::IDLE;
+        can_handler.stop_bamocar();
+        return;
+      }
+      if (torque_from_apps == config::apps::ERROR_PLAUSIBILITY) {
+        can_handler.stop_bamocar();
+        current_state_ = State::IDLE;
+        return;
+      }
+      can_handler.send_torque(torque_from_apps); /* VVVVVRRRRRRRRRRUUUUUUMMMMMMMMMMMMMMMMMMMMMMMm */
+
       break;
     case State::AS_DRIVING:
-      handle_driving();
+      if (logic_handler.should_go_idle()) {
+        current_state_ = State::IDLE;
+        can_handler.stop_bamocar();
+      }
+      if (logic_handler.just_entered_emergency()) {
+        can_handler.stop_bamocar();
+        current_state_ = State::IDLE;
+        io_manager.play_buzzer(config::buzzer::EMERGENCY_DURATION);
+        return;
+      }
       break;
     default:
       break;
@@ -54,31 +76,11 @@ void StateMachine::update() {
 }
 
 void StateMachine::transition_to_driving() {
-  io_manager.play_r2d_sound(); // tapem os ouvidos!
+  io_manager.play_r2d_sound();  // tapem os ouvidos!
   can_handler.init_bamocar();
 }
 
 void StateMachine::transition_to_as_driving() {
   // delay?
   can_handler.init_bamocar();
-}
-
-void StateMachine::handle_driving() {
-  if (logic_handler.should_go_idle()) {
-    current_state_ = State::IDLE;
-    can_handler.stop_bamocar();
-    return;
-  }
-  // TODO(PedroRomao3): timer needed?
-  else if (current_state_ == State::DRIVING) {
-    int torque_from_apps = logic_handler.calculate_torque();
-    if(torque_from_apps == config::apps::ERROR_PLAUSIBILITY){
-      can_handler.stop_bamocar();
-      current_state_ = State::IDLE;
-      //open sdc? todo
-      // log error 
-      return;
-    }
-    can_handler.send_torque(torque_from_apps);
-  }
 }

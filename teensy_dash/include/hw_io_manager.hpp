@@ -62,7 +62,7 @@ void IOManager::manage() {
   update_R2D_timer();
 }
 
-void IOManager::read_rotative_switch() {//TODO:checkout map function
+void IOManager::read_rotative_switch() {//maybe map
   const int raw_value = analogRead(pins::analog::ROTARY_SWITCH);
   data.switch_mode = static_cast<SwitchMode>((raw_value + config::adc::HALF_JUMP) *
                                              config::adc::NEW_SCALE_MAX / config::adc::MAX_VALUE);
@@ -81,7 +81,7 @@ void IOManager::update_R2D_timer() {
 void IOManager::manage_ats() {
   if (data.ats_pressed && !updated_data.asms_on) {
     data.ats_pressed = false;
-    digitalWrite(pins::digital::ATS_OUT, HIGH);//TODO: when does SDC close at ASATS?
+    digitalWrite(pins::digital::ATS_OUT, HIGH);
   }
 }
 void IOManager::setup() {
@@ -127,7 +127,7 @@ void IOManager::read_apps() {
 void IOManager::play_r2d_sound() { play_buzzer(1); }
 
 void IOManager::play_buzzer(uint8_t duration_seconds) {
-  data.buzzer_active = true;  // TODO: this is PWM now
+  data.buzzer_active = true;
   data.buzzer_start_time = millis();
   data.buzzer_duration_ms = duration_seconds * 1000;
   tone(pins::output::BUZZER, config::buzzer::BUZZER_FREQUENCY);//TODO: tone has time limite maybe timer not needed

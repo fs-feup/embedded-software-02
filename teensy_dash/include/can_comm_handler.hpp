@@ -26,6 +26,9 @@ private:
   SystemVolatileData& updated_data;
   FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> can1;
   elapsedMillis can_timer;
+  elapsedMillis rpm_timer;     // Timer for RPM messages
+  elapsedMillis apps_timer;    // Timer for APPS messages
+  elapsedMillis torque_timer;  // Timer for torque commands
   bool transmission_enabled = false;
   bool btb_ready = false;
   static void can_sniffer(const CAN_message_t& msg);
@@ -97,33 +100,37 @@ void CanCommHandler::bamocar_callback(const uint8_t* msg_data) {
 }
 
 void CanCommHandler::master_callback(const uint8_t* const msg_data) {
-  if (msg_data[0] == HYDRAULIC_LINE) {
-    updatable_data.brake_pressure = (msg_data[2] << 8) | msg_data[1];
-  }
-  if (msg_data[0] == ASMS) {
-    if (msg_data[1] == true) {  // TODO: maybe chnage this to a specif byte define that master will
-                                // send when asms on
-      updatable_data.asms_on = true;
-    } else {
-      updatable_data.asms_on = false;
-    }
-  }
-  if(msg_data[0] == SOC_MSG){
-    updatable_data.soc = msg_data[1];
+  switch (msg_data[0]) {
+    case HYDRAULIC_LINE:
+      updatable_data.brake_pressure = (msg_data[2] << 8) | msg_data[1];
+      break;
 
+    case ASMS:
+      updatable_data.asms_on = msg_data[1];
+      break;
 
-  }
-  if (msg_data[0] == STATE_MSG) {
-    if (msg_data[1] == 2) {
-      // ASState = ASReady
-      updatable_data.as_ready = true;  // TODO: emergency n buzzer logic
-    }
+    case SOC_MSG:
+      updatable_data.soc = msg_data[1];
+      break;
+
+    case STATE_MSG:
+      updatable_data.as_state = msg_data[1];
+      break;
+    default:
+      break;
   }
 }
 
 void CanCommHandler::write_periodic_messages() {
-  write_rpm();
-  write_apps();
+  if (rpm_timer >= RPM_MSG_PERIOD_MS) {
+    write_rpm();
+    rpm_timer = 0;
+  }
+
+  if (apps_timer >= APPS_MSG_PERIOD_MS) {
+    write_apps();
+    apps_timer = 0;
+  }
 }
 
 void CanCommHandler::write_rpm() {
@@ -134,7 +141,7 @@ void CanCommHandler::write_rpm() {
   char fr_rpm_byte[4] = {0, 0, 0, 0};
   rpm_to_bytes(data.fr_rpm, fr_rpm_byte);
 
-  rpm_message.buf[0] = 0x10;  // TODO: add define
+  rpm_message.buf[0] = FR_RPM;
   rpm_message.buf[1] = fr_rpm_byte[0];
   rpm_message.buf[2] = fr_rpm_byte[1];
   rpm_message.buf[3] = fr_rpm_byte[2];
@@ -144,7 +151,7 @@ void CanCommHandler::write_rpm() {
   char fl_rpm_byte[4] = {0, 0, 0, 0};
   rpm_to_bytes(data.fl_rpm, fl_rpm_byte);
 
-  rpm_message.buf[0] = 0x11;  // TODO: add define
+  rpm_message.buf[0] = FL_RPM;
   rpm_message.buf[1] = fl_rpm_byte[0];
   rpm_message.buf[2] = fl_rpm_byte[1];
   rpm_message.buf[3] = fl_rpm_byte[2];
@@ -160,13 +167,15 @@ void CanCommHandler::write_apps() {
   apps_message.id = DASH_ID;
   apps_message.len = 5;
 
-  apps_message.buf[0] = 0x20;  // TODO: add define
+  apps_message.buf[0] = APPS_HIGHER;
 
   apps_message.buf[1] = (apps_higher >> 0) & 0xFF;
   apps_message.buf[2] = (apps_higher >> 8) & 0xFF;
   apps_message.buf[3] = (apps_higher >> 16) & 0xFF;
   apps_message.buf[4] = (apps_higher >> 24) & 0xFF;
   can1.write(apps_message);
+
+  apps_message.buf[0] = APPS_LOWER;
 
   apps_message.buf[1] = (apps_lower >> 0) & 0xFF;
   apps_message.buf[2] = (apps_lower >> 8) & 0xFF;
@@ -176,7 +185,7 @@ void CanCommHandler::write_apps() {
 }
 
 void CanCommHandler::init_bamocar() {
-  CAN_message_t clear_errors;  // TODO: precreate msgs
+  CAN_message_t clear_errors;
   clear_errors.id = BAMO_COMMAND_ID;
   clear_errors.len = 3;
   clear_errors.buf[0] = 0x8E;
@@ -205,7 +214,7 @@ void CanCommHandler::init_bamocar() {
   no_disable.buf[1] = 0x00;
   no_disable.buf[2] = 0x00;
 
-  while (!transmission_enabled && can_timer > CAN_TIMEOUT_MS) {
+  while (!transmission_enabled && can_timer > CAN_TIMEOUT_MS) {  // TODO: change to inesc test logic
     can1.write(transmissionRequestEnable);
     can_timer = 0;
   }
@@ -230,6 +239,10 @@ void CanCommHandler::stop_bamocar() {
 }
 
 void CanCommHandler::send_torque(int torque) {
+  if (torque_timer < TORQUE_MSG_PERIOD_MS) {
+    return;
+  }
+
   CAN_message_t torque_message;
   torque_message.id = BAMO_COMMAND_ID;
   torque_message.len = 3;
@@ -242,4 +255,5 @@ void CanCommHandler::send_torque(int torque) {
   torque_message.buf[2] = torque_byte1;
 
   can1.write(torque_message);
+  torque_timer = 0;
 }

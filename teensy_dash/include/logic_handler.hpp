@@ -11,6 +11,7 @@ public:
   bool should_start_manual_driving() const;
   bool should_start_as_driving() const;
   bool should_go_idle() const;
+  bool just_entered_emergency();
   uint16_t scale_apps_lower_to_apps_higher(const uint16_t apps_lower) const;
   uint16_t calculate_torque();
 
@@ -20,6 +21,7 @@ private:
   elapsedMillis brake_implausibility_timer = 0;
   elapsedMillis apps_implausibility_timer = 0;
   bool apps_timeout = false;
+  bool entered_emergency = false;
   SystemData& data;
   SystemVolatileData& updated_data;
   bool check_brake_plausibility(const uint16_t bamocar_value);
@@ -34,7 +36,8 @@ bool LogicHandler::should_start_manual_driving() const {
 }
 
 bool LogicHandler::should_start_as_driving() const {
-  return (updated_data.TSOn && updated_data.as_ready);
+  return (updated_data.TSOn &&
+          (updated_data.as_state == AS_DRIVING || updated_data.as_state == AS_READY));
 }
 
 bool LogicHandler::should_go_idle() const { return (!updated_data.TSOn); }
@@ -74,7 +77,8 @@ bool LogicHandler::plausibility(const int apps_higher,
   return (percentage_difference < config::apps::MAX_ERROR_PERCENT);
 }
 
-uint16_t LogicHandler::apps_to_bamocar_value(const uint16_t apps_higher, const uint16_t apps_lower) {
+uint16_t LogicHandler::apps_to_bamocar_value(const uint16_t apps_higher,
+                                             const uint16_t apps_lower) {
   uint16_t torque_value = 0;
 
   if (apps_lower <= config::apps::DEAD_THRESHOLD_APPS_LOWER) {
@@ -89,6 +93,14 @@ uint16_t LogicHandler::apps_to_bamocar_value(const uint16_t apps_higher, const u
                      config::bamocar::MAX);
 
   return min(torque_value, config::bamocar::MAX);
+}
+
+inline bool LogicHandler::just_entered_emergency() {
+  if (!entered_emergency && updated_data.as_state == AS_EMERGENCY) {
+    entered_emergency = true;
+  } else if (entered_emergency && updated_data.as_state != AS_EMERGENCY) {
+    entered_emergency = false;  // reset if I left emergency so if i enter again buzzer plays
+  }
 }
 
 bool LogicHandler::check_brake_plausibility(uint16_t bamocar_value) {

@@ -48,6 +48,7 @@ namespace config {
     }
     namespace buzzer {
         constexpr uint32_t BUZZER_FREQUENCY = 500;
+        constexpr uint8_t EMERGENCY_DURATION = 8;
     }
 
     namespace apps {

@@ -5,6 +5,9 @@
 // System Constants
 //-----------------------------------------------------------------------------
 constexpr float CAN_TIMEOUT_MS = 100;
+constexpr uint8_t RPM_MSG_PERIOD_MS = 50;     // 20Hz
+constexpr uint8_t APPS_MSG_PERIOD_MS = 50;    // 20Hz
+constexpr uint8_t TORQUE_MSG_PERIOD_MS = 10;  // 100Hz
 constexpr float WHEEL_PRECISION = 1e-2;
 
 //-----------------------------------------------------------------------------
@@ -21,12 +24,22 @@ constexpr uint32_t CH_ID = 0x02207446;
 //-----------------------------------------------------------------------------
 constexpr uint8_t PC_ALIVE = 0x41;
 constexpr uint8_t MISSION_FINISHED = 0x42;
+constexpr uint8_t AS_READY = 2;
+constexpr uint8_t AS_OFF = 0;
+constexpr uint8_t AS_READY = 2;
+constexpr uint8_t AS_DRIVING = 3;
+constexpr uint8_t AS_EMERGENCY = 4;
+constexpr uint8_t AS_FINISHED = 5;
 constexpr uint8_t AS_CU_EMERGENCY_SIGNAL = 0x43;
 constexpr uint8_t STATE_MSG = 0x31;
 constexpr uint8_t MISSION_MSG = 0x32;
 constexpr uint8_t LEFT_WHEEL_MSG = 0x33;
 constexpr uint8_t DBG_LOG_MSG = 0x34;
 constexpr uint8_t DBG_LOG_MSG_2 = 0x35;
+constexpr uint8_t FR_RPM = 0x10;
+constexpr uint8_t FL_RPM = 0x11;
+constexpr uint8_t APPS_HIGHER = 0x20;
+constexpr uint8_t APPS_LOWER = 0x21;
 
 //-----------------------------------------------------------------------------
 // Logging Status IDs
