@@ -17,7 +17,7 @@ constexpr uint16_t MASTER_ID = 0x300;
 constexpr uint16_t DASH_ID = 0x132;
 constexpr uint16_t AS_CU_ID = 0x400;
 constexpr uint16_t TA_ID = 0x301;
-constexpr uint32_t CH_ID = 0x02207446;
+constexpr uint32_t CH_ID = 0x0220'7446;
 
 //-----------------------------------------------------------------------------
 // Status & Control Message Types

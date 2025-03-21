@@ -214,7 +214,9 @@ void CanCommHandler::init_bamocar() {
   no_disable.buf[1] = 0x00;
   no_disable.buf[2] = 0x00;
 
-  while (!transmission_enabled && can_timer > CAN_TIMEOUT_MS) {  // TODO: change to inesc test logic
+  while (!transmission_enabled &&
+         can_timer > CAN_TIMEOUT_MS) {  // TODO(PedroRomao3): change to inesc test logic  __ou então
+                                        // tijolões quentes faz isto
     can1.write(transmissionRequestEnable);
     can_timer = 0;
   }
@@ -239,21 +241,20 @@ void CanCommHandler::stop_bamocar() {
 }
 
 void CanCommHandler::send_torque(int torque) {
-  if (torque_timer < TORQUE_MSG_PERIOD_MS) {
-    return;
+  if (torque_timer >= TORQUE_MSG_PERIOD_MS) {
+    CAN_message_t torque_message;
+    torque_message.id = BAMO_COMMAND_ID;
+    torque_message.len = 3;
+    torque_message.buf[0] = 0x90;
+
+    uint8_t torque_byte1 = (torque >> 8) & 0xFF;  // MSB
+    uint8_t torque_byte2 = torque & 0xFF;         // LSB
+
+    torque_message.buf[1] = torque_byte2;
+    torque_message.buf[2] = torque_byte1;
+
+    can1.write(torque_message);
+    torque_timer = 0;
   }
-
-  CAN_message_t torque_message;
-  torque_message.id = BAMO_COMMAND_ID;
-  torque_message.len = 3;
-  torque_message.buf[0] = 0x90;
-
-  uint8_t torque_byte1 = (torque >> 8) & 0xFF;  // MSB
-  uint8_t torque_byte2 = torque & 0xFF;         // LSB
-
-  torque_message.buf[1] = torque_byte2;
-  torque_message.buf[2] = torque_byte1;
-
-  can1.write(torque_message);
-  torque_timer = 0;
+  return;
 }

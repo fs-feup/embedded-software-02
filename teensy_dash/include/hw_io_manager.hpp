@@ -130,7 +130,7 @@ void IOManager::play_buzzer(uint8_t duration_seconds) {
   data.buzzer_active = true;
   data.buzzer_start_time = millis();
   data.buzzer_duration_ms = duration_seconds * 1000;
-  tone(pins::output::BUZZER, config::buzzer::BUZZER_FREQUENCY);//TODO: tone has time limite maybe timer not needed
+  tone(pins::output::BUZZER, config::buzzer::BUZZER_FREQUENCY);//TODO(PedroRomao3): tone has time limite maybe timer not needed
 }
 
 void IOManager::update_buzzer() {
@@ -146,7 +146,7 @@ inline void IOManager::read_pins_handle_leds() {
 }
 
 void IOManager::calculate_rpm() {
-  constexpr float MICROSEC_TO_MIN = 60.0f / 1000000.0f; // Convert μs to minutes
+  constexpr float MICROSEC_TO_MIN = 60.0f / 1'000'000.0f; // Convert μs to minutes
   const unsigned long current_time = micros();
   
   // Front right wheelLIMIT_RPM_INTERVAL

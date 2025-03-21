@@ -47,12 +47,12 @@ uint16_t LogicHandler::scale_apps_lower_to_apps_higher(const uint16_t apps_lower
 }
 
 bool LogicHandler::plausibility(const int apps_higher,
-                                const int apps_lower) const {  // unit test, todo
-  bool valid_input = (apps_higher >= apps_lower) &&
-                     (apps_higher <= config::apps::UPPER_BOUND_APPS_HIGHER) &&
-                     (apps_higher >= config::apps::LOWER_BOUND_APPS_HIGHER) &&
-                     (apps_lower <= config::apps::UPPER_BOUND_APPS_LOWER) &&
-                     (apps_lower >= config::apps::LOWER_BOUND_APPS_LOWER);
+                                const int apps_lower) const {  // unit test, TODO(Yves)
+  const bool valid_input = (apps_higher >= apps_lower) &&
+                           (apps_higher >= config::apps::LOWER_BOUND_APPS_HIGHER &&
+                            apps_higher <= config::apps::UPPER_BOUND_APPS_HIGHER) &&
+                           (apps_lower >= config::apps::LOWER_BOUND_APPS_LOWER &&
+                            apps_lower <= config::apps::UPPER_BOUND_APPS_LOWER);
 
   if (!valid_input) {
     return false;
@@ -96,11 +96,18 @@ uint16_t LogicHandler::apps_to_bamocar_value(const uint16_t apps_higher,
 }
 
 inline bool LogicHandler::just_entered_emergency() {
-  if (!entered_emergency && updated_data.as_state == AS_EMERGENCY) {
+  bool is_emergency = (updated_data.as_state == AS_EMERGENCY);
+
+  if (!entered_emergency && is_emergency) {
     entered_emergency = true;
-  } else if (entered_emergency && updated_data.as_state != AS_EMERGENCY) {
+    return true;
+  }
+
+  if (entered_emergency && !is_emergency) {
     entered_emergency = false;  // reset if I left emergency so if i enter again buzzer plays
   }
+
+  return false;
 }
 
 bool LogicHandler::check_brake_plausibility(uint16_t bamocar_value) {

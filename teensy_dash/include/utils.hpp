@@ -30,9 +30,9 @@ bool check_sequence(const uint8_t* data, const std::array<uint8_t, 3>& expected)
  * @param rpm The RPM value to convert
  * @param output_bytes Pointer to a 4-byte array where the result will be stored
  */
-void rpm_to_bytes(const float rpm, char* output_bytes) {
+void rpm_to_bytes(const float rpm, char* const output_bytes) {
   // Convert to integer with 2 decimal places precision
-  int32_t scaled_value = static_cast<int32_t>(roundf(rpm * 100.0f));
+  const int32_t scaled_value = static_cast<int32_t>(roundf(rpm * 100.0f));
   
   // Explicitly control byte order (little-endian)
   output_bytes[0] = static_cast<char>(scaled_value & 0xFF);
