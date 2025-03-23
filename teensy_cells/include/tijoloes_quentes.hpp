@@ -7,6 +7,7 @@
 // System Configuration
 constexpr uint8_t TOTAL_BOARDS = 6;
 constexpr uint16_t TEMP_SENSOR_READ_INTERVAL = 100;
+constexpr int8_t NO_ERROR_RESET_THRESHOLD = 50;
 constexpr uint8_t NTC_SENSOR_COUNT = 18;
 constexpr uint16_t ANALOG_MAX = 1023;
 constexpr uint16_t ANALOG_MIN = 0;

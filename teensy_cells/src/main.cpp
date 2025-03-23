@@ -306,7 +306,7 @@ void loop() {
 #endif
     show_temperatures();
   }
-  if (no_error_iterations >= 50) {
+  if (no_error_iterations >= NO_ERROR_RESET_THRESHOLD) {
     error_count = 0;
     
   }
