@@ -56,6 +56,7 @@ void read_check_temperatures() {
   }
   if(!error){
     no_error_iterations++;
+    error_count = 0;
   }
 }
 
@@ -283,7 +284,7 @@ void loop() {
   unsigned long current_time = millis();
   
 
-  if (current_time - last_reading_time > DELAY_INTERVAL) {
+  if (current_time - last_reading_time > TEMP_SENSOR_READ_INTERVAL) {
     last_reading_time = current_time;
     read_check_temperatures();
 
