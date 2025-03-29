@@ -1,0 +1,42 @@
+#platform "Gen4-uLCD-70D-CLB"
+
+#inherit "4DGL_16bitColours.fnc"
+
+
+#CONST
+SCK PA5 // SCK constant PA5
+SDI PA6 // SDI constant PA6
+SDO PA4 // SDO constant PA4
+CS PA7 // CS constant PA7
+#END
+
+
+var UIO :=0x0000; // Max value of 32,767 (0x7FFF) since it is a signed variable used for storing bytes from FPGA
+var VE :=0x0000; // Max value of 32,767 (0x7FFF) since it is a signed variable used for storing bytes from FPGA
+var DIO :=0x0000; // Max value of 32,767 (0x7FFF) since it is a signed variable used for storing bytes from FPGA
+var FSD :=0x0000; // Max value of 32,767 (0x7FFF) since it is a signed variable used for storing bytes from FPGA
+
+func main()
+
+gfx_ScreenMode(LANDSCAPE) ; // Change manually if orientation change
+print("Hello World!\n") ; // Starting string that the display is on
+
+//=================================== Initialize SPI=====================================
+
+pin_Set(PIN_OUT,CS); // Set PA7 to be used as an output
+pin_HI(CS); // Set the CS pin high
+SPI1_SCK_pin(SCK); // Set PA5 as SPI SCK
+SPI1_SDI_pin(SDI); // Set PA6 as SPI SDI
+SPI1_SDO_pin(SDO); // Set PA4 as SPI SDO
+SPI1_Init(SPI_SPEED8,SPI8_MODE_1,CS); // Initialize SPI with speed of 1.75Mhz, 8-bit mode, SCK idles low, SDO stable for first rising edge, SDI sampled on first rising edge
+
+//repeat
+
+pin_LO(CS); // Chip select LO to begin SPI
+SPI1_Write(0xBA); // SPI1 Write byte to device
+pin_HI(CS); // Chip select HI to end SPI communication
+
+
+//forever
+
+endfunc​ 
