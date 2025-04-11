@@ -19,12 +19,12 @@ bool LogicHandler::should_start_as_driving() const {
 
 bool LogicHandler::should_go_idle() const { return (!updated_data.TSOn); }
 
-uint16_t LogicHandler::scale_apps_lower_to_apps_higher(const uint16_t apps_lower) const {
+uint16_t LogicHandler::scale_apps_lower_to_apps_higher(const uint16_t apps_lower) {
   return apps_lower + config::apps::LINEAR_OFFSET;
 }
 
 bool LogicHandler::plausibility(const int apps_higher,
-                                const int apps_lower) const {  // unit test, TODO(Yves)
+                                const int apps_lower) {  // unit test, TODO(Yves)
   const bool valid_input = (apps_higher >= apps_lower) &&
                            (apps_higher >= config::apps::LOWER_BOUND_APPS_HIGHER &&
                             apps_higher <= config::apps::UPPER_BOUND_APPS_HIGHER) &&
@@ -36,13 +36,13 @@ bool LogicHandler::plausibility(const int apps_higher,
   }
 
   if (apps_higher >= config::apps::DEAD_THRESHOLD_APPS_HIGHER) {
-    const int min_expected_apps_lower =
+    constexpr int min_expected_apps_lower =
         config::apps::APPS_HIGHER_DEADZONE_IN_APPS_LOWER_SCALE - config::apps::MAX_ERROR_ABS;
     return (apps_lower >= min_expected_apps_lower);
   }
 
   if (apps_lower <= config::apps::DEAD_THRESHOLD_APPS_LOWER) {
-    const int max_expected_apps_higher =
+    constexpr int max_expected_apps_higher =
         config::apps::APPS_LOWER_DEADZONE_IN_APPS_HIGHER_SCALE + config::apps::MAX_ERROR_ABS;
     return (apps_higher <= max_expected_apps_higher);
   }
@@ -73,7 +73,7 @@ uint16_t LogicHandler::apps_to_bamocar_value(const uint16_t apps_higher,
 }
 
 bool LogicHandler::just_entered_emergency() {
-  bool is_emergency = (updated_data.as_state == AS_EMERGENCY);
+  const bool is_emergency = (updated_data.as_state == AS_EMERGENCY);
 
   if (!entered_emergency && is_emergency) {
     entered_emergency = true;
@@ -87,10 +87,10 @@ bool LogicHandler::just_entered_emergency() {
   return false;
 }
 
-bool LogicHandler::check_brake_plausibility(uint16_t bamocar_value) {
-  float pedal_travel_percentage = ((float)bamocar_value / config::bamocar::MAX) * 100.0;
-
-  if (updated_data.brake_pressure >= config::apps::BRAKE_BLOCK_THRESHOLD &&
+bool LogicHandler::check_brake_plausibility(const uint16_t bamocar_value) {
+  if (const float pedal_travel_percentage =
+          (static_cast<float>(bamocar_value) / static_cast<float>(config::bamocar::MAX)) * 100.0f;
+      updated_data.brake_pressure >= config::apps::BRAKE_BLOCK_THRESHOLD &&
       pedal_travel_percentage >= 25.0) {
     if (brake_implausibility_timer > config::apps::BRAKE_PLAUSIBILITY_TIMEOUT_MS) {
       apps_timeout = true;
@@ -103,27 +103,26 @@ bool LogicHandler::check_brake_plausibility(uint16_t bamocar_value) {
   return true;
 }
 
-bool LogicHandler::check_apps_plausibility(uint16_t apps_higher_avg, uint16_t apps_lower_avg) {
-  bool plausible = plausibility(apps_higher_avg, apps_lower_avg);
-
-  if (!plausible && apps_implausibility_timer > config::apps::IMPLAUSIBLE_TIMEOUT_MS) {
+bool LogicHandler::check_apps_plausibility(const uint16_t apps_higher_avg,
+                                           const uint16_t apps_lower_avg) {
+  if (!plausibility(apps_higher_avg, apps_lower_avg) &&
+      apps_implausibility_timer > config::apps::IMPLAUSIBLE_TIMEOUT_MS) {
     return false;
-  } else {
-    apps_implausibility_timer = 0;
   }
+  apps_implausibility_timer = 0;
 
   return true;
 }
 
 uint16_t LogicHandler::calculate_torque() {
-  uint16_t apps_higher_average = average_queue(data.apps_higher_readings);
-  uint16_t apps_lower_average = average_queue(data.apps_lower_readings);
+  const uint16_t apps_higher_average = average_queue(data.apps_higher_readings);
+  const uint16_t apps_lower_average = average_queue(data.apps_lower_readings);
 
   if (!check_apps_plausibility(apps_higher_average, apps_lower_average)) {
     return config::apps::ERROR_PLAUSIBILITY;  // shutdown ?
   }
 
-  uint16_t bamocar_value = apps_to_bamocar_value(apps_higher_average, apps_lower_average);
+  const uint16_t bamocar_value = apps_to_bamocar_value(apps_higher_average, apps_lower_average);
 
   if (apps_timeout) {
     if (bamocar_value == 0) {  // Pedal released

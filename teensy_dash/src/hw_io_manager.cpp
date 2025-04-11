@@ -28,23 +28,23 @@ void IOManager::manage() {
   update_R2D_timer();
 }
 
-void IOManager::read_rotative_switch() {//maybe map
+void IOManager::read_rotative_switch() const {  //maybe map
   const int raw_value = analogRead(pins::analog::ROTARY_SWITCH);
   data.switch_mode = static_cast<SwitchMode>((raw_value + config::adc::HALF_JUMP) *
                                              config::adc::NEW_SCALE_MAX / config::adc::MAX_VALUE);
 }
 
-void IOManager::read_hydraulic_pressure() {
+void IOManager::read_hydraulic_pressure() const {
   insert_value_queue(analogRead(pins::analog::BRAKE_PRESSURE), data.brake_readings);
 }
 
-void IOManager::update_R2D_timer() {
+void IOManager::update_R2D_timer() const {
   if (average_queue(data.brake_readings) > config::apps::BRAKE_BLOCK_THRESHOLD) {
     data.r2d_brake_timer = 0;
   }
 }
 
-void IOManager::manage_ats() {
+void IOManager::manage_ats() const {
   if (data.ats_pressed && !updated_data.asms_on) {
     data.ats_pressed = false;
     digitalWrite(pins::digital::ATS_OUT, HIGH);
@@ -64,18 +64,18 @@ void IOManager::setup() {
   attachInterrupt(
       digitalPinToInterrupt(pins::encoder::FRONT_RIGHT_WHEEL),
       []() {
-        IOManager::instance->updatable_data.second_to_last_wheel_pulse_fr =
-            IOManager::instance->updatable_data.last_wheel_pulse_fr;
-        IOManager::instance->updatable_data.last_wheel_pulse_fr = micros();
+        instance->updatable_data.second_to_last_wheel_pulse_fr =
+            instance->updatable_data.last_wheel_pulse_fr;
+        instance->updatable_data.last_wheel_pulse_fr = micros();
       },
       RISING);
 
   attachInterrupt(
       digitalPinToInterrupt(pins::encoder::FRONT_LEFT_WHEEL),
       []() {
-        IOManager::instance->updatable_data.second_to_last_wheel_pulse_fl =
-            IOManager::instance->updatable_data.last_wheel_pulse_fl;
-        IOManager::instance->updatable_data.last_wheel_pulse_fl = micros();
+        instance->updatable_data.second_to_last_wheel_pulse_fl =
+            instance->updatable_data.last_wheel_pulse_fl;
+        instance->updatable_data.last_wheel_pulse_fl = micros();
       },
       RISING);
   r2d_button.attach(pins::digital::R2D, INPUT);
@@ -86,21 +86,21 @@ void IOManager::setup() {
   display_button.interval(100);
 }
 
-void IOManager::read_apps() {
+void IOManager::read_apps() const {
   insert_value_queue(analogRead(pins::analog::APPS_HIGHER), data.apps_higher_readings);
   insert_value_queue(analogRead(pins::analog::APPS_LOWER), data.apps_lower_readings);
 }
 
-void IOManager::play_r2d_sound() { play_buzzer(1); }
+void IOManager::play_r2d_sound() const { play_buzzer(1); }
 
-void IOManager::play_buzzer(uint8_t duration_seconds) {
+void IOManager::play_buzzer(const uint8_t duration_seconds) const {
   data.buzzer_active = true;
   data.buzzer_start_time = millis();
   data.buzzer_duration_ms = duration_seconds * 1000;
   tone(pins::output::BUZZER, config::buzzer::BUZZER_FREQUENCY);//TODO(PedroRomao3): tone has time limite maybe timer not needed
 }
 
-void IOManager::update_buzzer() {
+void IOManager::update_buzzer() const {
   if (data.buzzer_active && (millis() - data.buzzer_start_time >= data.buzzer_duration_ms)) {
     noTone(pins::output::BUZZER);
     data.buzzer_active = false;
@@ -112,42 +112,42 @@ void IOManager::read_pins_handle_leds() {
   digitalWrite(pins::output::INERTIA_LED, digitalRead(pins::digital::INERTIA));
 }
 
-void IOManager::calculate_rpm() {
+void IOManager::calculate_rpm() const {
   constexpr float MICROSEC_TO_MIN = 60.0f / 1'000'000.0f; // Convert μs to minutes
   const unsigned long current_time = micros();
 
   // Front right wheelLIMIT_RPM_INTERVAL
-  unsigned long time_since_last_pulse_fr = current_time - updated_data.last_wheel_pulse_fr;
-  if (time_since_last_pulse_fr > config::wheel::LIMIT_RPM_INTERVAL) {
+  if (const unsigned long time_since_last_pulse_fr = current_time - updated_data.last_wheel_pulse_fr;
+      time_since_last_pulse_fr > config::wheel::LIMIT_RPM_INTERVAL) {
     // No recent pulses, wheel stopped
     data.fr_rpm = 0.0f;
   } else {
     // Check if time_interval calculation would overflow
-    unsigned long time_interval_fr =
+    const unsigned long time_interval_fr =
         (updated_data.last_wheel_pulse_fr >= updated_data.second_to_last_wheel_pulse_fr) ?
         updated_data.last_wheel_pulse_fr - updated_data.second_to_last_wheel_pulse_fr :
         0; // Handle overflow case
 
     // Avoid division by zero
     if (time_interval_fr > 0) {
-      data.fr_rpm = (MICROSEC_TO_MIN / (time_interval_fr * config::wheel::PULSES_PER_ROTATION));
+      data.fr_rpm = (MICROSEC_TO_MIN / static_cast<float>(time_interval_fr * config::wheel::PULSES_PER_ROTATION));
     } else {
       data.fr_rpm = 0.0f; // Invalid interval
     }
   }
 
   // Front left wheel (same logic)
-  unsigned long time_since_last_pulse_fl = current_time - updated_data.last_wheel_pulse_fl;
-  if (time_since_last_pulse_fl > config::wheel::LIMIT_RPM_INTERVAL) {
+  if (const unsigned long time_since_last_pulse_fl = current_time - updated_data.last_wheel_pulse_fl;
+      time_since_last_pulse_fl > config::wheel::LIMIT_RPM_INTERVAL) {
     data.fl_rpm = 0.0f;
   } else {
-    unsigned long time_interval_fl =
+    const unsigned long time_interval_fl =
         (updated_data.last_wheel_pulse_fl >= updated_data.second_to_last_wheel_pulse_fl) ?
         updated_data.last_wheel_pulse_fl - updated_data.second_to_last_wheel_pulse_fl :
         0;
 
     if (time_interval_fl > 0) {
-      data.fl_rpm = (MICROSEC_TO_MIN / (time_interval_fl * config::wheel::PULSES_PER_ROTATION));
+      data.fl_rpm = (MICROSEC_TO_MIN / static_cast<float>(time_interval_fl * config::wheel::PULSES_PER_ROTATION));
     } else {
       data.fl_rpm = 0.0f;
     }

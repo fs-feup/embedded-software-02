@@ -65,7 +65,7 @@ void CanCommHandler::bamocar_callback(const uint8_t* msg_data) {
   }
 }
 
-void CanCommHandler::master_callback(const uint8_t* const msg_data) {
+void CanCommHandler::master_callback(const uint8_t* const msg_data) const {
   switch (msg_data[0]) {
     case HYDRAULIC_LINE:
       updatable_data.brake_pressure = (msg_data[2] << 8) | msg_data[1];
@@ -126,8 +126,8 @@ void CanCommHandler::write_rpm() {
 }
 
 void CanCommHandler::write_apps() {
-  int32_t apps_higher = average_queue(data.apps_higher_readings);
-  int32_t apps_lower = average_queue(data.apps_lower_readings);
+  const int32_t apps_higher = average_queue(data.apps_higher_readings);
+  const int32_t apps_lower = average_queue(data.apps_lower_readings);
 
   CAN_message_t apps_message;
   apps_message.id = DASH_ID;
@@ -207,15 +207,15 @@ void CanCommHandler::stop_bamocar() {
   can1.write(disable);
 }
 
-void CanCommHandler::send_torque(int torque) {
+void CanCommHandler::send_torque(const int torque) {
   if (torque_timer >= TORQUE_MSG_PERIOD_MS) {
     CAN_message_t torque_message;
     torque_message.id = BAMO_COMMAND_ID;
     torque_message.len = 3;
     torque_message.buf[0] = 0x90;
 
-    uint8_t torque_byte1 = (torque >> 8) & 0xFF;  // MSB
-    uint8_t torque_byte2 = torque & 0xFF;         // LSB
+    const uint8_t torque_byte1 = (torque >> 8) & 0xFF;  // MSB
+    const uint8_t torque_byte2 = torque & 0xFF;         // LSB
 
     torque_message.buf[1] = torque_byte2;
     torque_message.buf[2] = torque_byte1;
@@ -223,5 +223,4 @@ void CanCommHandler::send_torque(int torque) {
     can1.write(torque_message);
     torque_timer = 0;
   }
-  return;
-}
+  }

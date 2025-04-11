@@ -30,7 +30,7 @@ private:
   bool transmission_enabled = false;
   bool btb_ready = false;
   static void can_sniffer(const CAN_message_t& msg);
-  void master_callback(const uint8_t* msg_data);
+  void master_callback(const uint8_t* msg_data) const;
   void bamocar_callback(const uint8_t* msg_data);
   void write_rpm();
   void write_apps();

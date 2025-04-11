@@ -4,7 +4,7 @@
 //-----------------------------------------------------------------------------
 // System Constants
 //-----------------------------------------------------------------------------
-constexpr float CAN_TIMEOUT_MS = 100;
+constexpr unsigned CAN_TIMEOUT_MS = 100;
 constexpr uint8_t RPM_MSG_PERIOD_MS = 50;     // 20Hz
 constexpr uint8_t APPS_MSG_PERIOD_MS = 50;    // 20Hz
 constexpr uint8_t TORQUE_MSG_PERIOD_MS = 10;  // 100Hz

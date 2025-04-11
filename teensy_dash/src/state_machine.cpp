@@ -50,12 +50,12 @@ void StateMachine::update() {
   }
 }
 
-void StateMachine::transition_to_driving() {
+void StateMachine::transition_to_driving() const {
   io_manager.play_r2d_sound();  // tapem os ouvidos!
   can_handler.init_bamocar();
 }
 
-void StateMachine::transition_to_as_driving() {
+void StateMachine::transition_to_as_driving() const {
   // delay?
   can_handler.init_bamocar();
 }
