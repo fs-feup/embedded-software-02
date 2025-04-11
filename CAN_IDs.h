@@ -26,7 +26,6 @@ constexpr uint8_t PC_ALIVE = 0x41;
 constexpr uint8_t MISSION_FINISHED = 0x42;
 constexpr uint8_t AS_READY = 2;
 constexpr uint8_t AS_OFF = 0;
-constexpr uint8_t AS_READY = 2;
 constexpr uint8_t AS_DRIVING = 3;
 constexpr uint8_t AS_EMERGENCY = 4;
 constexpr uint8_t AS_FINISHED = 5;

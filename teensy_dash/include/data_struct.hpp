@@ -43,7 +43,7 @@ struct SystemVolatileData {
   unsigned long second_to_last_wheel_pulse_fl = 0;
 };
 
-void copy_volatile_data(SystemVolatileData& dest, volatile SystemVolatileData const& src) {
+inline void copy_volatile_data(SystemVolatileData& dest, volatile SystemVolatileData const& src) {
   noInterrupts();
   dest.TSOn = src.TSOn;
   dest.as_state = src.as_state;
