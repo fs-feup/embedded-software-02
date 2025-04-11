@@ -4,7 +4,6 @@
 
 #include "../../CAN_IDs.h"
 
-
 LogicHandler::LogicHandler(SystemData& system_data, SystemVolatileData& current_updated_data)
     : data(system_data), updated_data(current_updated_data) {}
 

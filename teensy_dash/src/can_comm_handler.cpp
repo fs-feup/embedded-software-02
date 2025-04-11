@@ -5,8 +5,8 @@
 #include "../../CAN_IDs.h"
 
 CanCommHandler::CanCommHandler(SystemData& system_data,
-                             volatile SystemVolatileData& volatile_updatable_data,
-                             SystemVolatileData& volatile_updated_data)
+                               volatile SystemVolatileData& volatile_updatable_data,
+                               SystemVolatileData& volatile_updated_data)
     : data(system_data),
       updatable_data(volatile_updatable_data),
       updated_data(volatile_updated_data) {
@@ -150,7 +150,7 @@ void CanCommHandler::write_apps() {
   can1.write(apps_message);
 }
 
-void CanCommHandler::init_bamocar() { // TODO DO THIS SHIT WITH STUFF FROM INESC
+void CanCommHandler::init_bamocar() {  // TODO DO THIS SHIT WITH STUFF FROM INESC
   // GET PEDAL VALUES FROM PIN INSTEAD OF ARBITRARY
   CAN_message_t clear_errors;
   clear_errors.id = BAMO_COMMAND_ID;
@@ -223,4 +223,4 @@ void CanCommHandler::send_torque(const int torque) {
     can1.write(torque_message);
     torque_timer = 0;
   }
-  }
+}
