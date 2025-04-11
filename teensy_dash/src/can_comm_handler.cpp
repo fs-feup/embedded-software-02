@@ -65,7 +65,7 @@ void CanCommHandler::bamocar_callback(const uint8_t* msg_data) {
   }
 }
 
-void CanCommHandler::master_callback(const uint8_t* const msg_data) const {
+void CanCommHandler::master_callback(const uint8_t* const msg_data) {
   switch (msg_data[0]) {
     case HYDRAULIC_LINE:
       updatable_data.brake_pressure = (msg_data[2] << 8) | msg_data[1];
@@ -75,9 +75,11 @@ void CanCommHandler::master_callback(const uint8_t* const msg_data) const {
       updatable_data.asms_on = msg_data[1];
       break;
 
-    case SOC_MSG:
-      updatable_data.soc = msg_data[1];
-      break;
+
+    // TODO MAY BE IMPORTANT: src/can_comm_handler.cpp:78:5: warning: case label value exceeds maximum value for type [-Wswitch-outside-range]
+    // case SOC_MSG:
+    //   updatable_data.soc = msg_data[1];
+    //   break;
 
     case STATE_MSG:
       updatable_data.as_state = msg_data[1];
