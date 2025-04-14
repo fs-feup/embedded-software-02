@@ -12,7 +12,7 @@ public:
                  SystemVolatileData& volatile_updated_data);
 
   void setup();
-  void init_bamocar();
+  bool init_bamocar();
   void stop_bamocar();
   void write_periodic_messages();
   void send_torque(int torque);
@@ -29,9 +29,9 @@ private:
   elapsedMillis torque_timer;  // Timer for torque commands
   bool transmission_enabled = false;
   bool btb_ready = false;
-  static void can_sniffer(const CAN_message_t& msg);
-  void master_callback(const uint8_t* msg_data);
-  void bamocar_callback(const uint8_t* msg_data);
+  static void can_snifflas(const CAN_message_t& msg);
+  void master_callback(const uint8_t* msg_data, uint8_t len);
+  void bamocar_callback(const uint8_t* msg_data, uint8_t len);
   void write_rpm();
   void write_apps();
 };

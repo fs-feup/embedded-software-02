@@ -25,13 +25,17 @@ bool check_sequence(const uint8_t* data, const std::array<uint8_t, 3>& expected)
   return (data[1] == expected[0] && data[2] == expected[1] && data[3] == expected[2]);
 }
 
-void rpm_to_bytes(const float rpm, char* const output_bytes) {
+
+
+std::array<uint8_t, 4> rpm_to_bytes(const float rpm) {
   // Convert to integer with 2 decimal places precision
   const auto scaled_value = static_cast<int32_t>(roundf(rpm * 100.0f));
 
-  // Explicitly control byte order (little-endian)
-  output_bytes[0] = static_cast<char>(scaled_value & 0xFF);
-  output_bytes[1] = static_cast<char>((scaled_value >> 8) & 0xFF);
-  output_bytes[2] = static_cast<char>((scaled_value >> 16) & 0xFF);
-  output_bytes[3] = static_cast<char>((scaled_value >> 24) & 0xFF);
+  // Return array with bytes in little-endian order
+  return {
+    static_cast<uint8_t>(scaled_value & 0xFF),
+    static_cast<uint8_t>((scaled_value >> 8) & 0xFF),
+    static_cast<uint8_t>((scaled_value >> 16) & 0xFF),
+    static_cast<uint8_t>((scaled_value >> 24) & 0xFF)
+  };
 }

@@ -11,10 +11,10 @@ void StateMachine::update() {
   switch (current_state_) {
     case State::IDLE:
       if (logic_handler.should_start_manual_driving()) {
-        transition_to_driving();
+        if (transition_to_driving())
         current_state_ = State::DRIVING; /* comi o cu de quem leu */
       } else if (logic_handler.should_start_as_driving()) {
-        transition_to_as_driving();
+        if (transition_to_as_driving())
         current_state_ = State::AS_DRIVING;
       } else {
         Serial.println("chillin");
@@ -43,7 +43,6 @@ void StateMachine::update() {
         can_handler.stop_bamocar();
         current_state_ = State::IDLE;
         io_manager.play_buzzer(config::buzzer::EMERGENCY_DURATION);
-        return;
       }
       break;
     default:
@@ -51,12 +50,15 @@ void StateMachine::update() {
   }
 }
 
-void StateMachine::transition_to_driving() const {
+bool StateMachine::transition_to_driving() const {
   io_manager.play_r2d_sound();  // tapem os ouvidos!
-  can_handler.init_bamocar();
+  const bool done = can_handler.init_bamocar();
+  return done;
 }
 
-void StateMachine::transition_to_as_driving() const {
+bool StateMachine::transition_to_as_driving() const {
   // delay?
-  can_handler.init_bamocar();
+  const bool done = can_handler.init_bamocar();
+  return done;
+
 }

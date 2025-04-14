@@ -148,4 +148,6 @@ constexpr uint8_t ENABLE_3 = 0x00;
 constexpr std::array<uint8_t, 3> BTB_READY_SEQUENCE = {BTB_READY_1, BTB_READY_2, BTB_READY_3};
 constexpr std::array<uint8_t, 3> ENABLE_SEQUENCE = {ENABLE_1, ENABLE_2, ENABLE_3};
 constexpr uint8_t DC_VOLTAGE = 0xEB;
-constexpr uint8_t SPEED_VALUE = 0x30;
+constexpr uint8_t SPEED_ACTUAL = 0x30;
+constexpr uint8_t SPEED_LIMIT = 0x34;
+constexpr uint8_t DEVICE_I_MAX = 0xC4;

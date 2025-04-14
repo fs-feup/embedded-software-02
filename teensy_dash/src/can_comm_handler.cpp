@@ -1,5 +1,7 @@
 #include "can_comm_handler.hpp"
 
+#include <array>
+#include <cstring>
 #include <utils.hpp>
 
 #include "../../CAN_IDs.h"
@@ -22,50 +24,81 @@ void CanCommHandler::setup() {
   can1.setFIFOFilter(2, BMS_ID, STD);
   can1.setFIFOFilter(3, BAMO_RESPONSE_ID, STD);
   can1.setFIFOFilter(4, MASTER_ID, STD);
-  can1.onReceive(can_sniffer);
+  can1.onReceive(can_snifflas);
 }
 
-void CanCommHandler::can_sniffer(const CAN_message_t& msg) {
+void CanCommHandler::can_snifflas(const CAN_message_t& msg) {
   switch (msg.id) {
     case BMS_ID:
       break;
     case BAMO_RESPONSE_ID:
-      instance->bamocar_callback(msg.buf);
+      if (instance) instance->bamocar_callback(msg.buf, msg.len);
       break;
     case MASTER_ID:
-      instance->master_callback(msg.buf);
+      if (instance) instance->master_callback(msg.buf, msg.len);
       break;
     default:
       break;
   }
 }
 
-void CanCommHandler::bamocar_callback(const uint8_t* msg_data) {
+void CanCommHandler::bamocar_callback(const uint8_t* const msg_data, const uint8_t len) {
+  // All received messages are 3 bytes long, meaning 2 bytes of data,
+  // unless otherwise specified (where it would be 4 bytes)
+  // COB-ID   | DLC | Byte 1      | Byte 2      | Byte 3      | Byte 4
+  // ---------|-----|-------------|-------------|-------------|-----------
+  // TX       | 4   | RegID       | Data 07..00 | Data 15..08 | Stuff
+  // |--------------| msg_data[0] | msg_data[1] | msg_data[2] | msg_data[3]
+  // "To get the drive to send all replies as 6 byte messages (32-bit data) a bit in RegID 0xDC has
+  // to be manually modified." - CAN-BUS BAMOCAR Manual
+
+  // almost all messages seem to be signed
+  int32_t message_value = 0;
+  if (len == 4) {
+    // Standard 16-bit data format
+    message_value = (msg_data[2] << 8) | msg_data[1];
+  } else if (len == 6) {
+    // Extended 32-bit data format
+    message_value = (msg_data[4] << 24) | (msg_data[3] << 16) | (msg_data[2] << 8) | msg_data[1];
+  }
+
   switch (msg_data[0]) {
     case DC_VOLTAGE: {
-      uint16_t dc_voltage = 0;
-      dc_voltage = (msg_data[2] << 8) | msg_data[1];
-      updatable_data.TSOn = (dc_voltage >= DC_THRESHOLD);
+      updatable_data.TSOn = (message_value >= DC_THRESHOLD);
       break;
     }
     case BTB_READY_0:
       btb_ready = check_sequence(msg_data, BTB_READY_SEQUENCE);
+      Serial.println("BTB ready");
       break;
 
     case ENABLE_0:
       transmission_enabled = check_sequence(msg_data, ENABLE_SEQUENCE);
+      Serial.println("Transmission enabled");
       break;
 
-    case SPEED_VALUE:
-      updatable_data.speed = (msg_data[2] << 8) | msg_data[1];
+    case SPEED_ACTUAL:
+      updatable_data.speed = message_value;
       break;
 
+    case SPEED_LIMIT:
+      // For debug purpose only, fow now
+      const int normalized_limit = map(message_value, 0, 32767, 0, 100);
+      Serial.print("Speed limit:");
+      Serial.println(normalized_limit);
+      break;
+
+    case DEVICE_I_MAX:
+      // Need to check if the in_max is correct or not: this value matches the ndrive read values
+      const int normalized_imax = map(message_value, 0, 16369, 0, 100);
+      Serial.print("I_max:");
+      Serial.println(normalized_imax);
     default:
       break;
   }
 }
 
-void CanCommHandler::master_callback(const uint8_t* const msg_data) {
+void CanCommHandler::master_callback(const uint8_t* const msg_data, const uint8_t len) {
   switch (msg_data[0]) {
     case HYDRAULIC_LINE:
       updatable_data.brake_pressure = (msg_data[2] << 8) | msg_data[1];
@@ -75,11 +108,11 @@ void CanCommHandler::master_callback(const uint8_t* const msg_data) {
       updatable_data.asms_on = msg_data[1];
       break;
 
-
-    // TODO MAY BE IMPORTANT: src/can_comm_handler.cpp:78:5: warning: case label value exceeds maximum value for type [-Wswitch-outside-range]
-    // case SOC_MSG:
-    //   updatable_data.soc = msg_data[1];
-    //   break;
+    // TODO MAY BE IMPORTANT: src/can_comm_handler.cpp:78:5: warning: case label value exceeds
+    // maximum value for type [-Wswitch-outside-range]
+    case SOC_MSG:
+      updatable_data.soc = msg_data[1];
+      break;
 
     case STATE_MSG:
       updatable_data.as_state = msg_data[1];
@@ -106,25 +139,18 @@ void CanCommHandler::write_rpm() {
   rpm_message.id = DASH_ID;
   rpm_message.len = 5;
 
-  char fr_rpm_byte[4] = {0, 0, 0, 0};
-  rpm_to_bytes(data.fr_rpm, fr_rpm_byte);
+  auto send_rpm = [this, &rpm_message](const uint8_t rpm_type, const float rpm_value) {
+    const auto rpm_bytes = rpm_to_bytes(rpm_value);
+    rpm_message.buf[0] = rpm_type;
+    rpm_message.buf[1] = rpm_bytes[0];
+    rpm_message.buf[2] = rpm_bytes[1];
+    rpm_message.buf[3] = rpm_bytes[2];
+    rpm_message.buf[4] = rpm_bytes[3];
+    this->can1.write(rpm_message);
+  };
 
-  rpm_message.buf[0] = FR_RPM;
-  rpm_message.buf[1] = fr_rpm_byte[0];
-  rpm_message.buf[2] = fr_rpm_byte[1];
-  rpm_message.buf[3] = fr_rpm_byte[2];
-  rpm_message.buf[4] = fr_rpm_byte[3];
-  can1.write(rpm_message);
-
-  char fl_rpm_byte[4] = {0, 0, 0, 0};
-  rpm_to_bytes(data.fl_rpm, fl_rpm_byte);
-
-  rpm_message.buf[0] = FL_RPM;
-  rpm_message.buf[1] = fl_rpm_byte[0];
-  rpm_message.buf[2] = fl_rpm_byte[1];
-  rpm_message.buf[3] = fl_rpm_byte[2];
-  rpm_message.buf[4] = fl_rpm_byte[3];
-  can1.write(rpm_message);
+  send_rpm(FR_RPM, data.fr_rpm);
+  send_rpm(FL_RPM, data.fl_rpm);
 }
 
 void CanCommHandler::write_apps() {
@@ -135,78 +161,123 @@ void CanCommHandler::write_apps() {
   apps_message.id = DASH_ID;
   apps_message.len = 5;
 
-  apps_message.buf[0] = APPS_HIGHER;
+  auto send_apps = [this, &apps_message](const uint8_t apps_type, const int32_t apps_value) {
+    apps_message.buf[0] = apps_type;
+    apps_message.buf[1] = (apps_value >> 0) & 0xFF;
+    apps_message.buf[2] = (apps_value >> 8) & 0xFF;
+    apps_message.buf[3] = (apps_value >> 16) & 0xFF;
+    apps_message.buf[4] = (apps_value >> 24) & 0xFF;
+    can1.write(apps_message);
+  };
 
-  apps_message.buf[1] = (apps_higher >> 0) & 0xFF;
-  apps_message.buf[2] = (apps_higher >> 8) & 0xFF;
-  apps_message.buf[3] = (apps_higher >> 16) & 0xFF;
-  apps_message.buf[4] = (apps_higher >> 24) & 0xFF;
-  can1.write(apps_message);
-
-  apps_message.buf[0] = APPS_LOWER;
-
-  apps_message.buf[1] = (apps_lower >> 0) & 0xFF;
-  apps_message.buf[2] = (apps_lower >> 8) & 0xFF;
-  apps_message.buf[3] = (apps_lower >> 16) & 0xFF;
-  apps_message.buf[4] = (apps_lower >> 24) & 0xFF;
-  can1.write(apps_message);
+  send_apps(APPS_HIGHER, apps_higher);
+  send_apps(APPS_LOWER, apps_lower);
 }
 
-void CanCommHandler::init_bamocar() {  // TODO DO THIS SHIT WITH STUFF FROM INESC
-  // GET PEDAL VALUES FROM PIN INSTEAD OF ARBITRARY
-  CAN_message_t clear_errors;
-  clear_errors.id = BAMO_COMMAND_ID;
-  clear_errors.len = 3;
-  clear_errors.buf[0] = 0x8E;
-  clear_errors.buf[1] = 0x44;
-  clear_errors.buf[2] = 0x4D;
-  can1.write(clear_errors);
+bool CanCommHandler::init_bamocar() {
+  constexpr unsigned long actionInterval = 100;
+  constexpr unsigned long timeout = 2000;
 
-  CAN_message_t transmissionRequestEnable;
-  transmissionRequestEnable.id = BAMO_COMMAND_ID;
-  transmissionRequestEnable.len = 3;
-  transmissionRequestEnable.buf[0] = 0x3D;
-  transmissionRequestEnable.buf[1] = 0xE8;
-  transmissionRequestEnable.buf[2] = 0x00;
+  // Drive disabled Enable internally switched off
+  constexpr CAN_message_t setEnableOff = {
+      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x51, 0x04, 0x00}};
+  constexpr CAN_message_t removeDisable = {
+      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x51, 0x00, 0x00}};
+  constexpr CAN_message_t checkBTBStatus = {
+      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, 0xE2, 0x00}};
+  constexpr CAN_message_t enableTransmission = {
+      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, 0xE8, 0x00}};
+  constexpr CAN_message_t rampAccRequest = {
+      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x35, 0xF4, 0x01}};
+  constexpr CAN_message_t rampDecRequest = {
+      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0xED, 0xE8, 0x03}};
 
-  CAN_message_t BTBStatus;
-  BTBStatus.id = BAMO_COMMAND_ID;
-  BTBStatus.len = 3;
-  BTBStatus.buf[0] = 0x3D;
-  BTBStatus.buf[1] = 0xE2;
-  BTBStatus.buf[2] = 0x00;
+  static BamocarState bamocarState = CHECK_BTB;
+  static unsigned long stateStartTime = 0;
+  static unsigned long lastActionTime = 0;
+  static bool commandSent = false;
+  static bool transmissionEnabled = false;
+  static unsigned long currentTime = 0;
+  currentTime = millis();
 
-  CAN_message_t no_disable;
-  no_disable.id = BAMO_COMMAND_ID;
-  no_disable.len = 3;
-  no_disable.buf[0] = 0x51;
-  no_disable.buf[1] = 0x00;
-  no_disable.buf[2] = 0x00;
+  switch (bamocarState) {
+    case CHECK_BTB:
+      if (currentTime - lastActionTime >= actionInterval) {
+        Serial.println("Checking BTB status");
+        can1.write(checkBTBStatus);
+        lastActionTime = currentTime;
+      }
+      if (btb_ready) {  // CLION SAYS "Condition is always false": CAP
+        bamocarState = ENABLE_OFF;
+        commandSent = false;
+      } else if (currentTime - stateStartTime >= timeout) {
+        Serial.println("Timeout checking BTB");
+        Serial.println("Error during initialization");
+        bamocarState = ERROR;
+      }
+      break;
 
-  while (!transmission_enabled &&
-         can_timer > CAN_TIMEOUT_MS) {  // TODO(PedroRomao3): change to inesc test logic  __ou então
-                                        // tijolões quentes faz isto
-    can1.write(transmissionRequestEnable);
-    can_timer = 0;
+    case ENABLE_OFF:
+      Serial.println("Disabling");
+      can1.write(setEnableOff);
+      bamocarState = ENABLE_TRANSMISSION;
+    case ENABLE_TRANSMISSION:
+      if (currentTime - lastActionTime >= actionInterval) {
+        Serial.println("Enabling transmission");
+        can1.write(enableTransmission);
+        lastActionTime = currentTime;
+      }
+      if (transmissionEnabled) {
+        bamocarState = ENABLE;
+        commandSent = false;
+        stateStartTime = currentTime;
+        lastActionTime = currentTime;
+      } else if (currentTime - stateStartTime >= timeout) {
+        Serial.println("Timeout enabling transmission");
+        Serial.println("Error during initialization");
+        bamocarState = ERROR;
+      }
+      break;
+
+    case ENABLE:
+      if (!commandSent) {
+        Serial.println("Removing disable");
+        can1.write(removeDisable);
+        commandSent = true;
+        bamocarState = ACC_RAMP;
+        // request_dataLOG_messages();
+      }
+      break;
+
+    case ACC_RAMP:
+      Serial.print("Transmitting acceleration ramp: ");
+      Serial.print(rampAccRequest.buf[1] | (rampAccRequest.buf[2] << 8));
+      Serial.print("ms");
+      can1.write(rampAccRequest);
+      bamocarState = DEC_RAMP;
+      break;
+
+    case DEC_RAMP:
+      Serial.print("Transmitting deceleration ramp: ");
+      Serial.print(rampDecRequest.buf[1] | (rampDecRequest.buf[2] << 8));
+      Serial.print("ms");
+      can1.write(rampDecRequest);
+      bamocarState = INITIALIZED;
+      break;
+    case INITIALIZED:
+      return true;
+    case ERROR:
+      break;
   }
 
-  while (!btb_ready && can_timer > CAN_TIMEOUT_MS) {
-    can1.write(BTBStatus);
-    can_timer = 0;
-  }
-
-  can1.write(no_disable);
+  return false;
 }
 
 void CanCommHandler::stop_bamocar() {
-  CAN_message_t disable;
-  disable.id = BAMO_COMMAND_ID;
-  disable.len = 3;
-  disable.buf[0] = 0x51;
-  disable.buf[1] = 0x04;
-  disable.buf[2] = 0x00;
+  constexpr CAN_message_t setEnableOff = {
+      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x51, 0x04, 0x00}};
 
-  can1.write(disable);
+  can1.write(setEnableOff);
 }
 
 void CanCommHandler::send_torque(const int torque) {
@@ -215,12 +286,8 @@ void CanCommHandler::send_torque(const int torque) {
     torque_message.id = BAMO_COMMAND_ID;
     torque_message.len = 3;
     torque_message.buf[0] = 0x90;
-
-    const uint8_t torque_byte1 = (torque >> 8) & 0xFF;  // MSB
-    const uint8_t torque_byte2 = torque & 0xFF;         // LSB
-
-    torque_message.buf[1] = torque_byte2;
-    torque_message.buf[2] = torque_byte1;
+    torque_message.buf[1] = torque & 0xFF;         // Lower byte
+    torque_message.buf[2] = (torque >> 8) & 0xFF;  // Upper byte
 
     can1.write(torque_message);
     torque_timer = 0;

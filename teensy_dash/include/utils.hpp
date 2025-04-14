@@ -15,6 +15,5 @@ bool check_sequence(const uint8_t* data, const std::array<uint8_t, 3>& expected)
 /**
  * Converts RPM float value to a 4-byte representation
  * @param rpm The RPM value to convert
- * @param output_bytes Pointer to a 4-byte array where the result will be stored
  */
-void rpm_to_bytes(float rpm, char* output_bytes);
+std::array<uint8_t, 4> rpm_to_bytes(float rpm);

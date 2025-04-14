@@ -16,8 +16,8 @@ private:
   LogicHandler& logic_handler;
   IOManager& io_manager;
   State current_state_ = State::IDLE;
-  void transition_to_driving() const;
-  void transition_to_as_driving() const;
+  [[nodiscard]] bool transition_to_driving() const;
+  [[nodiscard]] bool transition_to_as_driving() const;
   void handle_driving();
 };
 
