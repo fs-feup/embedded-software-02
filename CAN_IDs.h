@@ -150,4 +150,7 @@ constexpr std::array<uint8_t, 3> ENABLE_SEQUENCE = {ENABLE_1, ENABLE_2, ENABLE_3
 constexpr uint8_t DC_VOLTAGE = 0xEB;
 constexpr uint8_t SPEED_ACTUAL = 0x30;
 constexpr uint8_t SPEED_LIMIT = 0x34;
+constexpr uint8_t SPEED_DELTAMA_ACC = 0x35;
+constexpr uint8_t SPEED_DELTAMA_DECC = 0xED;
 constexpr uint8_t DEVICE_I_MAX = 0xC4;
+constexpr uint8_t DEVICE_I_CNT = 0xC5;

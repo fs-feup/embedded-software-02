@@ -14,7 +14,7 @@ public:
   void setup();
   bool init_bamocar();
   void stop_bamocar();
-  void write_periodic_messages();
+  void write_messages();
   void send_torque(int torque);
 
 private:
@@ -34,4 +34,5 @@ private:
   void bamocar_callback(const uint8_t* msg_data, uint8_t len);
   void write_rpm();
   void write_apps();
+  void write_inverter_mode(SwitchMode switch_mode);
 };

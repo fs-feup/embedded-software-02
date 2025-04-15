@@ -25,7 +25,7 @@ void setup() {
 void loop() {
   if (loop_timer >= MAIN_LOOP_INTERVAL) {
     io_manager.manage();
-    can_comm_handler.write_periodic_messages();
+    can_comm_handler.write_messages();
     copy_volatile_data(updated_data, updatable_data);
     state_machine.update();
 

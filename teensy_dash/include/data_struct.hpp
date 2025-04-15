@@ -37,6 +37,16 @@ enum BamocarState {
   ERROR
 };
 
+struct InverterModeParams {
+  int i_max_pk_percent = 0;
+  int speed_limit_percent = 0;
+  int i_cont_percent = 0;
+  int speed_ramp_acc = 0; // 0..30'000
+  int speed_ramp_brake = 0; // 0..30'000
+  int moment_ramp_acc = 0; // 0..4000
+  int moment_ramp_decc = 0; // 0..4000
+};
+
 struct SystemData {
   bool r2d_pressed = false;
   bool ats_pressed = false;
