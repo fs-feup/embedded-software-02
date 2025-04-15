@@ -12,7 +12,10 @@ CanCommHandler::CanCommHandler(SystemData& system_data,
     : data(system_data),
       updatable_data(volatile_updatable_data),
       updated_data(volatile_updated_data) {
-  instance = this;
+
+  staticCallback = [this](const CAN_message_t& msg) {
+    this->handleCanMessage(msg);
+  };
 }
 
 void CanCommHandler::setup() {
@@ -28,14 +31,19 @@ void CanCommHandler::setup() {
 }
 
 void CanCommHandler::can_snifflas(const CAN_message_t& msg) {
+  if (staticCallback) {
+    staticCallback(msg);
+  }
+}
+void CanCommHandler::handleCanMessage(const CAN_message_t& msg) {
   switch (msg.id) {
     case BMS_ID:
       break;
     case BAMO_RESPONSE_ID:
-      if (instance) instance->bamocar_callback(msg.buf, msg.len);
+      bamocar_callback(msg.buf, msg.len);
       break;
     case MASTER_ID:
-      if (instance) instance->master_callback(msg.buf, msg.len);
+      master_callback(msg.buf, msg.len);
       break;
     default:
       break;
@@ -81,19 +89,22 @@ void CanCommHandler::bamocar_callback(const uint8_t* const msg_data, const uint8
       updatable_data.speed = message_value;
       break;
 
-    case SPEED_LIMIT:
+    case SPEED_LIMIT: {
       // For debug purpose only, fow now
       const int normalized_limit = map(message_value, 0, 32767, 0, 100);
       Serial.print("Speed limit:");
       Serial.println(normalized_limit);
       break;
+    }
 
-    case DEVICE_I_MAX:
+    case DEVICE_I_MAX: {
       // Need to check if the in_max is correct or not: this value matches the ndrive read values
       const int normalized_imax = map(message_value, 0, 16369, 0, 100);
       Serial.print("I_max:");
       Serial.println(normalized_imax);
-    default:
+      break;
+    }
+      default:
       break;
   }
 }

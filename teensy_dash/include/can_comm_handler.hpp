@@ -18,10 +18,17 @@ public:
   void send_torque(int torque);
 
 private:
-  inline static CanCommHandler* instance = nullptr;
+  static inline std::function<void(const CAN_message_t&)> staticCallback;
+  static void can_snifflas(const CAN_message_t& msg);
+  void handleCanMessage(const CAN_message_t& msg);
+
+  void bamocar_callback(const uint8_t* msg_data, uint8_t len);
+  void master_callback(const uint8_t* msg_data, uint8_t len);
+
   SystemData& data;
   volatile SystemVolatileData& updatable_data;
   SystemVolatileData& updated_data;
+
   FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> can1;
   elapsedMillis can_timer;
   elapsedMillis rpm_timer;     // Timer for RPM messages
@@ -29,9 +36,7 @@ private:
   elapsedMillis torque_timer;  // Timer for torque commands
   bool transmission_enabled = false;
   bool btb_ready = false;
-  static void can_snifflas(const CAN_message_t& msg);
-  void master_callback(const uint8_t* msg_data, uint8_t len);
-  void bamocar_callback(const uint8_t* msg_data, uint8_t len);
+
   void write_rpm();
   void write_apps();
   void write_inverter_mode(SwitchMode switch_mode);
