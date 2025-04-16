@@ -12,15 +12,12 @@ CanCommHandler::CanCommHandler(SystemData& system_data,
     : data(system_data),
       updatable_data(volatile_updatable_data),
       updated_data(volatile_updated_data) {
-
-  staticCallback = [this](const CAN_message_t& msg) {
-    this->handleCanMessage(msg);
-  };
+  staticCallback = [this](const CAN_message_t& msg) { this->handleCanMessage(msg); };
 }
 
 void CanCommHandler::setup() {
   can1.begin();
-  can1.setBaudRate(1'000'000);
+  can1.setBaudRate(500'000);
   can1.enableFIFO();
   can1.enableFIFOInterrupt();
   can1.setFIFOFilter(REJECT_ALL);
@@ -104,7 +101,7 @@ void CanCommHandler::bamocar_callback(const uint8_t* const msg_data, const uint8
       Serial.println(normalized_imax);
       break;
     }
-      default:
+    default:
       break;
   }
 }
@@ -193,31 +190,83 @@ void CanCommHandler::write_apps() {
 }
 
 void CanCommHandler::write_inverter_mode(const SwitchMode switch_mode) {
-
   constexpr int MAX_I_VALUE = 16383;
   constexpr int MAX_SPEED_VALUE = 32767;
 
   InverterModeParams params = get_inverter_mode_config(switch_mode);
 
+#ifdef CAN_DEBUG
+  auto mode_to_string = [](SwitchMode mode) -> const char* {
+    switch (mode) {
+      case SwitchMode::INVERTER_MODE_0:
+        return "MODE_0";
+      case SwitchMode::INVERTER_MODE_CAVALETES:
+        return "CAVALETES";
+      case SwitchMode::INVERTER_MODE_LIMITER:
+        return "LIMITER";
+      case SwitchMode::INVERTER_MODE_BRAKE_TEST:
+        return "BRAKE_TEST";
+      case SwitchMode::INVERTER_MODE_SKIDPAD:
+        return "SKIDPAD";
+      case SwitchMode::INVERTER_MODE_ENDURANCE:
+        return "ENDURANCE";
+      case SwitchMode::INVERTER_MODE_MAX_ATTACK:
+        return "MAX_ATTACK";
+      case SwitchMode::INVERTER_MODE_NULL:
+        return "NULL";
+      case SwitchMode::INVERTER_MODE_NULL2:
+        return "NULL2";
+      case SwitchMode::INVERTER_MODE_NULL3:
+        return "NULL3";
+      case SwitchMode::INVERTER_MODE_NULL4:
+        return "NULL4";
+      case SwitchMode::INVERTER_MODE_NULL5:
+        return "NULL5";
+      default:
+        return "UNKNOWN";
+    }
+  };
+
+  Serial.print("Mode: ");
+  Serial.print(mode_to_string(switch_mode));
+  Serial.print(" | i_max: ");
+  Serial.print(params.i_max_pk_percent);
+  Serial.print("% | speed: ");
+  Serial.print(params.speed_limit_percent);
+  Serial.print("% | i_cont: ");
+  Serial.print(params.i_cont_percent);
+  Serial.print("% | s_acc: ");
+  Serial.print(params.speed_ramp_acc);
+  Serial.print(" | m_acc: ");
+  Serial.print(params.moment_ramp_acc);
+  Serial.print(" | s_brk: ");
+  Serial.print(params.speed_ramp_brake);
+  Serial.print(" | m_dec: ");
+  Serial.println(params.moment_ramp_decc);
+#endif
+
   int i_max_pk = map(params.i_max_pk_percent, 0, 100, 0, MAX_I_VALUE);
   int i_cont = map(params.i_cont_percent, 0, 100, 0, MAX_I_VALUE);
   int speed_lim = map(params.speed_limit_percent, 0, 100, 0, MAX_SPEED_VALUE);
 
-  CAN_message_t speed_limit_msg = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {SPEED_LIMIT, 0x00, 0x00}};
+  CAN_message_t speed_limit_msg = {
+      .id = BAMO_COMMAND_ID, .len = 3, .buf = {SPEED_LIMIT, 0x00, 0x00}};
   CAN_message_t i_max_msg = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {DEVICE_I_MAX, 0x00, 0x00}};
   CAN_message_t i_cont_msg = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {DEVICE_I_CNT, 0x00, 0x00}};
-  CAN_message_t accRamp_msg = {.id = BAMO_COMMAND_ID, .len = 5, .buf = {SPEED_DELTAMA_ACC, 0x00, 0x00}};
-  CAN_message_t deccRamp_msg = {.id = BAMO_COMMAND_ID, .len = 5, .buf = {SPEED_DELTAMA_DECC, 0x00, 0x00}};
+  CAN_message_t accRamp_msg = {
+      .id = BAMO_COMMAND_ID, .len = 5, .buf = {SPEED_DELTAMA_ACC, 0x00, 0x00}};
+  CAN_message_t deccRamp_msg = {
+      .id = BAMO_COMMAND_ID, .len = 5, .buf = {SPEED_DELTAMA_DECC, 0x00, 0x00}};
 
-  i_max_msg.buf[1] = i_max_pk & 0xFF;            // Lower byte
-  i_max_msg.buf[2] = (i_max_pk >> 8) & 0xFF;     // Upper byte
+  i_max_msg.buf[1] = i_max_pk & 0xFF;                // Lower byte
+  i_max_msg.buf[2] = (i_max_pk >> 8) & 0xFF;         // Upper byte
   speed_limit_msg.buf[1] = speed_lim & 0xFF;         // Lower byte
   speed_limit_msg.buf[2] = (speed_lim >> 8) & 0xFF;  // Upper byte
-  i_cont_msg.buf[1] = i_cont & 0xFF;            // Lower byte
-  i_cont_msg.buf[2] = (i_cont >> 8) & 0xFF;     // Upper byte
+  i_cont_msg.buf[1] = i_cont & 0xFF;                 // Lower byte
+  i_cont_msg.buf[2] = (i_cont >> 8) & 0xFF;          // Upper byte
 
-  accRamp_msg.buf[1] = params.speed_ramp_acc & 0xFF;         // Lower byte
-  accRamp_msg.buf[2] = (params.speed_ramp_acc >> 8) & 0xFF;  // Upper byte
+  accRamp_msg.buf[1] = params.speed_ramp_acc & 0xFF;          // Lower byte
+  accRamp_msg.buf[2] = (params.speed_ramp_acc >> 8) & 0xFF;   // Upper byte
   accRamp_msg.buf[3] = params.moment_ramp_acc & 0xFF;         // Upper byte
   accRamp_msg.buf[4] = (params.moment_ramp_acc >> 8) & 0xFF;  // Upper byte
 
@@ -340,8 +389,6 @@ void CanCommHandler::stop_bamocar() {
 
   can1.write(setEnableOff);
 }
-
-
 
 void CanCommHandler::send_torque(const int torque) {
   if (torque_timer >= TORQUE_MSG_PERIOD_MS) {

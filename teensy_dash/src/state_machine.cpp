@@ -17,7 +17,7 @@ void StateMachine::update() {
         if (transition_to_as_driving())
         current_state_ = State::AS_DRIVING;
       } else {
-        Serial.println("chillin");
+        // Serial.println("chillin");
       }
       break;
     case State::DRIVING:

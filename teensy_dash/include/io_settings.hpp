@@ -5,7 +5,7 @@ namespace pins {
         constexpr uint8_t APPS_HIGHER = 22;
         constexpr uint8_t APPS_LOWER = 20;
         constexpr uint8_t BRAKE_PRESSURE = 19;
-        constexpr uint8_t ROTARY_SWITCH = 23; // TODO: LEMOS WAS USING 40
+        constexpr uint8_t ROTARY_SWITCH = 40; // TODO: romao had this at 23
     }
 
     namespace digital {
