@@ -53,7 +53,7 @@ struct TemperatureData {
 };
 struct BoardData {
     TemperatureData temp_data;
-    bool valid = false;
+    bool has_reported = false;
     unsigned long last_update_ms;
 };
 
