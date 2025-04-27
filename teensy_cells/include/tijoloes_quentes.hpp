@@ -1,8 +1,8 @@
 #pragma once
 
 #include <FlexCAN_T4.h>
-#include "Arduino.h"
 
+#include "Arduino.h"
 
 // System Configuration
 constexpr uint8_t TOTAL_BOARDS = 6;
@@ -47,24 +47,35 @@ constexpr uint8_t LOWEST_THERMISTOR_ID = 0x00;
 constexpr uint8_t CHECKSUM_CONSTANT = 0x39;
 constexpr uint8_t MSG_LENGTH = 0x08;
 struct TemperatureData {
-    int8_t min_temp = ::MAX_INT8_T;
-    int8_t max_temp = ::MIN_INT8_T;
-    int8_t avg_temp = 0;
+  int8_t min_temp = ::MAX_INT8_T;
+  int8_t max_temp = ::MIN_INT8_T;
+  int8_t avg_temp = 0;
 };
 struct BoardData {
-    TemperatureData temp_data;
-    bool has_reported = false;
-    unsigned long last_update_ms;
+  TemperatureData temp_data;
+  bool has_communicated = false;
+  unsigned long last_update_ms;
 };
 
 float read_ntc_temperature(int analog_value);
 void read_check_temperatures();
 int8_t safe_temperature_cast(float temp);
 void send_can_max_min_avg_temperatures();
-void send_to_bms(const TemperatureData& global_data);
-void send_can_all_cell_temperatures();
 void show_temperatures();
 void code_reset();
+bool send_can_message(CAN_message_t& msg);
+
+// Functions specific to master board
+#if THIS_IS_MASTER
+void send_master_heartbeat();
 void can_snifflas(const CAN_message_t& msg);
 void calculate_global_stats(TemperatureData& global_data);
-bool check_temperture_timeout();
+bool check_temperature_timeouts();
+void send_to_bms(const TemperatureData& global_data);
+#endif
+
+// Functions specific to non-master boards
+#if !THIS_IS_MASTER
+bool check_master_timeout();
+void can_receive_from_master(const CAN_message_t& msg);
+#endif

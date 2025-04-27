@@ -47,19 +47,17 @@ void can_receive_from_master(const CAN_message_t& msg) {
 
 #endif
 
-
 #if THIS_IS_MASTER
 void send_master_heartbeat() {
   CAN_message_t msg;
   msg.id = MASTER_CELL_ID;
-  msg.len = 0;  
-  
+  msg.len = 0;
+
   if (send_can_message(msg)) {
     Serial.println("Sent master heartbeat");
   }
 }
 #endif
-
 
 float read_ntc_temperature(const int analog_value) {
   float temperature = TEMPERATURE_DEFAULT_C;
@@ -99,7 +97,7 @@ void read_check_temperatures() {
     board_temps[BOARD_ID].temp_data.min_temp = safe_temperature_cast(min_temp);
     board_temps[BOARD_ID].temp_data.max_temp = safe_temperature_cast(max_temp);
     board_temps[BOARD_ID].temp_data.avg_temp = safe_temperature_cast(sum_temp / NTC_SENSOR_COUNT);
-    board_temps[BOARD_ID].has_reported = true;
+    board_temps[BOARD_ID].has_communicated = true;
 
     digitalWrite(ERROR_SIGNAL, error_count >= MAX_NUM_ERRORS ? HIGH : LOW);
   }
@@ -115,7 +113,7 @@ bool check_temperature_timeouts() {
   for (uint8_t board_id = 1; board_id < TOTAL_BOARDS; board_id++) {
     const BoardData& board = board_temps[board_id];
 
-    if (!board.has_reported) {
+    if (!board.has_communicated) {
       // Allow 2 seconds on startup before considering it a timeout
       if (current_time > 2000) {
         Serial.print("Timeout: No data ever received from board ");
@@ -200,40 +198,6 @@ void send_to_bms(const TemperatureData& global_data) {
   // year only this one was used and worked fine
 }
 
-void send_can_all_cell_temperatures() {
-  CAN_message_t msg;
-
-  for (u_int8_t msgIndex = 0; msgIndex < 3; msgIndex++) {
-    msg.id = BOARD_ID;  // TODO
-    msg.len = 8;
-
-    msg.buf[0] = BOARD_ID;
-    msg.buf[1] = msgIndex;
-
-    for (int i = 0; i < CELLS_PER_MESSAGE; i++) {
-      int cellIndex = (msgIndex * CELLS_PER_MESSAGE) + i;
-      if (cellIndex < NTC_SENSOR_COUNT) {
-        msg.buf[i + 2] = safe_temperature_cast(cell_temps[cellIndex]);
-      } else {
-        msg.buf[i + 2] = 0;
-      }
-    }
-
-    can1.write(msg);
-
-    Serial.print("CAN MSG - ID: 0x");
-    Serial.print(msg.id, HEX);
-    Serial.print(" | Board: ");
-    Serial.print(BOARD_ID);
-    Serial.print(" | Cells ");
-    Serial.print(msgIndex * CELLS_PER_MESSAGE + 1);
-    Serial.print("-");
-    Serial.println(min((msgIndex + 1) * CELLS_PER_MESSAGE, NTC_SENSOR_COUNT));
-
-    delay(100);
-  }
-}
-
 void show_temperatures() {
   Serial.write("\033[2J");  // Clear screen
   Serial.write("\033[H");   // Home cursor
@@ -269,7 +233,7 @@ void can_snifflas(const CAN_message_t& msg) {
       board_temps[board_from_id].temp_data.min_temp = static_cast<int8_t>(msg.buf[1]);
       board_temps[board_from_id].temp_data.max_temp = static_cast<int8_t>(msg.buf[2]);
       board_temps[board_from_id].temp_data.avg_temp = static_cast<int8_t>(msg.buf[3]);
-      board_temps[board_from_id].has_reported = true;
+      board_temps[board_from_id].has_communicated = true;
       board_temps[board_from_id].last_update_ms = millis();
     } else {
       Serial.print("Error: Invalid board ID: ");
@@ -285,7 +249,7 @@ void calculate_global_stats(TemperatureData& global_data) {
   global_data.max_temp = MIN_INT8_T;
 
   for (const auto& board : board_temps) {
-    if (board.has_reported) {
+    if (board.has_communicated) {
       global_data.min_temp = min(global_data.min_temp, board.temp_data.min_temp);
       global_data.max_temp = max(global_data.max_temp, board.temp_data.max_temp);
       sum += board.temp_data.avg_temp;
@@ -342,8 +306,7 @@ void loop() {
     read_check_temperatures();
 
 #if !THIS_IS_MASTER
-    bool master_timeout = check_master_timeout();
-    if (master_timeout) {
+    if (check_master_timeout()) {
       Serial.println("EMERGENCY SHUTDOWN: Master data timeout detected!");
       digitalWrite(ERROR_SIGNAL, HIGH);
     }
