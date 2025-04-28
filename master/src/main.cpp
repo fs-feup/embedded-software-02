@@ -3,7 +3,7 @@
 #include "embedded/digitalReceiver.hpp"
 #include "embedded/digitalSender.hpp"
 #include "enum_utils.hpp"
-#include "logic/outputCoordinator.hpp"  // Updated path
+#include "logic/outputCoordinator.hpp"
 #include "logic/stateLogic.hpp"
 #include "model/systemData.hpp"
 #include "timings.hpp"
