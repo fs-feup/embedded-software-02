@@ -52,7 +52,6 @@ void to_ready() {
     sd.failure_detection_.pc_alive_timestamp_.reset();
     sd.failure_detection_.steer_alive_timestamp_.reset();
     sd.failure_detection_.res_signal_loss_timestamp_.reset();
-    // sd.digitalData.watchdogTimestamp.reset();
   }
 }
 
@@ -114,7 +113,6 @@ void test_off_to_ready_recheck() {
     sd.failure_detection_.inversor_alive_timestamp_.reset();
     sd.failure_detection_.pc_alive_timestamp_.reset();
     sd.failure_detection_.steer_alive_timestamp_.reset();
-    // sd.digitalData.watchdogTimestamp.reset(); // todo check
   }
 
   TEST_ASSERT_EQUAL(false, went_ready);
@@ -195,7 +193,6 @@ void test_ready_to_driving_to_emg() {
     sd.failure_detection_.pc_alive_timestamp_.reset();
     sd.failure_detection_.steer_alive_timestamp_.reset();
     sd.failure_detection_.res_signal_loss_timestamp_.reset();
-    // sd.digitalData.watchdogTimestamp.reset();
   }
 
   uint8_t msg[8] = {RES_GO, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
@@ -210,7 +207,6 @@ void test_ready_to_driving_to_emg() {
     sd.failure_detection_.pc_alive_timestamp_.reset();
     sd.failure_detection_.steer_alive_timestamp_.reset();
     sd.failure_detection_.res_signal_loss_timestamp_.reset();
-    // sd.digitalData.watchdogTimestamp.reset();
   }
 
   communicator.res_state_callback(msg);
@@ -224,7 +220,6 @@ void test_ready_to_driving_to_emg() {
     sd.failure_detection_.pc_alive_timestamp_.reset();
     sd.failure_detection_.steer_alive_timestamp_.reset();
     sd.failure_detection_.res_signal_loss_timestamp_.reset();
-    // sd.digitalData.watchdogTimestamp.reset();
     as_state.calculate_state();
   }
 
@@ -236,7 +231,6 @@ void test_ready_to_driving_to_emg() {
     sd.failure_detection_.pc_alive_timestamp_.reset();
     sd.failure_detection_.steer_alive_timestamp_.reset();
     sd.failure_detection_.res_signal_loss_timestamp_.reset();
-    // sd.digitalData.watchdogTimestamp.reset();
     as_state.calculate_state();
   }
   // threshold over, still with brake pressure, emergency
@@ -262,7 +256,6 @@ void test_ready_to_driving_to_emg2() {
     sd.failure_detection_.pc_alive_timestamp_.reset();
     sd.failure_detection_.steer_alive_timestamp_.reset();
     sd.failure_detection_.res_signal_loss_timestamp_.reset();
-    // sd.digitalData.watchdogTimestamp.reset();
   }
 
   uint8_t msg[8] = {RES_GO, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
@@ -409,24 +402,7 @@ void test_flow_ready() {
   // activation
   communicator.c1_callback(hydraulic_msg);
 
-  // Iterate a few times to go to check wd
-  // Metro time{1};
-  // while (!time.checkWithoutReset()) {
-  //     as_state.calculate_state();
-  // }
 
-  // sd.digitalData.watchdog_state = false;
-  // Wait for wd timeout
-  // Metro time2{INITIAL_CHECKUP_STEP_TIMEOUT};
-  // while (!time2.checkWithoutReset()) {
-  //     communicator.c1_callback(hydraulic_msg2);
-  //     as_state.calculate_state();
-  //     sd.failure_detection_.inversor_alive_timestamp_.reset();
-  //     sd.failure_detection_.pc_alive_timestamp_.reset();
-  //     sd.failure_detection_.steer_alive_timestamp_.reset();
-  // sd.digitalData.watchdogTimestamp.reset();
-  // }
-  // TEST_ASSERT_EQUAL(State::AS_OFF, as_state.state);
 
   Metro time3{INITIAL_CHECKUP_STEP_TIMEOUT};
   while (!time3.checkWithoutReset()) {
@@ -436,7 +412,6 @@ void test_flow_ready() {
     sd.failure_detection_.pc_alive_timestamp_.reset();
     sd.failure_detection_.steer_alive_timestamp_.reset();
     sd.failure_detection_.res_signal_loss_timestamp_.reset();
-    // sd.digitalData.watchdogTimestamp.reset();
   }
 
   TEST_ASSERT_EQUAL(State::AS_READY, as_state.state_);

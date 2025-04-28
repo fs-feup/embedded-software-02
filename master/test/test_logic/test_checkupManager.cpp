@@ -121,7 +121,6 @@ void test_shouldEnterEmergency() {
   sd.failure_detection_.pc_alive_timestamp_.reset();
   sd.failure_detection_.steer_alive_timestamp_.reset();
   sd.failure_detection_.res_signal_loss_timestamp_.reset();
-  // sd.hardware_data_.watchdogTimestamp.reset();
   sd.failure_detection_.emergency_signal_ = false;
   sd.failure_detection_.ts_on_ = true;
 
@@ -187,7 +186,6 @@ void test_shouldEnterEmergencyAsDrivingEBSValves() {
   sd.failure_detection_.pc_alive_timestamp_.reset();
   sd.failure_detection_.steer_alive_timestamp_.reset();
   sd.failure_detection_.res_signal_loss_timestamp_.checkWithoutReset();
-  // sd.hardware_data_.watchdogTimestamp.reset();
   sd.r2d_logics_.releaseEbsTimestamp.reset();
   sd.failure_detection_.emergency_signal_ = false;
   sd.failure_detection_.ts_on_ = true;
@@ -204,7 +202,6 @@ void test_shouldEnterEmergencyAsDrivingEBSValves() {
     sd.failure_detection_.pc_alive_timestamp_.reset();
     sd.failure_detection_.steer_alive_timestamp_.reset();
     sd.failure_detection_.res_signal_loss_timestamp_.reset();
-    // sd.hardware_data_.watchdogTimestamp.reset();
   }
 
   TEST_ASSERT_TRUE(checkupManager.shouldEnterEmergency(State::AS_DRIVING));

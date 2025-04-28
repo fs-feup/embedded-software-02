@@ -176,7 +176,6 @@ public:
    */
   [[nodiscard]] bool res_triggered() const;
 
-  [[nodiscard]] bool should_toggle_watchdog();
 };
 
 inline void CheckupManager::reset_checkup_state() {
@@ -469,4 +468,3 @@ inline bool CheckupManager::res_triggered() const {
   return false;
 }
 
-inline bool CheckupManager::should_toggle_watchdog() { return _watchdog_toggle_in_timer_; }
