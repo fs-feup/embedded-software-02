@@ -166,7 +166,7 @@ inline void DigitalReceiver::read_soc() {
 }
 
 inline void DigitalReceiver::read_bspd_sdc() {
-  bool is_sdc_open = !digitalRead(SDC_BSPD_STATE_PIN);  // low when sdc/bspd open
+  bool is_sdc_open = (0 == digitalRead(SDC_BSPD_STATE_PIN));  // low when sdc/bspd open
   debounce(is_sdc_open, hardware_data_->bspd_sdc_open_, sdc_bspd_change_counter_);
 }
 inline void DigitalReceiver::read_brake_sensor() {
