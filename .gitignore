@@ -1,1 +1,13 @@
-
+**/.vscode/*
+**/.idea/*
+**/doxygen/html/**
+compile_commands.json
+# PlatformIO build folders
+**/.pio
+# Compiled files
+*.o
+*.a
+*.bin
+*.hex
+*.elf
+**/build/

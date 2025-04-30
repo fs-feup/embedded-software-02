@@ -42,7 +42,7 @@ struct R2DLogics {
    */
 
   void process_go_signal() {
-    // If r2d is not received or received before 5 seconds, return false (?_?)
+    //if 5 seconds have passed all good, VVVRRRUUUMMMMM 
     if (readyTimestamp.check()) {
       r2d = true;
       return;

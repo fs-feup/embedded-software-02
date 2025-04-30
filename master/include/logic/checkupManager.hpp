@@ -289,7 +289,7 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
         checkup_state_ = CheckupState::EBS_CHECKS;
       }
       break;
-    case CheckupState::EBS_CHECKS:
+    case CheckupState::EBS_CHECKS:  
       handle_ebs_check();
       break;
     case CheckupState::CHECK_TIMESTAMPS: {
@@ -317,7 +317,7 @@ inline void CheckupManager::handle_ebs_check() {
       break;
 
     case EbsPressureTestPhase::CHECK_ACTUATOR_2:
-      if (check_pressure_high()) {
+      if (check_pressure_high()) {//pressure should be high even with only one actuator
         DEBUG_PRINT("Pressure high confirmed with only actuator 2");
         pressure_test_phase_ = EbsPressureTestPhase::ENABLE_ACTUATOR_1;
       }
