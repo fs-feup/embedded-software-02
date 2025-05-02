@@ -42,11 +42,12 @@ var searchData=
   ['test_5fshouldstayoff_5fwheninitialcheckupfails_5ffalse_39',['test_shouldStayOff_whenInitialCheckupFails_false',['../d9/d77/test__checkup_manager_8cpp.html#a27be3ebab870856632f7501493df3ff0',1,'test_checkupManager.cpp']]],
   ['test_5fshouldstayready_40',['test_shouldStayReady',['../d9/d77/test__checkup_manager_8cpp.html#a0125a19ddcfb685ed70af481d5d2a6db',1,'test_checkupManager.cpp']]],
   ['test_5fsystemdiagnostics_2ecpp_41',['test_systemDiagnostics.cpp',['../d5/d4f/test__system_diagnostics_8cpp.html',1,'']]],
-  ['timings_2ehpp_42',['timings.hpp',['../d2/d0c/timings_8hpp.html',1,'']]],
-  ['to_20develop_43',['Starting to Develop',['../index.html#autotoc_md1',1,'']]],
-  ['to_5fready_44',['to_ready',['../da/dad/test__integration_8cpp.html#abd09e1416aa231f6439d77b22bb05c10',1,'test_integration.cpp']]],
-  ['toggle_5fvalve_45',['TOGGLE_VALVE',['../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cba983b27e6997fc5f2021076d7d7c659f5',1,'CheckupManager']]],
-  ['togglewatchdog_46',['toggleWatchdog',['../da/db9/class_digital_sender.html#a323177916d67cb1d0e20f8f0268a356e',1,'DigitalSender']]],
-  ['trackdrive_47',['TRACKDRIVE',['../d3/db0/structure_8hpp.html#af686af98019fe71e9f18190349618431acd54d652c407892c09d1c0394be11a18',1,'structure.hpp']]],
-  ['ts_5fon_48',['ts_on',['../d3/df6/struct_failure_detection.html#a88125c3526b44548fa7d86b1104dee4a',1,'FailureDetection']]]
+  ['timer_5fstarted_42',['timer_started',['../d2/d46/class_a_s_state.html#a78e9322d13be537b8ee58cbaa4d7ecd3',1,'ASState']]],
+  ['timings_2ehpp_43',['timings.hpp',['../d2/d0c/timings_8hpp.html',1,'']]],
+  ['to_20develop_44',['Starting to Develop',['../index.html#autotoc_md1',1,'']]],
+  ['to_5fready_45',['to_ready',['../da/dad/test__integration_8cpp.html#abd09e1416aa231f6439d77b22bb05c10',1,'test_integration.cpp']]],
+  ['to_5funderlying_46',['to_underlying',['../db/dac/enum__utils_8hpp.html#a7c51004dded6296bb71c6dd83c7ad4a9',1,'enum_utils.hpp']]],
+  ['toggle_5fvalve_47',['TOGGLE_VALVE',['../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cba983b27e6997fc5f2021076d7d7c659f5',1,'CheckupManager']]],
+  ['trackdrive_48',['TRACKDRIVE',['../d3/db0/structure_8hpp.html#af686af98019fe71e9f18190349618431a0ca25c5af22edc019d28afcf211c34dd',1,'structure.hpp']]],
+  ['ts_5fon_5f_49',['ts_on_',['../d3/df6/struct_failure_detection.html#a70152d3e0448090d3e4cca333e1aaa6b',1,'FailureDetection']]]
 ];

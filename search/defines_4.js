@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['ebs_5fbuzzer_5ftimeout_0',['EBS_BUZZER_TIMEOUT',['../d6/db3/digital_settings_8hpp.html#aaab823e63df4385b58928b272ba45ddf',1,'digitalSettings.hpp']]],
-  ['ebs_5fvalve_5f1_5fpin_1',['ebs_valve_1_pin',['../d6/db3/digital_settings_8hpp.html#a7a728cf1dfd88108c973086de1810346',1,'EBS_VALVE_1_PIN:&#160;digitalSettings.hpp'],['../db/d2c/test__digital_sender_8cpp.html#a7a728cf1dfd88108c973086de1810346',1,'EBS_VALVE_1_PIN:&#160;test_digitalSender.cpp']]],
-  ['ebs_5fvalve_5f2_5fpin_2',['ebs_valve_2_pin',['../d6/db3/digital_settings_8hpp.html#a42751ed87b55bd7a6a6cdceda2b96bb4',1,'EBS_VALVE_2_PIN:&#160;digitalSettings.hpp'],['../db/d2c/test__digital_sender_8cpp.html#a42751ed87b55bd7a6a6cdceda2b96bb4',1,'EBS_VALVE_2_PIN:&#160;test_digitalSender.cpp']]]
+  ['green_5fled_5f1_0',['GREEN_LED_1',['../dd/d46/test__digital_receiver_8cpp.html#a117af37caa2b6df03e37497d28d2dfa2',1,'test_digitalReceiver.cpp']]],
+  ['green_5fled_5f2_1',['GREEN_LED_2',['../dd/d46/test__digital_receiver_8cpp.html#aca743ac8b5aa46899c0d5575c5f2db69',1,'test_digitalReceiver.cpp']]],
+  ['green_5fled_5f3_2',['GREEN_LED_3',['../dd/d46/test__digital_receiver_8cpp.html#afb4059db71c73174025a8fb6b3f58572',1,'test_digitalReceiver.cpp']]]
 ];

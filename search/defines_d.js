@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['unallowed_5fpin_0',['UNALLOWED_PIN',['../db/d2c/test__digital_sender_8cpp.html#a552054472526440a1a18bc6ad4132238',1,'test_digitalSender.cpp']]]
+  ['yellow_5fled_5f1_0',['YELLOW_LED_1',['../dd/d46/test__digital_receiver_8cpp.html#a37c80e07e23b962a506edde947e79b18',1,'test_digitalReceiver.cpp']]],
+  ['yellow_5fled_5f2_1',['YELLOW_LED_2',['../dd/d46/test__digital_receiver_8cpp.html#a67611e22eb44d7e3670a8822659e5263',1,'test_digitalReceiver.cpp']]]
 ];
