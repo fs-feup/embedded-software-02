@@ -76,7 +76,7 @@ float read_ntc_temperature(const int analog_value) {
 
   return temperature;
 }
-
+bool dc = false;
 void read_check_temperatures() {
   float sum_temp = 0.0;
   float min_temp = TEMPERATURE_MIN_C;
@@ -84,7 +84,11 @@ void read_check_temperatures() {
   bool error = false;
 
   for (int i = 0; i < NTC_SENSOR_COUNT; i++) {
+    float a = cell_temps[i];
     cell_temps[i] = read_ntc_temperature(analogRead(pin_ntc_temp[i]));
+    if (abs(a - cell_temps[i]) > 10) {
+      dc = !dc;
+    }
     min_temp = min(min_temp, cell_temps[i]);
     max_temp = max(max_temp, cell_temps[i]);
     sum_temp += cell_temps[i];
@@ -268,7 +272,9 @@ void setup() {
   code_reset();
   can1.begin();
   can1.setBaudRate(CAN_BAUD_RATE);
-
+  for (int i = 0; i < NTC_SENSOR_COUNT; i++) {
+    pinMode(pin_ntc_temp[i], INPUT);
+  }
 #if THIS_IS_MASTER
   unsigned long current_time = millis();
   for (uint8_t i = 0; i < TOTAL_BOARDS; i++) {
@@ -301,6 +307,7 @@ void setup() {
 void loop() {
   unsigned long current_time = millis();
 
+  
   if (current_time - last_reading_time > TEMP_SENSOR_READ_INTERVAL) {
     last_reading_time = current_time;
     read_check_temperatures();
@@ -327,6 +334,13 @@ void loop() {
     send_master_heartbeat();
 #endif
     show_temperatures();
+    if (dc) {
+      Serial.println("DCDCDCDCDCDCDCDCDCDCDCD");
+      Serial.println("DCDCDCDCDCDCDCDCDCDCDCD");
+      Serial.println("DCDCDCDCDCDCDCDCDCDCDCD");
+      Serial.println("DCDCDCDCDCDCDCDCDCDCDCD");
+      Serial.println(dc);
+    }
   }
   if (no_error_iterations >= NO_ERROR_RESET_THRESHOLD) {
     error_count = 0;
