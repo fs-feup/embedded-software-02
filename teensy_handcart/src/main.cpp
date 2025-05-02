@@ -1,5 +1,5 @@
 #include <Arduino.h>
-//#include "temp_header.h"
+// #include "temp_header.h"
 
 // put function declarations here:
 int myFunction(int, int);
@@ -14,6 +14,4 @@ void loop() {
 }
 
 // put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
-}
+int myFunction(int x, int y) { return x + y; }
