@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['state_0',['State',['../d3/db0/structure_8hpp.html#a5d74787dedbc4e11c1ab15bf487e61f8',1,'structure.hpp']]]
+  ['mission_0',['Mission',['../d3/db0/structure_8hpp.html#af686af98019fe71e9f18190349618431',1,'structure.hpp']]]
 ];

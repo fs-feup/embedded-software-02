@@ -1,21 +1,9 @@
 var searchData=
 [
-  ['master_5fid_0',['MASTER_ID',['../d6/d25/communicator_settings_8hpp.html#a88d4985242ab67d88d5c31b6ba5ff578',1,'communicatorSettings.hpp']]],
-  ['master_5fsdc_5fout_5fpin_1',['MASTER_SDC_OUT_PIN',['../d6/db3/digital_settings_8hpp.html#ad367f5c11f6d07827924c3e9b60d4302',1,'digitalSettings.hpp']]],
-  ['master_5fstate_5fhelper_2',['master_state_helper',['../df/d0a/main_8cpp.html#a904c227437f9cf806b185974129061ee',1,'main.cpp']]],
-  ['mission_5f_3',['mission_',['../d0/d9d/struct_system_data.html#a05c397b584d1a968e84a04f854f75487',1,'SystemData']]],
-  ['mission_5facceleration_5fpin_4',['MISSION_ACCELERATION_PIN',['../d6/db3/digital_settings_8hpp.html#aec2a5e9129a3d74f8b2fd3871535d257',1,'digitalSettings.hpp']]],
-  ['mission_5fautocross_5fpin_5',['MISSION_AUTOCROSS_PIN',['../d6/db3/digital_settings_8hpp.html#ada682a08783183d52d3a16c0ebd9e674',1,'digitalSettings.hpp']]],
-  ['mission_5febstest_5fpin_6',['MISSION_EBSTEST_PIN',['../d6/db3/digital_settings_8hpp.html#acad1fa9e7e84c9c003b38cc38adc4bd9',1,'digitalSettings.hpp']]],
-  ['mission_5ffinished_7',['MISSION_FINISHED',['../d6/d25/communicator_settings_8hpp.html#a4bb7c0eb4df40f82f545e6657bf1bc0b',1,'communicatorSettings.hpp']]],
-  ['mission_5ffinished_5f_8',['mission_finished_',['../d0/d9d/struct_system_data.html#abfedeb2e4a282940269622f4b084e427',1,'SystemData']]],
-  ['mission_5fhelper_9',['mission_helper',['../df/d0a/main_8cpp.html#a7cc282b54d11d23bdc7d7dd62b435dda',1,'main.cpp']]],
-  ['mission_5finspection_5fpin_10',['MISSION_INSPECTION_PIN',['../d6/db3/digital_settings_8hpp.html#a52bba09b7bf251e5408ded0ca0e1926c',1,'digitalSettings.hpp']]],
-  ['mission_5fmanual_5fpin_11',['MISSION_MANUAL_PIN',['../d6/db3/digital_settings_8hpp.html#ae1aa0bef3ee76836cd0a707bdcf6be11',1,'digitalSettings.hpp']]],
-  ['mission_5fmsg_12',['MISSION_MSG',['../d6/d25/communicator_settings_8hpp.html#a59cbca2953f265e7a3431671414975b2',1,'communicatorSettings.hpp']]],
-  ['mission_5fpublish_5finterval_13',['MISSION_PUBLISH_INTERVAL',['../d2/d0c/timings_8hpp.html#a130a7607f62a8c351f4869da4ffd6400',1,'timings.hpp']]],
-  ['mission_5fskidpad_5fpin_14',['MISSION_SKIDPAD_PIN',['../d6/db3/digital_settings_8hpp.html#a7d59f4f30c5b6999198f4c5cc586cb03',1,'digitalSettings.hpp']]],
-  ['mission_5ftimer_15',['mission_timer',['../df/d0a/main_8cpp.html#a011d9ce3bfea874c66a19c3322f76faa',1,'main.cpp']]],
-  ['mission_5ftrackdrive_5fpin_16',['MISSION_TRACKDRIVE_PIN',['../d6/db3/digital_settings_8hpp.html#a06659683e0a83aeff1dac91547ecc235',1,'digitalSettings.hpp']]],
-  ['msg_17',['msg',['../df/d2e/test__callbacks_8cpp.html#a7b7e0c51c97a7d2837c3aef9953192f1',1,'test_callbacks.cpp']]]
+  ['max_5fmission_0',['MAX_MISSION',['../d4/d7d/hardware_settings_8hpp.html#a9c2d5d4811dbb9ad6c78603b5e801160',1,'hardwareSettings.hpp']]],
+  ['micro_5fto_5fseconds_1',['MICRO_TO_SECONDS',['../d4/d7d/hardware_settings_8hpp.html#a24295253367e159e0e8926a0656f6882',1,'hardwareSettings.hpp']]],
+  ['mission_5f_2',['mission_',['../d0/d9d/struct_system_data.html#a05c397b584d1a968e84a04f854f75487',1,'SystemData']]],
+  ['mission_5ffinished_5f_3',['mission_finished_',['../d0/d9d/struct_system_data.html#abfedeb2e4a282940269622f4b084e427',1,'SystemData']]],
+  ['mission_5fpublish_5finterval_4',['MISSION_PUBLISH_INTERVAL',['../d2/d0c/timings_8hpp.html#a130a7607f62a8c351f4869da4ffd6400',1,'timings.hpp']]],
+  ['msg_5',['msg',['../df/d2e/test__callbacks_8cpp.html#a7b7e0c51c97a7d2837c3aef9953192f1',1,'test_callbacks.cpp']]]
 ];

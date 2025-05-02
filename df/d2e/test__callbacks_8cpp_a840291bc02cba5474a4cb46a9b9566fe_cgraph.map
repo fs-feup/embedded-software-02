@@ -1,51 +1,49 @@
 <map id="main" name="main">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,248,55,273"/>
-<area shape="rect" id="Node000002" href="$df/d2e/test__callbacks_8cpp.html#a52d28999c07434392567cd27c936944f" title="Tests if the messages from Bamocar are correctly parsed and the Tractive System State is matching rec..." alt="" coords="148,149,248,175"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="38,245,64,214,101,183,132,170,134,175,104,188,68,218,42,249"/>
-<area shape="rect" id="Node000015" href="$df/d2e/test__callbacks_8cpp.html#abe441660616299491af73f98f8d1556c" title="Tests if the messages from C1 are correctly parsed for Hydraulic Brake Pressure and Right Wheel Rpm&#39;s..." alt="" coords="166,198,230,224"/>
-<area shape="poly" id="edge17_Node000001_Node000015" title=" " alt="" coords="54,249,102,232,150,219,151,224,103,238,56,254"/>
-<area shape="rect" id="Node000016" href="$df/d2e/test__callbacks_8cpp.html#ad86d36c0154f17954835cc33167f5d3e" title="Tests if the messages from RES are correctly parsed for R2D and Emergency activations,..." alt="" coords="146,100,250,125"/>
-<area shape="poly" id="edge19_Node000001_Node000016" title=" " alt="" coords="33,246,55,192,75,161,101,134,130,120,132,124,104,138,79,164,60,194,38,248"/>
-<area shape="rect" id="Node000017" href="$df/d2e/test__callbacks_8cpp.html#ac6aeb4c67803998c1a9f04100ddbd068" title="Test if the message wheel rpm message is created correctly for a large rpm value." alt="" coords="115,396,281,421"/>
-<area shape="poly" id="edge21_Node000001_Node000017" title=" " alt="" coords="38,272,60,326,79,357,104,382,110,386,107,390,101,386,75,360,55,329,33,275"/>
-<area shape="rect" id="Node000019" href="$df/d2e/test__callbacks_8cpp.html#a245c32de49aa90cc9b50aa12196efc1f" title="Test if the message wheel rpm message is created correctly for a negative rpm value." alt="" coords="103,248,293,273"/>
-<area shape="poly" id="edge23_Node000001_Node000019" title=" " alt="" coords="55,258,87,258,87,263,55,263"/>
-<area shape="rect" id="Node000020" href="$df/d2e/test__callbacks_8cpp.html#ab404b0e3a1c36f486f5e0e9882c6934a" title="Test if the message wheel rpm message is created correctly for a small rpm value." alt="" coords="112,297,284,323"/>
-<area shape="poly" id="edge25_Node000001_Node000020" title=" " alt="" coords="56,267,103,283,127,290,126,295,102,288,54,272"/>
-<area shape="rect" id="Node000021" href="$df/d2e/test__callbacks_8cpp.html#af6d924848ced147e70312ebb49e39afc" title="Test if the message wheel rpm message is created correctly for a 0.0 rpm value." alt="" coords="115,346,281,372"/>
-<area shape="poly" id="edge27_Node000001_Node000021" title=" " alt="" coords="42,272,68,303,104,333,113,338,111,342,101,337,64,307,38,275"/>
-<area shape="rect" id="Node000003" href="$d0/d02/class_communicator.html#a39af6c0700f1e9b5df6b63c9322bdcb6" title="Parses the message received from the CAN bus." alt="" coords="347,141,490,182"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="248,159,332,159,332,164,248,164"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,234,55,260"/>
+<area shape="rect" id="Node000002" href="$df/d2e/test__callbacks_8cpp.html#a52d28999c07434392567cd27c936944f" title="Tests if the messages from Bamocar are correctly parsed and the Tractive System State is matching rec..." alt="" coords="148,136,248,161"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="38,232,64,201,101,170,132,157,134,162,104,175,68,205,42,235"/>
+<area shape="rect" id="Node000014" href="$df/d2e/test__callbacks_8cpp.html#abe441660616299491af73f98f8d1556c" title="Tests if the messages from C1 are correctly parsed for Hydraulic Brake Pressure and Right Wheel Rpm&#39;s..." alt="" coords="166,185,230,211"/>
+<area shape="poly" id="edge16_Node000001_Node000014" title=" " alt="" coords="54,235,102,219,150,206,151,211,103,224,56,241"/>
+<area shape="rect" id="Node000015" href="$df/d2e/test__callbacks_8cpp.html#ad86d36c0154f17954835cc33167f5d3e" title="Tests if the messages from RES are correctly parsed for R2D and Emergency activations,..." alt="" coords="146,86,250,112"/>
+<area shape="poly" id="edge18_Node000001_Node000015" title=" " alt="" coords="33,233,55,179,75,147,101,121,130,106,132,111,104,125,79,151,60,181,38,235"/>
+<area shape="rect" id="Node000016" href="$df/d2e/test__callbacks_8cpp.html#ac6aeb4c67803998c1a9f04100ddbd068" title="Test if the message wheel rpm message is created correctly for a large rpm value." alt="" coords="115,382,281,408"/>
+<area shape="poly" id="edge20_Node000001_Node000016" title=" " alt="" coords="38,259,60,313,79,343,104,369,110,373,107,377,101,373,75,347,55,315,33,261"/>
+<area shape="rect" id="Node000018" href="$df/d2e/test__callbacks_8cpp.html#a245c32de49aa90cc9b50aa12196efc1f" title="Test if the message wheel rpm message is created correctly for a negative rpm value." alt="" coords="103,234,293,260"/>
+<area shape="poly" id="edge22_Node000001_Node000018" title=" " alt="" coords="55,244,87,244,87,250,55,250"/>
+<area shape="rect" id="Node000019" href="$df/d2e/test__callbacks_8cpp.html#ab404b0e3a1c36f486f5e0e9882c6934a" title="Test if the message wheel rpm message is created correctly for a small rpm value." alt="" coords="112,284,284,309"/>
+<area shape="poly" id="edge24_Node000001_Node000019" title=" " alt="" coords="56,253,103,270,127,277,126,282,102,275,54,259"/>
+<area shape="rect" id="Node000020" href="$df/d2e/test__callbacks_8cpp.html#af6d924848ced147e70312ebb49e39afc" title="Test if the message wheel rpm message is created correctly for a 0.0 rpm value." alt="" coords="115,333,281,359"/>
+<area shape="poly" id="edge26_Node000001_Node000020" title=" " alt="" coords="42,259,68,289,104,319,113,324,111,329,101,324,64,293,38,262"/>
+<area shape="rect" id="Node000003" href="$d0/d02/class_communicator.html#a39af6c0700f1e9b5df6b63c9322bdcb6" title="Parses the message received from the CAN bus." alt="" coords="347,128,490,169"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="248,146,332,146,332,151,248,151"/>
 <area shape="rect" id="Node000004" href="$d0/d02/class_communicator.html#abb808b73526d1d221dafef31202f88cc" title="Callback from inversor, for alive signal and data." alt="" coords="554,5,715,46"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="438,139,484,97,543,55,552,51,555,55,546,60,488,101,442,143"/>
-<area shape="rect" id="Node000007" href="$d0/d02/class_communicator.html#a6726b6167f35e19b5965518fca206a95" title="Callback for data from C1 Teensy." alt="" coords="544,70,725,96"/>
-<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="462,138,543,104,563,98,565,103,545,110,464,143"/>
-<area shape="rect" id="Node000008" href="$d0/d02/class_communicator.html#a6e76ba59f478d3957c757b4cd211935b" title="Callback for message from AS CU." alt="" coords="544,120,725,145"/>
-<area shape="poly" id="edge7_Node000003_Node000008" title=" " alt="" coords="491,149,529,144,529,149,491,155"/>
-<area shape="rect" id="Node000009" href="$d0/d02/class_communicator.html#ade6c8ad4a457cda4b149c0fa44581002" title="Callback for RES activation." alt="" coords="551,300,718,341"/>
-<area shape="poly" id="edge9_Node000003_Node000009" title=" " alt="" coords="438,181,483,232,513,260,546,285,555,290,552,295,543,289,510,264,480,236,434,184"/>
-<area shape="rect" id="Node000011" href="$d0/d02/class_communicator.html#a42cf4c62a4ff6b22f9c0151f60ce53b2" title="Callback RES default callback." alt="" coords="552,235,717,275"/>
-<area shape="poly" id="edge11_Node000003_Node000011" title=" " alt="" coords="462,180,545,219,562,226,560,231,543,224,460,185"/>
-<area shape="rect" id="Node000014" href="$d0/d02/class_communicator.html#a04694b4fb21ef693a32ec31a13cd3127" title="Callback for steering actuator information." alt="" coords="556,169,713,210"/>
-<area shape="poly" id="edge15_Node000003_Node000014" title=" " alt="" coords="491,168,541,175,540,180,491,174"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="443,125,488,91,543,57,556,50,558,55,546,61,491,95,447,130"/>
+<area shape="rect" id="Node000007" href="$d0/d02/class_communicator.html#a6e76ba59f478d3957c757b4cd211935b" title="Callback for message from AS CU." alt="" coords="544,136,725,161"/>
+<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="491,146,529,146,529,151,491,151"/>
+<area shape="rect" id="Node000008" href="$d0/d02/class_communicator.html#ade6c8ad4a457cda4b149c0fa44581002" title="Callback for RES activation." alt="" coords="551,251,718,291"/>
+<area shape="poly" id="edge8_Node000003_Node000008" title=" " alt="" coords="447,167,491,201,546,235,558,242,556,246,543,240,488,206,443,171"/>
+<area shape="rect" id="Node000010" href="$d0/d02/class_communicator.html#a42cf4c62a4ff6b22f9c0151f60ce53b2" title="Callback RES default callback." alt="" coords="552,185,717,226"/>
+<area shape="poly" id="edge10_Node000003_Node000010" title=" " alt="" coords="492,165,541,178,540,183,490,170"/>
+<area shape="rect" id="Node000013" href="$d0/d02/class_communicator.html#a04694b4fb21ef693a32ec31a13cd3127" title="Callback for steering actuator information." alt="" coords="556,71,713,111"/>
+<area shape="poly" id="edge14_Node000003_Node000013" title=" " alt="" coords="490,127,540,113,542,118,492,132"/>
 <area shape="rect" id="Node000005" href="$db/d60/class_metro.html#a95ed7cb80b7f56a80790c34fcea93724" title="Checks if the interval has passed without resetting the timer." alt="" coords="773,13,946,39"/>
 <area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="715,23,757,23,757,28,715,28"/>
-<area shape="rect" id="Node000006" href="$db/d60/class_metro.html#a40a8e2c535e7558224f4336628797dbd" title="Resets the timer to the current time." alt="" coords="815,149,904,175"/>
-<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="703,44,726,55,786,96,835,136,831,140,783,100,723,60,700,49"/>
-<area shape="poly" id="edge8_Node000008_Node000006" title=" " alt="" coords="725,141,799,151,799,157,725,147"/>
-<area shape="rect" id="Node000010" href="$d0/d02/class_communicator.html#a55c912e8973aa10866ae3fd9f2df8de7" title="Sends a message to the CAN bus." alt="" coords="790,300,929,341"/>
-<area shape="poly" id="edge10_Node000009_Node000010" title=" " alt="" coords="719,318,774,318,774,323,719,323"/>
-<area shape="poly" id="edge14_Node000011_Node000006" title=" " alt="" coords="692,232,724,219,815,179,817,184,726,224,694,236"/>
-<area shape="rect" id="Node000012" href="$d8/deb/struct_r2_d_logics.html#a95855075cc6b54f2af9a86b16d537732" title="Processes the go signal." alt="" coords="791,235,928,275"/>
-<area shape="poly" id="edge12_Node000011_Node000012" title=" " alt="" coords="717,252,775,252,775,258,717,258"/>
-<area shape="rect" id="Node000013" href="$db/d60/class_metro.html#aca78646b9ae992c81ffc395c1a1da997" title="Checks if the interval has passed and resets the timer if true." alt="" coords="994,242,1089,268"/>
-<area shape="poly" id="edge13_Node000012_Node000013" title=" " alt="" coords="929,252,979,252,979,258,929,258"/>
-<area shape="poly" id="edge16_Node000014_Node000006" title=" " alt="" coords="713,177,799,166,799,172,714,183"/>
-<area shape="poly" id="edge18_Node000015_Node000003" title=" " alt="" coords="230,201,331,178,333,184,231,207"/>
-<area shape="poly" id="edge20_Node000016_Node000003" title=" " alt="" coords="251,121,333,140,331,145,250,127"/>
-<area shape="rect" id="Node000018" href="$df/d93/utils_8hpp.html#a64debfb46d428531f2ce27fa92f63685" title="Function to create left wheel msg." alt="" coords="341,321,496,347"/>
-<area shape="poly" id="edge22_Node000017_Node000018" title=" " alt="" coords="256,392,292,382,373,351,375,356,294,387,258,397"/>
-<area shape="poly" id="edge24_Node000019_Node000018" title=" " alt="" coords="257,271,294,282,374,312,372,317,292,287,256,276"/>
-<area shape="poly" id="edge26_Node000020_Node000018" title=" " alt="" coords="284,316,326,321,325,326,284,322"/>
-<area shape="poly" id="edge28_Node000021_Node000018" title=" " alt="" coords="281,347,325,342,326,347,281,352"/>
+<area shape="rect" id="Node000006" href="$db/d60/class_metro.html#a40a8e2c535e7558224f4336628797dbd" title="Resets the timer to the current time." alt="" coords="815,106,904,132"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="694,44,726,57,817,97,815,102,724,61,692,49"/>
+<area shape="poly" id="edge7_Node000007_Node000006" title=" " alt="" coords="725,134,799,124,799,129,725,139"/>
+<area shape="rect" id="Node000009" href="$d0/d02/class_communicator.html#a55c912e8973aa10866ae3fd9f2df8de7" title="Sends a message to the CAN bus." alt="" coords="790,251,929,291"/>
+<area shape="poly" id="edge9_Node000008_Node000009" title=" " alt="" coords="719,268,774,268,774,274,719,274"/>
+<area shape="poly" id="edge13_Node000010_Node000006" title=" " alt="" coords="694,182,724,171,812,136,814,141,726,176,696,187"/>
+<area shape="rect" id="Node000011" href="$d8/deb/struct_r2_d_logics.html#ac12d9b344b39a8a5da25dcc6cdfb3a3b" title="Processes the go signal." alt="" coords="791,185,928,226"/>
+<area shape="poly" id="edge11_Node000010_Node000011" title=" " alt="" coords="717,203,775,203,775,208,717,208"/>
+<area shape="rect" id="Node000012" href="$db/d60/class_metro.html#aca78646b9ae992c81ffc395c1a1da997" title="Checks if the interval has passed and resets the timer if true." alt="" coords="994,193,1089,219"/>
+<area shape="poly" id="edge12_Node000011_Node000012" title=" " alt="" coords="929,203,979,203,979,208,929,208"/>
+<area shape="poly" id="edge15_Node000013_Node000006" title=" " alt="" coords="714,98,799,109,799,114,713,103"/>
+<area shape="poly" id="edge17_Node000014_Node000003" title=" " alt="" coords="230,188,331,165,333,170,231,193"/>
+<area shape="poly" id="edge19_Node000015_Node000003" title=" " alt="" coords="251,108,333,126,331,132,250,113"/>
+<area shape="rect" id="Node000017" href="$d5/d5d/comm_2utils_8hpp.html#a64debfb46d428531f2ce27fa92f63685" title="Function to create left wheel msg." alt="" coords="341,308,496,333"/>
+<area shape="poly" id="edge21_Node000016_Node000017" title=" " alt="" coords="256,379,292,368,373,337,375,342,294,374,258,384"/>
+<area shape="poly" id="edge23_Node000018_Node000017" title=" " alt="" coords="257,258,294,268,374,299,372,304,292,274,256,263"/>
+<area shape="poly" id="edge25_Node000019_Node000017" title=" " alt="" coords="284,303,326,308,325,313,284,308"/>
+<area shape="poly" id="edge27_Node000020_Node000017" title=" " alt="" coords="281,334,325,328,326,334,281,339"/>
 </map>

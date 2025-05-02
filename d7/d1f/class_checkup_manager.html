@@ -109,9 +109,9 @@ Collaboration diagram for CheckupManager:</div>
 <div class="dyncontent">
 <div class="center"><img src="../../d7/d60/class_checkup_manager__coll__graph.png" border="0" usemap="#a_checkup_manager_coll__map" alt="Collaboration graph"/></div>
 <map name="a_checkup_manager_coll__map" id="a_checkup_manager_coll__map">
-<area shape="rect" title="The CheckupManager class handles various checkup operations." alt="" coords="5,214,185,558"/>
+<area shape="rect" title="The CheckupManager class handles various checkup operations." alt="" coords="5,214,185,647"/>
 <area shape="rect" href="../../db/d60/class_metro.html" title="Our own implementation of Metro class." alt="" coords="23,5,167,151"/>
-<area shape="poly" title=" " alt="" coords="98,150,98,197,93,197,93,150"/>
+<area shape="poly" title=" " alt="" coords="98,151,98,197,93,197,93,151"/>
 </map>
 </div>
 <table class="memberdecls">
@@ -120,25 +120,46 @@ Public Types</h2></td></tr>
 <tr class="memitem:a8bcbd0781d0b8ffcd769356db1ac30cb" id="r_a8bcbd0781d0b8ffcd769356db1ac30cb"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cb">CheckupState</a> { <br />
 &#160;&#160;<a class="el" href="../../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cbae1f05b645a68f589f8baef2e74cec3ca">WAIT_FOR_ASMS</a>
 , <a class="el" href="../../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cba6de3c2ac6a5532fa4910ee26bae0dd8d">START_TOGGLING_WATCHDOG</a>
-, <a class="el" href="../../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cbab2b781c8b7b4e83e4e66f416b67f2ced">WAIT_FOR_WATCHDOG</a>
+, <a class="el" href="../../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cba4c214e794c8eabaa278cf6b66a8a74f4">TOGGLING_WATCHDOG</a>
 , <a class="el" href="../../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cba68c8da63c34755ac54a3553bae964ef7">STOP_TOGGLING_WATCHDOG</a>
 , <br />
 &#160;&#160;<a class="el" href="../../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cbaa83742a92562c8098826832db2294a76">CHECK_WATCHDOG</a>
-, <a class="el" href="../../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cba88eee09a185b96c31b4f1d82ae2026ca">CLOSE_SDC</a>
-, <a class="el" href="../../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cba6aac1fc54666554f985cdf51e937cf57">WAIT_FOR_AATS</a>
-, <a class="el" href="../../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cbabe2d6a2adf6a59c550cedefc47b6bfe6">WAIT_FOR_TS</a>
+, <a class="el" href="../../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cbacaa70b61fb4243adc7ee4b4c09dc8eef">START_TOGGLING_WATCHDOG_AGAIN</a>
+, <a class="el" href="../../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cba7b025bd5608df14405acaa918808af1a">CHECK_EBS_STORAGE</a>
+, <a class="el" href="../../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cba1085587fa073a9b2a90fec2d3f7ad13f">CHECK_BRAKE_PRESSURE</a>
 , <br />
-&#160;&#160;<a class="el" href="../../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cba983b27e6997fc5f2021076d7d7c659f5">TOGGLE_VALVE</a>
-, <a class="el" href="../../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cba805e6c456a651c5179d1a4f98182c9ba">CHECK_PRESSURE</a>
-, <a class="el" href="../../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cba1c54fd7e170d0acb268ec72d3e554dec">CHECK_TIMESTAMPS</a>
+&#160;&#160;<a class="el" href="../../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cba88eee09a185b96c31b4f1d82ae2026ca">CLOSE_SDC</a>
+, <a class="el" href="../../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cba935c81645a142f40ec210a71d3bbade4">WAIT_FOR_ASATS</a>
+, <a class="el" href="../../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cbabe2d6a2adf6a59c550cedefc47b6bfe6">WAIT_FOR_TS</a>
+, <a class="el" href="../../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cbae2b5d02aba842851247a8f3eeb68314c">EBS_CHECKS</a>
+, <br />
+&#160;&#160;<a class="el" href="../../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cba1c54fd7e170d0acb268ec72d3e554dec">CHECK_TIMESTAMPS</a>
 , <a class="el" href="../../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cba56129675118a4166e97f020139a984ae">CHECKUP_COMPLETE</a>
 <br />
  }</td></tr>
 <tr class="memdesc:a8bcbd0781d0b8ffcd769356db1ac30cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">The CheckupState enum represents the different states of the initial checkup process. The checkup process is a sequence of checks that the vehicle must pass before it can transition to ready state.  <a href="../../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cb">More...</a><br /></td></tr>
 <tr class="separator:a8bcbd0781d0b8ffcd769356db1ac30cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a67dd5422cebccb716312448344a5cc46" id="r_a67dd5422cebccb716312448344a5cc46"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d1f/class_checkup_manager.html#a67dd5422cebccb716312448344a5cc46">CheckupError</a> { <a class="el" href="../../d7/d1f/class_checkup_manager.html#a67dd5422cebccb716312448344a5cc46aa51ca4912465f83e03ca419fc308b08b">WAITING_FOR_RESPONSE</a>
-, <a class="el" href="../../d7/d1f/class_checkup_manager.html#a67dd5422cebccb716312448344a5cc46abb1ca97ec761fc37101737ba0aa2e7c5">ERROR</a>
+<tr class="memitem:a80729480b8cd00c3756d18ea4f12c6d7" id="r_a80729480b8cd00c3756d18ea4f12c6d7"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d1f/class_checkup_manager.html#a80729480b8cd00c3756d18ea4f12c6d7">EbsPressureTestPhase</a> { <br />
+&#160;&#160;<a class="el" href="../../d7/d1f/class_checkup_manager.html#a80729480b8cd00c3756d18ea4f12c6d7aa0d3ca7bb722577be349988c403e5015">DISABLE_ACTUATOR_1</a>
+, <a class="el" href="../../d7/d1f/class_checkup_manager.html#a80729480b8cd00c3756d18ea4f12c6d7a8117b8415fee31d472f9c56b290ed045">CHECK_ACTUATOR_2</a>
+, <a class="el" href="../../d7/d1f/class_checkup_manager.html#a80729480b8cd00c3756d18ea4f12c6d7ad3a2d8a2e2015f38e3cc4c2167b21e90">ENABLE_ACTUATOR_1</a>
+, <a class="el" href="../../d7/d1f/class_checkup_manager.html#a80729480b8cd00c3756d18ea4f12c6d7a2bee83def1c1588ee5394fd0e849bc31">DISABLE_ACTUATOR_2</a>
+, <br />
+&#160;&#160;<a class="el" href="../../d7/d1f/class_checkup_manager.html#a80729480b8cd00c3756d18ea4f12c6d7ac4a1aedb9f23800f21b8a4045a7c51ef">CHECK_ACTUATOR_1</a>
+, <a class="el" href="../../d7/d1f/class_checkup_manager.html#a80729480b8cd00c3756d18ea4f12c6d7a8148eb583d277ad3fdaca2072d1dbaef">ENABLE_ACTUATOR_2</a>
+, <a class="el" href="../../d7/d1f/class_checkup_manager.html#a80729480b8cd00c3756d18ea4f12c6d7a3de44296982e58199afc513a715b12ba">COMPLETE</a>
+<br />
+ }</td></tr>
+<tr class="separator:a80729480b8cd00c3756d18ea4f12c6d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a67dd5422cebccb716312448344a5cc46" id="r_a67dd5422cebccb716312448344a5cc46"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d1f/class_checkup_manager.html#a67dd5422cebccb716312448344a5cc46">CheckupError</a> { <br />
+&#160;&#160;<a class="el" href="../../d7/d1f/class_checkup_manager.html#a67dd5422cebccb716312448344a5cc46aa51ca4912465f83e03ca419fc308b08b">WAITING_FOR_RESPONSE</a>
+, <a class="el" href="../../d7/d1f/class_checkup_manager.html#a67dd5422cebccb716312448344a5cc46a3a433473ce07346f0bdd56fc3b86c3fe">ERROR_WD_STAYED_READY</a>
+, <a class="el" href="../../d7/d1f/class_checkup_manager.html#a67dd5422cebccb716312448344a5cc46a10a356d1da1b6dffe6afe858d54d8ee3">ERROR_WD_TOGGLE</a>
+, <a class="el" href="../../d7/d1f/class_checkup_manager.html#a67dd5422cebccb716312448344a5cc46afad586753899ca760c5b13da19ecf0d0">ERROR_TIMESTAMPS_EMERGENCY</a>
+, <br />
+&#160;&#160;<a class="el" href="../../d7/d1f/class_checkup_manager.html#a67dd5422cebccb716312448344a5cc46abb1ca97ec761fc37101737ba0aa2e7c5">ERROR</a>
 , <a class="el" href="../../d7/d1f/class_checkup_manager.html#a67dd5422cebccb716312448344a5cc46ad0749aaba8b833466dfcbb0428e4f89c">SUCCESS</a>
+<br />
  }</td></tr>
 <tr class="separator:a67dd5422cebccb716312448344a5cc46"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -153,12 +174,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a033456ba1c06b51f32f83c3706f39358" id="r_a033456ba1c06b51f32f83c3706f39358"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d1f/class_checkup_manager.html#a033456ba1c06b51f32f83c3706f39358">should_stay_manual_driving</a> () const</td></tr>
 <tr class="memdesc:a033456ba1c06b51f32f83c3706f39358"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs a manual driving checkup.  <br /></td></tr>
 <tr class="separator:a033456ba1c06b51f32f83c3706f39358"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a17d80bac83cbb3f7ea20b8e5a4b6df8a" id="r_a17d80bac83cbb3f7ea20b8e5a4b6df8a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d1f/class_checkup_manager.html#a17d80bac83cbb3f7ea20b8e5a4b6df8a">should_stay_off</a> (<a class="el" href="../../da/db9/class_digital_sender.html">DigitalSender</a> *<a class="el" href="../../df/d0a/main_8cpp.html#a58cee0c7f306c21a8fea82ca46723ed4">digital_sender</a>)</td></tr>
-<tr class="memdesc:a17d80bac83cbb3f7ea20b8e5a4b6df8a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs an off checkup.  <br /></td></tr>
-<tr class="separator:a17d80bac83cbb3f7ea20b8e5a4b6df8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a242bb7e17395cd65fdc31a8a2c467336" id="r_a242bb7e17395cd65fdc31a8a2c467336"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d7/d1f/class_checkup_manager.html#a67dd5422cebccb716312448344a5cc46">CheckupError</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d1f/class_checkup_manager.html#a242bb7e17395cd65fdc31a8a2c467336">initial_checkup_sequence</a> (<a class="el" href="../../da/db9/class_digital_sender.html">DigitalSender</a> *<a class="el" href="../../df/d0a/main_8cpp.html#a58cee0c7f306c21a8fea82ca46723ed4">digital_sender</a>)</td></tr>
-<tr class="memdesc:a242bb7e17395cd65fdc31a8a2c467336"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs an initial checkup.  <br /></td></tr>
-<tr class="separator:a242bb7e17395cd65fdc31a8a2c467336"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abaf565f9d7f19293df1fc5a6d2280264" id="r_abaf565f9d7f19293df1fc5a6d2280264"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d1f/class_checkup_manager.html#abaf565f9d7f19293df1fc5a6d2280264">should_stay_off</a> ()</td></tr>
+<tr class="memdesc:abaf565f9d7f19293df1fc5a6d2280264"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs an off checkup.  <br /></td></tr>
+<tr class="separator:abaf565f9d7f19293df1fc5a6d2280264"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af42e7465ef8ea5047225257ac11c0870" id="r_af42e7465ef8ea5047225257ac11c0870"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d7/d1f/class_checkup_manager.html#a67dd5422cebccb716312448344a5cc46">CheckupError</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d1f/class_checkup_manager.html#af42e7465ef8ea5047225257ac11c0870">initial_checkup_sequence</a> ()</td></tr>
+<tr class="memdesc:af42e7465ef8ea5047225257ac11c0870"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs an initial checkup.  <br /></td></tr>
+<tr class="separator:af42e7465ef8ea5047225257ac11c0870"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9a609a4d9f99f91092792ac2105eb247" id="r_a9a609a4d9f99f91092792ac2105eb247"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d1f/class_checkup_manager.html#a9a609a4d9f99f91092792ac2105eb247">should_go_ready_from_off</a> () const</td></tr>
 <tr class="memdesc:a9a609a4d9f99f91092792ac2105eb247"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs a last re-check for off to ready transition.  <br /></td></tr>
 <tr class="separator:a9a609a4d9f99f91092792ac2105eb247"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -168,6 +189,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a1137db2adef0dae5c06fbbd1c86f8568" id="r_a1137db2adef0dae5c06fbbd1c86f8568"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d1f/class_checkup_manager.html#a1137db2adef0dae5c06fbbd1c86f8568">should_enter_emergency</a> (<a class="el" href="../../d3/db0/structure_8hpp.html#a5d74787dedbc4e11c1ab15bf487e61f8">State</a> current_state) const</td></tr>
 <tr class="memdesc:a1137db2adef0dae5c06fbbd1c86f8568"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs an emergency checkup.  <br /></td></tr>
 <tr class="separator:a1137db2adef0dae5c06fbbd1c86f8568"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ad49ca8165b728ea46d1d5e1e580148" id="r_a0ad49ca8165b728ea46d1d5e1e580148"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d1f/class_checkup_manager.html#a0ad49ca8165b728ea46d1d5e1e580148">should_enter_emergency_in_ready_state</a> () const</td></tr>
+<tr class="separator:a0ad49ca8165b728ea46d1d5e1e580148"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d3c5d16578d35a9db47e89ad63cfac8" id="r_a4d3c5d16578d35a9db47e89ad63cfac8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d1f/class_checkup_manager.html#a4d3c5d16578d35a9db47e89ad63cfac8">should_enter_emergency_in_driving_state</a> () const</td></tr>
+<tr class="separator:a4d3c5d16578d35a9db47e89ad63cfac8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae43d5cab5cc266bd19ba222b30fc06e3" id="r_ae43d5cab5cc266bd19ba222b30fc06e3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d1f/class_checkup_manager.html#ae43d5cab5cc266bd19ba222b30fc06e3">should_stay_driving</a> () const</td></tr>
 <tr class="separator:ae43d5cab5cc266bd19ba222b30fc06e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adab2ab683f0087fd08edaf7746d27980" id="r_adab2ab683f0087fd08edaf7746d27980"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d1f/class_checkup_manager.html#adab2ab683f0087fd08edaf7746d27980">should_stay_mission_finished</a> () const</td></tr>
@@ -182,17 +207,19 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a1c58e78bc635da26a23c332581b60f40" id="r_a1c58e78bc635da26a23c332581b60f40"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../db/d60/class_metro.html">Metro</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d1f/class_checkup_manager.html#a1c58e78bc635da26a23c332581b60f40">_ebs_sound_timestamp_</a> {<a class="el" href="../../d6/db3/digital_settings_8hpp.html#add9b22ef585021e481bd88305eada871">EBS_BUZZER_TIMEOUT</a>}</td></tr>
+<tr class="memitem:a1c58e78bc635da26a23c332581b60f40" id="r_a1c58e78bc635da26a23c332581b60f40"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../db/d60/class_metro.html">Metro</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d1f/class_checkup_manager.html#a1c58e78bc635da26a23c332581b60f40">_ebs_sound_timestamp_</a> {<a class="el" href="../../d4/d7d/hardware_settings_8hpp.html#add9b22ef585021e481bd88305eada871">EBS_BUZZER_TIMEOUT</a>}</td></tr>
 <tr class="memdesc:a1c58e78bc635da26a23c332581b60f40"><td class="mdescLeft">&#160;</td><td class="mdescRight">Timer for the EBS buzzer sound check.  <br /></td></tr>
 <tr class="separator:a1c58e78bc635da26a23c332581b60f40"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a46e69db33fb6d6207eeef581875a8f14" id="r_a46e69db33fb6d6207eeef581875a8f14"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cb">CheckupState</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d1f/class_checkup_manager.html#a46e69db33fb6d6207eeef581875a8f14">checkup_state_</a></td></tr>
 <tr class="memdesc:a46e69db33fb6d6207eeef581875a8f14"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current state of the checkup process.  <br /></td></tr>
 <tr class="separator:a46e69db33fb6d6207eeef581875a8f14"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10a6d8b53fdab864bac8aec6f1ee4b37" id="r_a10a6d8b53fdab864bac8aec6f1ee4b37"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d7/d1f/class_checkup_manager.html#a80729480b8cd00c3756d18ea4f12c6d7">EbsPressureTestPhase</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d1f/class_checkup_manager.html#a10a6d8b53fdab864bac8aec6f1ee4b37">pressure_test_phase_</a> {<a class="el" href="../../d7/d1f/class_checkup_manager.html#a80729480b8cd00c3756d18ea4f12c6d7aa0d3ca7bb722577be349988c403e5015">EbsPressureTestPhase::DISABLE_ACTUATOR_1</a>}</td></tr>
+<tr class="separator:a10a6d8b53fdab864bac8aec6f1ee4b37"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The <a class="el" href="../../d7/d1f/class_checkup_manager.html" title="The CheckupManager class handles various checkup operations.">CheckupManager</a> class handles various checkup operations. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00015">15</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00014">14</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="a67dd5422cebccb716312448344a5cc46" name="a67dd5422cebccb716312448344a5cc46"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a67dd5422cebccb716312448344a5cc46">&#9670;&#160;</a></span>CheckupError</h2>
@@ -216,11 +243,14 @@ Public Attributes</h2></td></tr>
 <p>This is for easier debugging in case initial checkup fails </p>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a67dd5422cebccb716312448344a5cc46aa51ca4912465f83e03ca419fc308b08b" name="a67dd5422cebccb716312448344a5cc46aa51ca4912465f83e03ca419fc308b08b"></a>WAITING_FOR_RESPONSE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a67dd5422cebccb716312448344a5cc46a3a433473ce07346f0bdd56fc3b86c3fe" name="a67dd5422cebccb716312448344a5cc46a3a433473ce07346f0bdd56fc3b86c3fe"></a>ERROR_WD_STAYED_READY&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a67dd5422cebccb716312448344a5cc46a10a356d1da1b6dffe6afe858d54d8ee3" name="a67dd5422cebccb716312448344a5cc46a10a356d1da1b6dffe6afe858d54d8ee3"></a>ERROR_WD_TOGGLE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a67dd5422cebccb716312448344a5cc46afad586753899ca760c5b13da19ecf0d0" name="a67dd5422cebccb716312448344a5cc46afad586753899ca760c5b13da19ecf0d0"></a>ERROR_TIMESTAMPS_EMERGENCY&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a67dd5422cebccb716312448344a5cc46abb1ca97ec761fc37101737ba0aa2e7c5" name="a67dd5422cebccb716312448344a5cc46abb1ca97ec761fc37101737ba0aa2e7c5"></a>ERROR&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a67dd5422cebccb716312448344a5cc46ad0749aaba8b833466dfcbb0428e4f89c" name="a67dd5422cebccb716312448344a5cc46ad0749aaba8b833466dfcbb0428e4f89c"></a>SUCCESS&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00049">49</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00100">100</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
 
 </div>
 </div>
@@ -248,19 +278,55 @@ Public Attributes</h2></td></tr>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a8bcbd0781d0b8ffcd769356db1ac30cbae1f05b645a68f589f8baef2e74cec3ca" name="a8bcbd0781d0b8ffcd769356db1ac30cbae1f05b645a68f589f8baef2e74cec3ca"></a>WAIT_FOR_ASMS&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a8bcbd0781d0b8ffcd769356db1ac30cba6de3c2ac6a5532fa4910ee26bae0dd8d" name="a8bcbd0781d0b8ffcd769356db1ac30cba6de3c2ac6a5532fa4910ee26bae0dd8d"></a>START_TOGGLING_WATCHDOG&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a8bcbd0781d0b8ffcd769356db1ac30cbab2b781c8b7b4e83e4e66f416b67f2ced" name="a8bcbd0781d0b8ffcd769356db1ac30cbab2b781c8b7b4e83e4e66f416b67f2ced"></a>WAIT_FOR_WATCHDOG&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a8bcbd0781d0b8ffcd769356db1ac30cba4c214e794c8eabaa278cf6b66a8a74f4" name="a8bcbd0781d0b8ffcd769356db1ac30cba4c214e794c8eabaa278cf6b66a8a74f4"></a>TOGGLING_WATCHDOG&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a8bcbd0781d0b8ffcd769356db1ac30cba68c8da63c34755ac54a3553bae964ef7" name="a8bcbd0781d0b8ffcd769356db1ac30cba68c8da63c34755ac54a3553bae964ef7"></a>STOP_TOGGLING_WATCHDOG&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a8bcbd0781d0b8ffcd769356db1ac30cbaa83742a92562c8098826832db2294a76" name="a8bcbd0781d0b8ffcd769356db1ac30cbaa83742a92562c8098826832db2294a76"></a>CHECK_WATCHDOG&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a8bcbd0781d0b8ffcd769356db1ac30cbacaa70b61fb4243adc7ee4b4c09dc8eef" name="a8bcbd0781d0b8ffcd769356db1ac30cbacaa70b61fb4243adc7ee4b4c09dc8eef"></a>START_TOGGLING_WATCHDOG_AGAIN&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a8bcbd0781d0b8ffcd769356db1ac30cba7b025bd5608df14405acaa918808af1a" name="a8bcbd0781d0b8ffcd769356db1ac30cba7b025bd5608df14405acaa918808af1a"></a>CHECK_EBS_STORAGE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a8bcbd0781d0b8ffcd769356db1ac30cba1085587fa073a9b2a90fec2d3f7ad13f" name="a8bcbd0781d0b8ffcd769356db1ac30cba1085587fa073a9b2a90fec2d3f7ad13f"></a>CHECK_BRAKE_PRESSURE&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a8bcbd0781d0b8ffcd769356db1ac30cba88eee09a185b96c31b4f1d82ae2026ca" name="a8bcbd0781d0b8ffcd769356db1ac30cba88eee09a185b96c31b4f1d82ae2026ca"></a>CLOSE_SDC&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a8bcbd0781d0b8ffcd769356db1ac30cba6aac1fc54666554f985cdf51e937cf57" name="a8bcbd0781d0b8ffcd769356db1ac30cba6aac1fc54666554f985cdf51e937cf57"></a>WAIT_FOR_AATS&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a8bcbd0781d0b8ffcd769356db1ac30cba935c81645a142f40ec210a71d3bbade4" name="a8bcbd0781d0b8ffcd769356db1ac30cba935c81645a142f40ec210a71d3bbade4"></a>WAIT_FOR_ASATS&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a8bcbd0781d0b8ffcd769356db1ac30cbabe2d6a2adf6a59c550cedefc47b6bfe6" name="a8bcbd0781d0b8ffcd769356db1ac30cbabe2d6a2adf6a59c550cedefc47b6bfe6"></a>WAIT_FOR_TS&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a8bcbd0781d0b8ffcd769356db1ac30cba983b27e6997fc5f2021076d7d7c659f5" name="a8bcbd0781d0b8ffcd769356db1ac30cba983b27e6997fc5f2021076d7d7c659f5"></a>TOGGLE_VALVE&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a8bcbd0781d0b8ffcd769356db1ac30cba805e6c456a651c5179d1a4f98182c9ba" name="a8bcbd0781d0b8ffcd769356db1ac30cba805e6c456a651c5179d1a4f98182c9ba"></a>CHECK_PRESSURE&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a8bcbd0781d0b8ffcd769356db1ac30cba1c54fd7e170d0acb268ec72d3e554dec" name="a8bcbd0781d0b8ffcd769356db1ac30cba1c54fd7e170d0acb268ec72d3e554dec"></a>CHECK_TIMESTAMPS&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a8bcbd0781d0b8ffcd769356db1ac30cbae2b5d02aba842851247a8f3eeb68314c" name="a8bcbd0781d0b8ffcd769356db1ac30cbae2b5d02aba842851247a8f3eeb68314c"></a>EBS_CHECKS&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a8bcbd0781d0b8ffcd769356db1ac30cba1c54fd7e170d0acb268ec72d3e554dec" name="a8bcbd0781d0b8ffcd769356db1ac30cba1c54fd7e170d0acb268ec72d3e554dec"></a>CHECK_TIMESTAMPS&#160;</td><td class="fielddoc"><p>activate and deactivate ebs and -&gt; check pressures are correct </p>
+</td></tr>
 <tr><td class="fieldname"><a id="a8bcbd0781d0b8ffcd769356db1ac30cba56129675118a4166e97f020139a984ae" name="a8bcbd0781d0b8ffcd769356db1ac30cba56129675118a4166e97f020139a984ae"></a>CHECKUP_COMPLETE&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00031">31</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00070">70</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a80729480b8cd00c3756d18ea4f12c6d7" name="a80729480b8cd00c3756d18ea4f12c6d7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a80729480b8cd00c3756d18ea4f12c6d7">&#9670;&#160;</a></span>EbsPressureTestPhase</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="../../d7/d1f/class_checkup_manager.html#a80729480b8cd00c3756d18ea4f12c6d7">CheckupManager::EbsPressureTestPhase</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a80729480b8cd00c3756d18ea4f12c6d7aa0d3ca7bb722577be349988c403e5015" name="a80729480b8cd00c3756d18ea4f12c6d7aa0d3ca7bb722577be349988c403e5015"></a>DISABLE_ACTUATOR_1&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a80729480b8cd00c3756d18ea4f12c6d7a8117b8415fee31d472f9c56b290ed045" name="a80729480b8cd00c3756d18ea4f12c6d7a8117b8415fee31d472f9c56b290ed045"></a>CHECK_ACTUATOR_2&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a80729480b8cd00c3756d18ea4f12c6d7ad3a2d8a2e2015f38e3cc4c2167b21e90" name="a80729480b8cd00c3756d18ea4f12c6d7ad3a2d8a2e2015f38e3cc4c2167b21e90"></a>ENABLE_ACTUATOR_1&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a80729480b8cd00c3756d18ea4f12c6d7a2bee83def1c1588ee5394fd0e849bc31" name="a80729480b8cd00c3756d18ea4f12c6d7a2bee83def1c1588ee5394fd0e849bc31"></a>DISABLE_ACTUATOR_2&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a80729480b8cd00c3756d18ea4f12c6d7ac4a1aedb9f23800f21b8a4045a7c51ef" name="a80729480b8cd00c3756d18ea4f12c6d7ac4a1aedb9f23800f21b8a4045a7c51ef"></a>CHECK_ACTUATOR_1&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a80729480b8cd00c3756d18ea4f12c6d7a8148eb583d277ad3fdaca2072d1dbaef" name="a80729480b8cd00c3756d18ea4f12c6d7a8148eb583d277ad3fdaca2072d1dbaef"></a>ENABLE_ACTUATOR_2&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a80729480b8cd00c3756d18ea4f12c6d7a3de44296982e58199afc513a715b12ba" name="a80729480b8cd00c3756d18ea4f12c6d7a3de44296982e58199afc513a715b12ba"></a>COMPLETE&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00087">87</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
 
 </div>
 </div>
@@ -297,7 +363,7 @@ Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00058">58</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00118">118</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
 
 </div>
 </div>
@@ -327,7 +393,7 @@ Public Attributes</h2></td></tr>
 
 <p>Checks if the emergency sequence is complete and the vehicle can transition to AS_OFF. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00269">269</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00457">457</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -404,8 +470,8 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
-<a id="a242bb7e17395cd65fdc31a8a2c467336" name="a242bb7e17395cd65fdc31a8a2c467336"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a242bb7e17395cd65fdc31a8a2c467336">&#9670;&#160;</a></span>initial_checkup_sequence()</h2>
+<a id="af42e7465ef8ea5047225257ac11c0870" name="af42e7465ef8ea5047225257ac11c0870"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af42e7465ef8ea5047225257ac11c0870">&#9670;&#160;</a></span>initial_checkup_sequence()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -416,8 +482,7 @@ Here is the caller graph for this function:</div>
         <tr>
           <td class="memname"><a class="el" href="../../d7/d1f/class_checkup_manager.html#a67dd5422cebccb716312448344a5cc46">CheckupManager::CheckupError</a> CheckupManager::initial_checkup_sequence </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="../../da/db9/class_digital_sender.html">DigitalSender</a> *&#160;</td>
-          <td class="paramname"><em>digital_sender</em></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -430,30 +495,35 @@ Here is the caller graph for this function:</div>
 
 <p>Performs an initial checkup. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00141">141</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00205">205</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="../../d7/d1f/class_checkup_manager_a242bb7e17395cd65fdc31a8a2c467336_cgraph.png" border="0" usemap="#ad7/d1f/class_checkup_manager_a242bb7e17395cd65fdc31a8a2c467336_cgraph" alt=""/></div>
-<map name="ad7/d1f/class_checkup_manager_a242bb7e17395cd65fdc31a8a2c467336_cgraph" id="ad7/d1f/class_checkup_manager_a242bb7e17395cd65fdc31a8a2c467336_cgraph">
-<area shape="rect" title="Performs an initial checkup." alt="" coords="5,47,164,88"/>
-<area shape="rect" href="../../da/db9/class_digital_sender.html#ab0cfa966c0a5e7c9538761dab485e4e2" title="Activates the solenoid EBS valves." alt="" coords="214,5,393,31"/>
-<area shape="poly" title=" " alt="" coords="163,47,228,32,229,38,164,52"/>
-<area shape="rect" href="../../da/db9/class_digital_sender.html#aeba7623043aeabfc9c4340cf5185fbca" title="Closes the SDC in Master and SDC Logic." alt="" coords="222,55,385,80"/>
-<area shape="poly" title=" " alt="" coords="164,65,206,65,206,70,164,70"/>
-<area shape="rect" href="../../d3/df6/struct_failure_detection.html#a2dce218ec78f523302e547071e600d87" title=" " alt="" coords="212,105,395,145"/>
-<area shape="poly" title=" " alt="" coords="165,86,209,97,208,103,163,91"/>
-<area shape="rect" href="../../db/d60/class_metro.html#a95ed7cb80b7f56a80790c34fcea93724" title="Checks if the interval has passed without resetting the timer." alt="" coords="443,112,616,138"/>
-<area shape="poly" title=" " alt="" coords="396,122,427,122,427,128,396,128"/>
+<div class="center"><img src="../../d7/d1f/class_checkup_manager_af42e7465ef8ea5047225257ac11c0870_cgraph.png" border="0" usemap="#ad7/d1f/class_checkup_manager_af42e7465ef8ea5047225257ac11c0870_cgraph" alt=""/></div>
+<map name="ad7/d1f/class_checkup_manager_af42e7465ef8ea5047225257ac11c0870_cgraph" id="ad7/d1f/class_checkup_manager_af42e7465ef8ea5047225257ac11c0870_cgraph">
+<area shape="rect" title="Performs an initial checkup." alt="" coords="5,119,164,160"/>
+<area shape="rect" href="../../db/d60/class_metro.html#a95ed7cb80b7f56a80790c34fcea93724" title="Checks if the interval has passed without resetting the timer." alt="" coords="443,72,616,98"/>
+<area shape="poly" title=" " alt="" coords="98,117,144,66,175,41,211,21,261,6,302,3,344,10,396,21,449,39,495,62,493,67,447,44,394,26,343,15,302,9,262,11,213,26,178,45,147,70,102,121"/>
+<area shape="rect" href="../../da/db9/class_digital_sender.html#aeba7623043aeabfc9c4340cf5185fbca" title="Closes the SDC in Master and SDC Logic." alt="" coords="222,36,385,62"/>
+<area shape="poly" title=" " alt="" coords="120,117,163,94,211,72,232,65,233,70,213,77,165,98,123,121"/>
+<area shape="rect" href="../../da/db9/class_digital_sender.html#a306472b53ae1cf7beac1a77cdf790f1a" title="Closes the watchdog signal for SDC." alt="" coords="236,86,371,127"/>
+<area shape="poly" title=" " alt="" coords="163,125,220,116,220,122,164,130"/>
+<area shape="rect" href="../../d3/df6/struct_failure_detection.html#a2dce218ec78f523302e547071e600d87" title=" " alt="" coords="212,151,395,192"/>
+<area shape="poly" title=" " alt="" coords="164,149,197,153,196,159,163,154"/>
+<area shape="rect" href="../../db/d60/class_metro.html#a40a8e2c535e7558224f4336628797dbd" title="Resets the timer to the current time." alt="" coords="259,216,348,242"/>
+<area shape="poly" title=" " alt="" coords="123,158,213,201,245,212,243,217,211,206,121,163"/>
+<area shape="rect" href="../../da/db9/class_digital_sender.html#ad6c5006f6fe3807e86ab3ed992d8669e" title="Toggles the watchdog signal." alt="" coords="234,266,373,307"/>
+<area shape="poly" title=" " alt="" coords="106,159,152,205,181,230,213,252,221,257,219,261,210,257,178,234,148,209,102,163"/>
+<area shape="poly" title=" " alt="" coords="361,148,394,136,480,102,482,107,396,141,363,153"/>
 </map>
 </div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="../../d7/d1f/class_checkup_manager_a242bb7e17395cd65fdc31a8a2c467336_icgraph.png" border="0" usemap="#ad7/d1f/class_checkup_manager_a242bb7e17395cd65fdc31a8a2c467336_icgraph" alt=""/></div>
-<map name="ad7/d1f/class_checkup_manager_a242bb7e17395cd65fdc31a8a2c467336_icgraph" id="ad7/d1f/class_checkup_manager_a242bb7e17395cd65fdc31a8a2c467336_icgraph">
+<div class="center"><img src="../../d7/d1f/class_checkup_manager_af42e7465ef8ea5047225257ac11c0870_icgraph.png" border="0" usemap="#ad7/d1f/class_checkup_manager_af42e7465ef8ea5047225257ac11c0870_icgraph" alt=""/></div>
+<map name="ad7/d1f/class_checkup_manager_af42e7465ef8ea5047225257ac11c0870_icgraph" id="ad7/d1f/class_checkup_manager_af42e7465ef8ea5047225257ac11c0870_icgraph">
 <area shape="rect" title="Performs an initial checkup." alt="" coords="1040,687,1198,728"/>
-<area shape="rect" href="../../d7/d1f/class_checkup_manager.html#a17d80bac83cbb3f7ea20b8e5a4b6df8a" title="Performs an off checkup." alt="" coords="814,654,981,695"/>
+<area shape="rect" href="../../d7/d1f/class_checkup_manager.html#abaf565f9d7f19293df1fc5a6d2280264" title="Performs an off checkup." alt="" coords="814,654,981,695"/>
 <area shape="poly" title=" " alt="" coords="1025,696,981,689,982,684,1025,691"/>
 <area shape="rect" href="../../d9/d77/test__checkup_manager_8cpp.html#aadc5418e1777bcc168fc3375df7dce46" title=" " alt="" coords="803,719,992,760"/>
 <area shape="poly" title=" " alt="" coords="1025,724,993,728,992,723,1025,718"/>
@@ -548,7 +618,7 @@ Here is the caller graph for this function:</div>
 <p>Checks if the RES has been triggered. </p>
 <p>This function checks whether the RES has been triggered or not. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00276">276</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00464">464</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -640,7 +710,7 @@ Here is the caller graph for this function:</div>
 
 <p>Resets the checkup state to the initial state. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00117">117</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00181">181</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -733,17 +803,22 @@ Here is the caller graph for this function:</div>
 
 <p>Performs an emergency checkup. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00225">225</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00386">386</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="../../d7/d1f/class_checkup_manager_a1137db2adef0dae5c06fbbd1c86f8568_cgraph.png" border="0" usemap="#ad7/d1f/class_checkup_manager_a1137db2adef0dae5c06fbbd1c86f8568_cgraph" alt=""/></div>
 <map name="ad7/d1f/class_checkup_manager_a1137db2adef0dae5c06fbbd1c86f8568_cgraph" id="ad7/d1f/class_checkup_manager_a1137db2adef0dae5c06fbbd1c86f8568_cgraph">
-<area shape="rect" title="Performs an emergency checkup." alt="" coords="5,5,172,46"/>
-<area shape="rect" href="../../d3/df6/struct_failure_detection.html#a2dce218ec78f523302e547071e600d87" title=" " alt="" coords="220,5,403,46"/>
-<area shape="poly" title=" " alt="" coords="172,23,204,23,204,28,172,28"/>
-<area shape="rect" href="../../db/d60/class_metro.html#a95ed7cb80b7f56a80790c34fcea93724" title="Checks if the interval has passed without resetting the timer." alt="" coords="451,13,624,39"/>
-<area shape="poly" title=" " alt="" coords="404,23,435,23,435,28,404,28"/>
+<area shape="rect" title="Performs an emergency checkup." alt="" coords="5,39,172,79"/>
+<area shape="rect" href="../../d7/d1f/class_checkup_manager.html#a4d3c5d16578d35a9db47e89ad63cfac8" title=" " alt="" coords="220,5,445,46"/>
+<area shape="poly" title=" " alt="" coords="172,45,204,41,205,46,173,50"/>
+<area shape="rect" href="../../d7/d1f/class_checkup_manager.html#a0ad49ca8165b728ea46d1d5e1e580148" title=" " alt="" coords="223,71,442,111"/>
+<area shape="poly" title=" " alt="" coords="173,67,208,72,207,77,172,73"/>
+<area shape="rect" href="../../d3/df6/struct_failure_detection.html#a2dce218ec78f523302e547071e600d87" title=" " alt="" coords="493,39,676,79"/>
+<area shape="poly" title=" " alt="" coords="446,38,478,42,477,48,445,43"/>
+<area shape="rect" href="../../db/d60/class_metro.html#a95ed7cb80b7f56a80790c34fcea93724" title="Checks if the interval has passed without resetting the timer." alt="" coords="724,46,898,72"/>
+<area shape="poly" title=" " alt="" coords="677,56,709,56,709,62,677,62"/>
+<area shape="poly" title=" " alt="" coords="442,74,477,70,478,75,442,80"/>
 </map>
 </div>
 <div class="dynheader">
@@ -752,6 +827,198 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="../../d7/d1f/class_checkup_manager_a1137db2adef0dae5c06fbbd1c86f8568_icgraph.png" border="0" usemap="#ad7/d1f/class_checkup_manager_a1137db2adef0dae5c06fbbd1c86f8568_icgraph" alt=""/></div>
 <map name="ad7/d1f/class_checkup_manager_a1137db2adef0dae5c06fbbd1c86f8568_icgraph" id="ad7/d1f/class_checkup_manager_a1137db2adef0dae5c06fbbd1c86f8568_icgraph">
 <area shape="rect" title="Performs an emergency checkup." alt="" coords="727,327,893,368"/>
+<area shape="rect" href="../../d2/d46/class_a_s_state.html#a813d8386653a4884bd4a8d986fc57d56" title="Calculates the state of the vehicle." alt="" coords="550,327,679,368"/>
+<area shape="poly" title=" " alt="" coords="711,350,679,350,679,345,711,345"/>
+<area shape="rect" href="../../df/d0a/main_8cpp.html#afe461d27b9c48d5921c00d521181f12f" title=" " alt="" coords="393,5,438,31"/>
+<area shape="poly" title=" " alt="" coords="607,312,597,256,578,186,547,115,526,82,500,52,486,41,470,33,438,24,439,19,472,28,489,37,504,48,530,78,551,112,583,185,602,255,612,311"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html#a1136867e1558c6e16064d9a381541d74" title="Test function to validate AS_DRIVING to AS_FINISHED transition and AS_FINISHED to AS_OFF after." alt="" coords="113,37,271,77"/>
+<area shape="poly" title=" " alt="" coords="603,313,590,269,570,218,540,168,522,145,501,126,475,108,447,94,386,74,326,63,271,58,271,53,327,57,388,69,449,89,477,104,504,121,526,141,545,165,575,216,596,267,608,311"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html#a5d3fca79015e34f8e50e160e73ae04d3" title="Test function to validate AS_FINISHED to AS_EMERGENCY transition if RES is activated after mission fi..." alt="" coords="120,101,264,127"/>
+<area shape="poly" title=" " alt="" coords="599,314,584,279,563,240,535,202,501,171,473,155,444,142,381,125,320,116,264,114,264,108,320,111,382,119,446,137,476,150,504,167,539,198,568,237,589,276,604,311"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html#af34db6a28b556f40fe93b7f5b65be950" title="Test function to validate flow diagram conditions to go AS_DRIVING." alt="" coords="133,151,251,176"/>
+<area shape="poly" title=" " alt="" coords="593,315,556,260,530,234,501,212,438,186,372,170,307,164,251,163,251,157,307,158,372,165,440,181,504,208,534,230,560,257,598,312"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html#a6184f596da9420293a095cd7c912c1df" title="Test function to validate flow diagram conditions to go AS_EMERGENCY." alt="" coords="120,200,264,226"/>
+<area shape="poly" title=" " alt="" coords="586,317,548,280,526,262,501,249,441,228,379,216,318,211,264,211,264,206,318,206,379,211,443,223,503,244,529,258,552,276,590,313"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html#a1a978d53e812c37eb128fd7dc33438a4" title="Test function to validate flow diagram conditions to go AS_FINISHED." alt="" coords="130,299,254,324"/>
+<area shape="poly" title=" " alt="" coords="535,343,254,319,255,314,535,338"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html#ac41be4ed7a2b91bafe7b0b4010d91417" title="Test function to validate flow diagram conditions to go AS_READY." alt="" coords="360,571,471,596"/>
+<area shape="poly" title=" " alt="" coords="605,384,590,422,568,467,540,513,504,552,469,572,467,568,501,548,536,509,564,465,585,420,600,382"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html#ae14d101f4be75b5ff4fe487b96ce50ca" title="Test function to validate AS_OFF to AS_Manual transition and the other way around." alt="" coords="350,622,481,663"/>
+<area shape="poly" title=" " alt="" coords="610,384,598,434,577,494,547,556,527,585,504,611,483,626,480,621,501,607,523,582,542,553,573,492,593,432,605,382"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html#ae58375ced56286047b208255596c5457" title="Test function to validate AS_OFF to AS_Ready transition with checks reverting to invalid mid transiti..." alt="" coords="329,691,502,716"/>
+<area shape="poly" title=" " alt="" coords="614,384,606,446,587,524,573,565,555,605,532,643,504,676,480,692,477,688,501,672,528,639,550,603,568,563,582,523,600,445,608,383"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html#a0ad2fba381b8d0d077a2c522bf133b5c" title="Test function to validate AS_READY doesn&#39;t revert to AS_Ready." alt="" coords="103,349,281,389"/>
+<area shape="poly" title=" " alt="" coords="535,354,282,367,281,362,534,349"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html#af9be37ef8f6eeaaabdfe963a421b22d8" title="Test function to validate AS_READY to AS_Driving transition and AS_DRIVING to AS_EMERGENCY if brakes ..." alt="" coords="120,414,264,455"/>
+<area shape="poly" title=" " alt="" coords="535,366,265,422,264,417,534,361"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html#a736c262e298425de32bfa70c2d2f51ff" title="Test function to validate AS_READY to AS_Driving transition and AS_DRIVING to AS_EMERGENCY if failure..." alt="" coords="120,479,264,520"/>
+<area shape="poly" title=" " alt="" coords="570,379,503,414,442,437,378,458,265,487,264,482,377,452,440,432,501,409,568,374"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html#a20511278436d764bb8ba543573c729ed" title="Test function to validate AS_READY to AS_Emergency and the AS_EMERGENCY to AS_OFF transition." alt="" coords="107,544,277,570"/>
+<area shape="poly" title=" " alt="" coords="594,382,556,430,531,455,504,475,448,504,389,525,331,540,278,550,277,545,330,535,388,520,446,499,501,471,528,451,552,427,590,379"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html#abd09e1416aa231f6439d77b22bb05c10" title="Auxiliary function to set state as ready." alt="" coords="381,259,451,284"/>
+<area shape="poly" title=" " alt="" coords="547,324,501,306,450,287,452,282,503,301,548,319"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title=" " alt="" coords="5,356,55,382"/>
+<area shape="poly" title=" " alt="" coords="106,89,105,91,81,123,63,159,50,198,42,236,34,307,33,356,28,356,28,307,36,235,45,196,58,157,76,120,101,87,102,85"/>
+<area shape="poly" title=" " alt="" coords="108,137,105,140,84,165,67,194,46,256,36,314,34,356,29,356,31,314,41,255,62,191,79,162,101,136,105,133"/>
+<area shape="poly" title=" " alt="" coords="120,179,104,190,87,208,73,230,52,277,40,322,35,356,30,355,35,321,47,276,68,227,83,205,101,185,117,175"/>
+<area shape="poly" title=" " alt="" coords="109,236,104,239,78,267,59,299,37,357,32,355,54,297,74,263,101,235,106,231"/>
+<area shape="poly" title=" " alt="" coords="126,332,104,339,56,360,54,355,102,334,124,327"/>
+<area shape="poly" title=" " alt="" coords="360,604,302,616,234,621,199,619,164,613,131,602,101,584,78,563,61,537,48,509,39,479,30,423,28,382,34,382,35,422,44,478,53,507,66,535,82,560,104,580,134,597,166,608,200,614,234,616,301,610,359,598"/>
+<area shape="poly" title=" " alt="" coords="335,664,279,670,217,670,156,657,127,644,101,627,86,609,74,581,53,510,38,436,30,382,36,382,44,435,58,509,79,579,91,606,104,623,130,639,157,652,217,664,278,665,334,659"/>
+<area shape="poly" title=" " alt="" coords="336,722,279,726,216,723,155,707,127,693,101,675,85,653,71,619,50,533,36,445,30,382,35,382,42,444,55,532,76,617,89,650,105,671,129,689,157,702,217,717,279,721,335,716"/>
+<area shape="poly" title=" " alt="" coords="87,372,55,372,55,366,87,366"/>
+<area shape="poly" title=" " alt="" coords="119,410,102,403,54,382,56,377,104,398,121,405"/>
+<area shape="poly" title=" " alt="" coords="108,473,101,468,79,448,61,425,36,383,40,381,65,422,83,444,104,464,111,469"/>
+<area shape="poly" title=" " alt="" coords="106,538,101,533,71,497,50,454,37,413,31,383,36,381,42,412,55,452,75,494,105,530,110,534"/>
+<area shape="poly" title=" " alt="" coords="399,247,353,170,319,128,279,91,261,80,264,75,283,87,323,124,357,167,404,244"/>
+<area shape="poly" title=" " alt="" coords="394,248,346,193,314,165,280,140,256,130,259,125,282,136,318,161,350,190,398,245"/>
+<area shape="poly" title=" " alt="" coords="383,251,336,220,280,190,251,179,253,174,282,185,338,215,386,247"/>
+<area shape="poly" title=" " alt="" coords="365,261,243,229,244,224,366,256"/>
+<area shape="poly" title=" " alt="" coords="366,283,255,303,254,298,365,278"/>
+<area shape="poly" title=" " alt="" coords="377,294,282,339,254,350,252,346,280,334,374,289"/>
+<area shape="poly" title=" " alt="" coords="396,298,348,350,316,378,282,403,259,416,256,411,280,399,313,374,344,347,392,295"/>
+<area shape="poly" title=" " alt="" coords="405,300,386,337,359,382,324,428,283,468,263,481,260,476,279,464,320,424,354,379,381,334,400,297"/>
+<area shape="poly" title=" " alt="" coords="410,300,395,350,370,413,333,478,310,508,283,534,263,546,260,541,279,529,306,504,329,475,365,411,390,348,405,298"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html#a5665bb2a1cfd6e9bc513ed13f99dc95e" title="Test function to validate AS_OFF to AS_Ready transition normal and successful transition." alt="" coords="104,249,280,275"/>
+<area shape="poly" title=" " alt="" coords="365,272,280,269,280,263,365,267"/>
+<area shape="poly" title=" " alt="" coords="112,284,104,288,84,304,67,322,41,357,37,354,63,319,81,300,101,284,109,279"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a4d3c5d16578d35a9db47e89ad63cfac8" name="a4d3c5d16578d35a9db47e89ad63cfac8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4d3c5d16578d35a9db47e89ad63cfac8">&#9670;&#160;</a></span>should_enter_emergency_in_driving_state()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool CheckupManager::should_enter_emergency_in_driving_state </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00404">404</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="../../d7/d1f/class_checkup_manager_a4d3c5d16578d35a9db47e89ad63cfac8_cgraph.png" border="0" usemap="#ad7/d1f/class_checkup_manager_a4d3c5d16578d35a9db47e89ad63cfac8_cgraph" alt=""/></div>
+<map name="ad7/d1f/class_checkup_manager_a4d3c5d16578d35a9db47e89ad63cfac8_cgraph" id="ad7/d1f/class_checkup_manager_a4d3c5d16578d35a9db47e89ad63cfac8_cgraph">
+<area shape="rect" title=" " alt="" coords="5,5,231,46"/>
+<area shape="rect" href="../../d3/df6/struct_failure_detection.html#a2dce218ec78f523302e547071e600d87" title=" " alt="" coords="279,5,462,46"/>
+<area shape="poly" title=" " alt="" coords="231,23,263,23,263,28,231,28"/>
+<area shape="rect" href="../../db/d60/class_metro.html#a95ed7cb80b7f56a80790c34fcea93724" title="Checks if the interval has passed without resetting the timer." alt="" coords="510,13,683,39"/>
+<area shape="poly" title=" " alt="" coords="463,23,494,23,494,28,463,28"/>
+</map>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="../../d7/d1f/class_checkup_manager_a4d3c5d16578d35a9db47e89ad63cfac8_icgraph.png" border="0" usemap="#ad7/d1f/class_checkup_manager_a4d3c5d16578d35a9db47e89ad63cfac8_icgraph" alt=""/></div>
+<map name="ad7/d1f/class_checkup_manager_a4d3c5d16578d35a9db47e89ad63cfac8_icgraph" id="ad7/d1f/class_checkup_manager_a4d3c5d16578d35a9db47e89ad63cfac8_icgraph">
+<area shape="rect" title=" " alt="" coords="941,327,1166,368"/>
+<area shape="rect" href="../../d7/d1f/class_checkup_manager.html#a1137db2adef0dae5c06fbbd1c86f8568" title="Performs an emergency checkup." alt="" coords="727,327,893,368"/>
+<area shape="poly" title=" " alt="" coords="925,350,893,350,893,345,925,345"/>
+<area shape="rect" href="../../d2/d46/class_a_s_state.html#a813d8386653a4884bd4a8d986fc57d56" title="Calculates the state of the vehicle." alt="" coords="550,327,679,368"/>
+<area shape="poly" title=" " alt="" coords="711,350,679,350,679,345,711,345"/>
+<area shape="rect" href="../../df/d0a/main_8cpp.html#afe461d27b9c48d5921c00d521181f12f" title=" " alt="" coords="393,5,438,31"/>
+<area shape="poly" title=" " alt="" coords="607,312,597,256,578,186,547,115,526,82,500,52,486,41,470,33,438,24,439,19,472,28,489,37,504,48,530,78,551,112,583,185,602,255,612,311"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html#a1136867e1558c6e16064d9a381541d74" title="Test function to validate AS_DRIVING to AS_FINISHED transition and AS_FINISHED to AS_OFF after." alt="" coords="113,37,271,77"/>
+<area shape="poly" title=" " alt="" coords="603,313,590,269,570,218,540,168,522,145,501,126,475,108,447,94,386,74,326,63,271,58,271,53,327,57,388,69,449,89,477,104,504,121,526,141,545,165,575,216,596,267,608,311"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html#a5d3fca79015e34f8e50e160e73ae04d3" title="Test function to validate AS_FINISHED to AS_EMERGENCY transition if RES is activated after mission fi..." alt="" coords="120,101,264,127"/>
+<area shape="poly" title=" " alt="" coords="599,314,584,279,563,240,535,202,501,171,473,155,444,142,381,125,320,116,264,114,264,108,320,111,382,119,446,137,476,150,504,167,539,198,568,237,589,276,604,311"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html#af34db6a28b556f40fe93b7f5b65be950" title="Test function to validate flow diagram conditions to go AS_DRIVING." alt="" coords="133,151,251,176"/>
+<area shape="poly" title=" " alt="" coords="593,315,556,260,530,234,501,212,438,186,372,170,307,164,251,163,251,157,307,158,372,165,440,181,504,208,534,230,560,257,598,312"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html#a6184f596da9420293a095cd7c912c1df" title="Test function to validate flow diagram conditions to go AS_EMERGENCY." alt="" coords="120,200,264,226"/>
+<area shape="poly" title=" " alt="" coords="586,317,548,280,526,262,501,249,441,228,379,216,318,211,264,211,264,206,318,206,379,211,443,223,503,244,529,258,552,276,590,313"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html#a1a978d53e812c37eb128fd7dc33438a4" title="Test function to validate flow diagram conditions to go AS_FINISHED." alt="" coords="130,299,254,324"/>
+<area shape="poly" title=" " alt="" coords="535,343,254,319,255,314,535,338"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html#ac41be4ed7a2b91bafe7b0b4010d91417" title="Test function to validate flow diagram conditions to go AS_READY." alt="" coords="360,571,471,596"/>
+<area shape="poly" title=" " alt="" coords="605,384,590,422,568,467,540,513,504,552,469,572,467,568,501,548,536,509,564,465,585,420,600,382"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html#ae14d101f4be75b5ff4fe487b96ce50ca" title="Test function to validate AS_OFF to AS_Manual transition and the other way around." alt="" coords="350,622,481,663"/>
+<area shape="poly" title=" " alt="" coords="610,384,598,434,577,494,547,556,527,585,504,611,483,626,480,621,501,607,523,582,542,553,573,492,593,432,605,382"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html#ae58375ced56286047b208255596c5457" title="Test function to validate AS_OFF to AS_Ready transition with checks reverting to invalid mid transiti..." alt="" coords="329,691,502,716"/>
+<area shape="poly" title=" " alt="" coords="614,384,606,446,587,524,573,565,555,605,532,643,504,676,480,692,477,688,501,672,528,639,550,603,568,563,582,523,600,445,608,383"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html#a0ad2fba381b8d0d077a2c522bf133b5c" title="Test function to validate AS_READY doesn&#39;t revert to AS_Ready." alt="" coords="103,349,281,389"/>
+<area shape="poly" title=" " alt="" coords="535,354,282,367,281,362,534,349"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html#af9be37ef8f6eeaaabdfe963a421b22d8" title="Test function to validate AS_READY to AS_Driving transition and AS_DRIVING to AS_EMERGENCY if brakes ..." alt="" coords="120,414,264,455"/>
+<area shape="poly" title=" " alt="" coords="535,366,265,422,264,417,534,361"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html#a736c262e298425de32bfa70c2d2f51ff" title="Test function to validate AS_READY to AS_Driving transition and AS_DRIVING to AS_EMERGENCY if failure..." alt="" coords="120,479,264,520"/>
+<area shape="poly" title=" " alt="" coords="570,379,503,414,442,437,378,458,265,487,264,482,377,452,440,432,501,409,568,374"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html#a20511278436d764bb8ba543573c729ed" title="Test function to validate AS_READY to AS_Emergency and the AS_EMERGENCY to AS_OFF transition." alt="" coords="107,544,277,570"/>
+<area shape="poly" title=" " alt="" coords="594,382,556,430,531,455,504,475,448,504,389,525,331,540,278,550,277,545,330,535,388,520,446,499,501,471,528,451,552,427,590,379"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html#abd09e1416aa231f6439d77b22bb05c10" title="Auxiliary function to set state as ready." alt="" coords="381,259,451,284"/>
+<area shape="poly" title=" " alt="" coords="547,324,501,306,450,287,452,282,503,301,548,319"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title=" " alt="" coords="5,356,55,382"/>
+<area shape="poly" title=" " alt="" coords="106,89,105,91,81,123,63,159,50,198,42,236,34,307,33,356,28,356,28,307,36,235,45,196,58,157,76,120,101,87,102,85"/>
+<area shape="poly" title=" " alt="" coords="108,137,105,140,84,165,67,194,46,256,36,314,34,356,29,356,31,314,41,255,62,191,79,162,101,136,105,133"/>
+<area shape="poly" title=" " alt="" coords="120,179,104,190,87,208,73,230,52,277,40,322,35,356,30,355,35,321,47,276,68,227,83,205,101,185,117,175"/>
+<area shape="poly" title=" " alt="" coords="109,236,104,239,78,267,59,299,37,357,32,355,54,297,74,263,101,235,106,231"/>
+<area shape="poly" title=" " alt="" coords="126,332,104,339,56,360,54,355,102,334,124,327"/>
+<area shape="poly" title=" " alt="" coords="360,604,302,616,234,621,199,619,164,613,131,602,101,584,78,563,61,537,48,509,39,479,30,423,28,382,34,382,35,422,44,478,53,507,66,535,82,560,104,580,134,597,166,608,200,614,234,616,301,610,359,598"/>
+<area shape="poly" title=" " alt="" coords="335,664,279,670,217,670,156,657,127,644,101,627,86,609,74,581,53,510,38,436,30,382,36,382,44,435,58,509,79,579,91,606,104,623,130,639,157,652,217,664,278,665,334,659"/>
+<area shape="poly" title=" " alt="" coords="336,722,279,726,216,723,155,707,127,693,101,675,85,653,71,619,50,533,36,445,30,382,35,382,42,444,55,532,76,617,89,650,105,671,129,689,157,702,217,717,279,721,335,716"/>
+<area shape="poly" title=" " alt="" coords="87,372,55,372,55,366,87,366"/>
+<area shape="poly" title=" " alt="" coords="119,410,102,403,54,382,56,377,104,398,121,405"/>
+<area shape="poly" title=" " alt="" coords="108,473,101,468,79,448,61,425,36,383,40,381,65,422,83,444,104,464,111,469"/>
+<area shape="poly" title=" " alt="" coords="106,538,101,533,71,497,50,454,37,413,31,383,36,381,42,412,55,452,75,494,105,530,110,534"/>
+<area shape="poly" title=" " alt="" coords="399,247,353,170,319,128,279,91,261,80,264,75,283,87,323,124,357,167,404,244"/>
+<area shape="poly" title=" " alt="" coords="394,248,346,193,314,165,280,140,256,130,259,125,282,136,318,161,350,190,398,245"/>
+<area shape="poly" title=" " alt="" coords="383,251,336,220,280,190,251,179,253,174,282,185,338,215,386,247"/>
+<area shape="poly" title=" " alt="" coords="365,261,243,229,244,224,366,256"/>
+<area shape="poly" title=" " alt="" coords="366,283,255,303,254,298,365,278"/>
+<area shape="poly" title=" " alt="" coords="377,294,282,339,254,350,252,346,280,334,374,289"/>
+<area shape="poly" title=" " alt="" coords="396,298,348,350,316,378,282,403,259,416,256,411,280,399,313,374,344,347,392,295"/>
+<area shape="poly" title=" " alt="" coords="405,300,386,337,359,382,324,428,283,468,263,481,260,476,279,464,320,424,354,379,381,334,400,297"/>
+<area shape="poly" title=" " alt="" coords="410,300,395,350,370,413,333,478,310,508,283,534,263,546,260,541,279,529,306,504,329,475,365,411,390,348,405,298"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html#a5665bb2a1cfd6e9bc513ed13f99dc95e" title="Test function to validate AS_OFF to AS_Ready transition normal and successful transition." alt="" coords="104,249,280,275"/>
+<area shape="poly" title=" " alt="" coords="365,272,280,269,280,263,365,267"/>
+<area shape="poly" title=" " alt="" coords="112,284,104,288,84,304,67,322,41,357,37,354,63,319,81,300,101,284,109,279"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a0ad49ca8165b728ea46d1d5e1e580148" name="a0ad49ca8165b728ea46d1d5e1e580148"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ad49ca8165b728ea46d1d5e1e580148">&#9670;&#160;</a></span>should_enter_emergency_in_ready_state()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool CheckupManager::should_enter_emergency_in_ready_state </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00395">395</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="../../d7/d1f/class_checkup_manager_a0ad49ca8165b728ea46d1d5e1e580148_cgraph.png" border="0" usemap="#ad7/d1f/class_checkup_manager_a0ad49ca8165b728ea46d1d5e1e580148_cgraph" alt=""/></div>
+<map name="ad7/d1f/class_checkup_manager_a0ad49ca8165b728ea46d1d5e1e580148_cgraph" id="ad7/d1f/class_checkup_manager_a0ad49ca8165b728ea46d1d5e1e580148_cgraph">
+<area shape="rect" title=" " alt="" coords="5,5,224,46"/>
+<area shape="rect" href="../../d3/df6/struct_failure_detection.html#a2dce218ec78f523302e547071e600d87" title=" " alt="" coords="272,5,455,46"/>
+<area shape="poly" title=" " alt="" coords="224,23,256,23,256,28,224,28"/>
+<area shape="rect" href="../../db/d60/class_metro.html#a95ed7cb80b7f56a80790c34fcea93724" title="Checks if the interval has passed without resetting the timer." alt="" coords="503,13,676,39"/>
+<area shape="poly" title=" " alt="" coords="456,23,487,23,487,28,456,28"/>
+</map>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="../../d7/d1f/class_checkup_manager_a0ad49ca8165b728ea46d1d5e1e580148_icgraph.png" border="0" usemap="#ad7/d1f/class_checkup_manager_a0ad49ca8165b728ea46d1d5e1e580148_icgraph" alt=""/></div>
+<map name="ad7/d1f/class_checkup_manager_a0ad49ca8165b728ea46d1d5e1e580148_icgraph" id="ad7/d1f/class_checkup_manager_a0ad49ca8165b728ea46d1d5e1e580148_icgraph">
+<area shape="rect" title=" " alt="" coords="941,327,1159,368"/>
+<area shape="rect" href="../../d7/d1f/class_checkup_manager.html#a1137db2adef0dae5c06fbbd1c86f8568" title="Performs an emergency checkup." alt="" coords="727,327,893,368"/>
+<area shape="poly" title=" " alt="" coords="925,350,893,350,893,345,925,345"/>
 <area shape="rect" href="../../d2/d46/class_a_s_state.html#a813d8386653a4884bd4a8d986fc57d56" title="Calculates the state of the vehicle." alt="" coords="550,327,679,368"/>
 <area shape="poly" title=" " alt="" coords="711,350,679,350,679,345,711,345"/>
 <area shape="rect" href="../../df/d0a/main_8cpp.html#afe461d27b9c48d5921c00d521181f12f" title=" " alt="" coords="393,5,438,31"/>
@@ -837,7 +1104,7 @@ Here is the caller graph for this function:</div>
 
 <p>Performs a last re-check for off to ready transition. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00208">208</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00365">365</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -939,7 +1206,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00254">254</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00441">441</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -1031,7 +1298,7 @@ Here is the caller graph for this function:</div>
 
 <p>Performs a manual driving checkup. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00122">122</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00186">186</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -1130,7 +1397,7 @@ Here is the caller graph for this function:</div>
 
 <p>Performs a mission finished checkup. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00262">262</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00450">450</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -1197,8 +1464,8 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
-<a id="a17d80bac83cbb3f7ea20b8e5a4b6df8a" name="a17d80bac83cbb3f7ea20b8e5a4b6df8a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a17d80bac83cbb3f7ea20b8e5a4b6df8a">&#9670;&#160;</a></span>should_stay_off()</h2>
+<a id="abaf565f9d7f19293df1fc5a6d2280264" name="abaf565f9d7f19293df1fc5a6d2280264"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abaf565f9d7f19293df1fc5a6d2280264">&#9670;&#160;</a></span>should_stay_off()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1209,8 +1476,7 @@ Here is the caller graph for this function:</div>
         <tr>
           <td class="memname">bool CheckupManager::should_stay_off </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="../../da/db9/class_digital_sender.html">DigitalSender</a> *&#160;</td>
-          <td class="paramname"><em>digital_sender</em></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -1223,30 +1489,35 @@ Here is the caller graph for this function:</div>
 
 <p>Performs an off checkup. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00132">132</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00196">196</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="../../d7/d1f/class_checkup_manager_a17d80bac83cbb3f7ea20b8e5a4b6df8a_cgraph.png" border="0" usemap="#ad7/d1f/class_checkup_manager_a17d80bac83cbb3f7ea20b8e5a4b6df8a_cgraph" alt=""/></div>
-<map name="ad7/d1f/class_checkup_manager_a17d80bac83cbb3f7ea20b8e5a4b6df8a_cgraph" id="ad7/d1f/class_checkup_manager_a17d80bac83cbb3f7ea20b8e5a4b6df8a_cgraph">
-<area shape="rect" title="Performs an off checkup." alt="" coords="5,47,172,88"/>
-<area shape="rect" href="../../d7/d1f/class_checkup_manager.html#a242bb7e17395cd65fdc31a8a2c467336" title="Performs an initial checkup." alt="" coords="220,47,378,88"/>
-<area shape="poly" title=" " alt="" coords="172,65,204,65,204,70,172,70"/>
-<area shape="rect" href="../../da/db9/class_digital_sender.html#ab0cfa966c0a5e7c9538761dab485e4e2" title="Activates the solenoid EBS valves." alt="" coords="429,5,607,31"/>
-<area shape="poly" title=" " alt="" coords="378,47,442,32,443,38,379,52"/>
-<area shape="rect" href="../../da/db9/class_digital_sender.html#aeba7623043aeabfc9c4340cf5185fbca" title="Closes the SDC in Master and SDC Logic." alt="" coords="436,55,599,80"/>
-<area shape="poly" title=" " alt="" coords="378,65,420,65,420,70,378,70"/>
-<area shape="rect" href="../../d3/df6/struct_failure_detection.html#a2dce218ec78f523302e547071e600d87" title=" " alt="" coords="426,105,609,145"/>
-<area shape="poly" title=" " alt="" coords="379,86,423,97,422,103,378,91"/>
-<area shape="rect" href="../../db/d60/class_metro.html#a95ed7cb80b7f56a80790c34fcea93724" title="Checks if the interval has passed without resetting the timer." alt="" coords="657,112,831,138"/>
-<area shape="poly" title=" " alt="" coords="610,122,642,122,642,128,610,128"/>
+<div class="center"><img src="../../d7/d1f/class_checkup_manager_abaf565f9d7f19293df1fc5a6d2280264_cgraph.png" border="0" usemap="#ad7/d1f/class_checkup_manager_abaf565f9d7f19293df1fc5a6d2280264_cgraph" alt=""/></div>
+<map name="ad7/d1f/class_checkup_manager_abaf565f9d7f19293df1fc5a6d2280264_cgraph" id="ad7/d1f/class_checkup_manager_abaf565f9d7f19293df1fc5a6d2280264_cgraph">
+<area shape="rect" title="Performs an off checkup." alt="" coords="5,119,172,160"/>
+<area shape="rect" href="../../d7/d1f/class_checkup_manager.html#af42e7465ef8ea5047225257ac11c0870" title="Performs an initial checkup." alt="" coords="220,119,378,160"/>
+<area shape="poly" title=" " alt="" coords="172,137,204,137,204,142,172,142"/>
+<area shape="rect" href="../../db/d60/class_metro.html#a95ed7cb80b7f56a80790c34fcea93724" title="Checks if the interval has passed without resetting the timer." alt="" coords="657,72,831,98"/>
+<area shape="poly" title=" " alt="" coords="313,117,358,66,389,41,425,21,475,6,516,3,558,10,610,21,663,39,709,62,707,67,661,44,609,26,557,15,516,9,476,11,427,26,392,45,362,70,317,121"/>
+<area shape="rect" href="../../da/db9/class_digital_sender.html#aeba7623043aeabfc9c4340cf5185fbca" title="Closes the SDC in Master and SDC Logic." alt="" coords="436,36,599,62"/>
+<area shape="poly" title=" " alt="" coords="334,117,377,94,425,72,446,65,448,70,427,77,379,98,337,121"/>
+<area shape="rect" href="../../da/db9/class_digital_sender.html#a306472b53ae1cf7beac1a77cdf790f1a" title="Closes the watchdog signal for SDC." alt="" coords="450,86,585,127"/>
+<area shape="poly" title=" " alt="" coords="378,125,434,116,435,122,379,130"/>
+<area shape="rect" href="../../d3/df6/struct_failure_detection.html#a2dce218ec78f523302e547071e600d87" title=" " alt="" coords="426,151,609,192"/>
+<area shape="poly" title=" " alt="" coords="379,149,411,153,410,159,378,154"/>
+<area shape="rect" href="../../db/d60/class_metro.html#a40a8e2c535e7558224f4336628797dbd" title="Resets the timer to the current time." alt="" coords="473,216,562,242"/>
+<area shape="poly" title=" " alt="" coords="337,158,427,201,459,212,457,217,425,206,335,163"/>
+<area shape="rect" href="../../da/db9/class_digital_sender.html#ad6c5006f6fe3807e86ab3ed992d8669e" title="Toggles the watchdog signal." alt="" coords="448,266,587,307"/>
+<area shape="poly" title=" " alt="" coords="320,159,366,205,396,230,427,252,436,257,433,261,425,257,392,234,363,209,316,163"/>
+<area shape="poly" title=" " alt="" coords="575,148,608,136,695,102,697,107,610,141,577,153"/>
 </map>
 </div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="../../d7/d1f/class_checkup_manager_a17d80bac83cbb3f7ea20b8e5a4b6df8a_icgraph.png" border="0" usemap="#ad7/d1f/class_checkup_manager_a17d80bac83cbb3f7ea20b8e5a4b6df8a_icgraph" alt=""/></div>
-<map name="ad7/d1f/class_checkup_manager_a17d80bac83cbb3f7ea20b8e5a4b6df8a_icgraph" id="ad7/d1f/class_checkup_manager_a17d80bac83cbb3f7ea20b8e5a4b6df8a_icgraph">
+<div class="center"><img src="../../d7/d1f/class_checkup_manager_abaf565f9d7f19293df1fc5a6d2280264_icgraph.png" border="0" usemap="#ad7/d1f/class_checkup_manager_abaf565f9d7f19293df1fc5a6d2280264_icgraph" alt=""/></div>
+<map name="ad7/d1f/class_checkup_manager_abaf565f9d7f19293df1fc5a6d2280264_icgraph" id="ad7/d1f/class_checkup_manager_abaf565f9d7f19293df1fc5a6d2280264_icgraph">
 <area shape="rect" title="Performs an off checkup." alt="" coords="803,544,969,585"/>
 <area shape="rect" href="../../d2/d46/class_a_s_state.html#a813d8386653a4884bd4a8d986fc57d56" title="Calculates the state of the vehicle." alt="" coords="588,367,717,407"/>
 <area shape="poly" title=" " alt="" coords="844,537,679,410,683,406,847,533"/>
@@ -1337,17 +1608,17 @@ Here is the caller graph for this function:</div>
 
 <p>Performs a ready to drive checkup. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00217">217</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00375">375</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="../../d7/d1f/class_checkup_manager_a880c417754f8b2b1a171f70893326f16_cgraph.png" border="0" usemap="#ad7/d1f/class_checkup_manager_a880c417754f8b2b1a171f70893326f16_cgraph" alt=""/></div>
 <map name="ad7/d1f/class_checkup_manager_a880c417754f8b2b1a171f70893326f16_cgraph" id="ad7/d1f/class_checkup_manager_a880c417754f8b2b1a171f70893326f16_cgraph">
 <area shape="rect" title="Performs a ready to drive checkup." alt="" coords="5,5,172,46"/>
-<area shape="rect" href="../../d8/deb/struct_r2_d_logics.html#a653573aa20aaed5f5e5da8721554a089" title="resets timestamps for driving" alt="" coords="220,5,385,46"/>
+<area shape="rect" href="../../d8/deb/struct_r2_d_logics.html#a33c5da56ad44e42e0c3d9bcfa1a96e4e" title="resets timestamps for driving" alt="" coords="220,5,368,46"/>
 <area shape="poly" title=" " alt="" coords="172,23,204,23,204,28,172,28"/>
-<area shape="rect" href="../../db/d60/class_metro.html#a40a8e2c535e7558224f4336628797dbd" title="Resets the timer to the current time." alt="" coords="433,13,522,39"/>
-<area shape="poly" title=" " alt="" coords="385,23,417,23,417,28,385,28"/>
+<area shape="rect" href="../../db/d60/class_metro.html#a40a8e2c535e7558224f4336628797dbd" title="Resets the timer to the current time." alt="" coords="416,13,505,39"/>
+<area shape="poly" title=" " alt="" coords="369,23,400,23,400,28,369,28"/>
 </map>
 </div>
 <div class="dynheader">
@@ -1424,14 +1695,14 @@ Here is the caller graph for this function:</div>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="../../db/d60/class_metro.html">Metro</a> CheckupManager::_ebs_sound_timestamp_ {<a class="el" href="../../d6/db3/digital_settings_8hpp.html#add9b22ef585021e481bd88305eada871">EBS_BUZZER_TIMEOUT</a>}</td>
+          <td class="memname"><a class="el" href="../../db/d60/class_metro.html">Metro</a> CheckupManager::_ebs_sound_timestamp_ {<a class="el" href="../../d4/d7d/hardware_settings_8hpp.html#add9b22ef585021e481bd88305eada871">EBS_BUZZER_TIMEOUT</a>}</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Timer for the EBS buzzer sound check. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00023">23</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00062">62</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
 
 </div>
 </div>
@@ -1452,7 +1723,23 @@ Here is the caller graph for this function:</div>
 </div><!-- fragment -->
 <p>Current state of the checkup process. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00051">51</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00109">109</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a10a6d8b53fdab864bac8aec6f1ee4b37" name="a10a6d8b53fdab864bac8aec6f1ee4b37"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a10a6d8b53fdab864bac8aec6f1ee4b37">&#9670;&#160;</a></span>pressure_test_phase_</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="../../d7/d1f/class_checkup_manager.html#a80729480b8cd00c3756d18ea4f12c6d7">EbsPressureTestPhase</a> CheckupManager::pressure_test_phase_ {<a class="el" href="../../d7/d1f/class_checkup_manager.html#a80729480b8cd00c3756d18ea4f12c6d7aa0d3ca7bb722577be349988c403e5015">EbsPressureTestPhase::DISABLE_ACTUATOR_1</a>}</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html#l00112">112</a> of file <a class="el" href="../../df/d6d/checkup_manager_8hpp_source.html">checkupManager.hpp</a>.</p>
 
 </div>
 </div>

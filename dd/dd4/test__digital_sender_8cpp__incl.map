@@ -1,18 +1,18 @@
 <map id="master/test/test_digital_sender/test_digitalSender.cpp" name="master/test/test_digital_sender/test_digitalSender.cpp">
-<area shape="rect" id="Node000001" title=" " alt="" coords="100,5,299,46"/>
-<area shape="rect" id="Node000002" href="$d6/db3/digital_settings_8hpp.html" title=" " alt="" coords="5,168,197,193"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="144,49,113,68,89,95,84,109,83,124,91,153,86,154,78,124,79,108,84,93,109,64,141,44"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="99,94,157,120"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="184,48,151,84,147,80,180,45"/>
-<area shape="rect" id="Node000004" href="$da/d46/digital_sender_8hpp.html" title=" " alt="" coords="181,94,365,120"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="220,45,253,81,250,84,216,48"/>
-<area shape="rect" id="Node000006" href="$d1/d73/metro_8h.html" title=" " alt="" coords="325,168,389,193"/>
-<area shape="poly" id="edge9_Node000001_Node000006" title=" " alt="" coords="301,40,344,60,363,74,379,93,385,108,385,124,375,155,370,153,380,123,380,109,375,95,360,78,341,64,299,45"/>
-<area shape="poly" id="edge5_Node000004_Node000002" title=" " alt="" coords="245,123,145,164,143,159,243,118"/>
-<area shape="rect" id="Node000005" title=" " alt="" coords="235,241,311,267"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="276,120,276,226,270,226,270,120"/>
-<area shape="poly" id="edge6_Node000004_Node000006" title=" " alt="" coords="289,118,333,155,330,159,286,122"/>
-<area shape="poly" id="edge7_Node000006_Node000005" title=" " alt="" coords="344,196,300,233,297,229,341,192"/>
-<area shape="rect" id="Node000007" title=" " alt="" coords="335,241,411,267"/>
-<area shape="poly" id="edge8_Node000006_Node000007" title=" " alt="" coords="362,193,370,225,364,226,357,194"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="115,5,314,46"/>
+<area shape="rect" id="Node000002" href="$d4/d7d/hardware_settings_8hpp.html" title=" " alt="" coords="5,168,216,193"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="159,49,128,68,103,95,99,109,97,123,103,152,97,153,92,124,93,108,99,93,124,64,156,44"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="113,94,172,120"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="199,48,166,84,162,80,195,45"/>
+<area shape="rect" id="Node000004" href="$da/d46/digital_sender_8hpp.html" title=" " alt="" coords="196,94,380,120"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="235,45,268,81,264,84,231,48"/>
+<area shape="rect" id="Node000006" href="$d1/d73/metro_8h.html" title=" " alt="" coords="340,168,404,193"/>
+<area shape="poly" id="edge9_Node000001_Node000006" title=" " alt="" coords="316,40,359,60,378,74,394,93,400,108,400,124,390,155,385,153,395,123,395,109,390,95,375,78,356,64,314,45"/>
+<area shape="poly" id="edge5_Node000004_Node000002" title=" " alt="" coords="259,123,156,164,154,159,257,118"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="250,241,326,267"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="291,120,291,226,285,226,285,120"/>
+<area shape="poly" id="edge6_Node000004_Node000006" title=" " alt="" coords="304,118,348,155,344,159,300,122"/>
+<area shape="poly" id="edge7_Node000006_Node000005" title=" " alt="" coords="359,196,315,233,312,229,356,192"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="350,241,426,267"/>
+<area shape="poly" id="edge8_Node000006_Node000007" title=" " alt="" coords="377,193,384,225,379,226,372,194"/>
 </map>

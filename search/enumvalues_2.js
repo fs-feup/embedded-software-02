@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['ebs_5ftest_0',['EBS_TEST',['../d3/db0/structure_8hpp.html#af686af98019fe71e9f18190349618431a3805508c91ba0e8c66494b9fb9a96c4f',1,'structure.hpp']]],
-  ['error_1',['ERROR',['../d7/d1f/class_checkup_manager.html#a67dd5422cebccb716312448344a5cc46abb1ca97ec761fc37101737ba0aa2e7c5',1,'CheckupManager']]]
+  ['disable_5factuator_5f1_0',['DISABLE_ACTUATOR_1',['../d7/d1f/class_checkup_manager.html#a80729480b8cd00c3756d18ea4f12c6d7aa0d3ca7bb722577be349988c403e5015',1,'CheckupManager']]],
+  ['disable_5factuator_5f2_1',['DISABLE_ACTUATOR_2',['../d7/d1f/class_checkup_manager.html#a80729480b8cd00c3756d18ea4f12c6d7a2bee83def1c1588ee5394fd0e849bc31',1,'CheckupManager']]]
 ];

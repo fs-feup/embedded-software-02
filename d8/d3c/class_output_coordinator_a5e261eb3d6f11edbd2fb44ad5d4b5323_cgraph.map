@@ -1,0 +1,9 @@
+<map id="OutputCoordinator::enter_manual_state" name="OutputCoordinator::enter_manual_state">
+<area shape="rect" id="Node000001" title="Everything off, sdc closed." alt="" coords="5,47,141,88"/>
+<area shape="rect" id="Node000002" href="$da/db9/class_digital_sender.html#aeba7623043aeabfc9c4340cf5185fbca" title="Closes the SDC in Master and SDC Logic." alt="" coords="203,5,367,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="140,49,211,32,212,38,142,54"/>
+<area shape="rect" id="Node000003" href="$da/db9/class_digital_sender.html#ac37de32ae8c5d6aff580f8ee1e09dff1" title="Deactivates the solenoid EBS valves." alt="" coords="189,55,381,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="141,65,173,65,173,70,141,70"/>
+<area shape="rect" id="Node000004" href="$da/db9/class_digital_sender.html#a1db8385e42b643db5de2390a2bcf5a20" title="Turns off both ASSI LEDs (yellow and blue)." alt="" coords="222,105,348,145"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="142,83,207,101,206,106,140,88"/>
+</map>

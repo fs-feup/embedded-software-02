@@ -8,7 +8,8 @@ var structure_8hpp =
       [ "AUTOCROSS", "d3/db0/structure_8hpp.html#af686af98019fe71e9f18190349618431a748105e3604329b8be29b48c8de915f7", null ],
       [ "TRACKDRIVE", "d3/db0/structure_8hpp.html#af686af98019fe71e9f18190349618431a0ca25c5af22edc019d28afcf211c34dd", null ],
       [ "EBS_TEST", "d3/db0/structure_8hpp.html#af686af98019fe71e9f18190349618431a3805508c91ba0e8c66494b9fb9a96c4f", null ],
-      [ "INSPECTION", "d3/db0/structure_8hpp.html#af686af98019fe71e9f18190349618431ab95152130e074a54464df84e2086b1ad", null ]
+      [ "INSPECTION", "d3/db0/structure_8hpp.html#af686af98019fe71e9f18190349618431ab95152130e074a54464df84e2086b1ad", null ],
+      [ "CHUCK", "d3/db0/structure_8hpp.html#af686af98019fe71e9f18190349618431a5b14a4f4972d89ead612994600609a75", null ]
     ] ],
     [ "State", "d3/db0/structure_8hpp.html#a5d74787dedbc4e11c1ab15bf487e61f8", [
       [ "AS_MANUAL", "d3/db0/structure_8hpp.html#a5d74787dedbc4e11c1ab15bf487e61f8aa50a933cc29982f8013eb520b5a468f3", null ],

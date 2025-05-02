@@ -1,6 +1,8 @@
 var searchData=
 [
-  ['bamo_5fresponse_5fid_0',['BAMO_RESPONSE_ID',['../d6/d25/communicator_settings_8hpp.html#aa703f61e3e582a5246809ae43a3c646f',1,'communicatorSettings.hpp']]],
-  ['bms_5fid_1',['BMS_ID',['../d6/d25/communicator_settings_8hpp.html#ac1402c9cb190dc63569bf0630374f0d5',1,'communicatorSettings.hpp']]],
-  ['btb_5fready_2',['BTB_READY',['../d6/d25/communicator_settings_8hpp.html#a8a2c511eec87717a988b00336087b898',1,'communicatorSettings.hpp']]]
+  ['brake_5flight_0',['BRAKE_LIGHT',['../d4/d7d/hardware_settings_8hpp.html#ac0bca9c8a08a6ea1f82f51ce3967d778',1,'hardwareSettings.hpp']]],
+  ['brake_5fpressure_5flower_5fthreshold_1',['BRAKE_PRESSURE_LOWER_THRESHOLD',['../d4/d7d/hardware_settings_8hpp.html#a6cddc9cbad50e1d5bde5dc8daa04fbbb',1,'hardwareSettings.hpp']]],
+  ['brake_5fpressure_5fupper_5fthreshold_2',['BRAKE_PRESSURE_UPPER_THRESHOLD',['../d4/d7d/hardware_settings_8hpp.html#a6bb57ea910675d78af1bec76f2bca817',1,'hardwareSettings.hpp']]],
+  ['brake_5fsensor_3',['BRAKE_SENSOR',['../d4/d7d/hardware_settings_8hpp.html#ae7790c92e03e3d3f8823aca4a9df3383',1,'hardwareSettings.hpp']]],
+  ['bspd_5fsdc_5fopen_5f_4',['bspd_sdc_open_',['../df/d95/struct_hardware_data.html#aaeb880298080d5340c286767a2464090',1,'HardwareData']]]
 ];

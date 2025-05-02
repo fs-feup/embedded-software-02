@@ -1,0 +1,11 @@
+<map id="master/include/model/hardwareData.hpp" name="master/include/model/hardwareData.hpp">
+<area shape="rect" id="Node000001" title=" " alt="" coords="118,5,263,46"/>
+<area shape="rect" id="Node000002" href="$d4/d7d/hardware_settings_8hpp.html" title=" " alt="" coords="5,94,216,120"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="173,48,135,85,132,81,169,45"/>
+<area shape="rect" id="Node000003" href="$d1/d73/metro_8h.html" title=" " alt="" coords="240,94,304,120"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="212,44,250,81,247,85,209,48"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="184,168,259,193"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="266,121,241,156,236,153,261,118"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="283,168,359,193"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="282,118,307,153,302,156,278,121"/>
+</map>

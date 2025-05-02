@@ -1,7 +1,0 @@
-<map id="create_debug_message_1" name="create_debug_message_1">
-<area shape="rect" id="Node000001" title=" " alt="" coords="299,13,472,39"/>
-<area shape="rect" id="Node000002" href="$d0/d02/class_communicator.html#acb2803811e2a8deec2442fa65d99c16b" title="Publish AS Mission to CAN." alt="" coords="99,5,251,46"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="283,28,251,28,251,23,283,23"/>
-<area shape="rect" id="Node000003" href="$df/d0a/main_8cpp.html#afe461d27b9c48d5921c00d521181f12f" title=" " alt="" coords="5,13,51,39"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="83,28,51,28,51,23,83,23"/>
-</map>

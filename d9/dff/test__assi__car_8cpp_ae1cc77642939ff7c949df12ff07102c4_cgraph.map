@@ -1,15 +1,5 @@
 <map id="test_enterEmergencyState_and_turn_off_LEDS" name="test_enterEmergencyState_and_turn_off_LEDS">
-<area shape="rect" id="Node000001" title="Test the enterEmergency state function PROTOCOL:" alt="" coords="5,49,180,89"/>
-<area shape="rect" id="Node000002" href="$da/db9/class_digital_sender.html#a2e7fd9af17e61e7b0976de86e603895c" title="Blinks the LED at the given pin." alt="" coords="228,16,383,42"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="179,50,218,43,219,48,180,55"/>
-<area shape="rect" id="Node000004" href="$da/db9/class_digital_sender.html#a04d0cb69bbee63b4c0e68eafb7b7383a" title="ASSI LEDs blue flashing, sdc open and buzzer ringing." alt="" coords="239,77,372,117"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="180,78,224,83,223,89,180,83"/>
-<area shape="rect" id="Node000003" href="$db/d60/class_metro.html#aca78646b9ae992c81ffc395c1a1da997" title="Checks if the interval has passed and resets the timer if true." alt="" coords="473,5,568,31"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="383,22,457,19,457,24,383,28"/>
-<area shape="rect" id="Node000005" href="$da/db9/class_digital_sender.html#ab0cfa966c0a5e7c9538761dab485e4e2" title="Activates the solenoid EBS valves." alt="" coords="431,55,609,80"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="372,85,415,79,416,84,373,90"/>
-<area shape="rect" id="Node000006" href="$da/db9/class_digital_sender.html#add14481fc3edc2d052e8bc20dc5e7845" title="Opens the SDC in Master and SDC Logic." alt="" coords="440,104,600,130"/>
-<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="373,100,425,105,424,111,372,106"/>
-<area shape="rect" id="Node000007" href="$db/d60/class_metro.html#a40a8e2c535e7558224f4336628797dbd" title="Resets the timer to the current time." alt="" coords="476,153,565,179"/>
-<area shape="poly" id="edge6_Node000004_Node000007" title=" " alt="" coords="362,115,432,140,461,148,459,153,430,145,360,120"/>
+<area shape="rect" id="Node000001" title="Test the enterEmergency state function PROTOCOL:" alt="" coords="5,5,180,46"/>
+<area shape="rect" id="Node000002" href="$da/db9/class_digital_sender.html#a2e7fd9af17e61e7b0976de86e603895c" title="Blinks the LED at the given pin." alt="" coords="228,13,383,39"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="180,23,212,23,212,28,180,28"/>
 </map>

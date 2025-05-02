@@ -1,39 +1,14 @@
 <map id="main" name="main">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,133,55,159"/>
-<area shape="rect" id="Node000002" href="$d9/dff/test__assi__car_8cpp.html#a300f7b73a5b155e1a6f101369d21ec01" title="Test the enterDrivingState function PROTOCOL:" alt="" coords="115,27,265,68"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="41,131,67,105,101,79,111,73,114,77,104,83,71,109,45,135"/>
-<area shape="rect" id="Node000009" href="$d9/dff/test__assi__car_8cpp.html#ae1cc77642939ff7c949df12ff07102c4" title="Test the enterEmergency state function PROTOCOL:" alt="" coords="103,93,277,133"/>
-<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="55,138,87,132,88,137,56,144"/>
-<area shape="rect" id="Node000013" href="$d9/dff/test__assi__car_8cpp.html#a6f9e4a2179a8997ed57d6eeb87a8d32a" title="Test the enterFinishState function PROTOCOL:" alt="" coords="117,223,263,264"/>
-<area shape="poly" id="edge14_Node000001_Node000013" title=" " alt="" coords="45,158,71,183,104,208,115,214,112,218,101,212,68,187,41,161"/>
-<area shape="rect" id="Node000015" href="$d9/dff/test__assi__car_8cpp.html#a5f4b20652766818aae6265dba4899e2c" title="Test the enterReadyState function PROTOCOL:" alt="" coords="117,158,263,199"/>
-<area shape="poly" id="edge18_Node000001_Node000015" title=" " alt="" coords="56,148,102,158,101,163,55,154"/>
-<area shape="rect" id="Node000003" href="$da/db9/class_digital_sender.html#a2e7fd9af17e61e7b0976de86e603895c" title="Blinks the LED at the given pin." alt="" coords="325,5,480,31"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="265,35,309,28,310,34,266,40"/>
-<area shape="rect" id="Node000005" href="$da/db9/class_digital_sender.html#a966bfea535191a5367a4ab0dd7046836" title="ASSI LEDs yellow flashing, ebs valves deactivated, sdc closed." alt="" coords="336,55,469,96"/>
-<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="266,55,321,62,320,67,265,60"/>
-<area shape="rect" id="Node000004" href="$db/d60/class_metro.html#aca78646b9ae992c81ffc395c1a1da997" title="Checks if the interval has passed and resets the timer if true." alt="" coords="577,5,672,31"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="481,16,561,16,561,21,481,21"/>
-<area shape="rect" id="Node000006" href="$da/db9/class_digital_sender.html#aeba7623043aeabfc9c4340cf5185fbca" title="Closes the SDC in Master and SDC Logic." alt="" coords="543,105,706,131"/>
-<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="470,86,540,99,539,104,469,91"/>
-<area shape="rect" id="Node000007" href="$da/db9/class_digital_sender.html#ac37de32ae8c5d6aff580f8ee1e09dff1" title="Deactivates the solenoid EBS valves." alt="" coords="528,56,721,82"/>
-<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="470,71,513,70,513,75,470,76"/>
-<area shape="rect" id="Node000008" href="$db/d60/class_metro.html#a40a8e2c535e7558224f4336628797dbd" title="Resets the timer to the current time." alt="" coords="580,155,669,180"/>
-<area shape="poly" id="edge7_Node000005_Node000008" title=" " alt="" coords="457,94,482,107,506,125,530,141,566,154,564,159,527,146,502,129,479,111,455,99"/>
-<area shape="poly" id="edge9_Node000009_Node000003" title=" " alt="" coords="250,90,276,77,299,59,324,41,338,34,340,39,326,46,302,63,278,82,252,94"/>
-<area shape="rect" id="Node000010" href="$da/db9/class_digital_sender.html#a04d0cb69bbee63b4c0e68eafb7b7383a" title="ASSI LEDs blue flashing, sdc open and buzzer ringing." alt="" coords="336,186,469,227"/>
-<area shape="poly" id="edge10_Node000009_Node000010" title=" " alt="" coords="249,131,278,144,326,170,339,177,337,181,324,175,276,149,247,136"/>
-<area shape="poly" id="edge13_Node000010_Node000008" title=" " alt="" coords="469,192,564,175,565,180,470,197"/>
-<area shape="rect" id="Node000011" href="$da/db9/class_digital_sender.html#ab0cfa966c0a5e7c9538761dab485e4e2" title="Activates the solenoid EBS valves." alt="" coords="535,204,714,230"/>
-<area shape="poly" id="edge11_Node000010_Node000011" title=" " alt="" coords="470,207,520,209,520,214,470,212"/>
-<area shape="rect" id="Node000012" href="$da/db9/class_digital_sender.html#add14481fc3edc2d052e8bc20dc5e7845" title="Opens the SDC in Master and SDC Logic." alt="" coords="544,256,705,282"/>
-<area shape="poly" id="edge12_Node000010_Node000012" title=" " alt="" coords="471,223,529,240,561,249,559,254,528,245,469,228"/>
-<area shape="rect" id="Node000014" href="$da/db9/class_digital_sender.html#a859c630ba909c7f8c50386d403a6e75c" title="ASSI blue LED on, ebs valves activated, sdc open." alt="" coords="336,251,469,292"/>
-<area shape="poly" id="edge15_Node000013_Node000014" title=" " alt="" coords="263,250,321,258,320,263,263,256"/>
-<area shape="poly" id="edge16_Node000014_Node000011" title=" " alt="" coords="469,253,554,231,555,237,470,258"/>
-<area shape="poly" id="edge17_Node000014_Node000012" title=" " alt="" coords="470,268,529,267,529,273,470,273"/>
-<area shape="rect" id="Node000016" href="$da/db9/class_digital_sender.html#ae5d857237e7d521c8f84e2895615272d" title="ASSI yellow LED on, ebs valves activated, sdc closed." alt="" coords="336,121,469,161"/>
-<area shape="poly" id="edge19_Node000015_Node000016" title=" " alt="" coords="263,163,320,153,321,158,264,168"/>
-<area shape="poly" id="edge21_Node000016_Node000006" title=" " alt="" coords="469,131,527,125,528,131,470,137"/>
-<area shape="poly" id="edge20_Node000016_Node000011" title=" " alt="" coords="453,159,529,190,551,197,550,202,527,195,451,164"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,112,55,137"/>
+<area shape="rect" id="Node000002" href="$d9/dff/test__assi__car_8cpp.html#a300f7b73a5b155e1a6f101369d21ec01" title="Test the enterDrivingState function PROTOCOL:" alt="" coords="115,5,265,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="41,109,67,83,101,57,111,51,114,56,104,61,71,87,45,113"/>
+<area shape="rect" id="Node000004" href="$d9/dff/test__assi__car_8cpp.html#ae1cc77642939ff7c949df12ff07102c4" title="Test the enterEmergency state function PROTOCOL:" alt="" coords="103,71,277,111"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="55,117,87,110,88,115,56,122"/>
+<area shape="rect" id="Node000005" href="$d9/dff/test__assi__car_8cpp.html#a6f9e4a2179a8997ed57d6eeb87a8d32a" title="Test the enterFinishState function PROTOCOL:" alt="" coords="117,136,263,177"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="56,127,103,136,102,141,55,132"/>
+<area shape="rect" id="Node000006" href="$d9/dff/test__assi__car_8cpp.html#a5f4b20652766818aae6265dba4899e2c" title="Test the enterReadyState function PROTOCOL:" alt="" coords="117,201,263,242"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="45,136,71,161,104,186,115,192,112,197,101,191,68,165,41,140"/>
+<area shape="rect" id="Node000003" href="$da/db9/class_digital_sender.html#a2e7fd9af17e61e7b0976de86e603895c" title="Blinks the LED at the given pin." alt="" coords="325,46,480,72"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="266,35,310,42,309,47,265,40"/>
+<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="277,75,309,70,310,76,278,81"/>
 </map>

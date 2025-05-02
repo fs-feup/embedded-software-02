@@ -100,58 +100,65 @@ $(document).ready(function(){initNavTree('d4/d32/communicator_8hpp.html','../../
 <div class="textblock"><code>#include &lt;Arduino.h&gt;</code><br />
 <code>#include &lt;FlexCAN_T4.h&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
-<code>#include &quot;<a class="el" href="../../d6/d25/communicator_settings_8hpp_source.html">comm/communicatorSettings.hpp</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="../../df/d93/utils_8hpp_source.html">comm/utils.hpp</a>&quot;</code><br />
+<code>#include &quot;../../CAN_IDs.h&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../d5/d5d/comm_2utils_8hpp_source.html">comm/utils.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../d2/dff/debug_utils_8hpp_source.html">debugUtils.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../db/dac/enum__utils_8hpp_source.html">enum_utils.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../dd/d88/system_data_8hpp_source.html">model/systemData.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../df/d93/utils_8hpp_source.html">../utils.hpp</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for communicator.hpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="../../d6/ddd/communicator_8hpp__incl.png" border="0" usemap="#amaster_2include_2comm_2communicator_8hpp" alt=""/></div>
 <map name="amaster_2include_2comm_2communicator_8hpp" id="amaster_2include_2comm_2communicator_8hpp">
-<area shape="rect" title=" " alt="" coords="971,5,1117,46"/>
-<area shape="rect" title=" " alt="" coords="642,389,717,414"/>
-<area shape="poly" title=" " alt="" coords="1086,44,1122,67,1157,97,1185,134,1193,156,1196,179,1196,256,1192,274,1181,290,1163,305,1141,318,1083,342,1013,360,860,386,733,399,733,394,860,381,1012,355,1081,337,1138,314,1160,301,1177,287,1187,272,1190,255,1190,179,1188,157,1180,137,1153,100,1119,71,1083,49"/>
-<area shape="rect" title=" " alt="" coords="1231,94,1336,120"/>
-<area shape="poly" title=" " alt="" coords="1104,44,1233,86,1231,91,1103,49"/>
-<area shape="rect" title=" " alt="" coords="1361,94,1414,120"/>
-<area shape="poly" title=" " alt="" coords="1118,39,1346,91,1345,96,1117,44"/>
-<area shape="rect" href="../../d6/d25/communicator_settings_8hpp.html" title=" " alt="" coords="808,168,1023,193"/>
-<area shape="poly" title=" " alt="" coords="1035,48,1013,83,984,121,945,160,941,156,980,118,1009,80,1031,45"/>
-<area shape="rect" href="../../df/d93/utils_8hpp.html" title=" " alt="" coords="861,94,970,120"/>
-<area shape="poly" title=" " alt="" coords="1013,49,949,88,947,83,1011,44"/>
-<area shape="rect" href="../../dd/d88/system_data_8hpp.html" title=" " alt="" coords="415,168,568,193"/>
-<area shape="poly" title=" " alt="" coords="971,40,844,62,702,97,609,130,531,163,529,158,607,125,700,91,843,57,970,35"/>
-<area shape="rect" href="../../d2/dff/debug_utils_8hpp.html" title=" " alt="" coords="626,315,733,341"/>
-<area shape="poly" title=" " alt="" coords="971,46,910,67,850,96,821,118,794,143,749,200,715,257,693,302,688,300,710,254,745,197,791,139,818,114,848,92,908,62,969,41"/>
-<area shape="rect" href="../../db/dac/enum__utils_8hpp.html" title=" " alt="" coords="1047,168,1155,193"/>
-<area shape="poly" title=" " alt="" coords="1053,45,1094,152,1089,154,1048,47"/>
-<area shape="poly" title=" " alt="" coords="873,123,833,141,814,154,798,169,783,191,775,212,770,252,766,294,760,317,747,342,731,363,711,381,708,377,727,360,743,339,755,315,761,293,764,251,769,210,778,189,794,166,811,150,830,136,871,118"/>
-<area shape="poly" title=" " alt="" coords="918,120,918,152,913,152,913,120"/>
-<area shape="poly" title=" " alt="" coords="861,120,580,167,579,162,860,115"/>
-<area shape="poly" title=" " alt="" coords="948,118,1056,159,1054,164,946,123"/>
-<area shape="rect" href="../../d2/d22/digital_data_8hpp.html" title=" " alt="" coords="164,241,310,267"/>
-<area shape="poly" title=" " alt="" coords="449,196,296,239,294,234,448,191"/>
-<area shape="rect" href="../../d1/d13/sensors_8hpp.html" title=" " alt="" coords="333,241,464,267"/>
-<area shape="poly" title=" " alt="" coords="477,196,428,234,424,230,474,192"/>
-<area shape="rect" href="../../d3/db0/structure_8hpp.html" title=" " alt="" coords="5,241,141,267"/>
-<area shape="poly" title=" " alt="" coords="421,197,156,241,156,236,420,191"/>
-<area shape="rect" href="../../de/d72/system_diagnostics_8hpp.html" title=" " alt="" coords="488,241,682,267"/>
-<area shape="poly" title=" " alt="" coords="509,192,559,230,556,234,506,196"/>
-<area shape="rect" href="../../d6/db3/digital_settings_8hpp.html" title=" " alt="" coords="165,315,357,341"/>
-<area shape="poly" title=" " alt="" coords="243,266,255,299,250,301,238,268"/>
-<area shape="rect" href="../../d1/d73/metro_8h.html" title=" " alt="" coords="405,315,469,341"/>
-<area shape="poly" title=" " alt="" coords="272,265,391,307,389,312,270,270"/>
-<area shape="poly" title=" " alt="" coords="470,336,627,382,626,387,469,341"/>
-<area shape="rect" title=" " alt="" coords="399,389,475,414"/>
-<area shape="poly" title=" " alt="" coords="440,341,440,373,434,373,434,341"/>
-<area shape="poly" title=" " alt="" coords="590,267,599,301,617,339,633,360,652,377,649,381,629,363,612,342,594,303,585,268"/>
-<area shape="poly" title=" " alt="" coords="530,270,332,314,330,309,529,265"/>
-<area shape="poly" title=" " alt="" coords="561,270,477,310,475,305,559,265"/>
-<area shape="rect" title=" " alt="" coords="493,315,552,341"/>
-<area shape="poly" title=" " alt="" coords="577,269,545,305,541,301,573,265"/>
-<area shape="poly" title=" " alt="" coords="603,265,653,303,650,308,599,270"/>
+<area shape="rect" title=" " alt="" coords="790,5,937,46"/>
+<area shape="rect" title=" " alt="" coords="481,389,556,414"/>
+<area shape="poly" title=" " alt="" coords="884,45,906,75,927,113,934,133,937,154,935,175,927,195,893,240,851,278,804,310,754,336,703,357,655,373,572,394,570,389,653,368,701,352,752,331,801,305,848,273,889,236,923,192,930,174,932,154,929,135,922,115,902,78,879,48"/>
+<area shape="rect" title=" " alt="" coords="972,94,1078,120"/>
+<area shape="poly" title=" " alt="" coords="905,44,988,84,985,89,903,49"/>
+<area shape="rect" title=" " alt="" coords="1102,94,1156,120"/>
+<area shape="poly" title=" " alt="" coords="931,44,1088,91,1087,96,929,49"/>
+<area shape="rect" title=" " alt="" coords="673,168,779,193"/>
+<area shape="poly" title=" " alt="" coords="851,48,789,121,752,159,748,155,786,118,847,45"/>
+<area shape="rect" href="../../d5/d5d/comm_2utils_8hpp.html" title=" " alt="" coords="666,94,776,120"/>
+<area shape="poly" title=" " alt="" coords="829,49,757,88,755,84,827,44"/>
+<area shape="rect" href="../../dd/d88/system_data_8hpp.html" title=" " alt="" coords="374,168,527,193"/>
+<area shape="poly" title=" " alt="" coords="790,38,683,58,624,75,567,96,516,127,475,160,472,155,513,122,565,92,622,70,681,53,789,32"/>
+<area shape="rect" href="../../d2/dff/debug_utils_8hpp.html" title=" " alt="" coords="491,315,599,341"/>
+<area shape="poly" title=" " alt="" coords="791,38,721,58,686,74,656,96,630,132,601,189,556,302,552,300,597,187,625,130,652,92,684,70,719,53,789,33"/>
+<area shape="rect" href="../../db/dac/enum__utils_8hpp.html" title=" " alt="" coords="804,168,912,193"/>
+<area shape="poly" title=" " alt="" coords="865,46,862,152,856,152,860,46"/>
+<area shape="rect" href="../../df/d93/utils_8hpp.html" title=" " alt="" coords="1180,94,1259,120"/>
+<area shape="poly" title=" " alt="" coords="938,41,1165,91,1164,96,937,46"/>
+<area shape="poly" title=" " alt="" coords="707,122,684,143,663,169,651,193,645,215,641,256,635,297,627,319,612,342,589,366,562,383,559,379,586,362,608,339,622,316,630,296,635,256,640,214,646,191,659,166,680,139,703,118"/>
+<area shape="poly" title=" " alt="" coords="724,120,727,152,721,152,719,120"/>
+<area shape="poly" title=" " alt="" coords="676,123,512,166,510,161,674,118"/>
+<area shape="poly" title=" " alt="" coords="745,118,822,158,820,162,743,123"/>
+<area shape="rect" href="../../d8/d29/hardware_data_8hpp.html" title=" " alt="" coords="5,241,170,267"/>
+<area shape="poly" title=" " alt="" coords="389,197,165,240,164,235,388,191"/>
+<area shape="rect" href="../../d3/db0/structure_8hpp.html" title=" " alt="" coords="193,241,329,267"/>
+<area shape="poly" title=" " alt="" coords="419,196,308,238,306,233,417,191"/>
+<area shape="rect" href="../../de/d72/system_diagnostics_8hpp.html" title=" " alt="" coords="353,241,547,267"/>
+<area shape="poly" title=" " alt="" coords="453,194,453,226,448,226,448,194"/>
+<area shape="rect" href="../../d4/d7d/hardware_settings_8hpp.html" title=" " alt="" coords="9,315,219,341"/>
+<area shape="poly" title=" " alt="" coords="94,266,107,299,102,301,89,268"/>
+<area shape="rect" href="../../d1/d73/metro_8h.html" title=" " alt="" coords="269,315,333,341"/>
+<area shape="poly" title=" " alt="" coords="125,265,255,308,253,313,123,270"/>
+<area shape="poly" title=" " alt="" coords="334,337,467,381,466,386,333,342"/>
+<area shape="rect" title=" " alt="" coords="263,389,339,414"/>
+<area shape="poly" title=" " alt="" coords="304,341,304,373,298,373,298,341"/>
+<area shape="poly" title=" " alt="" coords="434,270,417,284,402,302,394,321,394,330,398,339,411,355,428,368,466,386,464,391,425,373,407,359,393,342,389,331,389,320,398,299,414,280,431,266"/>
+<area shape="poly" title=" " alt="" coords="393,270,187,314,185,309,392,265"/>
+<area shape="poly" title=" " alt="" coords="426,270,341,310,339,306,424,265"/>
+<area shape="rect" title=" " alt="" coords="407,315,467,341"/>
+<area shape="poly" title=" " alt="" coords="451,268,445,300,439,299,445,267"/>
+<area shape="poly" title=" " alt="" coords="468,265,518,303,515,308,465,270"/>
+<area shape="rect" title=" " alt="" coords="1107,168,1167,193"/>
+<area shape="poly" title=" " alt="" coords="1207,122,1164,159,1160,155,1204,118"/>
+<area shape="rect" title=" " alt="" coords="1191,168,1248,193"/>
+<area shape="poly" title=" " alt="" coords="1222,120,1222,152,1217,152,1217,120"/>
+<area shape="rect" title=" " alt="" coords="1271,168,1339,193"/>
+<area shape="poly" title=" " alt="" coords="1236,118,1281,156,1277,160,1232,122"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -159,13 +166,16 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="../../d5/d44/communicator_8hpp__dep__incl.png" border="0" usemap="#amaster_2include_2comm_2communicator_8hppdep" alt=""/></div>
 <map name="amaster_2include_2comm_2communicator_8hppdep" id="amaster_2include_2comm_2communicator_8hppdep">
-<area shape="rect" title=" " alt="" coords="174,5,320,46"/>
-<area shape="rect" href="../../df/d0a/main_8cpp.html" title=" " alt="" coords="5,102,145,127"/>
-<area shape="poly" title=" " alt="" coords="196,56,100,103,98,99,193,51"/>
-<area shape="rect" href="../../df/d2e/test__callbacks_8cpp.html" title=" " alt="" coords="169,94,325,135"/>
-<area shape="poly" title=" " alt="" coords="250,62,250,94,244,94,244,62"/>
-<area shape="rect" href="../../da/dad/test__integration_8cpp.html" title=" " alt="" coords="349,94,529,135"/>
-<area shape="poly" title=" " alt="" coords="305,50,397,91,395,96,303,55"/>
+<area shape="rect" title=" " alt="" coords="179,5,325,46"/>
+<area shape="rect" href="../../d0/dad/output_coordinator_8hpp.html" title=" " alt="" coords="5,94,157,135"/>
+<area shape="poly" title=" " alt="" coords="201,56,121,96,118,91,198,51"/>
+<area shape="rect" href="../../df/d0a/main_8cpp.html" title=" " alt="" coords="67,183,207,208"/>
+<area shape="poly" title=" " alt="" coords="232,60,147,184,143,181,228,57"/>
+<area shape="rect" href="../../df/d2e/test__callbacks_8cpp.html" title=" " alt="" coords="232,94,389,135"/>
+<area shape="poly" title=" " alt="" coords="276,57,299,92,295,95,271,60"/>
+<area shape="rect" href="../../da/dad/test__integration_8cpp.html" title=" " alt="" coords="412,94,593,135"/>
+<area shape="poly" title=" " alt="" coords="324,49,446,91,444,96,322,54"/>
+<area shape="poly" title=" " alt="" coords="106,146,131,181,126,184,101,149"/>
 </map>
 </div>
 </div>
@@ -206,24 +216,17 @@ Variables</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= {{{0, <a class="code hl_variable" href="../../d6/d25/communicator_settings_8hpp.html#aafe6e2fbe02727632b4e30cf8087600b">C1_ID</a>},</div>
-<div class="line">                                         {1, <a class="code hl_variable" href="../../d6/d25/communicator_settings_8hpp.html#aa703f61e3e582a5246809ae43a3c646f">BAMO_RESPONSE_ID</a>},</div>
-<div class="line">                                         {2, <a class="code hl_variable" href="../../d6/d25/communicator_settings_8hpp.html#a1c7573e17872b41c2011f89f72311245">AS_CU_EMERGENCY_SIGNAL</a>},</div>
-<div class="line">                                         {3, <a class="code hl_variable" href="../../d6/d25/communicator_settings_8hpp.html#a4bb7c0eb4df40f82f545e6657bf1bc0b">MISSION_FINISHED</a>},</div>
-<div class="line">                                         {4, <a class="code hl_variable" href="../../d6/d25/communicator_settings_8hpp.html#a59b5dcf623b44583ac8b4465a6aab582">AS_CU_ID</a>},</div>
-<div class="line">                                         {5, <a class="code hl_variable" href="../../d6/d25/communicator_settings_8hpp.html#a3a6791dec65a6c077554b7afedbf28b1">RES_STATE</a>},</div>
-<div class="line">                                         {6, <a class="code hl_variable" href="../../d6/d25/communicator_settings_8hpp.html#a358b17f73bccd5ca7fa8d8d170940b04">RES_READY</a>}}}</div>
-<div class="ttc" id="acommunicator_settings_8hpp_html_a1c7573e17872b41c2011f89f72311245"><div class="ttname"><a href="../../d6/d25/communicator_settings_8hpp.html#a1c7573e17872b41c2011f89f72311245">AS_CU_EMERGENCY_SIGNAL</a></div><div class="ttdeci">constexpr auto AS_CU_EMERGENCY_SIGNAL</div><div class="ttdef"><b>Definition</b> <a href="../../d6/d25/communicator_settings_8hpp_source.html#l00013">communicatorSettings.hpp:13</a></div></div>
-<div class="ttc" id="acommunicator_settings_8hpp_html_a358b17f73bccd5ca7fa8d8d170940b04"><div class="ttname"><a href="../../d6/d25/communicator_settings_8hpp.html#a358b17f73bccd5ca7fa8d8d170940b04">RES_READY</a></div><div class="ttdeci">constexpr auto RES_READY</div><div class="ttdef"><b>Definition</b> <a href="../../d6/d25/communicator_settings_8hpp_source.html#l00033">communicatorSettings.hpp:33</a></div></div>
-<div class="ttc" id="acommunicator_settings_8hpp_html_a3a6791dec65a6c077554b7afedbf28b1"><div class="ttname"><a href="../../d6/d25/communicator_settings_8hpp.html#a3a6791dec65a6c077554b7afedbf28b1">RES_STATE</a></div><div class="ttdeci">constexpr auto RES_STATE</div><div class="ttdef"><b>Definition</b> <a href="../../d6/d25/communicator_settings_8hpp_source.html#l00032">communicatorSettings.hpp:32</a></div></div>
-<div class="ttc" id="acommunicator_settings_8hpp_html_a4bb7c0eb4df40f82f545e6657bf1bc0b"><div class="ttname"><a href="../../d6/d25/communicator_settings_8hpp.html#a4bb7c0eb4df40f82f545e6657bf1bc0b">MISSION_FINISHED</a></div><div class="ttdeci">constexpr auto MISSION_FINISHED</div><div class="ttdef"><b>Definition</b> <a href="../../d6/d25/communicator_settings_8hpp_source.html#l00014">communicatorSettings.hpp:14</a></div></div>
-<div class="ttc" id="acommunicator_settings_8hpp_html_a59b5dcf623b44583ac8b4465a6aab582"><div class="ttname"><a href="../../d6/d25/communicator_settings_8hpp.html#a59b5dcf623b44583ac8b4465a6aab582">AS_CU_ID</a></div><div class="ttdeci">constexpr auto AS_CU_ID</div><div class="ttdef"><b>Definition</b> <a href="../../d6/d25/communicator_settings_8hpp_source.html#l00009">communicatorSettings.hpp:9</a></div></div>
-<div class="ttc" id="acommunicator_settings_8hpp_html_aa703f61e3e582a5246809ae43a3c646f"><div class="ttname"><a href="../../d6/d25/communicator_settings_8hpp.html#aa703f61e3e582a5246809ae43a3c646f">BAMO_RESPONSE_ID</a></div><div class="ttdeci">constexpr auto BAMO_RESPONSE_ID</div><div class="ttdef"><b>Definition</b> <a href="../../d6/d25/communicator_settings_8hpp_source.html#l00006">communicatorSettings.hpp:6</a></div></div>
-<div class="ttc" id="acommunicator_settings_8hpp_html_aafe6e2fbe02727632b4e30cf8087600b"><div class="ttname"><a href="../../d6/d25/communicator_settings_8hpp.html#aafe6e2fbe02727632b4e30cf8087600b">C1_ID</a></div><div class="ttdeci">constexpr auto C1_ID</div><div class="ttdef"><b>Definition</b> <a href="../../d6/d25/communicator_settings_8hpp_source.html#l00007">communicatorSettings.hpp:7</a></div></div>
+<b>Initial value:</b><div class="fragment"><div class="line">= {{{0, DASH_ID},</div>
+<div class="line">                                         {1, BAMO_RESPONSE_ID},</div>
+<div class="line">                                         {2, AS_CU_EMERGENCY_SIGNAL},</div>
+<div class="line">                                         {3, MISSION_FINISHED},</div>
+<div class="line">                                         {4, AS_CU_ID},</div>
+<div class="line">                                         {5, RES_STATE},</div>
+<div class="line">                                         {6, RES_READY}}}</div>
 </div><!-- fragment -->
 <p>Array of standard CAN message codes to be used for FIFO filtering Each <a class="el" href="../../db/d7a/struct_code.html">Code</a> struct contains a key and a corresponding message ID. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../d4/d32/communicator_8hpp_source.html#l00018">18</a> of file <a class="el" href="../../d4/d32/communicator_8hpp_source.html">communicator.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d4/d32/communicator_8hpp_source.html#l00020">20</a> of file <a class="el" href="../../d4/d32/communicator_8hpp_source.html">communicator.hpp</a>.</p>
 
 </div>
 </div>
@@ -247,13 +250,12 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">= {{</div>
-<div class="line">    {7, <a class="code hl_variable" href="../../d6/d25/communicator_settings_8hpp.html#a272b2fafff1b2973336db6429879e4d0">STEERING_ID</a>},</div>
+<div class="line">    {7, STEERING_ID},</div>
 <div class="line">}}</div>
-<div class="ttc" id="acommunicator_settings_8hpp_html_a272b2fafff1b2973336db6429879e4d0"><div class="ttname"><a href="../../d6/d25/communicator_settings_8hpp.html#a272b2fafff1b2973336db6429879e4d0">STEERING_ID</a></div><div class="ttdeci">constexpr auto STEERING_ID</div><div class="ttdef"><b>Definition</b> <a href="../../d6/d25/communicator_settings_8hpp_source.html#l00010">communicatorSettings.hpp:10</a></div></div>
 </div><!-- fragment -->
 <p>Array of extended CAN message codes to be used for FIFO filtering Contains the key and corresponding message ID for extended messages. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../d4/d32/communicator_8hpp_source.html#l00030">30</a> of file <a class="el" href="../../d4/d32/communicator_8hpp_source.html">communicator.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d4/d32/communicator_8hpp_source.html#l00032">32</a> of file <a class="el" href="../../d4/d32/communicator_8hpp_source.html">communicator.hpp</a>.</p>
 
 </div>
 </div>

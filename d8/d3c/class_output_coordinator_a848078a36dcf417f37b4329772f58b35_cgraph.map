@@ -1,0 +1,7 @@
+<map id="OutputCoordinator::blink_driving_led" name="OutputCoordinator::blink_driving_led">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,23,138,64"/>
+<area shape="rect" id="Node000002" href="$da/db9/class_digital_sender.html#a2e7fd9af17e61e7b0976de86e603895c" title="Blinks the LED at the given pin." alt="" coords="186,5,341,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="138,32,170,28,170,33,138,37"/>
+<area shape="rect" id="Node000003" href="$db/d60/class_metro.html#aca78646b9ae992c81ffc395c1a1da997" title="Checks if the interval has passed and resets the timer if true." alt="" coords="216,55,311,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="138,49,201,57,200,62,138,54"/>
+</map>

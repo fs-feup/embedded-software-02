@@ -1,6 +1,10 @@
 var utils_8hpp =
 [
-    [ "create_debug_message_1", "df/d93/utils_8hpp.html#a38adcb526d999f28c6901510ec723558", null ],
-    [ "create_debug_message_2", "df/d93/utils_8hpp.html#a9fc462cd993c19edfc63e11589691e35", null ],
-    [ "create_left_wheel_msg", "df/d93/utils_8hpp.html#a64debfb46d428531f2ce27fa92f63685", null ]
+    [ "float2bytes", "da/d91/unionfloat2bytes.html", "da/d91/unionfloat2bytes" ],
+    [ "average_queue", "df/d93/utils_8hpp.html#af67eed8e42e4131cd1673b8923354298", null ],
+    [ "check_sequence", "df/d93/utils_8hpp.html#a6644a0eb30b43493556b6b88f798bc9c", null ],
+    [ "debounce", "df/d93/utils_8hpp.html#aeefd5d05777d8d468938df4d95489a7a", null ],
+    [ "debounce", "df/d93/utils_8hpp.html#a55e08d54bdfb6ab82b486716970c5eb1", null ],
+    [ "insert_value_queue", "df/d93/utils_8hpp.html#ac4c9889e0835f0957b9f14e4359f5a46", null ],
+    [ "rpm_2_byte", "df/d93/utils_8hpp.html#a08bce81832e54a9419b914bb3c92487a", null ]
 ];

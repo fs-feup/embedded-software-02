@@ -1,7 +1,12 @@
 <map id="CheckupManager::should_enter_emergency" name="CheckupManager::should_enter_emergency">
-<area shape="rect" id="Node000001" title="Performs an emergency checkup." alt="" coords="5,5,172,46"/>
-<area shape="rect" id="Node000002" href="$d3/df6/struct_failure_detection.html#a2dce218ec78f523302e547071e600d87" title=" " alt="" coords="220,5,403,46"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="172,23,204,23,204,28,172,28"/>
-<area shape="rect" id="Node000003" href="$db/d60/class_metro.html#a95ed7cb80b7f56a80790c34fcea93724" title="Checks if the interval has passed without resetting the timer." alt="" coords="451,13,624,39"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="404,23,435,23,435,28,404,28"/>
+<area shape="rect" id="Node000001" title="Performs an emergency checkup." alt="" coords="5,39,172,79"/>
+<area shape="rect" id="Node000002" href="$d7/d1f/class_checkup_manager.html#a4d3c5d16578d35a9db47e89ad63cfac8" title=" " alt="" coords="220,5,445,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="172,45,204,41,205,46,173,50"/>
+<area shape="rect" id="Node000005" href="$d7/d1f/class_checkup_manager.html#a0ad49ca8165b728ea46d1d5e1e580148" title=" " alt="" coords="223,71,442,111"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="173,67,208,72,207,77,172,73"/>
+<area shape="rect" id="Node000003" href="$d3/df6/struct_failure_detection.html#a2dce218ec78f523302e547071e600d87" title=" " alt="" coords="493,39,676,79"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="446,38,478,42,477,48,445,43"/>
+<area shape="rect" id="Node000004" href="$db/d60/class_metro.html#a95ed7cb80b7f56a80790c34fcea93724" title="Checks if the interval has passed without resetting the timer." alt="" coords="724,46,898,72"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="677,56,709,56,709,62,677,62"/>
+<area shape="poly" id="edge5_Node000005_Node000003" title=" " alt="" coords="442,74,477,70,478,75,442,80"/>
 </map>

@@ -1,19 +1,12 @@
 var searchData=
 [
-  ['dbg_5flog_5fmsg_0',['DBG_LOG_MSG',['../d6/d25/communicator_settings_8hpp.html#ab88711d0d4ec8fcdc4882803903df373',1,'communicatorSettings.hpp']]],
-  ['dbg_5flog_5fmsg_5f2_1',['DBG_LOG_MSG_2',['../d6/d25/communicator_settings_8hpp.html#aa691071eade545862ba15ffcac346af7',1,'communicatorSettings.hpp']]],
-  ['dc_5fthreshold_2',['DC_THRESHOLD',['../d6/d25/communicator_settings_8hpp.html#a93257b1b068986c1d624144edbf54af7',1,'communicatorSettings.hpp']]],
-  ['dc_5fvoltage_5f_3',['dc_voltage_',['../d3/df6/struct_failure_detection.html#ab7a505942693211eb6095159c4c8d186',1,'FailureDetection']]],
-  ['dc_5fvoltage_5fdrop_5ftimestamp_5f_4',['dc_voltage_drop_timestamp_',['../d3/df6/struct_failure_detection.html#a8b8f996e50ad40f2ab417694ee98daf4',1,'FailureDetection']]],
-  ['dc_5fvoltage_5fhold_5',['DC_VOLTAGE_HOLD',['../d6/db3/digital_settings_8hpp.html#a8190057e599d431fde47a99eed5fa9a4',1,'digitalSettings.hpp']]],
-  ['dc_5fvoltage_5fhold_5ftimestamp_5f_6',['dc_voltage_hold_timestamp_',['../d3/df6/struct_failure_detection.html#a5287f7ba45e86bf130023ed349e64f1a',1,'FailureDetection']]],
-  ['dc_5fvoltage_5ftimeout_7',['DC_VOLTAGE_TIMEOUT',['../d6/db3/digital_settings_8hpp.html#af9f1d492013b491e9a7f53bc803a8325',1,'digitalSettings.hpp']]],
-  ['digital_5fdata_5f_8',['digital_data_',['../d0/d9d/struct_system_data.html#a24b89cdcfcd9304e405be7a3d0a8c509',1,'SystemData']]],
-  ['digital_5finput_5fcounter_5flimit_9',['DIGITAL_INPUT_COUNTER_LIMIT',['../d6/db3/digital_settings_8hpp.html#ad2a9289b57310d5a7aad6592b0579fd8',1,'digitalSettings.hpp']]],
-  ['digital_5freceiver_10',['digital_receiver',['../df/d0a/main_8cpp.html#aec2626254ff3d05be462c363f65cd51f',1,'main.cpp']]],
-  ['digital_5fsender_11',['digital_sender',['../df/d0a/main_8cpp.html#a58cee0c7f306c21a8fea82ca46723ed4',1,'main.cpp']]],
-  ['digitalrecv_12',['digitalRecv',['../dd/d46/test__digital_receiver_8cpp.html#ab86217a1b3614e429f61b7b7427a504c',1,'test_digitalReceiver.cpp']]],
-  ['digitalsender_13',['digitalSender',['../da/dad/test__integration_8cpp.html#a97caf154728d778c2f1590be4e8c67d5',1,'test_integration.cpp']]],
-  ['driving_5fcontrol_14',['DRIVING_CONTROL',['../d6/d25/communicator_settings_8hpp.html#a47ef3e08da0238ba481fdb1dac284f7f',1,'communicatorSettings.hpp']]],
-  ['driving_5fstate_15',['DRIVING_STATE',['../d6/d25/communicator_settings_8hpp.html#af03a39267446bb99fb897b342273b18e',1,'communicatorSettings.hpp']]]
+  ['dc_5fvoltage_5f_0',['dc_voltage_',['../d3/df6/struct_failure_detection.html#ab7a505942693211eb6095159c4c8d186',1,'FailureDetection']]],
+  ['dc_5fvoltage_5fdrop_5ftimestamp_5f_1',['dc_voltage_drop_timestamp_',['../d3/df6/struct_failure_detection.html#a8b8f996e50ad40f2ab417694ee98daf4',1,'FailureDetection']]],
+  ['dc_5fvoltage_5fhold_2',['DC_VOLTAGE_HOLD',['../d4/d7d/hardware_settings_8hpp.html#a8190057e599d431fde47a99eed5fa9a4',1,'hardwareSettings.hpp']]],
+  ['dc_5fvoltage_5fhold_5ftimestamp_5f_3',['dc_voltage_hold_timestamp_',['../d3/df6/struct_failure_detection.html#a5287f7ba45e86bf130023ed349e64f1a',1,'FailureDetection']]],
+  ['dc_5fvoltage_5ftimeout_4',['DC_VOLTAGE_TIMEOUT',['../d4/d7d/hardware_settings_8hpp.html#af9f1d492013b491e9a7f53bc803a8325',1,'hardwareSettings.hpp']]],
+  ['digital_5freceiver_5',['digital_receiver',['../df/d0a/main_8cpp.html#aec2626254ff3d05be462c363f65cd51f',1,'main.cpp']]],
+  ['digital_5fsender_6',['digital_sender',['../df/d0a/main_8cpp.html#a58cee0c7f306c21a8fea82ca46723ed4',1,'main.cpp']]],
+  ['digitalrecv_7',['digitalRecv',['../dd/d46/test__digital_receiver_8cpp.html#ab86217a1b3614e429f61b7b7427a504c',1,'test_digitalReceiver.cpp']]],
+  ['digitalsender_8',['digitalSender',['../da/dad/test__integration_8cpp.html#a97caf154728d778c2f1590be4e8c67d5',1,'test_integration.cpp']]]
 ];

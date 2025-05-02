@@ -2,8 +2,8 @@ var searchData=
 [
   ['acceleration_0',['ACCELERATION',['../d3/db0/structure_8hpp.html#af686af98019fe71e9f18190349618431aee49d439f92c07271c132560998b73e1',1,'structure.hpp']]],
   ['activate_5febs_1',['activate_ebs',['../da/db9/class_digital_sender.html#ab0cfa966c0a5e7c9538761dab485e4e2',1,'DigitalSender']]],
-  ['as_5fcu_5femergency_5fsignal_2',['AS_CU_EMERGENCY_SIGNAL',['../d6/d25/communicator_settings_8hpp.html#a1c7573e17872b41c2011f89f72311245',1,'communicatorSettings.hpp']]],
-  ['as_5fcu_5fid_3',['AS_CU_ID',['../d6/d25/communicator_settings_8hpp.html#a59b5dcf623b44583ac8b4465a6aab582',1,'communicatorSettings.hpp']]],
+  ['adc_5fmax_5fvalue_2',['ADC_MAX_VALUE',['../d4/d7d/hardware_settings_8hpp.html#a0cac84a64de0184da3b7163d10114835',1,'hardwareSettings.hpp']]],
+  ['ami_3',['AMI',['../d4/d7d/hardware_settings_8hpp.html#ac60369436fc0ba6c2705bea66028ad17',1,'hardwareSettings.hpp']]],
   ['as_5fdriving_4',['AS_DRIVING',['../d3/db0/structure_8hpp.html#a5d74787dedbc4e11c1ab15bf487e61f8a7403c76d5015cb14b2c11f6ebbb721e6',1,'structure.hpp']]],
   ['as_5femergency_5',['AS_EMERGENCY',['../d3/db0/structure_8hpp.html#a5d74787dedbc4e11c1ab15bf487e61f8ae41a6ccae216479c5160def02d37dc76',1,'structure.hpp']]],
   ['as_5ffinished_6',['AS_FINISHED',['../d3/db0/structure_8hpp.html#a5d74787dedbc4e11c1ab15bf487e61f8ad7ba764f4cd60bbac1c7cf38521b2f57',1,'structure.hpp']]],
@@ -11,10 +11,15 @@ var searchData=
   ['as_5foff_8',['AS_OFF',['../d3/db0/structure_8hpp.html#a5d74787dedbc4e11c1ab15bf487e61f8afba21ae8c6c394bfc9f303536319a659',1,'structure.hpp']]],
   ['as_5fready_9',['AS_READY',['../d3/db0/structure_8hpp.html#a5d74787dedbc4e11c1ab15bf487e61f8ac8155923226aa4ae9cd267c22ef3aebf',1,'structure.hpp']]],
   ['as_5fstate_10',['as_state',['../df/d0a/main_8cpp.html#a39aea26143b601c4c591d01356226729',1,'as_state:&#160;main.cpp'],['../da/dad/test__integration_8cpp.html#a39aea26143b601c4c591d01356226729',1,'as_state:&#160;test_integration.cpp']]],
-  ['asms_5fin_5fpin_11',['asms_in_pin',['../dd/d46/test__digital_receiver_8cpp.html#a0a16fa5264538aa2b4e20397aa609079',1,'ASMS_IN_PIN:&#160;test_digitalReceiver.cpp'],['../d6/db3/digital_settings_8hpp.html#a29157794eacf4851ee5442c7954c6a8d',1,'ASMS_IN_PIN:&#160;digitalSettings.hpp']]],
-  ['asms_5fon_5f_12',['asms_on_',['../d3/d93/struct_digital_data.html#a2a159e7ae61f0017d6b49778ad1c7edc',1,'DigitalData']]],
-  ['assi_5fblue_5fpin_13',['ASSI_BLUE_PIN',['../d6/db3/digital_settings_8hpp.html#a99e5c7f4a404f01ad3dd48b067eaa2a2',1,'digitalSettings.hpp']]],
-  ['assi_5fyellow_5fpin_14',['ASSI_YELLOW_PIN',['../d6/db3/digital_settings_8hpp.html#ae89c6bae760914131177dd543172dcf9',1,'digitalSettings.hpp']]],
-  ['asstate_15',['asstate',['../d2/d46/class_a_s_state.html#a69bc772cee31d8f920a8eed743ac2abc',1,'ASState::ASState()'],['../d2/d46/class_a_s_state.html',1,'ASState']]],
-  ['autocross_16',['AUTOCROSS',['../d3/db0/structure_8hpp.html#af686af98019fe71e9f18190349618431a748105e3604329b8be29b48c8de915f7',1,'structure.hpp']]]
+  ['asats_11',['ASATS',['../d4/d7d/hardware_settings_8hpp.html#ab7263e6d57246b5dd354fc9cd3ad90eb',1,'hardwareSettings.hpp']]],
+  ['asats_5fpressed_5f_12',['asats_pressed_',['../df/d95/struct_hardware_data.html#a0575eb8f0a950490ede7b4d8e1b89448',1,'HardwareData']]],
+  ['asms_5fin_5fpin_13',['asms_in_pin',['../dd/d46/test__digital_receiver_8cpp.html#a0a16fa5264538aa2b4e20397aa609079',1,'ASMS_IN_PIN:&#160;test_digitalReceiver.cpp'],['../d4/d7d/hardware_settings_8hpp.html#a29157794eacf4851ee5442c7954c6a8d',1,'ASMS_IN_PIN:&#160;hardwareSettings.hpp']]],
+  ['asms_5fon_5f_14',['asms_on_',['../df/d95/struct_hardware_data.html#ae1de5bbf96b043012ede22630db02b6f',1,'HardwareData']]],
+  ['assi_5fblue_5fpin_15',['ASSI_BLUE_PIN',['../d4/d7d/hardware_settings_8hpp.html#a99e5c7f4a404f01ad3dd48b067eaa2a2',1,'hardwareSettings.hpp']]],
+  ['assi_5fyellow_5fpin_16',['ASSI_YELLOW_PIN',['../d4/d7d/hardware_settings_8hpp.html#ae89c6bae760914131177dd543172dcf9',1,'hardwareSettings.hpp']]],
+  ['asstate_17',['asstate',['../d2/d46/class_a_s_state.html#ae6bc8b49c032c4f10043eebf473e7186',1,'ASState::ASState()'],['../d2/d46/class_a_s_state.html',1,'ASState']]],
+  ['ats_18',['ATS',['../d4/d7d/hardware_settings_8hpp.html#ac2bea494f91f3e68761b1f98a2f1cb19',1,'hardwareSettings.hpp']]],
+  ['ats_5fpressed_5f_19',['ats_pressed_',['../df/d95/struct_hardware_data.html#a983673f7bb0f74137b7c429bcdd9ca96',1,'HardwareData']]],
+  ['autocross_20',['AUTOCROSS',['../d3/db0/structure_8hpp.html#af686af98019fe71e9f18190349618431a748105e3604329b8be29b48c8de915f7',1,'structure.hpp']]],
+  ['average_5fqueue_21',['average_queue',['../df/d93/utils_8hpp.html#af67eed8e42e4131cd1673b8923354298',1,'utils.hpp']]]
 ];

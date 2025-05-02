@@ -12,7 +12,7 @@ var searchData=
   ['test_5fdriving_5fto_5ffinished_5fto_5foff_9',['test_driving_to_finished_to_off',['../da/dad/test__integration_8cpp.html#a1136867e1558c6e16064d9a381541d74',1,'test_integration.cpp']]],
   ['test_5femergencysequencecomplete_10',['test_emergencySequenceComplete',['../d9/d77/test__checkup_manager_8cpp.html#ad0af15f739a7c89635bb92f5341faa0b',1,'test_checkupManager.cpp']]],
   ['test_5fenterdrivingstate_5fand_5fturn_5foff_5fleds_11',['test_enterDrivingState_and_turn_off_LEDS',['../d9/dff/test__assi__car_8cpp.html#a300f7b73a5b155e1a6f101369d21ec01',1,'test_assi_car.cpp']]],
-  ['test_5fenteremergencystate_5fand_5fturn_5foff_5fleds_12',['test_enteremergencystate_and_turn_off_leds',['../d9/dff/test__assi__car_8cpp.html#ae1cc77642939ff7c949df12ff07102c4',1,'test_enterEmergencyState_and_turn_off_LEDS(void):&#160;test_assi_car.cpp'],['../db/d2c/test__digital_sender_8cpp.html#ae1cc77642939ff7c949df12ff07102c4',1,'test_enterEmergencyState_and_turn_off_LEDS(void):&#160;test_digitalSender.cpp']]],
+  ['test_5fenteremergencystate_5fand_5fturn_5foff_5fleds_12',['test_enteremergencystate_and_turn_off_leds',['../db/d2c/test__digital_sender_8cpp.html#ae1cc77642939ff7c949df12ff07102c4',1,'test_enterEmergencyState_and_turn_off_LEDS(void):&#160;test_digitalSender.cpp'],['../d9/dff/test__assi__car_8cpp.html#ae1cc77642939ff7c949df12ff07102c4',1,'test_enterEmergencyState_and_turn_off_LEDS(void):&#160;test_assi_car.cpp']]],
   ['test_5fenterfinishstate_5fand_5fturn_5foff_5fleds_13',['test_enterFinishState_and_turn_off_LEDS',['../d9/dff/test__assi__car_8cpp.html#a6f9e4a2179a8997ed57d6eeb87a8d32a',1,'test_assi_car.cpp']]],
   ['test_5fenterreadystate_5fand_5fturn_5foff_5fleds_14',['test_enterReadyState_and_turn_off_LEDS',['../d9/dff/test__assi__car_8cpp.html#a5f4b20652766818aae6265dba4899e2c',1,'test_assi_car.cpp']]],
   ['test_5ffinished_5fto_5femg_15',['test_finished_to_emg',['../da/dad/test__integration_8cpp.html#a5d3fca79015e34f8e50e160e73ae04d3',1,'test_integration.cpp']]],
@@ -47,7 +47,13 @@ var searchData=
   ['to_20develop_44',['Starting to Develop',['../index.html#autotoc_md1',1,'']]],
   ['to_5fready_45',['to_ready',['../da/dad/test__integration_8cpp.html#abd09e1416aa231f6439d77b22bb05c10',1,'test_integration.cpp']]],
   ['to_5funderlying_46',['to_underlying',['../db/dac/enum__utils_8hpp.html#a7c51004dded6296bb71c6dd83c7ad4a9',1,'enum_utils.hpp']]],
-  ['toggle_5fvalve_47',['TOGGLE_VALVE',['../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cba983b27e6997fc5f2021076d7d7c659f5',1,'CheckupManager']]],
-  ['trackdrive_48',['TRACKDRIVE',['../d3/db0/structure_8hpp.html#af686af98019fe71e9f18190349618431a0ca25c5af22edc019d28afcf211c34dd',1,'structure.hpp']]],
-  ['ts_5fon_5f_49',['ts_on_',['../d3/df6/struct_failure_detection.html#a70152d3e0448090d3e4cca333e1aaa6b',1,'FailureDetection']]]
+  ['toggle_5fwatchdog_47',['toggle_watchdog',['../da/db9/class_digital_sender.html#ad6c5006f6fe3807e86ab3ed992d8669e',1,'DigitalSender']]],
+  ['toggling_5fwatchdog_48',['TOGGLING_WATCHDOG',['../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cba4c214e794c8eabaa278cf6b66a8a74f4',1,'CheckupManager']]],
+  ['trackdrive_49',['TRACKDRIVE',['../d3/db0/structure_8hpp.html#af686af98019fe71e9f18190349618431a0ca25c5af22edc019d28afcf211c34dd',1,'structure.hpp']]],
+  ['ts_5fon_5f_50',['ts_on_',['../d3/df6/struct_failure_detection.html#a70152d3e0448090d3e4cca333e1aaa6b',1,'FailureDetection']]],
+  ['turn_5foff_5fassi_51',['turn_off_assi',['../da/db9/class_digital_sender.html#a1db8385e42b643db5de2390a2bcf5a20',1,'DigitalSender']]],
+  ['turn_5foff_5fbrake_5flight_52',['turn_off_brake_light',['../da/db9/class_digital_sender.html#a724814744a90f8fe733ad5edf0ebf7a5',1,'DigitalSender']]],
+  ['turn_5fon_5fblue_53',['turn_on_blue',['../da/db9/class_digital_sender.html#a5a90832e1fe9c2657e9c882ef74e00d5',1,'DigitalSender']]],
+  ['turn_5fon_5fbrake_5flight_54',['turn_on_brake_light',['../da/db9/class_digital_sender.html#a3255f3934a5e9bd70f09e5cca202db1e',1,'DigitalSender']]],
+  ['turn_5fon_5fyellow_55',['turn_on_yellow',['../da/db9/class_digital_sender.html#af2dad86a446fe22d6e9e16f24950e979',1,'DigitalSender']]]
 ];
