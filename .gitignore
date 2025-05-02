@@ -11,3 +11,14 @@ compile_commands.json
 *.hex
 *.elf
 **/build/
+**/.DS_Store
+**/build/*
+**/install/*
+**/log/*
+**/doxygen/html/** 
+**/bags/*
+*.bag
+*.db3
+*.pcd
+compile_commands.json
+.clang-format

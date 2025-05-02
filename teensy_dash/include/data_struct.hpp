@@ -1,38 +1,78 @@
 #pragma once
 #include <deque>
+#include <Arduino.h>
+#include <elapsedMillis.h>
 
-
-enum class SwitchMode {//TODO: proper naming, file and place
-    MODE_0,
-    MODE_1, 
-    MODE_2,
-    MODE_3,
-    MODE_4,
-    MODE_5,
-    MODE_6,
-    MODE_7
+enum class SwitchMode {
+  INVERTER_MODE_0,
+  INVERTER_MODE_CAVALETES,
+  INVERTER_MODE_LIMITER,
+  INVERTER_MODE_BRAKE_TEST,
+  INVERTER_MODE_SKIDPAD,
+  INVERTER_MODE_ENDURANCE,
+  INVERTER_MODE_MAX_ATTACK,
+  INVERTER_MODE_NULL,
+  INVERTER_MODE_NULL2,
+  INVERTER_MODE_NULL3,
+  INVERTER_MODE_NULL4,
+  INVERTER_MODE_NULL5
 };
+
+/* From NDrive Manual:
+ * "Sequence for enabling with hardwired RFE and RUN (FRG) input:
+ * 1. First lock the servo with the command ENABLE OFF (MODE BIT 0x51Bit 2 = 1).
+ * 2. Then unlock the servo with the command NOT ENABLE OFF (MODE BIT 0x51Bit 2 = 0).
+ *    The servo is enabled without delay.
+ *    → Only in this order can an enabled be achieved.
+ *    → At the same time, all stored errors are deleted."
+ *
+ * NOTE: Search for MODE BITS in Ndrive Manual for info about the 0x51 command.
+ */
+enum BamocarState {
+  ENABLE_TRANSMISSION,
+  CHECK_BTB,
+  ENABLE_OFF,
+  ENABLE,
+  ACC_RAMP,
+  DEC_RAMP,
+  INITIALIZED,
+  ERROR
+};
+
+struct InverterModeParams {
+  int i_max_pk_percent = 0;
+  int speed_limit_percent = 0;
+  int i_cont_percent = 0;
+  int speed_ramp_acc = 0; // 0..30'000
+  int moment_ramp_acc = 0; // 0..4000
+  int speed_ramp_brake = 0; // 0..30'000
+  int moment_ramp_decc = 0; // 0..4000
+};
+
 struct SystemData {
   bool r2d_pressed = false;
   bool ats_pressed = false;
   bool display_pressed = false;
-  SwitchMode switch_mode = SwitchMode::MODE_0;
+  SwitchMode switch_mode = SwitchMode::INVERTER_MODE_0;
   bool buzzer_active = false;
   unsigned long buzzer_start_time;
   unsigned long buzzer_duration_ms;
-  std::deque<int> apps1_readings;
-  std::deque<int> apps2_readings;
+  std::deque<uint16_t> apps_higher_readings;
+  std::deque<uint16_t> apps_lower_readings;
   float fr_rpm = 0;
   float fl_rpm = 0;
-  elapsedMillis R2DTimer = 0;
-};
+  std::deque<uint16_t> brake_readings;
 
+  elapsedMillis r2d_brake_timer = 0;
+};
 
 struct SystemVolatileData {
   bool TSOn = false;
-  bool as_ready = false;
+  uint8_t as_state = 0;
   bool asms_on = false;
   int brake_pressure = 0;
+  int speed = 0;
+  uint8_t soc = 0;
 
   unsigned long last_wheel_pulse_fr = 0;
   unsigned long second_to_last_wheel_pulse_fr = 0;
@@ -40,15 +80,17 @@ struct SystemVolatileData {
   unsigned long second_to_last_wheel_pulse_fl = 0;
 };
 
-void copy_volatile_data(SystemVolatileData& dest, volatile SystemVolatileData const& src) {
-    noInterrupts();
-    dest.TSOn = src.TSOn;
-    dest.as_ready = src.as_ready;
-    dest.asms_on = src.asms_on;
-    dest.brake_pressure = src.brake_pressure;
-    dest.last_wheel_pulse_fr = src.last_wheel_pulse_fr;
-    dest.second_to_last_wheel_pulse_fr = src.second_to_last_wheel_pulse_fr;
-    dest.last_wheel_pulse_fl = src.last_wheel_pulse_fl;
-    dest.second_to_last_wheel_pulse_fl = src.second_to_last_wheel_pulse_fl;
-    interrupts();
+inline void copy_volatile_data(SystemVolatileData& dest, volatile SystemVolatileData const& src) {
+  noInterrupts();
+  dest.TSOn = src.TSOn;
+  dest.as_state = src.as_state;
+  dest.asms_on = src.asms_on;
+  dest.brake_pressure = src.brake_pressure;
+  dest.speed = src.speed;
+  dest.soc = src.soc;
+  dest.last_wheel_pulse_fr = src.last_wheel_pulse_fr;
+  dest.second_to_last_wheel_pulse_fr = src.second_to_last_wheel_pulse_fr;
+  dest.last_wheel_pulse_fl = src.last_wheel_pulse_fl;
+  dest.second_to_last_wheel_pulse_fl = src.second_to_last_wheel_pulse_fl;
+  interrupts();
 }

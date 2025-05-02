@@ -4,7 +4,11 @@
 //-----------------------------------------------------------------------------
 // System Constants
 //-----------------------------------------------------------------------------
-constexpr float CAN_TIMEOUT_MS = 100;
+
+constexpr unsigned CAN_TIMEOUT_MS = 100;
+constexpr uint8_t RPM_MSG_PERIOD_MS = 50;     // 20Hz
+constexpr uint8_t APPS_MSG_PERIOD_MS = 50;    // 20Hz
+constexpr uint8_t TORQUE_MSG_PERIOD_MS = 10;  // 100Hz
 constexpr float WHEEL_PRECISION = 1e-2;
 
 //-----------------------------------------------------------------------------
@@ -14,19 +18,29 @@ constexpr uint16_t MASTER_ID = 0x300;
 constexpr uint16_t DASH_ID = 0x132;
 constexpr uint16_t AS_CU_ID = 0x400;
 constexpr uint16_t TA_ID = 0x301;
-constexpr uint32_t CH_ID = 0x02207446;
+constexpr uint32_t CH_ID = 0x0220'7446;
 
 //-----------------------------------------------------------------------------
+
 // Status & Control Message Types
 //-----------------------------------------------------------------------------
 constexpr uint8_t PC_ALIVE = 0x41;
 constexpr uint8_t MISSION_FINISHED = 0x42;
+
+
+constexpr uint8_t AS_READY = 2;
+constexpr uint8_t AS_OFF = 0;
+constexpr uint8_t AS_DRIVING = 3;
+constexpr uint8_t AS_EMERGENCY = 4;
+constexpr uint8_t AS_FINISHED = 5;
+
 constexpr uint8_t AS_CU_EMERGENCY_SIGNAL = 0x43;
 constexpr uint8_t STATE_MSG = 0x31;
 constexpr uint8_t MISSION_MSG = 0x32;
 constexpr uint8_t LEFT_WHEEL_MSG = 0x33;
 constexpr uint8_t DBG_LOG_MSG = 0x34;
 constexpr uint8_t DBG_LOG_MSG_2 = 0x35;
+
 
 //-----------------------------------------------------------------------------
 // Logging Status IDs
@@ -53,6 +67,12 @@ constexpr uint16_t SET_ORIGIN_CUBEM_ID = 0x55D;
 
 /** ID for steering angle messages (standardized) */
 constexpr uint16_t STEERING_ID = 0x295D;
+
+
+constexpr uint8_t FR_RPM = 0x10;
+constexpr uint8_t FL_RPM = 0x11;
+constexpr uint8_t APPS_HIGHER = 0x20;
+constexpr uint8_t APPS_LOWER = 0x21;
 
 /** Payload to reset steering angle sensor to zero */
 constexpr uint8_t SET_ORIGIN_BOSCH_STEERING_ANGLE_RESET = 0x05;
@@ -122,4 +142,27 @@ constexpr uint16_t BMS_ID_ERR = 0x123;
 constexpr uint16_t NODE_ID = 0x011;  // Competition Defined
 constexpr uint16_t RES_STATE = (0x180 + NODE_ID);
 constexpr uint16_t RES_READY = (0x700 + NODE_ID);
+
 constexpr uint16_t RES_ACTIVATE = 0x000;
+
+constexpr uint16_t RES_ACTIVATE = 0x000;
+
+// Bamocar
+constexpr uint8_t BTB_READY_0 = 0xE2;
+constexpr uint8_t BTB_READY_1 = 0x01;
+constexpr uint8_t BTB_READY_2 = 0x00;
+constexpr uint8_t BTB_READY_3 = 0x00;
+constexpr uint8_t ENABLE_0 = 0xE8;
+constexpr uint8_t ENABLE_1 = 0x01;
+constexpr uint8_t ENABLE_2 = 0x00;
+constexpr uint8_t ENABLE_3 = 0x00;
+constexpr std::array<uint8_t, 3> BTB_READY_SEQUENCE = {BTB_READY_1, BTB_READY_2, BTB_READY_3};
+constexpr std::array<uint8_t, 3> ENABLE_SEQUENCE = {ENABLE_1, ENABLE_2, ENABLE_3};
+constexpr uint8_t DC_VOLTAGE = 0xEB;
+constexpr uint8_t SPEED_ACTUAL = 0x30;
+constexpr uint8_t SPEED_LIMIT = 0x34;
+constexpr uint8_t SPEED_DELTAMA_ACC = 0x35;
+constexpr uint8_t SPEED_DELTAMA_DECC = 0xED;
+constexpr uint8_t DEVICE_I_MAX = 0xC4;
+constexpr uint8_t DEVICE_I_CNT = 0xC5;
+
