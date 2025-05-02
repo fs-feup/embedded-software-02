@@ -1,5 +1,5 @@
 #include "embedded/digitalSender.hpp"
-#include "embedded/digitalSettings.hpp"
+#include "embedded/hardwareSettings.hpp"
 #include "metro.h"
 #include "unity.h"
 

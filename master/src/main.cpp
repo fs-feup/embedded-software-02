@@ -3,59 +3,43 @@
 #include "embedded/digitalReceiver.hpp"
 #include "embedded/digitalSender.hpp"
 #include "enum_utils.hpp"
+#include "logic/outputCoordinator.hpp"
 #include "logic/stateLogic.hpp"
 #include "model/systemData.hpp"
 #include "timings.hpp"
 
-SystemData system_data;                                  // Model
-SystemData system_data_copy;                             // Copy of the model for Communicator (where interrupt updates are stored)
+SystemData system_data;
+SystemData
+    system_data_copy;  // Copy of the model for Communicator (where interrupt updates are stored)
 Communicator communicator = Communicator(&system_data_copy);  // CAN
 DigitalReceiver digital_receiver =
-    DigitalReceiver(&system_data_copy.digital_data_, &system_data_copy.mission_);  // Digital inputs
-DigitalSender digital_sender = DigitalSender();                          // Digital outputs
-ASState as_state = ASState(&system_data, &communicator, &digital_sender);
-
-Metro rl_rpm_timer = Metro{LEFT_WHEEL_PUBLISH_INTERVAL};
-Metro mission_timer = Metro(MISSION_PUBLISH_INTERVAL);
-Metro state_timer = Metro(STATE_PUBLISH_INTERVAL);
-// only publih debug log if there is a change in one of the states
-uint8_t master_state_helper = static_cast<uint8_t>(15);
-uint8_t checkup_state_helper = static_cast<uint8_t>(15);
-uint8_t mission_helper = static_cast<uint8_t>(15);
+    DigitalReceiver(&system_data_copy.hardware_data_, &system_data_copy.mission_);
+DigitalSender digital_sender = DigitalSender();
+OutputCoordinator output_coordinator =
+    OutputCoordinator(&system_data, &communicator, &digital_sender);
+ASState as_state = ASState(&system_data, &communicator, &output_coordinator);
 
 void setup() {
   Serial.begin(9600);
   Communicator::_systemData = &system_data_copy;
   communicator.init();
-  rl_rpm_timer.reset();
-  mission_timer.reset();
-  state_timer.reset();
+  output_coordinator.init();
   DEBUG_PRINT("Starting up...");
 }
 
 void loop() {
   digital_receiver.digital_reads();
+
   noInterrupts();
   system_data = system_data_copy;
   interrupts();
+
   as_state.calculate_state();
-  if (master_state_helper != to_underlying(as_state.state_) ||
-      checkup_state_helper != to_underlying(as_state._checkup_manager_.checkup_state_) ||
-      mission_helper != to_underlying(system_data.mission_)) {
-    master_state_helper = to_underlying(as_state.state_);
-    checkup_state_helper = to_underlying(as_state._checkup_manager_.checkup_state_);
-    mission_helper = to_underlying(system_data.mission_);
-    Communicator::publish_debug_log(
-        system_data, to_underlying(as_state.state_),
-        to_underlying(
-            as_state._checkup_manager_.checkup_state_));  // mudar pointer se problemas de memória
-  }
-  if (mission_timer.check()) {
-    Communicator::publish_mission(to_underlying(system_data.mission_));
-    mission_timer.reset();
-  }
-  if (state_timer.check()) {
-    Communicator::publish_state(to_underlying(as_state.state_));
-    state_timer.reset();
-  }
+
+  uint8_t current_master_state = to_underlying(as_state.state_);
+  uint8_t current_checkup_state = to_underlying(as_state._checkup_manager_.checkup_state_);
+
+  output_coordinator.process(current_master_state, current_checkup_state);
+
+  delay(LOOP_DELAY);
 }

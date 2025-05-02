@@ -5,17 +5,19 @@
 
 #include <string>
 
-#include "comm/communicatorSettings.hpp"
+#include "../../CAN_IDs.h"
 #include "comm/utils.hpp"
 #include "debugUtils.hpp"
 #include "enum_utils.hpp"
 #include "model/systemData.hpp"
+#include "utils.hpp"
+#include "../utils.hpp"
 
 /**
  * @brief Array of standard CAN message codes to be used for FIFO filtering
  * Each Code struct contains a key and a corresponding message ID.
  */
-inline std::array<Code, 7> fifoCodes = {{{0, C1_ID},
+inline std::array<Code, 7> fifoCodes = {{{0, DASH_ID},
                                          {1, BAMO_RESPONSE_ID},
                                          {2, AS_CU_EMERGENCY_SIGNAL},
                                          {3, MISSION_FINISHED},
@@ -39,7 +41,7 @@ inline std::array<Code, 1> fifoExtendedCodes = {{
 class Communicator {
 private:
   // Static FlexCAN_T4 object for CAN2 interface with RX and TX buffer sizes specified
-  inline static FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> can2;
+  inline static FlexCAN_T4<CAN3, RX_SIZE_256, TX_SIZE_16> can2;
 
 public:
   // Pointer to SystemData instance for storing system-related data
@@ -78,11 +80,6 @@ public:
   static void pc_callback(const uint8_t *buf);
 
   /**
-   * @brief Callback for data from C1 Teensy
-   */
-  static void c1_callback(const uint8_t *buf);
-
-  /**
    * @brief Callback RES default callback
    */
   static void res_state_callback(const uint8_t *buf);
@@ -111,16 +108,24 @@ public:
    * @brief Publish AS Mission to CAN
    */
   static int publish_mission(int mission_id);
-
+  /**
+   * @brief Publish SOC to CAN
+   */
+  static int publish_soc(uint8_t soc);
+  /**
+   * @brief Publish ASMS state to CAN
+   */
+  static int publish_asms_on(bool asms_on);
   /**
    * @brief Publish AS Mission to CAN
    */
-  static int publish_debug_log(const SystemData& system_data, uint8_t sate, uint8_t state_checkup);
+  static int publish_debug_morning_log(const SystemData &system_data, uint8_t sate,
+                                       uint8_t state_checkup);
 
   /**
    * @brief Publish rl wheel rpm to CAN
    */
-  static int publish_left_wheel_rpm(double value);
+  static int publish_rpm();
 };
 
 inline Communicator::Communicator(SystemData *system_data) { _systemData = system_data; }
@@ -143,20 +148,6 @@ void Communicator::init() {
   can2.mailboxStatus();
 }
 
-inline void Communicator::c1_callback(const uint8_t *buf) {
-  if (buf[0] == HYDRAULIC_LINE) {
-    _systemData->sensors_._hydraulic_line_pressure = (buf[2] << 8) | buf[1];
-  } else if (buf[0] == RIGHT_WHEEL_CODE) {
-    double right_wheel_rpm = (buf[4] << 24) | (buf[3] << 16) | (buf[2] << 8) | buf[1];
-    right_wheel_rpm *= WHEEL_PRECISION;  // convert back adding decimal part
-    _systemData->sensors_._right_wheel_rpm = right_wheel_rpm;
-  } else if (buf[0] == LEFT_WHEEL_CODE) {
-    double left_wheel_rpm = (buf[4] << 24) | (buf[3] << 16) | (buf[2] << 8) | buf[1];
-    left_wheel_rpm *= WHEEL_PRECISION;  // convert back adding decimal part
-    _systemData->sensors_._left_wheel_rpm = left_wheel_rpm;
-  }
-}
-
 inline void Communicator::res_state_callback(const uint8_t *buf) {
   bool emg_stop1 = buf[0] & 0x01;
   bool emg_stop2 = buf[3] >> 7 & 0x01;
@@ -165,7 +156,7 @@ inline void Communicator::res_state_callback(const uint8_t *buf) {
 
   if (go_button || go_switch)
     _systemData->r2d_logics_.process_go_signal();
-  else if (!emg_stop1 && !emg_stop2) {
+  else if (!(emg_stop1 || emg_stop2)) { // If both are false 
     _systemData->failure_detection_.emergency_signal_ = true;
   }
 
@@ -183,10 +174,9 @@ inline void Communicator::res_state_callback(const uint8_t *buf) {
 
 inline void Communicator::res_ready_callback() {
   // If res sends boot message, activate it
-  unsigned id = RES_ACTIVATE;
   std::array<uint8_t, 2> msg = {0x01, NODE_ID};  // 0x00 in byte 2 for all nodes
 
-  send_message(2, msg, id);
+  send_message(2, msg, RES_ACTIVATE);
 }
 
 inline void Communicator::bamocar_callback(const uint8_t *buf) {
@@ -196,16 +186,21 @@ inline void Communicator::bamocar_callback(const uint8_t *buf) {
     if (buf[1] == false) {
       _systemData->failure_detection_.ts_on_ = false;
     }
-  } else if (buf[0] == VDC_BUS) {
+  } else if (buf[0] == BAMOCAR_BATTERY_VOLTAGE_CODE) {
     unsigned dc_voltage = (buf[2] << 8) | buf[1];
     _systemData->failure_detection_.dc_voltage_ = dc_voltage;
 
+    // Voltage hysteresis:
     if (dc_voltage < DC_THRESHOLD) {
+      // When voltage drops/is below threshold: 
+      // Reset hold timer and check if voltage has been below threshold long enough
       _systemData->failure_detection_.dc_voltage_hold_timestamp_.reset();
       if (_systemData->failure_detection_.dc_voltage_drop_timestamp_.checkWithoutReset()) {
         _systemData->failure_detection_.ts_on_ = false;
       }
     } else {
+      // When voltage is above threshold:
+      // Reset drop timer and check if voltage has been above threshold long enough
       _systemData->failure_detection_.dc_voltage_drop_timestamp_.reset();
       if (_systemData->failure_detection_.dc_voltage_hold_timestamp_.checkWithoutReset()) {
         _systemData->failure_detection_.ts_on_ = true;
@@ -238,9 +233,6 @@ inline void Communicator::parse_message(const CAN_message_t &msg) {
     case RES_READY:
       res_ready_callback();
       break;
-    case C1_ID:
-      c1_callback(msg.buf);  // rwheel, lwheel and hydraulic line
-      break;
     case BAMO_RESPONSE_ID:
       bamocar_callback(msg.buf);
       break;
@@ -264,19 +256,46 @@ inline int Communicator::publish_mission(int mission_id) {
   send_message(2, msg, MASTER_ID);
   return 0;
 }
-
-inline int Communicator::publish_debug_log(const SystemData& system_data, uint8_t state,
-                                           uint8_t state_checkup) {
+inline int Communicator::publish_debug_morning_log(const SystemData &system_data, uint8_t state,
+                                                   uint8_t state_checkup) {
   send_message(8, create_debug_message_1(system_data, state, state_checkup), MASTER_ID);
   send_message(7, create_debug_message_2(system_data), MASTER_ID);
   return 0;
 }
 
-inline int Communicator::publish_left_wheel_rpm(double value) {
-  std::array<uint8_t, 5> msg;
-  create_left_wheel_msg(msg, value);
+inline int Communicator::publish_soc(uint8_t soc) {
+  const std::array<uint8_t, 2> msg = {SOC_MSG, soc};
+  send_message(2, msg, MASTER_ID);
+  return 0;
+}
 
-  send_message(5, msg, MASTER_ID);
+inline int Communicator::publish_asms_on(bool asms_on) {
+  const std::array<uint8_t, 2> msg = {ASMS_ON, asms_on};
+  send_message(2, msg, MASTER_ID);
+  return 0;
+}
+
+inline int Communicator::publish_rpm() {
+  std::array<uint8_t, 5> rl_rpm_msg = {0};
+  std::array<uint8_t, 5> rr_rpm_msg = {0};
+
+  char rr_rpm_byte[4];
+  char rl_rpm_byte[4];
+  rpm_2_byte(_systemData->hardware_data_._left_wheel_rpm, rl_rpm_byte);
+  rpm_2_byte(_systemData->hardware_data_._right_wheel_rpm, rr_rpm_byte);
+
+  rl_rpm_msg[0] = LEFT_WHEEL_CODE;
+  for (int i = 0; i < 4; i++) {
+    rl_rpm_msg[i + 1] = rl_rpm_byte[i];
+  }
+
+  rr_rpm_msg[0] = RIGHT_WHEEL_CODE;
+  for (int i = 0; i < 4; i++) {
+    rr_rpm_msg[i + 1] = rr_rpm_byte[i];
+  }
+  send_message(5, rl_rpm_msg, MASTER_ID);
+  send_message(5, rr_rpm_msg, MASTER_ID);
+
   return 0;
 }
 

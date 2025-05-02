@@ -1,4 +1,4 @@
-#include "embedded/digitalSettings.hpp"
+#include "embedded/hardwareSettings.hpp"
 #include "unity.h"
 
 // undefine before all the pins defined after

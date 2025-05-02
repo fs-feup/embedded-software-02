@@ -4,7 +4,7 @@
 
 #include "Arduino.h"
 #include "debugUtils.hpp"
-#include "embedded/digitalSettings.hpp"
+#include "embedded/hardwareSettings.hpp"
 #include "metro.h"
 
 struct R2DLogics {
@@ -31,7 +31,7 @@ struct R2DLogics {
   /**
    * @brief resets timestamps for driving
    */
-  void enter_driving_state() { releaseEbsTimestamp.reset(); }
+  void reset_ebs_timestamp() { releaseEbsTimestamp.reset(); }
 
   /**
    * @brief Processes the go signal.
@@ -39,18 +39,16 @@ struct R2DLogics {
    * This function is responsible for processing the go signal.
    * It performs the necessary actions based on the received signal.
    *
-   * @return 0 if the go signal was successfully processed, 1 otherwise.
    */
 
-  bool process_go_signal() {
-    // If r2d is not received or received before 5 seconds, return false (?_?)
+  void process_go_signal() {
+    //if 5 seconds have passed all good, VVVRRRUUUMMMMM 
     if (readyTimestamp.check()) {
       r2d = true;
-      return EXIT_SUCCESS;
+      return;
     }
-    // If r2d is received after the timeout duration, return true
     r2d = false;
-    return EXIT_FAILURE;
+    return;
   }
 };
 
