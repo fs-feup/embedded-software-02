@@ -36,7 +36,8 @@ constexpr uint16_t MAX_TEMP_DELAY_MS = 500;
 constexpr uint32_t MASTER_CELL_ID = 0x109;
 constexpr uint8_t CELLS_PER_MESSAGE = 6;
 constexpr uint32_t CELL_TEMPS_BASE_ID = 0x110;
-constexpr uint32_t CAN_BAUD_RATE = 1'000'000;
+constexpr uint32_t CAN_DRIVING_BAUD_RATE = 1'000'000;
+constexpr uint32_t CAN_CHARGING_BAUD_RATE = 125'000;
 
 // BMS Protocol
 constexpr uint32_t BMS_THERMISTOR_ID = 0x1839'F380;

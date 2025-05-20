@@ -7,13 +7,21 @@ const u_int8_t pin_ntc_temp[NTC_SENSOR_COUNT] = {A4,  A5,  A6,  A7, A8, A9,  A2,
 
 float cell_temps[NTC_SENSOR_COUNT];
 
+const unsigned long SETUP_TIMEOUT = 5000;  // 5 seconds for CAN setup detection
+volatile unsigned long last_can_message_received_for_setup_time =
+    0;  // volatile as it might be modified in ISR context
+
+
 unsigned long last_reading_time = 0;
+unsigned long last_message_received_time = 0;
 uint8_t error_count = 0;
 uint8_t no_error_iterations = 0;
 static BoardData board_temps[TOTAL_BOARDS];
 #if !THIS_IS_MASTER
 unsigned long last_master_message_time = 0;
 bool master_has_communicated = false;
+
+
 
 // Check if master communication has timed out (for non-master boards)
 bool check_master_timeout() {
@@ -43,6 +51,7 @@ void can_receive_from_master(const CAN_message_t& msg) {
     last_master_message_time = millis();
     master_has_communicated = true;
   }
+  last_message_received_time = millis();
 }
 
 #endif
@@ -244,6 +253,7 @@ void can_snifflas(const CAN_message_t& msg) {
       Serial.println(board_from_id);
     }
   }
+  last_message_received_time = millis();
 }
 
 void calculate_global_stats(TemperatureData& global_data) {
@@ -267,25 +277,22 @@ void calculate_global_stats(TemperatureData& global_data) {
   }
 }
 
-void setup() {
-  Serial.begin(9600);
-  code_reset();
+void initializeCAN_explicit(uint32_t baudRate) {
+  Serial.print("Initializing CAN at ");
+  Serial.print(baudRate);
+  Serial.println(" baud...");
+
   can1.begin();
-  can1.setBaudRate(CAN_BAUD_RATE);
-  for (int i = 0; i < NTC_SENSOR_COUNT; i++) {
-    pinMode(pin_ntc_temp[i], INPUT);
-  }
-#if THIS_IS_MASTER
-  unsigned long current_time = millis();
-  for (uint8_t i = 0; i < TOTAL_BOARDS; i++) {
-    if (i != BOARD_ID) {
-      board_temps[i].last_update_ms = current_time;
-    }
-  }
+  can1.setBaudRate(baudRate);
+
+  can1.enableFIFO();
+  can1.enableFIFOInterrupt();
 
   can1.enableFIFO();
   can1.enableFIFOInterrupt();
   can1.setFIFOFilter(REJECT_ALL);
+
+#if THIS_IS_MASTER
 
   for (uint8_t i = 0; i < min(8, TOTAL_BOARDS); i++) {  // FlexCAN typically supports 8 filters
     can1.setFIFOFilter(i, CELL_TEMPS_BASE_ID + i, STD);
@@ -295,19 +302,61 @@ void setup() {
   Serial.println("CAN filters configured for all board IDs");
 #else
 
-  can1.enableFIFO();
-  can1.enableFIFOInterrupt();
-  can1.setFIFOFilter(REJECT_ALL);
   can1.setFIFOFilter(0, MASTER_CELL_ID, STD);
   can1.onReceive(can_receive_from_master);
   Serial.println("CAN filter configured for master messages");
 #endif
+
+  can1.mailboxStatus();
+  Serial.println("CAN Initialized/Re-initialized.");
+  last_message_received_time = 0;  // Reset message timer for detection logic
+}
+
+void setup() {
+  Serial.begin(9600);
+  code_reset();
+
+#if THIS_IS_MASTER
+  unsigned long current_time = millis();
+  for (uint8_t i = 0; i < TOTAL_BOARDS; i++) {
+    if (i != BOARD_ID) {
+      board_temps[i].last_update_ms = current_time;
+    }
+  }
+#endif
+  for (int i = 0; i < NTC_SENSOR_COUNT; i++) {
+    pinMode(pin_ntc_temp[i], INPUT);
+  }
+
+  initializeCAN_explicit(CAN_DRIVING_BAUD_RATE);
+
+  unsigned long can_1M_start_time = millis();
+  bool received_at_1M = false;
+
+  while (millis() - can_1M_start_time < SETUP_TIMEOUT) {
+    // can1.events(); // Process events to ensure ISRs run and parse_message can be called.
+    // Important for message detection during this timed window.
+    if (last_message_received_time > can_1M_start_time &&
+        last_message_received_time <= millis()) {  // Check if a message came *after* init
+      Serial.println("Message received at 1000000 baud.");
+      received_at_1M = true;
+      break;
+    }
+    delay(10);  // Small delay to allow other processes
+  }
+
+  if (!received_at_1M) {
+    Serial.println("No message received at 1000000 baud within 5 seconds.");
+    Serial.println("Switching to 125000 baud.");
+    can1.reset();  // Reset before re-initializing
+    initializeCAN_explicit(CAN_CHARGING_BAUD_RATE);
+    // 125000 is the fallback
+  }
 }
 
 void loop() {
   unsigned long current_time = millis();
 
-  
   if (current_time - last_reading_time > TEMP_SENSOR_READ_INTERVAL) {
     last_reading_time = current_time;
     read_check_temperatures();
