@@ -116,8 +116,6 @@ void CanCommHandler::master_callback(const uint8_t* const msg_data, const uint8_
       updatable_data.asms_on = msg_data[1];
       break;
 
-    // TODO MAY BE IMPORTANT: src/can_comm_handler.cpp:78:5: warning: case label value exceeds
-    // maximum value for type [-Wswitch-outside-range]
     case SOC_MSG:
       updatable_data.soc = msg_data[1];
       break;
@@ -134,6 +132,11 @@ void CanCommHandler::write_messages() {
   if (rpm_timer >= RPM_MSG_PERIOD_MS) {
     write_rpm();
     rpm_timer = 0;
+  }
+
+  if (hydraulic_timer >= BRAKE_MSG_PERIOD_MS) {
+    write_hydraulic_line();
+    hydraulic_timer = 0;
   }
 
   if (apps_timer >= APPS_MSG_PERIOD_MS) {
@@ -166,6 +169,20 @@ void CanCommHandler::write_rpm() {
 
   send_rpm(FR_RPM, data.fr_rpm);
   send_rpm(FL_RPM, data.fl_rpm);
+}
+
+void CanCommHandler::write_hydraulic_line() {
+  const uint16_t hydraulic_value = average_queue(data.brake_readings);
+
+  CAN_message_t hydraulic_message;
+  hydraulic_message.id = DASH_ID;
+  hydraulic_message.len = 3;
+
+  hydraulic_message.buf[0] = HYDRAULIC_LINE;
+  hydraulic_message.buf[1] = hydraulic_value & 0xFF;         // Lower byte
+  hydraulic_message.buf[2] = (hydraulic_value >> 8) & 0xFF;  // Upper byte
+
+  can1.write(hydraulic_message);
 }
 
 void CanCommHandler::write_apps() {

@@ -2,8 +2,9 @@
 #include <FlexCAN_T4.h>
 #include <elapsedMillis.h>
 
-#include "helper.hpp"
+#include "constants.hpp"
 #include "structs.hpp"
+#include "utils.hpp"
 
 FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> can1;
 
@@ -11,25 +12,12 @@ elapsedMillis step;
 
 PARAMETERS param;
 
-bool request = 0;          // BMS request
+bool ch_safety_pin = 1;    // This was CH safety pin status, todo: check it exists
 bool shutdown_status = 0;  // Charging shutdown status, 1 for shutdown
 bool latching_status = 0;  // Latching error status, 0 means error (open)
 
 Status charger_status;       // current state machine status
 Status next_charger_status;  // next state machine status
-
-void extract_value(uint32_t &param_value, const uint8_t *buf) {
-  param_value = 0;
-  param_value |= buf[4] << 24;
-  param_value |= buf[5] << 16;
-  param_value |= buf[6] << 8;
-  param_value |= buf[7];
-}
-
-void print_value(const char *label, const uint32_t value) {
-  Serial.print(label);
-  Serial.print(value);
-}
 
 void handle_set_data_response(const CAN_message_t &message) {
   switch (message.buf[1]) {
@@ -90,52 +78,34 @@ void parse_charger_message(const CAN_message_t &message) {
 }
 
 void can_snifflas(const CAN_message_t &message) {
-  switch (message.id) {
-    case CHARGER_ID: {
-      parse_charger_message(message);
-      break;
-    }
+  if (message.id == CHARGER_ID) {
+    parse_charger_message(message);
+  } else if (message.id == BMS_ID_CCL) {
+    param.ccl = message.buf[0] * 1000; // Assuming conversion is correct
+  } else if (message.id >= CELL_TEMPS_BASE_ID && message.id < (CELL_TEMPS_BASE_ID + TOTAL_BOARDS)) {
+    // Handles new teensy_cells temperature messages
+    uint8_t board_id_from_can_id = message.id - CELL_TEMPS_BASE_ID;
 
-    case BMS_ID_CCL: {
-      param.ccl = message.buf[0] * 1000;
-      break;
-    }
+    if (message.len == 4) { // Expected length: BOARD_ID, min, max, avg
+      uint8_t board_id_from_payload = message.buf[0];
 
-    case TEMPERATURES_ID: {  // todo read each board (id) temperature
-      int offset = (message.buf[0] & 0xF) * 7;
-      for (int i = 0; i < 7 && (i + offset) < 60; i++) {
-        param.temperature[i + offset] = message.buf[i + 1];
+      if (board_id_from_can_id == board_id_from_payload) { // Sanity check
+        if (board_id_from_can_id < TOTAL_CELL_BOARDS) {
+          param.cell_board_temps[board_id_from_can_id].min_temp = static_cast<int8_t>(message.buf[1]);
+          param.cell_board_temps[board_id_from_can_id].max_temp = static_cast<int8_t>(message.buf[2]);
+          param.cell_board_temps[board_id_from_can_id].avg_temp = static_cast<int8_t>(message.buf[3]);
+          param.cell_board_temps[board_id_from_can_id].has_data = true;
+          param.cell_board_temps[board_id_from_can_id].last_update_ms = millis();
+        }
+      } else {
+        // Optional: Log board ID mismatch
+        // Serial.printf("Cell Temp Msg: Board ID mismatch! CAN_ID implies %d, Payload says %d\n", board_id_from_can_id, board_id_from_payload);
       }
-      break;
-    }
-
-    default: {
-      break;
+    } else {
+      // Optional: Log incorrect message length
+      // Serial.printf("Cell Temp Msg: Incorrect length %d for board %d (ID 0x%X)\n", message.len, board_id_from_can_id, message.id);
     }
   }
-}
-
-void setup() {
-  // put your setup code here, to run once:
-  Serial.begin(115'200);
-  Serial.println("startup");
-
-  pinMode(CH_SAFETY_PIN, INPUT);
-  pinMode(SHUTDOWN_PIN, INPUT);
-  pinMode(LATCHING_ERROR_PIN, INPUT);
-
-  can1.begin();
-  can1.setBaudRate(125'000);
-  can1.enableFIFO();
-  can1.enableFIFOInterrupt();
-  can1.setFIFOFilter(REJECT_ALL);
-  can1.setFIFOFilter(0, CHARGER_ID, STD);
-  can1.setFIFOFilter(1, BMS_ID_CCL, STD);
-  can1.setFIFOFilter(2, BMS_ID_ERR, STD);
-  can1.setFIFOFilter(3, TEMPERATURES_ID, STD);
-  can1.onReceive(can_snifflas);
-
-  param.set_voltage = MAX_VOLTAGE;
 }
 
 void charger_machine() {
@@ -144,7 +114,7 @@ void charger_machine() {
     case Status::IDLE: {
       if (shutdown_status) {
         next_charger_status = Status::SHUTDOWN;
-      } else if (request == 1 && latching_status == 1) {
+      } else if (ch_safety_pin == 1 && latching_status == 1) {
         next_charger_status = Status::CHARGING;
       }
       break;
@@ -152,7 +122,7 @@ void charger_machine() {
     case Status::CHARGING: {
       if (shutdown_status) {
         next_charger_status = Status::SHUTDOWN;
-      } else if (request == 0 || latching_status == 0) {
+      } else if (ch_safety_pin == 0 || latching_status == 0) {
         next_charger_status = Status::IDLE;
       }
       break;
@@ -169,7 +139,7 @@ void charger_machine() {
 
 void read_inputs() {
   shutdown_status = digitalRead(SHUTDOWN_PIN);
-  latching_status = digitalRead(LATCHING_ERROR_PIN);
+  latching_status = !shutdown_status;
 }
 
 void power_on_module(const bool OnOff) {
@@ -268,6 +238,58 @@ void update_charger(Status charger_status) {
   set_voltage(MAX_VOLTAGE);
   power_on_module(charger_status == Status::CHARGING);
 }
+void print_temps() {
+  Serial.println("--- Teensy Cell Temperatures ---");
+  for (int i = 0; i < TOTAL_CELL_BOARDS; i++) {
+    if (param.cell_board_temps[i].has_data) {
+      Serial.printf("Board %d: Min=%d C, Max=%d C, Avg=%d C (Last update: %lu ms ago)\n",
+                    i,
+                    param.cell_board_temps[i].min_temp,
+                    param.cell_board_temps[i].max_temp,
+                    param.cell_board_temps[i].avg_temp,
+                    millis() - param.cell_board_temps[i].last_update_ms);
+    } else {
+      Serial.printf("Board %d: No data received yet.\n", i);
+    }
+  }
+}
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(115'200);
+  Serial.println("startup");
+
+  pinMode(CH_SAFETY_PIN, INPUT);
+  pinMode(SHUTDOWN_PIN, INPUT);
+  pinMode(LATCHING_ERROR_PIN, INPUT);
+
+  can1.begin();
+  can1.setBaudRate(125'000);
+  can1.enableFIFO();
+  can1.enableFIFOInterrupt();
+  can1.setFIFOFilter(REJECT_ALL);
+  can1.setFIFOFilter(0, CHARGER_ID, STD);
+  can1.setFIFOFilter(1, BMS_ID_CCL, STD);
+  can1.setFIFOFilter(2, BMS_ID_ERR, STD);
+
+  uint8_t filter_idx_start = 3; 
+  for (int i = 0; i < TOTAL_CELL_BOARDS; ++i) {
+    if (filter_idx_start + i < 8) { 
+        can1.setFIFOFilter(filter_idx_start + i, CELL_TEMPS_BASE_ID + i, STD);
+    } else {
+        Serial.println("Warning: Not enough FIFO filters for all teensy_cell boards.");
+        break;
+    }
+  }
+
+  can1.onReceive(can_snifflas);
+
+  for (int i = 0; i < TOTAL_CELL_BOARDS; ++i) {
+    param.cell_board_temps[i].has_data = false;
+    param.cell_board_temps[i].last_update_ms = 0;
+  }
+
+  param.set_voltage = MAX_VOLTAGE;
+}
 
 void loop() {
   if (step < 1000) {
@@ -280,31 +302,15 @@ void loop() {
   charger_machine();
   charger_status = next_charger_status;
 
-  if (param.ccl < MAX_CURRENT) {
-    param.allowed_current = param.ccl;
-  } else {
-    param.allowed_current = MAX_CURRENT;
-  }
+  param.allowed_current = (param.ccl < MAX_CURRENT) ? param.ccl : MAX_CURRENT;
 
-  for (int i = 0; i < 60; i++) {
-    Serial.print("temperature");
-    Serial.print(i);
-    Serial.print(": ");
-
-    if (i == 20 || i == 21 || i == 29) {
-      Serial.println(param.temperature[19]);
-      continue;
-    }
-    if (param.temperature[i] == 0) {
-      Serial.println("Thermistor turned off");
-    } else {
-      Serial.println(param.temperature[i]);
-    }
-  }
+  print_temps();
 
   update_charger(charger_status);
 
   Serial.printf("ccl: %d\n", param.ccl);
 
-  Serial.println("loop");
+  Serial.println("loop iteration");
+  Serial.println("====================================");
+  Serial.println();
 }

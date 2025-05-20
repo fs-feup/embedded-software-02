@@ -32,6 +32,7 @@ private:
   FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> can1; // yves - had to change this to CAN1 for bamocar
   elapsedMillis can_timer;
   elapsedMillis rpm_timer;     // Timer for RPM messages
+  elapsedMillis hydraulic_timer;   // Timer for brake messages
   elapsedMillis apps_timer;    // Timer for APPS messages
   elapsedMillis torque_timer;  // Timer for torque commands
   bool transmission_enabled = false;
@@ -39,5 +40,6 @@ private:
 
   void write_rpm();
   void write_apps();
+  void write_hydraulic_line();
   void write_inverter_mode(SwitchMode switch_mode);
 };

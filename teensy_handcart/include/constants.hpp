@@ -16,11 +16,14 @@
 #define TEMPERATURES_ID 0x301 //todo change to correct id 100 + BOARD_ID
 #define BMS_ID 0x639
 
-#define SHUTDOWN_PIN 32
+#define SHUTDOWN_PIN 16
 #define CH_SAFETY_PIN 36
 #define LATCHING_ERROR_PIN 34
 
 #define MAX_VOLTAGE 456000
 #define MAX_CURRENT 18000
+
+#define CELL_TEMPS_BASE_ID 0x110
+#define TOTAL_BOARDS 5
 
 
