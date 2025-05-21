@@ -79,7 +79,7 @@ void parse_charger_message(const CAN_message_t &message) {
 
 void can_snifflas(const CAN_message_t &message) {
   //print id hex
-  Serial.printf("CAN ID: 0x%X\n", message.id);
+  // Serial.printf("CAN ID: 0x%X\n", message.id);
   if (message.id == CHARGER_ID) {
     parse_charger_message(message);
   } else if (message.id == BMS_ID_CCL) {
@@ -263,6 +263,71 @@ void print_temps() {
     }
   }
 }
+
+
+void print_all_board_temps() {
+  // Temperature thresholds
+  const int TEMP_WARNING = 45;  // Celsius
+  const int TEMP_CRITICAL = 55; // Celsius
+  
+  Serial.println("\n--- TEMPERATURE BOARD DATA ---");
+  Serial.println("Board | Min  | Max  | Avg  | Updated");
+  Serial.println("------+------+------+------+--------");
+  
+  bool any_data = false;
+  unsigned long current_time = millis();
+  
+  for (int i = 0; i < TOTAL_BOARDS; i++) {
+    if (param.cell_board_temps[i].has_data) {
+      any_data = true;
+      
+      // Calculate time since last update
+      unsigned long time_since_update = current_time - param.cell_board_temps[i].last_update_ms;
+      
+      // Format the output with padding for alignment
+      Serial.printf("%4d  | ", i);
+      
+      // Print min temp with warning indicator
+      if (param.cell_board_temps[i].min_temp >= TEMP_CRITICAL)
+        Serial.printf("%3d! | ", param.cell_board_temps[i].min_temp);
+      else if (param.cell_board_temps[i].min_temp >= TEMP_WARNING)
+        Serial.printf("%3d* | ", param.cell_board_temps[i].min_temp);
+      else
+        Serial.printf("%3d  | ", param.cell_board_temps[i].min_temp);
+      
+      // Print max temp with warning indicator
+      if (param.cell_board_temps[i].max_temp >= TEMP_CRITICAL)
+        Serial.printf("%3d! | ", param.cell_board_temps[i].max_temp);
+      else if (param.cell_board_temps[i].max_temp >= TEMP_WARNING)
+        Serial.printf("%3d* | ", param.cell_board_temps[i].max_temp);
+      else
+        Serial.printf("%3d  | ", param.cell_board_temps[i].max_temp);
+      
+      // Print avg temp with warning indicator
+      if (param.cell_board_temps[i].avg_temp >= TEMP_CRITICAL)
+        Serial.printf("%3d! | ", param.cell_board_temps[i].avg_temp);
+      else if (param.cell_board_temps[i].avg_temp >= TEMP_WARNING)
+        Serial.printf("%3d* | ", param.cell_board_temps[i].avg_temp);
+      else
+        Serial.printf("%3d  | ", param.cell_board_temps[i].avg_temp);
+      
+      // Print time since last update
+      if (time_since_update < 5000) {
+        Serial.printf("%lus\n", time_since_update / 1000);
+      } else {
+        Serial.printf("%lus!\n", time_since_update / 1000);
+      }
+    }
+  }
+  
+  if (!any_data) {
+    Serial.println("No temperature data available");
+  }
+  
+  Serial.println("* = Warning temperature");
+  Serial.println("! = Critical temperature");
+}
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115'200);
@@ -318,49 +383,52 @@ void loop() {
 
   update_charger(charger_status);
 
-  // Serial.printf("ccl: %d\n", param.ccl);
+  Serial.printf("ccl: %d\n", param.ccl);
 
-  // Serial.println("loop iteration");
-  // // print relevant parameters
-  // Serial.print("Current voltage: ");
-  // Serial.print(param.current_voltage);
-  // Serial.print(" V\n");
-  // Serial.print("Current current: ");
-  // Serial.print(param.current_current);
-  // Serial.print(" A\n");
-  // Serial.print("Set voltage: ");
-  // Serial.print(param.set_voltage);
-  // Serial.print(" V\n");
-  // Serial.print("Set current: ");
-  // Serial.print(param.set_current);
-  // Serial.print(" A\n");
-  // Serial.print("Allowed current: ");
-  // Serial.print(param.allowed_current);
-  // Serial.print(" A\n");
-  // Serial.print("Shutdown status: ");
-  // Serial.print(shutdown_status);
-  // Serial.print("\n");
-  // Serial.print("Charger safety pin: ");
-  // Serial.print(ch_safety_pin);
-  // Serial.print("\n");
-  // Serial.print("Latching status: ");
-  // Serial.print(latching_status);
-  // Serial.print("\n");
-  // Serial.print("Charger status: ");
-  // switch (charger_status) {
-  //   case Status::IDLE:
-  //     Serial.println("IDLE");
-  //     break;
-  //   case Status::CHARGING:
-  //     Serial.println("CHARGING");
-  //     break;
-  //   case Status::SHUTDOWN:
-  //     Serial.println("SHUTDOWN");
-  //     break;
-  //   default:
-  //     Serial.println("UNKNOWN");
-  //     break;
-  // }
-  // Serial.println("====================================");
-  // Serial.println();
+  Serial.println("loop iteration");
+  // print relevant parameters
+  Serial.print("Current voltage: ");
+  Serial.print(param.current_voltage);
+  Serial.print(" V\n");
+  Serial.print("Current current: ");
+  Serial.print(param.current_current);
+  Serial.print(" A\n");
+  Serial.print("Set voltage: ");
+  Serial.print(param.set_voltage);
+  Serial.print(" V\n");
+  Serial.print("Set current: ");
+  Serial.print(param.set_current);
+  Serial.print(" A\n");
+  Serial.print("Allowed current: ");
+  Serial.print(param.allowed_current);
+  Serial.print(" A\n");
+  Serial.print("Shutdown status: ");
+  Serial.print(shutdown_status);
+  Serial.print("\n");
+  Serial.print("Charger safety pin: ");
+  Serial.print(ch_safety_pin);
+  Serial.print("\n");
+  Serial.print("Latching status: ");
+  Serial.print(latching_status);
+  Serial.print("\n");
+  Serial.print("Charger status: ");
+  switch (charger_status) {
+    case Status::IDLE:
+      Serial.println("IDLE");
+      break;
+    case Status::CHARGING:
+      Serial.println("CHARGING");
+      break;
+    case Status::SHUTDOWN:
+      Serial.println("SHUTDOWN");
+      break;
+    default:
+      Serial.println("UNKNOWN");
+      break;
+  }
+  //print all board temperatures
+  
+  print_all_board_temps();
+  Serial.println("====================================");
+  Serial.println();
 }
