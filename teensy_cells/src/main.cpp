@@ -8,15 +8,107 @@ const u_int8_t pin_ntc_temp[NTC_SENSOR_COUNT] = {A4,  A5,  A6,  A7, A8, A9,  A2,
 float cell_temps[NTC_SENSOR_COUNT];
 
 const unsigned long SETUP_TIMEOUT = 5000;  // 5 seconds for CAN setup detection
-volatile unsigned long last_can_message_received_for_setup_time =
-    0;  // volatile as it might be modified in ISR context
 
 
 unsigned long last_reading_time = 0;
-unsigned long last_message_received_time = 0;
+volatile unsigned long last_message_received_time = 0;
 uint8_t error_count = 0;
 uint8_t no_error_iterations = 0;
 static BoardData board_temps[TOTAL_BOARDS];
+
+
+void debug_helper() {
+  Serial.println("----------- DEBUG HELPER -----------");
+
+  // --- General Info ---
+  Serial.print("THIS_IS_MASTER: ");
+  Serial.println(THIS_IS_MASTER ? "true" : "false");
+  Serial.print("BOARD_ID: ");
+  Serial.println(BOARD_ID);
+  Serial.print("Current millis(): ");
+  Serial.println(millis());
+
+  // --- Error and State Info ---
+  Serial.print("error_count: ");
+  Serial.println(error_count);
+  Serial.print("no_error_iterations: ");
+  Serial.println(no_error_iterations);
+  Serial.print("ERROR_SIGNAL Pin State: ");
+  Serial.println(digitalRead(ERROR_SIGNAL) ? "HIGH" : "LOW");
+
+  // --- CAN Info ---
+  Serial.print("Last CAN message received time: ");
+  Serial.println(last_message_received_time);
+  // Note: Actual current baud rate isn't stored directly in a global variable after setup.
+  // We can print the configured rates.
+  Serial.print("CAN_DRIVING_BAUD_RATE: ");
+  Serial.println(CAN_DRIVING_BAUD_RATE);
+  Serial.print("CAN_CHARGING_BAUD_RATE: ");
+  Serial.println(CAN_CHARGING_BAUD_RATE);
+
+
+  // --- Board Specific Temperature Data (for the current board) ---
+  Serial.println("--- Current Board Temperature Data ---");
+  Serial.print("Board ID [");
+  Serial.print(BOARD_ID);
+  Serial.print("] Min Temp: ");
+  Serial.println(board_temps[BOARD_ID].temp_data.min_temp);
+  Serial.print("Board ID [");
+  Serial.print(BOARD_ID);
+  Serial.print("] Max Temp: ");
+  Serial.println(board_temps[BOARD_ID].temp_data.max_temp);
+  Serial.print("Board ID [");
+  Serial.print(BOARD_ID);
+  Serial.print("] Avg Temp: ");
+  Serial.println(board_temps[BOARD_ID].temp_data.avg_temp);
+  Serial.print("Board ID [");
+  Serial.print(BOARD_ID);
+  Serial.print("] Has Communicated: ");
+  Serial.println(board_temps[BOARD_ID].has_communicated ? "true" : "false");
+
+
+#if THIS_IS_MASTER
+  // --- Master Specific Info ---
+  Serial.println("--- Master Specific Debug Info ---");
+  Serial.println("Global Temperature Stats (as sent to BMS):");
+  // To print global_data, you might need to make it accessible here or recalculate it.
+  // For simplicity, let's print the contents of board_temps which master uses to calculate global stats.
+  Serial.println("Stored Temperatures from other boards:");
+  for (uint8_t i = 0; i < TOTAL_BOARDS; i++) {
+    if (i == BOARD_ID && THIS_IS_MASTER) { // Master's own data is already printed above
+        // Or if you want to show it in this loop specifically for master:
+        // Serial.print("Board (Master) ["); Serial.print(i); Serial.print("] Own Data - Min: "); Serial.print(board_temps[i].temp_data.min_temp);
+        // Serial.print(", Max: "); Serial.print(board_temps[i].temp_data.max_temp);
+        // Serial.print(", Avg: "); Serial.print(board_temps[i].temp_data.avg_temp);
+        // Serial.print(", Last Update: "); Serial.println(board_temps[i].last_update_ms);
+        continue;
+    }
+    Serial.print("Board [");
+    Serial.print(i);
+    Serial.print("] Min: ");
+    Serial.print(board_temps[i].temp_data.min_temp);
+    Serial.print(", Max: ");
+    Serial.print(board_temps[i].temp_data.max_temp);
+    Serial.print(", Avg: ");
+    Serial.print(board_temps[i].temp_data.avg_temp);
+    Serial.print(", HasComm: ");
+    Serial.print(board_temps[i].has_communicated ? "Y" : "N");
+    Serial.print(", LastUpdate: ");
+    Serial.println(board_temps[i].last_update_ms);
+  }
+#else
+  // --- Slave Specific Info ---
+  Serial.println("--- Slave Specific Debug Info ---");
+  Serial.print("master_has_communicated: ");
+  Serial.println(master_has_communicated ? "true" : "false");
+  Serial.print("last_master_message_time: ");
+  Serial.println(last_master_message_time);
+#endif
+
+  Serial.println("--------- END DEBUG HELPER ---------");
+  Serial.println(); // Add a blank line for readability
+}
+
 #if !THIS_IS_MASTER
 unsigned long last_master_message_time = 0;
 bool master_has_communicated = false;
@@ -85,7 +177,6 @@ float read_ntc_temperature(const int analog_value) {
 
   return temperature;
 }
-bool dc = false;
 void read_check_temperatures() {
   float sum_temp = 0.0;
   float min_temp = TEMPERATURE_MIN_C;
@@ -95,9 +186,6 @@ void read_check_temperatures() {
   for (int i = 0; i < NTC_SENSOR_COUNT; i++) {
     float a = cell_temps[i];
     cell_temps[i] = read_ntc_temperature(analogRead(pin_ntc_temp[i]));
-    if (abs(a - cell_temps[i]) > 10) {
-      dc = !dc;
-    }
     min_temp = min(min_temp, cell_temps[i]);
     max_temp = max(max_temp, cell_temps[i]);
     sum_temp += cell_temps[i];
@@ -196,6 +284,7 @@ void send_can_max_min_avg_temperatures() {
 void send_to_bms(const TemperatureData& global_data) {
   CAN_message_t msg;
   msg.id = BMS_THERMISTOR_ID;
+  msg.flags.extended = true;
   msg.len = 8;
   msg.buf[0] = THERMISTOR_MODULE_NUMBER;
   msg.buf[1] = global_data.min_temp;
@@ -277,17 +366,13 @@ void calculate_global_stats(TemperatureData& global_data) {
   }
 }
 
-void initializeCAN_explicit(uint32_t baudRate) {
+void initialize_can(uint32_t baudRate) {
   Serial.print("Initializing CAN at ");
   Serial.print(baudRate);
   Serial.println(" baud...");
 
   can1.begin();
   can1.setBaudRate(baudRate);
-
-  can1.enableFIFO();
-  can1.enableFIFOInterrupt();
-
   can1.enableFIFO();
   can1.enableFIFOInterrupt();
   can1.setFIFOFilter(REJECT_ALL);
@@ -295,7 +380,7 @@ void initializeCAN_explicit(uint32_t baudRate) {
 #if THIS_IS_MASTER
 
   for (uint8_t i = 0; i < min(8, TOTAL_BOARDS); i++) {  // FlexCAN typically supports 8 filters
-    can1.setFIFOFilter(i, CELL_TEMPS_BASE_ID + i, STD);
+    can1.setFIFOFilter(i, CELL_TEMPS_BASE_ID + 1 + i, STD);
   }
 
   can1.onReceive(can_snifflas);
@@ -328,7 +413,7 @@ void setup() {
     pinMode(pin_ntc_temp[i], INPUT);
   }
 
-  initializeCAN_explicit(CAN_DRIVING_BAUD_RATE);
+  initialize_can(CAN_DRIVING_BAUD_RATE);
 
   unsigned long can_1M_start_time = millis();
   bool received_at_1M = false;
@@ -349,7 +434,7 @@ void setup() {
     Serial.println("No message received at 1000000 baud within 5 seconds.");
     Serial.println("Switching to 125000 baud.");
     can1.reset();  // Reset before re-initializing
-    initializeCAN_explicit(CAN_CHARGING_BAUD_RATE);
+    initialize_can(CAN_CHARGING_BAUD_RATE);
     // 125000 is the fallback
   }
 }
@@ -383,16 +468,11 @@ void loop() {
     send_master_heartbeat();
 #endif
     show_temperatures();
-    if (dc) {
-      Serial.println("DCDCDCDCDCDCDCDCDCDCDCD");
-      Serial.println("DCDCDCDCDCDCDCDCDCDCDCD");
-      Serial.println("DCDCDCDCDCDCDCDCDCDCDCD");
-      Serial.println("DCDCDCDCDCDCDCDCDCDCDCD");
-      Serial.println(dc);
-    }
   }
   if (no_error_iterations >= NO_ERROR_RESET_THRESHOLD) {
     error_count = 0;
     no_error_iterations = 0;
   }
+  debug_helper();
+  delay(10);
 }

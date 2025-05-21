@@ -17,7 +17,7 @@
 #define BMS_ID 0x639
 
 #define SHUTDOWN_PIN 16
-#define CH_SAFETY_PIN 36
+#define CH_SAFETY_PIN 14
 #define LATCHING_ERROR_PIN 34
 
 #define MAX_VOLTAGE 456000
