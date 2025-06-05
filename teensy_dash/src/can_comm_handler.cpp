@@ -134,7 +134,7 @@ void CanCommHandler::write_messages() {
     rpm_timer = 0;
   }
 
-  if (hydraulic_timer >= BRAKE_MSG_PERIOD_MS) {
+  if (hydraulic_timer >= HYDRAULIC_MSG_PERIOD_MS) {
     write_hydraulic_line();
     hydraulic_timer = 0;
   }

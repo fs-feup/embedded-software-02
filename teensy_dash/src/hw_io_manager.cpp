@@ -33,8 +33,7 @@ void IOManager::read_rotative_switch() const {  // maybe map
   // data.switch_mode = static_cast<SwitchMode>((raw_value + config::adc::HALF_JUMP) *
   //                                            config::adc::NEW_SCALE_MAX / config::adc::MAX_VALUE); // TODO: USE ENUM LAST VALUE +1 INSTEAD OF NEW_SCALE_MAX
   // TODO CONFIRM BEST WAY
-
-  int pos = map(analogRead(pins::analog::ROTARY_SWITCH), 0, config::adc::MAX_VALUE, 0, 11);
+  int pos = map(analogRead(pins::analog::ROTARY_SWITCH), 0, config::adc::MAX_VALUE, 0, 7);
   data.switch_mode = static_cast<SwitchMode>(pos);
 
 
@@ -67,6 +66,9 @@ void IOManager::setup() {
   pinMode(pins::output::BSPD_LED, OUTPUT);
   pinMode(pins::output::INERTIA_LED, OUTPUT);
   pinMode(pins::digital::ATS_OUT, OUTPUT);
+  pinMode(pins::output::TS_LED, OUTPUT);
+  pinMode(pins::digital::TS, OUTPUT);
+
   attachInterrupt(
       digitalPinToInterrupt(pins::encoder::FRONT_RIGHT_WHEEL),
       []() {
@@ -117,6 +119,7 @@ void IOManager::update_buzzer() const {
 void IOManager::read_pins_handle_leds() {
   digitalWrite(pins::output::BSPD_LED, digitalRead(pins::digital::BSPD));
   digitalWrite(pins::output::INERTIA_LED, digitalRead(pins::digital::INERTIA));
+  digitalWrite(pins::output::TS_LED, digitalRead(pins::digital::TS));
 }
 
 void IOManager::calculate_rpm() const {

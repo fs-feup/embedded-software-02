@@ -5,16 +5,16 @@ namespace pins {
         constexpr uint8_t APPS_HIGHER = 22;
         constexpr uint8_t APPS_LOWER = 20;
         constexpr uint8_t BRAKE_PRESSURE = 19;
-        constexpr uint8_t ROTARY_SWITCH = 40; // TODO: romao had this at 23
+        constexpr uint8_t ROTARY_SWITCH = 23; // TODO: romao had this at 23
     }
 
     namespace digital {
         constexpr uint8_t TS = 21;
-        constexpr uint8_t BSPD = 7;
-        constexpr uint8_t INERTIA = 8;
+        constexpr uint8_t BSPD = 18;
+        constexpr uint8_t INERTIA = 7;
         constexpr uint8_t R2D = 4;
         constexpr uint8_t ATS = 5;
-        constexpr uint8_t ATS_OUT = 9;
+        constexpr uint8_t ATS_OUT = 6;
     }
 
     namespace spi {
@@ -25,17 +25,17 @@ namespace pins {
     }
 
     namespace output {
-        constexpr uint8_t RACE_LED = 14;
+        constexpr uint8_t RACE_LED = 17;
         constexpr uint8_t BUZZER = 2;
         constexpr uint8_t DISPLAY_MODE = 3;
-        constexpr uint8_t TS_LED = 13;
-        constexpr uint8_t BSPD_LED = 15;
-        constexpr uint8_t INERTIA_LED = 16;
+        constexpr uint8_t TS_LED = 16;
+        constexpr uint8_t BSPD_LED = 14;
+        constexpr uint8_t INERTIA_LED = 15;
     }
 
     namespace encoder {
-        constexpr uint8_t FRONT_RIGHT_WHEEL = 12;
-        constexpr uint8_t FRONT_LEFT_WHEEL = 11;
+        constexpr uint8_t FRONT_RIGHT_WHEEL = 9;
+        constexpr uint8_t FRONT_LEFT_WHEEL = 8;
     }
 }
 

@@ -7,7 +7,7 @@ const u_int8_t pin_ntc_temp[NTC_SENSOR_COUNT] = {A4,  A5,  A6,  A7, A8, A9,  A2,
 
 float cell_temps[NTC_SENSOR_COUNT];
 
-const unsigned long SETUP_TIMEOUT = 5000;  // 5 seconds for CAN setup detection
+const unsigned long SETUP_TIMEOUT = 5000;  // 5 seconds for CAN set up detection
 
 
 bool baud_1M = true;
@@ -422,8 +422,7 @@ void setup() {
   while (millis() - can_1M_start_time < SETUP_TIMEOUT) {
     // can1.events(); // Process events to ensure ISRs run and parse_message can be called.
     // Important for message detection during this timed window.
-    if (last_message_received_time > can_1M_start_time &&
-        last_message_received_time <= millis()) {  // Check if a message came *after* init
+    if (last_message_received_time > can_1M_start_time) {  // Check if a message came *after* init
       Serial.println("Message received at 1000000 baud.");
       received_at_1M = true;
       break;
