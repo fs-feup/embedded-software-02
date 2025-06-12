@@ -318,10 +318,9 @@ bool CanCommHandler::init_bamocar() {
       .id = BAMO_COMMAND_ID, .len = 3, .buf = {0xED, 0xE8, 0x03}};
 
   static BamocarState bamocarState = CHECK_BTB;
-  static unsigned long stateStartTime = 0;
+  static unsigned long stateStartTime = millis();
   static unsigned long lastActionTime = 0;
   static bool commandSent = false;
-  static bool transmissionEnabled = false;
   static unsigned long currentTime = 0;
   currentTime = millis();
 
@@ -354,7 +353,7 @@ bool CanCommHandler::init_bamocar() {
         can1.write(enableTransmission);
         lastActionTime = currentTime;
       }
-      if (transmissionEnabled) {
+      if (transmission_enabled) {
         bamocarState = ENABLE;
         commandSent = false;
         stateStartTime = currentTime;
@@ -393,7 +392,7 @@ bool CanCommHandler::init_bamocar() {
       break;
     case INITIALIZED:
       return true;
-    case ERROR:
+    case ERROR://in the future add a retry mechanism
       break;
   }
 
