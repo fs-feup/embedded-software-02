@@ -164,6 +164,8 @@ private:
   void update_physical_outputs() {
     brake_light_update();
     bsdp_sdc_update();
+    // digital_sender_->turn_on_blue();
+    // digital_sender_->turn_on_yellow();
   }
 
   void brake_light_update() {

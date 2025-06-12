@@ -29,7 +29,6 @@ void setup() {
 
 void loop() {
   digital_receiver.digital_reads();
-
   noInterrupts();
   system_data = system_data_copy;
   interrupts();
@@ -40,6 +39,8 @@ void loop() {
   uint8_t current_checkup_state = to_underlying(as_state._checkup_manager_.checkup_state_);
 
   output_coordinator.process(current_master_state, current_checkup_state);
+  analogWrite(ASSI_BLUE_PIN, 1023);
+  analogWrite(ASSI_YELLOW_PIN, 1023);
 
   delay(LOOP_DELAY);
 }
