@@ -332,7 +332,7 @@ bool CanCommHandler::init_bamocar() {
         can1.write(checkBTBStatus);
         lastActionTime = currentTime;
       }
-      if (btb_ready) {  // CLION SAYS "Condition is always false": CAP
+      if (btb_ready) {
         bamocarState = ENABLE_OFF;
         commandSent = false;
       } else if (currentTime - stateStartTime >= timeout) {

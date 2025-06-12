@@ -8,7 +8,7 @@ LogicHandler::LogicHandler(SystemData& system_data, SystemVolatileData& current_
     : data(system_data), updated_data(current_updated_data) {}
 
 bool LogicHandler::should_start_manual_driving() const {
-  return (data.r2d_pressed && updated_data.TSOn && data.r2d_brake_timer < config::r2d::TIMEOUT_MS);
+  return (data.r2d_pressed && updated_data.TSOn /* && data.r2d_brake_timer < config::r2d::TIMEOUT_MS */);
 }
 
 bool LogicHandler::should_start_as_driving() const {

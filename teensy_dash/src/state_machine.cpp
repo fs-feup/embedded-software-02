@@ -11,15 +11,24 @@ void StateMachine::update() {
   switch (current_state_) {
     case State::IDLE:
       if (logic_handler.should_start_manual_driving()) {
-        if (transition_to_driving())
-        current_state_ = State::DRIVING; /* comi o cu de quem leu */
+        current_state_ = State::INITIALIZING_DRIVING;
+        io_manager.play_r2d_sound();  // tapem os ouvidos!
       } else if (logic_handler.should_start_as_driving()) {
-        if (transition_to_as_driving())
-        current_state_ = State::AS_DRIVING;
+        current_state_ = State::INITIALIZING_AS_DRIVING;
       } else {
         // Serial.println("chillin");
       }
       break;
+    case State::INITIALIZING_DRIVING:
+      if(transition_to_driving()){
+        current_state_ = State::DRIVING;
+      }
+      break; // wait for transition to finish
+    case State::INITIALIZING_AS_DRIVING:
+      if(transition_to_driving()){
+        current_state_ = State::AS_DRIVING;
+      }
+      break; // wait for transition to finish
     case State::DRIVING:
       torque_from_apps = logic_handler.calculate_torque();
       if (logic_handler.should_go_idle()) {
@@ -51,14 +60,6 @@ void StateMachine::update() {
 }
 
 bool StateMachine::transition_to_driving() const {
-  io_manager.play_r2d_sound();  // tapem os ouvidos!
   const bool done = can_handler.init_bamocar();
   return done;
-}
-
-bool StateMachine::transition_to_as_driving() const {
-  // delay?
-  const bool done = can_handler.init_bamocar();
-  return done;
-
 }

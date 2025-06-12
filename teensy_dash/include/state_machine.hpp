@@ -4,7 +4,7 @@
 #include "hw_io_manager.hpp"
 #include "logic_handler.hpp"
 
-enum class State { IDLE, DRIVING, AS_DRIVING };
+enum class State { IDLE, INITIALIZING_DRIVING, DRIVING, INITIALIZING_AS_DRIVING, AS_DRIVING };
 
 class StateMachine {
 public:
@@ -17,7 +17,6 @@ private:
   IOManager& io_manager;
   State current_state_ = State::IDLE;
   [[nodiscard]] bool transition_to_driving() const;
-  [[nodiscard]] bool transition_to_as_driving() const;
   void handle_driving();
 };
 
