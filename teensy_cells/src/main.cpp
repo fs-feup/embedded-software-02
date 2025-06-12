@@ -2,8 +2,8 @@
 
 FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> can1;
 
-const u_int8_t pin_ntc_temp[NTC_SENSOR_COUNT] = {A4,  A5,  A6,  A7, A8, A9,  A2,  A3,  A10,
-                                                 A11, A12, A13, A0, A1, A17, A16, A15, A14};
+const u_int8_t pin_ntc_temp[NTC_SENSOR_COUNT] = {A4,  A5,  A6,  A7, A8, A9,  A4,  A3,  A10,
+                                                 A11, A12, A13, A0, A1, A17, A16, A15, A14};//teensy 1 cell 7 is fcked, ill change later
 
 float cell_temps[NTC_SENSOR_COUNT];
 
