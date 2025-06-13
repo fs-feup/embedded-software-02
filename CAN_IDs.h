@@ -147,8 +147,6 @@ constexpr uint16_t RES_READY = (0x700 + NODE_ID);//(0x700 + NODE_ID)
 
 constexpr uint16_t RES_ACTIVATE = 0x000;//0x000
 
-constexpr uint16_t RES_ACTIVATE = 0x000;//0x000
-
 // Bamocar
 constexpr uint8_t BTB_READY_0 = 0xE2;//0xE2
 constexpr uint8_t BTB_READY_1 = 0x01;//0x01

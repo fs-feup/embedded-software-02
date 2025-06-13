@@ -25,7 +25,11 @@ void CanCommHandler::setup() {
   can1.setFIFOFilter(3, BAMO_RESPONSE_ID, STD);
   can1.setFIFOFilter(4, MASTER_ID, STD);
   can1.onReceive(can_snifflas);
-}
+  delay(20);
+
+  CAN_message_t DCVoltageRequest = {
+    .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, 0xEB, 0x64}};
+  can1.write(DCVoltageRequest);}
 
 void CanCommHandler::can_snifflas(const CAN_message_t& msg) {
   if (staticCallback) {
