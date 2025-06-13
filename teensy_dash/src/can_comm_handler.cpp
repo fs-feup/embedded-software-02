@@ -27,9 +27,9 @@ void CanCommHandler::setup() {
   can1.onReceive(can_snifflas);
   delay(20);
 
-  CAN_message_t DCVoltageRequest = {
-    .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, 0xEB, 0x64}};
-  can1.write(DCVoltageRequest);}
+  CAN_message_t DCVoltageRequest = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, 0xEB, 0x64}};
+  can1.write(DCVoltageRequest);
+}
 
 void CanCommHandler::can_snifflas(const CAN_message_t& msg) {
   if (staticCallback) {
@@ -396,7 +396,7 @@ bool CanCommHandler::init_bamocar() {
       break;
     case INITIALIZED:
       return true;
-    case ERROR://in the future add a retry mechanism
+    case ERROR:  // in the future add a retry mechanism
       break;
   }
 
