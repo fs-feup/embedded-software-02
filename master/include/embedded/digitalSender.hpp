@@ -161,9 +161,10 @@ inline void DigitalSender::bspd_error() { digitalWrite(SDC_BSPD_OUT, HIGH); }
 inline void DigitalSender::no_bspd_error() { digitalWrite(SDC_BSPD_OUT, LOW); }
 
 inline void DigitalSender::toggle_watchdog() {
-  static bool wd_state = false;
+  static volatile bool wd_state = false;
   wd_state = !wd_state;
   digitalWrite(WD_ALIVE, wd_state);
+  DEBUG_PRINT("Toggling watchdog: " + String(wd_state ? "ON" : "OFF"));
 }
 
 inline void DigitalSender::close_watchdog_sdc() { digitalWrite(WD_SDC_CLOSE, HIGH); }

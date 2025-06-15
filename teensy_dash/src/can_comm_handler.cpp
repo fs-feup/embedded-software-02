@@ -17,7 +17,7 @@ CanCommHandler::CanCommHandler(SystemData& system_data,
 
 void CanCommHandler::setup() {
   can1.begin();
-  can1.setBaudRate(500'000);
+  can1.setBaudRate(1'000'000);
   can1.enableFIFO();
   can1.enableFIFOInterrupt();
   can1.setFIFOFilter(REJECT_ALL);

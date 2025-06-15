@@ -86,6 +86,7 @@ public:
     digital_sender_->turn_off_assi();
     digital_sender_->deactivate_ebs();
     digital_sender_->close_sdc();
+    DEBUG_PRINT("Entering manual state...");
   }
 
   /**

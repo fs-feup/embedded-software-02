@@ -213,7 +213,7 @@ inline void DigitalReceiver::read_asms_switch() {
 inline void DigitalReceiver::read_asats_state() {
   bool asats_pressed = digitalRead(ASATS);
   //print
-  DEBUG_PRINT("ASATS pressed: " + String(asats_pressed));
+  //DEBUG_PRINT("ASATS pressed: " + String(asats_pressed));
   debounce(asats_pressed, hardware_data_->asats_pressed_, aats_change_counter_);
 }
 
@@ -224,6 +224,7 @@ inline void DigitalReceiver::read_ats() {
 
 inline void DigitalReceiver::read_watchdog_ready() {
   bool wd_ready = digitalRead(WD_READY);
+
   debounce(wd_ready, hardware_data_->wd_ready_, wd_ready_change_counter_);
 }
 

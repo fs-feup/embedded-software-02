@@ -132,7 +132,7 @@ inline Communicator::Communicator(SystemData *system_data) { _systemData = syste
 
 void Communicator::init() {
   can2.begin();
-  can2.setBaudRate(500000);
+  can2.setBaudRate(1000000);
 
   can2.enableFIFO();
   can2.enableFIFOInterrupt();
