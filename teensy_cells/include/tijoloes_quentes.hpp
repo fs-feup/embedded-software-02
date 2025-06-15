@@ -80,3 +80,13 @@ void send_to_bms(const TemperatureData& global_data);
 bool check_master_timeout();
 void can_receive_from_master(const CAN_message_t& msg);
 #endif
+
+#if DEBUG_ENABLED
+  #define DEBUG_PRINT(x) Serial.print(x)
+  #define DEBUG_PRINTLN(x) Serial.println(x)
+  #define DEBUG_WRITE(x) Serial.write(x)
+#else
+  #define DEBUG_PRINT(x)
+  #define DEBUG_PRINTLN(x)
+  #define DEBUG_WRITE(x)
+#endif

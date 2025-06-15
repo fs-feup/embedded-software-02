@@ -78,8 +78,6 @@ void parse_charger_message(const CAN_message_t &message) {
 }
 
 void can_snifflas(const CAN_message_t &message) {
-  //print id hex
-  // Serial.printf("CAN ID: 0x%X\n", message.id);
   if (message.id == CHARGER_ID) {
     parse_charger_message(message);
   } else if (message.id == BMS_ID_CCL) {
