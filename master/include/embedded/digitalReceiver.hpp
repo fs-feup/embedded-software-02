@@ -219,6 +219,7 @@ inline void DigitalReceiver::read_asats_state() {
 
 inline void DigitalReceiver::read_ats() {
   bool ats_pressed = digitalRead(ATS);
+  DEBUG_PRINT_VAR(ats_pressed);
   debounce(ats_pressed, hardware_data_->ats_pressed_, ats_change_counter_);
 }
 

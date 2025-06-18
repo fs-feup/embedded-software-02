@@ -18,12 +18,19 @@ LogicHandler logic_handler(data, updated_data);
 StateMachine state_machine(can_comm_handler, logic_handler, io_manager);
 
 void setup() {
+  Serial.begin(9600);
+  Serial.println();
+  DEBUG_PRINT("Starting up...");
+  DEBUG_PRINT("Starting up...");
+  DEBUG_PRINT("Starting up...");
+  DEBUG_PRINT("Starting up...");
   io_manager.setup();
   can_comm_handler.setup();
 }
 
 void loop() {
   if (loop_timer >= MAIN_LOOP_INTERVAL) {
+    Serial.println("Looping");
     io_manager.manage();
     can_comm_handler.write_messages();
     copy_volatile_data(updated_data, updatable_data);

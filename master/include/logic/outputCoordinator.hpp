@@ -85,7 +85,8 @@ public:
   void enter_manual_state() {
     digital_sender_->turn_off_assi();
     digital_sender_->deactivate_ebs();
-    digital_sender_->close_sdc();
+    digital_sender_->open_sdc();
+    // digital_sender_->close_sdc(); // close sdc only when ats pressed and in manual mode already
     DEBUG_PRINT("Entering manual state...");
   }
 
@@ -189,8 +190,10 @@ private:
     if (system_data_->hardware_data_.ats_pressed_ &&
         current_master_state == to_underlying(State::AS_MANUAL)) {
       digital_sender_->close_sdc();
-    } else {
-      digital_sender_->open_sdc();
+    }
+    else {
+      // !! this was opening sdc as soon as ats was released
+    //   digital_sender_->open_sdc();
     }
   }
   void send_rpm() { Communicator::publish_rpm(); }

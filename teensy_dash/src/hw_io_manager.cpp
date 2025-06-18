@@ -50,9 +50,20 @@ void IOManager::update_R2D_timer() const {
 }
 
 void IOManager::manage_ats() const {
-  if (data.ats_pressed && !updated_data.asms_on) {
+  static bool ats_active = false;
+  static unsigned long ats_activated_time = 0;
+
+  if (data.ats_pressed && !updated_data.asms_on && !ats_active) {
+    DEBUG_PRINT("ATS pressed, setting HIGH");
     data.ats_pressed = false;
     digitalWrite(pins::digital::ATS_OUT, HIGH);
+    ats_active = true;
+    ats_activated_time = millis();
+  }
+  if (ats_active && (millis() - ats_activated_time >= 1000)) {
+    DEBUG_PRINT("ATS HIGH duration elapsed, setting LOW");
+    digitalWrite(pins::digital::ATS_OUT, LOW);
+    ats_active = false;
   }
 }
 
