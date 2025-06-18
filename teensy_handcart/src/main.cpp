@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <FlexCAN_T4.h>
 #include <elapsedMillis.h>
+#include "SPI_MSTransfer_T4.h"
 
 #include "constants.hpp"
 #include "structs.hpp"
@@ -8,7 +9,10 @@
 
 FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> can1;
 
+SPI_MSTransfer_T4<&SPI> displaySPI;
+
 elapsedMillis step;
+elapsedMillis spi_update_timer;
 
 PARAMETERS param;
 
@@ -18,6 +22,9 @@ bool latching_status = 0;  // Latching error status, 0 means error (open)
 
 Status charger_status;       // current state machine status
 Status next_charger_status;  // next state machine status
+
+static uint16_t value1 = 0, value2 = 100;
+static bool increasing = true;
 
 void handle_set_data_response(const CAN_message_t &message) {
   switch (message.buf[1]) {
@@ -335,6 +342,9 @@ void setup() {
   pinMode(SHUTDOWN_PIN, INPUT);
   pinMode(LATCHING_ERROR_PIN, INPUT);
 
+  displaySPI.begin();
+
+
   can1.begin();
   can1.setBaudRate(125'000);
   can1.enableFIFO();
@@ -365,6 +375,37 @@ void setup() {
 }
 
 void loop() {
+
+  if (spi_update_timer >= 10) {
+    Serial.print("millis: ");
+    Serial.println(millis());
+
+    static uint16_t data[1]; // Define a static array to hold the values
+
+    // Send values to widgetID 0x0002
+    data[0] = value1;
+    displaySPI.transfer16(data, 1, 0x0002, millis() & 0xFFFF);
+
+    // Send values to widgetID 0x0001
+    data[0] = value2;
+    displaySPI.transfer16(data, 1, 0x0001, millis() & 0xFFFF);
+
+    // Update values
+    if (increasing) {
+      value1++;
+      value2--;
+      if (value1 >= 99)
+        increasing = false;
+    } else {
+      value1--;
+      value2++;
+      if (value1 <= 1)
+        increasing = true;
+    }
+
+    spi_update_timer = 0;
+  }
+
   if (step < 1000) {
     return;
   }

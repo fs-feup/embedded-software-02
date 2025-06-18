@@ -16,18 +16,45 @@ CanCommHandler::CanCommHandler(SystemData& system_data,
 }
 
 void CanCommHandler::setup() {
+  DEBUG_PRINTLN("Setting up CAN communication handler...");
   can1.begin();
   can1.setBaudRate(1'000'000);
   can1.enableFIFO();
   can1.enableFIFOInterrupt();
   can1.setFIFOFilter(REJECT_ALL);
-  can1.setFIFOFilter(2, BMS_ID, STD);
-  can1.setFIFOFilter(3, BAMO_RESPONSE_ID, STD);
-  can1.setFIFOFilter(4, MASTER_ID, STD);
+  can1.setFIFOFilter(0, BMS_ID, STD);
+  can1.setFIFOFilter(1, BAMO_RESPONSE_ID, STD);
+  can1.setFIFOFilter(2, MASTER_ID, STD);
   can1.onReceive(can_snifflas);
-  delay(20);
+  delay(10000);
 
-  CAN_message_t DCVoltageRequest = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, 0xEB, 0x64}};
+  CAN_message_t disable;
+
+  disable.id = BAMO_COMMAND_ID;
+  disable.len = 3;
+  disable.buf[0] = 0x51;
+  disable.buf[1] = 0x04;
+  disable.buf[2] = 0x00;
+
+  CAN_message_t statusRequest;
+
+  statusRequest.id = BAMO_COMMAND_ID;
+  statusRequest.len = 3;
+  statusRequest.buf[0] = 0x3D;
+  statusRequest.buf[1] = 0x40;
+  statusRequest.buf[2] = 0x00;
+
+  CAN_message_t DCVoltageRequest;
+
+  DCVoltageRequest.id = BAMO_COMMAND_ID;
+  DCVoltageRequest.len = 3;
+  DCVoltageRequest.buf[0] = 0x3D;
+  DCVoltageRequest.buf[1] = 0xEB;
+  DCVoltageRequest.buf[2] = 0x64;
+
+  DEBUG_PRINTLN("Sending initial messages to BAMO-CAR...");
+  can1.write(disable);
+  can1.write(statusRequest);
   can1.write(DCVoltageRequest);
 }
 
@@ -73,6 +100,7 @@ void CanCommHandler::bamocar_callback(const uint8_t* const msg_data, const uint8
 
   switch (msg_data[0]) {
     case DC_VOLTAGE: {
+      // DEBUG_PRINTLN("DC Voltage: " + String(message_value));
       updatable_data.TSOn = (message_value >= DC_THRESHOLD);
       break;
     }

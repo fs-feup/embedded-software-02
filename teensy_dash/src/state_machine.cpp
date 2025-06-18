@@ -13,6 +13,7 @@ void StateMachine::update() {
       if (logic_handler.should_start_manual_driving()) {
         current_state_ = State::INITIALIZING_DRIVING;
         io_manager.play_r2d_sound();  // tapem os ouvidos!
+        DEBUG_PRINTLN("Starting manual driving");
       } else if (logic_handler.should_start_as_driving()) {
         current_state_ = State::INITIALIZING_AS_DRIVING;
       } else {

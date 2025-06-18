@@ -116,13 +116,16 @@ void IOManager::play_buzzer(const uint8_t duration_seconds) const {
   data.buzzer_active = true;
   data.buzzer_start_time = millis();
   data.buzzer_duration_ms = duration_seconds * 1000;
-  tone(pins::output::BUZZER, config::buzzer::BUZZER_FREQUENCY);  // TODO(romain): tone has time
-                                                                 // limite maybe timer not needed
+  DEBUG_PRINTLN("Playing buzzer for " + String(data.buzzer_duration_ms) + " ms");
+  // tone(pins::output::BUZZER, config::buzzer::BUZZER_FREQUENCY);  // TODO(romain): tone has time
+  //                                                                // limite maybe timer not needed
+  digitalWrite(pins::output::BUZZER, HIGH);  // Use digitalWrite for buzzer
 }
 
 void IOManager::update_buzzer() const {
   if (data.buzzer_active && (millis() - data.buzzer_start_time >= data.buzzer_duration_ms)) {
-    noTone(pins::output::BUZZER);
+    // noTone(pins::output::BUZZER);
+    digitalWrite(pins::output::BUZZER, LOW);  // Stop the buzzer
     data.buzzer_active = false;
   }
 }
