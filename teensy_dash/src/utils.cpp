@@ -111,42 +111,6 @@ InverterModeParams get_inverter_mode_config(const SwitchMode switch_mode) {
                 .speed_ramp_brake = 400,
                 .moment_ramp_decc = 40};
       break;
-    case SwitchMode::INVERTER_MODE_NULL2:
-      params = {.i_max_pk_percent = 45,
-                .speed_limit_percent = 45,
-                .i_cont_percent = 45,
-                .speed_ramp_acc = 450,
-                .moment_ramp_acc = 45,
-                .speed_ramp_brake = 450,
-                .moment_ramp_decc = 45};
-      break;
-    case SwitchMode::INVERTER_MODE_NULL3:
-      params = {.i_max_pk_percent = 50,
-                .speed_limit_percent = 50,
-                .i_cont_percent = 50,
-                .speed_ramp_acc = 500,
-                .moment_ramp_acc = 50,
-                .speed_ramp_brake = 500,
-                .moment_ramp_decc = 50};
-      break;
-    case SwitchMode::INVERTER_MODE_NULL4:
-      params = {.i_max_pk_percent = 55,
-                .speed_limit_percent = 55,
-                .i_cont_percent = 55,
-                .speed_ramp_acc = 550,
-                .moment_ramp_acc = 55,
-                .speed_ramp_brake = 550,
-                .moment_ramp_decc = 55};
-      break;
-    case SwitchMode::INVERTER_MODE_NULL5:
-      params = {.i_max_pk_percent = 60,
-                .speed_limit_percent = 60,
-                .i_cont_percent = 60,
-                .speed_ramp_acc = 600,
-                .moment_ramp_acc = 60,
-                .speed_ramp_brake = 600,
-                .moment_ramp_decc = 60};
-      break;
     default:
       break;
   }

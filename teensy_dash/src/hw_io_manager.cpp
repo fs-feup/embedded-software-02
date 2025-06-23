@@ -28,15 +28,9 @@ void IOManager::manage() {
   update_R2D_timer();
 }
 
-void IOManager::read_rotative_switch() const {  // maybe map
-  // const int raw_value = analogRead(pins::analog::ROTARY_SWITCH);
-  // data.switch_mode = static_cast<SwitchMode>((raw_value + config::adc::HALF_JUMP) *
-  //                                            config::adc::NEW_SCALE_MAX / config::adc::MAX_VALUE); // TODO: USE ENUM LAST VALUE +1 INSTEAD OF NEW_SCALE_MAX
-  // TODO CONFIRM BEST WAY
+void IOManager::read_rotative_switch() const {
   int pos = map(analogRead(pins::analog::ROTARY_SWITCH), 0, config::adc::MAX_VALUE, 0, 7);
   data.switch_mode = static_cast<SwitchMode>(pos);
-
-
 }
 
 void IOManager::read_hydraulic_pressure() const {
