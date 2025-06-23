@@ -8,7 +8,12 @@ LogicHandler::LogicHandler(SystemData& system_data, SystemVolatileData& current_
     : data(system_data), updated_data(current_updated_data) {}
 
 bool LogicHandler::should_start_manual_driving() const {
-  return (data.r2d_pressed && updated_data.TSOn /* && data.r2d_brake_timer < config::r2d::TIMEOUT_MS */);
+  DEBUG_PRINTLN("Checking if should start manual driving v8");
+  // print var
+  DEBUG_PRINTLN("R2D pressed: " + String(data.r2d_pressed));
+  DEBUG_PRINTLN("TSOn: " + String(updated_data.TSOn));
+  return (data.r2d_pressed &&
+          updated_data.TSOn /* && data.r2d_brake_timer < config::r2d::TIMEOUT_MS */);
 }
 
 bool LogicHandler::should_start_as_driving() const {
@@ -34,41 +39,44 @@ bool LogicHandler::plausibility(const int apps_higher,
     return false;
   }
 
-  if (apps_higher >= config::apps::DEAD_THRESHOLD_APPS_HIGHER) {
-    constexpr int min_expected_apps_lower =
-        config::apps::APPS_HIGHER_DEADZONE_IN_APPS_LOWER_SCALE - config::apps::MAX_ERROR_ABS;
-    return (apps_lower >= min_expected_apps_lower);
-  }
-
-  if (apps_lower <= config::apps::DEAD_THRESHOLD_APPS_LOWER) {
-    constexpr int max_expected_apps_higher =
-        config::apps::APPS_LOWER_DEADZONE_IN_APPS_HIGHER_SCALE + config::apps::MAX_ERROR_ABS;
-    return (apps_higher <= max_expected_apps_higher);
-  }
-
   const int scaled_apps_lower = scale_apps_lower_to_apps_higher(apps_lower);
   const int difference = abs(scaled_apps_lower - apps_higher);
   const int percentage_difference = (difference * 100) / apps_higher;
-
+  if (apps_lower < config::apps::APPS_LOWER_ZEROED) {
+    if (apps_higher < config::apps::APPS_HIGHER_WHEN_LOWER_ZEROES) {
+      return true;  // apps lower is zeroed, so we can ignore the implausibility
+    } else
+      return false;
+  }
   return (percentage_difference < config::apps::MAX_ERROR_PERCENT);
 }
 
 uint16_t LogicHandler::apps_to_bamocar_value(const uint16_t apps_higher,
                                              const uint16_t apps_lower) {
-  uint16_t torque_value = 0;
-
-  if (apps_lower <= config::apps::DEAD_THRESHOLD_APPS_LOWER) {
-    torque_value = apps_higher;
-  } else {
-    torque_value = scale_apps_lower_to_apps_higher(apps_lower);
-  }
+  uint16_t torque_value = apps_higher;
 
   torque_value = constrain(torque_value, config::apps::MIN, config::apps::MAX);
 
-  torque_value = map(torque_value, config::apps::MIN, config::apps::MAX, config::bamocar::MIN,
-                     config::bamocar::MAX);
+  torque_value =
+      config::apps::MAX - torque_value;  // Invert the value to match Bamocar's expected input
+  DEBUG_PRINTLN("Torque value before deadband: " + String(torque_value));
+  if (torque_value <= config::apps::DEADBAND) {
+    return 0;
+  }
 
-  return min(torque_value, config::bamocar::MAX);
+  float normalized_input = (float)(torque_value - config::apps::DEADBAND) /
+                           (float)(config::apps::MAX_FOR_TORQUE - config::apps::DEADBAND);
+
+  // Apply sigmoid mapping for smooth transition
+  // Sigmoid: output = 1 / (1 + e^(-k * (x - 0.5)))
+  const float k = 15.0;  // Steepness of the sigmoid curve (adjust for responsiveness)
+  float normalized_output =
+      1.0 / (1.0 + exp(-k * (normalized_input -
+                             0.5)));  // Use desmos graphing calculator for visualization
+
+  uint16_t mapped_value = (uint16_t)(normalized_output * (config::bamocar::MAX));
+
+  return min(mapped_value, config::bamocar::MAX);
 }
 
 bool LogicHandler::just_entered_emergency() {
@@ -116,12 +124,15 @@ bool LogicHandler::check_apps_plausibility(const uint16_t apps_higher_avg,
 uint16_t LogicHandler::calculate_torque() {
   const uint16_t apps_higher_average = average_queue(data.apps_higher_readings);
   const uint16_t apps_lower_average = average_queue(data.apps_lower_readings);
-
+  DEBUG_PRINTLN("Apps Higher Average v2: " + String(apps_higher_average));
+  DEBUG_PRINTLN("Apps Lower Average v2: " + String(apps_lower_average));
   if (!check_apps_plausibility(apps_higher_average, apps_lower_average)) {
     return config::apps::ERROR_PLAUSIBILITY;  // shutdown ?
   }
 
   const uint16_t bamocar_value = apps_to_bamocar_value(apps_higher_average, apps_lower_average);
+
+  DEBUG_PRINTLN("Bamocar value: " + String(bamocar_value));
 
   if (apps_timeout) {
     if (bamocar_value == 0) {  // Pedal released

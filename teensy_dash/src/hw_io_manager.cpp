@@ -41,6 +41,8 @@ void IOManager::read_rotative_switch() const {  // maybe map
 
 void IOManager::read_hydraulic_pressure() const {
   insert_value_queue(analogRead(pins::analog::BRAKE_PRESSURE), data.brake_readings);
+  DEBUG_PRINTLN("Brake pressure: " +
+                 String(average_queue(data.brake_readings)));
 }
 
 void IOManager::update_R2D_timer() const {
@@ -83,6 +85,7 @@ void IOManager::setup() {
   attachInterrupt(
       digitalPinToInterrupt(pins::encoder::FRONT_RIGHT_WHEEL),
       []() {
+        DEBUG_PRINTLN("Front right wheel pulse detected");
         instance->updatable_data.second_to_last_wheel_pulse_fr =
             instance->updatable_data.last_wheel_pulse_fr;
         instance->updatable_data.last_wheel_pulse_fr = micros();
@@ -92,6 +95,7 @@ void IOManager::setup() {
   attachInterrupt(
       digitalPinToInterrupt(pins::encoder::FRONT_LEFT_WHEEL),
       []() {
+        DEBUG_PRINTLN("Front left wheel pulse detected");
         instance->updatable_data.second_to_last_wheel_pulse_fl =
             instance->updatable_data.last_wheel_pulse_fl;
         instance->updatable_data.last_wheel_pulse_fl = micros();
@@ -180,4 +184,5 @@ void IOManager::calculate_rpm() const {
       data.fl_rpm = 0.0f;
     }
   }
+  DEBUG_PRINTLN("FR RPM: " + String(data.fr_rpm) + ", FL RPM: " + String(data.fl_rpm));
 }

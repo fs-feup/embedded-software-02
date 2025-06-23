@@ -348,6 +348,8 @@ bool CanCommHandler::init_bamocar() {
       .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x35, 0xF4, 0x01}};
   constexpr CAN_message_t rampDecRequest = {
       .id = BAMO_COMMAND_ID, .len = 3, .buf = {0xED, 0xE8, 0x03}};
+  constexpr CAN_message_t clear_error_message = {
+      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x8E, 0x00, 0x00}};
 
   static BamocarState bamocarState = CHECK_BTB;
   static unsigned long stateStartTime = millis();
@@ -420,6 +422,13 @@ bool CanCommHandler::init_bamocar() {
       DEBUG_PRINT(rampDecRequest.buf[1] | (rampDecRequest.buf[2] << 8));
       DEBUG_PRINTLN("ms");
       can1.write(rampDecRequest);
+      bamocarState = CLEAR_ERRORS;
+      break;
+    case CLEAR_ERRORS:
+      // This state is not used in the current initialization sequence
+      // but can be used in the future to clear errors
+      DEBUG_PRINTLN("Clearing errors");
+      can1.write(clear_error_message);
       bamocarState = INITIALIZED;
       break;
     case INITIALIZED:
@@ -446,6 +455,7 @@ void CanCommHandler::send_torque(const int torque) {
     torque_message.buf[0] = 0x90;
     torque_message.buf[1] = torque & 0xFF;         // Lower byte
     torque_message.buf[2] = (torque >> 8) & 0xFF;  // Upper byte
+
 
     can1.write(torque_message);
     torque_timer = 0;
