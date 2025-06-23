@@ -10,7 +10,7 @@
 
 FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> can1;
 
-SPI_MSTransfer_T4<&SPI> displaySPI;
+// SPI_MSTransfer_T4<&SPI> displaySPI;
 
 elapsedMillis step;
 elapsedMillis spi_update_timer;
@@ -91,6 +91,18 @@ void can_snifflas(const CAN_message_t &message) {
     parse_charger_message(message);
   } else if (message.id == BMS_ID_CCL) {
     param.ccl = message.buf[0] * 1000;  // Assuming conversion is correct
+    param.ch_safety = message.buf[2] & 0x04;
+
+    uint8_t status = message.buf[2];
+
+    Serial.print("Discharge relay: "); Serial.println((status & 0x01) ? "ON" : "OFF");
+    Serial.print("Charge relay: "); Serial.println((status & 0x02) ? "ON" : "OFF");
+    Serial.print("Charger safety: "); Serial.println((status & 0x04) ? "ON" : "OFF");
+    Serial.print("Malfunction indicator: "); Serial.println((status & 0x08) ? "ON" : "OFF");
+    Serial.print("Multi-Purpose Input: "); Serial.println((status & 0x10) ? "ON" : "OFF");
+    Serial.print("Always-on signal: "); Serial.println((status & 0x20) ? "ON" : "OFF");
+    Serial.print("Is-Ready signal: "); Serial.println((status & 0x40) ? "ON" : "OFF");
+    Serial.print("Is-Charging signal: "); Serial.println((status & 0x80) ? "ON" : "OFF");
 
   } else if (message.id == BMS_ID_ERR) {
     // Handle error messages if needed
@@ -344,6 +356,14 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(115'200);
   Serial.println("startup");
+  Serial.println("startup");
+  Serial.println("startup");
+  Serial.println("startup");
+  Serial.println("startup");
+  Serial.println("startup");
+  Serial.println("startup");
+  Serial.println("startup");
+  Serial.println("startup");
 
   pinMode(CH_ENABLE_PIN, INPUT);
   pinMode(SHUTDOWN_PIN, INPUT);
@@ -352,7 +372,7 @@ void setup() {
   display_button.attach(DISPLAY_BUTTON_PIN, INPUT);
   display_button.interval(10);  // 50ms debounce time
 
-  displaySPI.begin();
+  // displaySPI.begin();
 
   can1.begin();
   can1.setBaudRate(125'000);
@@ -398,36 +418,36 @@ void loop() {
 
   update_charger(charger_status);
 
-  static uint16_t data[1];  // Define a static array to hold the values
-  static int form_num = 1;
-
-  if (display_button_pressed) {
-    Serial.println("button pressed");
-    form_num = (form_num == 1) ? 2 : 1;  // toggle 1 and 2
-    data[0] = form_num;
-    displaySPI.transfer16(data, 1, 0x9999, millis() & 0xFFFF);
-    display_button_pressed = false;
-  }
-  // Send values to widgetID 0x0002
-  if (spi_update_timer >= 100) {
-    data[0] = value1;
-    displaySPI.transfer16(data, 1, 0x0002, millis() & 0xFFFF);
-
-    // Send values to widgetID 0x0001
-    data[0] = value2;
-    displaySPI.transfer16(data, 1, 0x0001, millis() & 0xFFFF);
-
-    // Update values
-    if (increasing) {
-      value1++;
-      value2--;
-      if (value1 >= 99) increasing = false;
-    } else {
-      value1--;
-      value2++;
-      if (value1 <= 1) increasing = true;
-    }
-
-    spi_update_timer = 0;
-  }
+  // static uint16_t data[1];  // Define a static array to hold the values
+  // static int form_num = 1;
+  //
+  // if (display_button_pressed) {
+  //   Serial.println("button pressed");
+  //   form_num = (form_num == 1) ? 2 : 1;  // toggle 1 and 2
+  //   data[0] = form_num;
+  //   displaySPI.transfer16(data, 1, 0x9999, millis() & 0xFFFF);
+  //   display_button_pressed = false;
+  // }
+  // // Send values to widgetID 0x0002
+  // if (spi_update_timer >= 100) {
+  //   data[0] = value1;
+  //   displaySPI.transfer16(data, 1, 0x0002, millis() & 0xFFFF);
+  //
+  //   // Send values to widgetID 0x0001
+  //   data[0] = value2;
+  //   displaySPI.transfer16(data, 1, 0x0001, millis() & 0xFFFF);
+  //
+  //   // Update values
+  //   if (increasing) {
+  //     value1++;
+  //     value2--;
+  //     if (value1 >= 99) increasing = false;
+  //   } else {
+  //     value1--;
+  //     value2++;
+  //     if (value1 <= 1) increasing = true;
+  //   }
+  //
+  //   spi_update_timer = 0;
+  // }
 }

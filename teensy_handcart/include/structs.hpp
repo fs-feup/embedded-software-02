@@ -11,6 +11,7 @@ struct BoardTemperatureData {
 };
 
 struct PARAMETERS {
+  bool ch_safety = false;
   uint32_t set_voltage = 0;
   uint32_t current_voltage = 0;
   uint32_t allowed_current = 0;
