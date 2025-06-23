@@ -49,8 +49,8 @@ void loop() {
   output_coordinator.process(current_master_state, current_checkup_state);
 
 
-  DEBUG_PRINT(current_master_state);
+  // DEBUG_PRINT(current_master_state);
   // DEBUG_PRINT(system_data_copy.hardware_data_.pneumatic_line_pressure_);
   // DEBUG_PRINT(system_data_copy.hardware_data_.hydraulic_pressure_);
   delay(LOOP_DELAY);
-}
+} 

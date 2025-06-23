@@ -35,6 +35,8 @@ void IOManager::read_rotative_switch() const {
 
 void IOManager::read_hydraulic_pressure() const {
   insert_value_queue(analogRead(pins::analog::BRAKE_PRESSURE), data.brake_readings);
+  DEBUG_PRINTLN("Brake pressure: " +
+                 String(average_queue(data.brake_readings)));
 }
 
 void IOManager::update_R2D_timer() const {
@@ -67,16 +69,17 @@ void IOManager::setup() {
   pinMode(pins::analog::APPS_LOWER, INPUT);
   pinMode(pins::analog::ROTARY_SWITCH, INPUT);
   pinMode(pins::analog::BRAKE_PRESSURE, INPUT);
+  pinMode(pins::digital::TS, INPUT);
   pinMode(pins::output::BUZZER, OUTPUT);
   pinMode(pins::output::BSPD_LED, OUTPUT);
   pinMode(pins::output::INERTIA_LED, OUTPUT);
   pinMode(pins::digital::ATS_OUT, OUTPUT);
   pinMode(pins::output::TS_LED, OUTPUT);
-  pinMode(pins::digital::TS, OUTPUT);
 
   attachInterrupt(
       digitalPinToInterrupt(pins::encoder::FRONT_RIGHT_WHEEL),
       []() {
+        DEBUG_PRINTLN("Front right wheel pulse detected");
         instance->updatable_data.second_to_last_wheel_pulse_fr =
             instance->updatable_data.last_wheel_pulse_fr;
         instance->updatable_data.last_wheel_pulse_fr = micros();
@@ -86,6 +89,7 @@ void IOManager::setup() {
   attachInterrupt(
       digitalPinToInterrupt(pins::encoder::FRONT_LEFT_WHEEL),
       []() {
+        DEBUG_PRINTLN("Front left wheel pulse detected");
         instance->updatable_data.second_to_last_wheel_pulse_fl =
             instance->updatable_data.last_wheel_pulse_fl;
         instance->updatable_data.last_wheel_pulse_fl = micros();
@@ -110,13 +114,16 @@ void IOManager::play_buzzer(const uint8_t duration_seconds) const {
   data.buzzer_active = true;
   data.buzzer_start_time = millis();
   data.buzzer_duration_ms = duration_seconds * 1000;
-  tone(pins::output::BUZZER, config::buzzer::BUZZER_FREQUENCY);  // TODO(romain): tone has time
-                                                                 // limite maybe timer not needed
+  DEBUG_PRINTLN("Playing buzzer for " + String(data.buzzer_duration_ms) + " ms");
+  // tone(pins::output::BUZZER, config::buzzer::BUZZER_FREQUENCY);  // TODO(romain): tone has time
+  //                                                                // limite maybe timer not needed
+  digitalWrite(pins::output::BUZZER, HIGH);  // Use digitalWrite for buzzer
 }
 
 void IOManager::update_buzzer() const {
   if (data.buzzer_active && (millis() - data.buzzer_start_time >= data.buzzer_duration_ms)) {
-    noTone(pins::output::BUZZER);
+    // noTone(pins::output::BUZZER);
+    digitalWrite(pins::output::BUZZER, LOW);  // Stop the buzzer
     data.buzzer_active = false;
   }
 }
@@ -171,4 +178,5 @@ void IOManager::calculate_rpm() const {
       data.fl_rpm = 0.0f;
     }
   }
+  DEBUG_PRINTLN("FR RPM: " + String(data.fr_rpm) + ", FL RPM: " + String(data.fl_rpm));
 }

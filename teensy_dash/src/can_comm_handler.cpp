@@ -16,18 +16,45 @@ CanCommHandler::CanCommHandler(SystemData& system_data,
 }
 
 void CanCommHandler::setup() {
+  DEBUG_PRINTLN("Setting up CAN communication handler...");
   can1.begin();
   can1.setBaudRate(1'000'000);
   can1.enableFIFO();
   can1.enableFIFOInterrupt();
   can1.setFIFOFilter(REJECT_ALL);
-  can1.setFIFOFilter(2, BMS_ID, STD);
-  can1.setFIFOFilter(3, BAMO_RESPONSE_ID, STD);
-  can1.setFIFOFilter(4, MASTER_ID, STD);
+  can1.setFIFOFilter(0, BMS_ID, STD);
+  can1.setFIFOFilter(1, BAMO_RESPONSE_ID, STD);
+  can1.setFIFOFilter(2, MASTER_ID, STD);
   can1.onReceive(can_snifflas);
-  delay(20);
+  delay(10000);
 
-  CAN_message_t DCVoltageRequest = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, 0xEB, 0x64}};
+  CAN_message_t disable;
+
+  disable.id = BAMO_COMMAND_ID;
+  disable.len = 3;
+  disable.buf[0] = 0x51;
+  disable.buf[1] = 0x04;
+  disable.buf[2] = 0x00;
+
+  CAN_message_t statusRequest;
+
+  statusRequest.id = BAMO_COMMAND_ID;
+  statusRequest.len = 3;
+  statusRequest.buf[0] = 0x3D;
+  statusRequest.buf[1] = 0x40;
+  statusRequest.buf[2] = 0x00;
+
+  CAN_message_t DCVoltageRequest;
+
+  DCVoltageRequest.id = BAMO_COMMAND_ID;
+  DCVoltageRequest.len = 3;
+  DCVoltageRequest.buf[0] = 0x3D;
+  DCVoltageRequest.buf[1] = 0xEB;
+  DCVoltageRequest.buf[2] = 0x64;
+
+  DEBUG_PRINTLN("Sending initial messages to BAMO-CAR...");
+  can1.write(disable);
+  can1.write(statusRequest);
   can1.write(DCVoltageRequest);
 }
 
@@ -73,6 +100,7 @@ void CanCommHandler::bamocar_callback(const uint8_t* const msg_data, const uint8
 
   switch (msg_data[0]) {
     case DC_VOLTAGE: {
+      // DEBUG_PRINTLN("DC Voltage: " + String(message_value));
       updatable_data.TSOn = (message_value >= DC_THRESHOLD);
       break;
     }
@@ -216,55 +244,55 @@ void CanCommHandler::write_inverter_mode(const SwitchMode switch_mode) {
 
   InverterModeParams params = get_inverter_mode_config(switch_mode);
 
-#ifdef DEBUG_PRINTS
-  auto mode_to_string = [](SwitchMode mode) -> const char* {
-    switch (mode) {
-      case SwitchMode::INVERTER_MODE_0:
-        return "MODE_0";
-      case SwitchMode::INVERTER_MODE_CAVALETES:
-        return "CAVALETES";
-      case SwitchMode::INVERTER_MODE_LIMITER:
-        return "LIMITER";
-      case SwitchMode::INVERTER_MODE_BRAKE_TEST:
-        return "BRAKE_TEST";
-      case SwitchMode::INVERTER_MODE_SKIDPAD:
-        return "SKIDPAD";
-      case SwitchMode::INVERTER_MODE_ENDURANCE:
-        return "ENDURANCE";
-      case SwitchMode::INVERTER_MODE_MAX_ATTACK:
-        return "MAX_ATTACK";
-      case SwitchMode::INVERTER_MODE_NULL:
-        return "NULL";
-      case SwitchMode::INVERTER_MODE_NULL2:
-        return "NULL2";
-      case SwitchMode::INVERTER_MODE_NULL3:
-        return "NULL3";
-      case SwitchMode::INVERTER_MODE_NULL4:
-        return "NULL4";
-      case SwitchMode::INVERTER_MODE_NULL5:
-        return "NULL5";
-      default:
-        return "UNKNOWN";
-    }
-  };
-
-  DEBUG_PRINT("Mode: ");
-  DEBUG_PRINT(mode_to_string(switch_mode));
-  DEBUG_PRINT(" | i_max: ");
-  DEBUG_PRINT(params.i_max_pk_percent);
-  DEBUG_PRINT("% | speed: ");
-  DEBUG_PRINT(params.speed_limit_percent);
-  DEBUG_PRINT("% | i_cont: ");
-  DEBUG_PRINT(params.i_cont_percent);
-  DEBUG_PRINT("% | s_acc: ");
-  DEBUG_PRINT(params.speed_ramp_acc);
-  DEBUG_PRINT(" | m_acc: ");
-  DEBUG_PRINT(params.moment_ramp_acc);
-  DEBUG_PRINT(" | s_brk: ");
-  DEBUG_PRINT(params.speed_ramp_brake);
-  DEBUG_PRINT(" | m_dec: ");
-  DEBUG_PRINTLN(params.moment_ramp_decc);
-#endif
+// #ifdef DEBUG_PRINTS
+//   auto mode_to_string = [](SwitchMode mode) -> const char* {
+//     switch (mode) {
+//       case SwitchMode::INVERTER_MODE_0:
+//         return "MODE_0";
+//       case SwitchMode::INVERTER_MODE_CAVALETES:
+//         return "CAVALETES";
+//       case SwitchMode::INVERTER_MODE_LIMITER:
+//         return "LIMITER";
+//       case SwitchMode::INVERTER_MODE_BRAKE_TEST:
+//         return "BRAKE_TEST";
+//       case SwitchMode::INVERTER_MODE_SKIDPAD:
+//         return "SKIDPAD";
+//       case SwitchMode::INVERTER_MODE_ENDURANCE:
+//         return "ENDURANCE";
+//       case SwitchMode::INVERTER_MODE_MAX_ATTACK:
+//         return "MAX_ATTACK";
+//       case SwitchMode::INVERTER_MODE_NULL:
+//         return "NULL";
+//       case SwitchMode::INVERTER_MODE_NULL2:
+//         return "NULL2";
+//       case SwitchMode::INVERTER_MODE_NULL3:
+//         return "NULL3";
+//       case SwitchMode::INVERTER_MODE_NULL4:
+//         return "NULL4";
+//       case SwitchMode::INVERTER_MODE_NULL5:
+//         return "NULL5";
+//       default:
+//         return "UNKNOWN";
+//     }
+//   };
+//
+//   DEBUG_PRINT("Mode: ");
+//   DEBUG_PRINT(mode_to_string(switch_mode));
+//   DEBUG_PRINT(" | i_max: ");
+//   DEBUG_PRINT(params.i_max_pk_percent);
+//   DEBUG_PRINT("% | speed: ");
+//   DEBUG_PRINT(params.speed_limit_percent);
+//   DEBUG_PRINT("% | i_cont: ");
+//   DEBUG_PRINT(params.i_cont_percent);
+//   DEBUG_PRINT("% | s_acc: ");
+//   DEBUG_PRINT(params.speed_ramp_acc);
+//   DEBUG_PRINT(" | m_acc: ");
+//   DEBUG_PRINT(params.moment_ramp_acc);
+//   DEBUG_PRINT(" | s_brk: ");
+//   DEBUG_PRINT(params.speed_ramp_brake);
+//   DEBUG_PRINT(" | m_dec: ");
+//   DEBUG_PRINTLN(params.moment_ramp_decc);
+// #endif
 
   int i_max_pk = map(params.i_max_pk_percent, 0, 100, 0, MAX_I_VALUE);
   int i_cont = map(params.i_cont_percent, 0, 100, 0, MAX_I_VALUE);
@@ -320,6 +348,8 @@ bool CanCommHandler::init_bamocar() {
       .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x35, 0xF4, 0x01}};
   constexpr CAN_message_t rampDecRequest = {
       .id = BAMO_COMMAND_ID, .len = 3, .buf = {0xED, 0xE8, 0x03}};
+  constexpr CAN_message_t clear_error_message = {
+      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x8E, 0x00, 0x00}};
 
   static BamocarState bamocarState = CHECK_BTB;
   static unsigned long stateStartTime = millis();
@@ -392,6 +422,13 @@ bool CanCommHandler::init_bamocar() {
       DEBUG_PRINT(rampDecRequest.buf[1] | (rampDecRequest.buf[2] << 8));
       DEBUG_PRINTLN("ms");
       can1.write(rampDecRequest);
+      bamocarState = CLEAR_ERRORS;
+      break;
+    case CLEAR_ERRORS:
+      // This state is not used in the current initialization sequence
+      // but can be used in the future to clear errors
+      DEBUG_PRINTLN("Clearing errors");
+      can1.write(clear_error_message);
       bamocarState = INITIALIZED;
       break;
     case INITIALIZED:
@@ -418,6 +455,7 @@ void CanCommHandler::send_torque(const int torque) {
     torque_message.buf[0] = 0x90;
     torque_message.buf[1] = torque & 0xFF;         // Lower byte
     torque_message.buf[2] = (torque >> 8) & 0xFF;  // Upper byte
+
 
     can1.write(torque_message);
     torque_timer = 0;

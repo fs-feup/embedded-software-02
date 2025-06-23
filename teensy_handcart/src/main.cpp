@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include <FlexCAN_T4.h>
+#include <Bounce2.h>
 #include <elapsedMillis.h>
+#include "SPI_MSTransfer_T4.h"
 
 #include "constants.hpp"
 #include "structs.hpp"
@@ -8,16 +10,24 @@
 
 FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> can1;
 
+SPI_MSTransfer_T4<&SPI> displaySPI;
+
 elapsedMillis step;
+elapsedMillis spi_update_timer;
 
 PARAMETERS param;
 
 bool ch_safety_pin = 1;    // This was CH safety pin status, todo: check it exists
 bool shutdown_status = 0;  // Charging shutdown status, 1 for shutdown
 bool latching_status = 0;  // Latching error status, 0 means error (open)
+auto display_button = Bounce();
+bool display_button_pressed = false;
 
 Status charger_status;       // current state machine status
 Status next_charger_status;  // next state machine status
+
+static uint16_t value1 = 0, value2 = 100;
+static bool increasing = true;
 
 void handle_set_data_response(const CAN_message_t &message) {
   switch (message.buf[1]) {
@@ -149,6 +159,18 @@ void charger_machine() {
 void read_inputs() {
   shutdown_status = digitalRead(SHUTDOWN_PIN);
   ch_safety_pin = digitalRead(CH_SAFETY_PIN);
+  display_button.update();
+  display_button_pressed = display_button.rose();
+
+  // Serial.print("Raw: ");
+  // Serial.print(digitalRead(DISPLAY_BUTTON_PIN));
+  static bool last_display_button_state = false;
+  if (display_button_pressed != last_display_button_state) {
+    Serial.print(" Bounced: ");
+    Serial.println(display_button_pressed);
+    last_display_button_state = display_button_pressed;
+  }
+
   latching_status = !shutdown_status;
 }
 
@@ -334,6 +356,12 @@ void setup() {
   pinMode(CH_SAFETY_PIN, INPUT);
   pinMode(SHUTDOWN_PIN, INPUT);
   pinMode(LATCHING_ERROR_PIN, INPUT);
+  pinMode(DISPLAY_BUTTON_PIN, INPUT);
+
+  display_button.attach(DISPLAY_BUTTON_PIN, INPUT);
+  display_button.interval(10); // 50ms debounce time
+
+  displaySPI.begin();
 
   can1.begin();
   can1.setBaudRate(125'000);
@@ -365,13 +393,53 @@ void setup() {
 }
 
 void loop() {
-  if (step < 1000) {
+
+  if (step < 10) {
     return;
   }
-
   step = 0;
 
+  // if (spi_update_timer >= 100) {
+    // Serial.print("millis: ");
+    // Serial.println(millis());
+
+    static uint16_t data[1]; // Define a static array to hold the values
+    static int form_num = 1;
+
+    if (display_button_pressed) {
+      Serial.println("button pressed");
+      form_num = (form_num == 1) ? 2 : 1; // toggle 1 and 2
+      data[0] = form_num;
+      displaySPI.transfer16(data, 1, 0x9999, millis() & 0xFFFF);
+      display_button_pressed = false;
+    }
+    // Send values to widgetID 0x0002
+    if (spi_update_timer >= 100) {
+
+    data[0] = value1;
+    displaySPI.transfer16(data, 1, 0x0002, millis() & 0xFFFF);
+
+    // Send values to widgetID 0x0001
+    data[0] = value2;
+    displaySPI.transfer16(data, 1, 0x0001, millis() & 0xFFFF);
+
+    // Update values
+    if (increasing) {
+      value1++;
+      value2--;
+      if (value1 >= 99)
+        increasing = false;
+    } else {
+      value1--;
+      value2++;
+      if (value1 <= 1)
+        increasing = true;
+    }
+
+    spi_update_timer = 0;
+    }
   read_inputs();
+
   charger_machine();
   charger_status = next_charger_status;
 
@@ -381,52 +449,52 @@ void loop() {
 
   update_charger(charger_status);
 
-  Serial.printf("ccl: %d\n", param.ccl);
-
-  Serial.println("loop iteration");
-  // print relevant parameters
-  Serial.print("Current voltage: ");
-  Serial.print(param.current_voltage);
-  Serial.print(" V\n");
-  Serial.print("Current current: ");
-  Serial.print(param.current_current);
-  Serial.print(" A\n");
-  Serial.print("Set voltage: ");
-  Serial.print(param.set_voltage);
-  Serial.print(" V\n");
-  Serial.print("Set current: ");
-  Serial.print(param.set_current);
-  Serial.print(" A\n");
-  Serial.print("Allowed current: ");
-  Serial.print(param.allowed_current);
-  Serial.print(" A\n");
-  Serial.print("Shutdown status: ");
-  Serial.print(shutdown_status);
-  Serial.print("\n");
-  Serial.print("Charger safety pin: ");
-  Serial.print(ch_safety_pin);
-  Serial.print("\n");
-  Serial.print("Latching status: ");
-  Serial.print(latching_status);
-  Serial.print("\n");
-  Serial.print("Charger status: ");
-  switch (charger_status) {
-    case Status::IDLE:
-      Serial.println("IDLE");
-      break;
-    case Status::CHARGING:
-      Serial.println("CHARGING");
-      break;
-    case Status::SHUTDOWN:
-      Serial.println("SHUTDOWN");
-      break;
-    default:
-      Serial.println("UNKNOWN");
-      break;
-  }
+  // Serial.printf("ccl: %d\n", param.ccl);
+  //
+  // Serial.println("loop iteration");
+  // // print relevant parameters
+  // Serial.print("Current voltage: ");
+  // Serial.print(param.current_voltage);
+  // Serial.print(" V\n");
+  // Serial.print("Current current: ");
+  // Serial.print(param.current_current);
+  // Serial.print(" A\n");
+  // Serial.print("Set voltage: ");
+  // Serial.print(param.set_voltage);
+  // Serial.print(" V\n");
+  // Serial.print("Set current: ");
+  // Serial.print(param.set_current);
+  // Serial.print(" A\n");
+  // Serial.print("Allowed current: ");
+  // Serial.print(param.allowed_current);
+  // Serial.print(" A\n");
+  // Serial.print("Shutdown status: ");
+  // Serial.print(shutdown_status);
+  // Serial.print("\n");
+  // Serial.print("Charger safety pin: ");
+  // Serial.print(ch_safety_pin);
+  // Serial.print("\n");
+  // Serial.print("Latching status: ");
+  // Serial.print(latching_status);
+  // Serial.print("\n");
+  // Serial.print("Charger status: ");
+  // switch (charger_status) {
+  //   case Status::IDLE:
+  //     Serial.println("IDLE");
+  //     break;
+  //   case Status::CHARGING:
+  //     Serial.println("CHARGING");
+  //     break;
+  //   case Status::SHUTDOWN:
+  //     Serial.println("SHUTDOWN");
+  //     break;
+  //   default:
+  //     Serial.println("UNKNOWN");
+  //     break;
+  // }
   //print all board temperatures
   
-  print_all_board_temps();
-  Serial.println("====================================");
-  Serial.println();
+  // print_all_board_temps();
+  // Serial.println("====================================");
+  // Serial.println();
 }

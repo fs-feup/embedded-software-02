@@ -30,10 +30,11 @@ constexpr float NTC_BETA = 3971.0;
 constexpr float MAXIMUM_TEMPERATURE = 60.0;
 constexpr int8_t MAX_INT8_T = 127;
 constexpr int8_t MIN_INT8_T = -128;
-constexpr uint16_t MAX_TEMP_DELAY_MS = 500;
+constexpr uint16_t MAX_TEMP_DELAY_MS = 2000;
 
 // CAN Communication
 constexpr uint32_t MASTER_CELL_ID = 0x109;
+constexpr uint32_t MASTER_ID = 0x300;
 constexpr uint8_t CELLS_PER_MESSAGE = 6;
 constexpr uint32_t CELL_TEMPS_BASE_ID = 0x110;
 constexpr uint32_t CAN_DRIVING_BAUD_RATE = 1'000'000;

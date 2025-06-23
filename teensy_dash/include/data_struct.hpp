@@ -32,7 +32,8 @@ enum BamocarState {
   ACC_RAMP,
   DEC_RAMP,
   INITIALIZED,
-  ERROR
+  ERROR,
+  CLEAR_ERRORS
 };
 
 struct InverterModeParams {
