@@ -73,12 +73,12 @@ void IOManager::setup() {
   pinMode(pins::analog::APPS_LOWER, INPUT);
   pinMode(pins::analog::ROTARY_SWITCH, INPUT);
   pinMode(pins::analog::BRAKE_PRESSURE, INPUT);
+  pinMode(pins::digital::TS, INPUT);
   pinMode(pins::output::BUZZER, OUTPUT);
   pinMode(pins::output::BSPD_LED, OUTPUT);
   pinMode(pins::output::INERTIA_LED, OUTPUT);
   pinMode(pins::digital::ATS_OUT, OUTPUT);
   pinMode(pins::output::TS_LED, OUTPUT);
-  pinMode(pins::digital::TS, OUTPUT);
 
   attachInterrupt(
       digitalPinToInterrupt(pins::encoder::FRONT_RIGHT_WHEEL),

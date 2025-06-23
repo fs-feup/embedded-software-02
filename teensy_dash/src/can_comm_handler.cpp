@@ -244,55 +244,55 @@ void CanCommHandler::write_inverter_mode(const SwitchMode switch_mode) {
 
   InverterModeParams params = get_inverter_mode_config(switch_mode);
 
-#ifdef DEBUG_PRINTS
-  auto mode_to_string = [](SwitchMode mode) -> const char* {
-    switch (mode) {
-      case SwitchMode::INVERTER_MODE_0:
-        return "MODE_0";
-      case SwitchMode::INVERTER_MODE_CAVALETES:
-        return "CAVALETES";
-      case SwitchMode::INVERTER_MODE_LIMITER:
-        return "LIMITER";
-      case SwitchMode::INVERTER_MODE_BRAKE_TEST:
-        return "BRAKE_TEST";
-      case SwitchMode::INVERTER_MODE_SKIDPAD:
-        return "SKIDPAD";
-      case SwitchMode::INVERTER_MODE_ENDURANCE:
-        return "ENDURANCE";
-      case SwitchMode::INVERTER_MODE_MAX_ATTACK:
-        return "MAX_ATTACK";
-      case SwitchMode::INVERTER_MODE_NULL:
-        return "NULL";
-      case SwitchMode::INVERTER_MODE_NULL2:
-        return "NULL2";
-      case SwitchMode::INVERTER_MODE_NULL3:
-        return "NULL3";
-      case SwitchMode::INVERTER_MODE_NULL4:
-        return "NULL4";
-      case SwitchMode::INVERTER_MODE_NULL5:
-        return "NULL5";
-      default:
-        return "UNKNOWN";
-    }
-  };
-
-  DEBUG_PRINT("Mode: ");
-  DEBUG_PRINT(mode_to_string(switch_mode));
-  DEBUG_PRINT(" | i_max: ");
-  DEBUG_PRINT(params.i_max_pk_percent);
-  DEBUG_PRINT("% | speed: ");
-  DEBUG_PRINT(params.speed_limit_percent);
-  DEBUG_PRINT("% | i_cont: ");
-  DEBUG_PRINT(params.i_cont_percent);
-  DEBUG_PRINT("% | s_acc: ");
-  DEBUG_PRINT(params.speed_ramp_acc);
-  DEBUG_PRINT(" | m_acc: ");
-  DEBUG_PRINT(params.moment_ramp_acc);
-  DEBUG_PRINT(" | s_brk: ");
-  DEBUG_PRINT(params.speed_ramp_brake);
-  DEBUG_PRINT(" | m_dec: ");
-  DEBUG_PRINTLN(params.moment_ramp_decc);
-#endif
+// #ifdef DEBUG_PRINTS
+//   auto mode_to_string = [](SwitchMode mode) -> const char* {
+//     switch (mode) {
+//       case SwitchMode::INVERTER_MODE_0:
+//         return "MODE_0";
+//       case SwitchMode::INVERTER_MODE_CAVALETES:
+//         return "CAVALETES";
+//       case SwitchMode::INVERTER_MODE_LIMITER:
+//         return "LIMITER";
+//       case SwitchMode::INVERTER_MODE_BRAKE_TEST:
+//         return "BRAKE_TEST";
+//       case SwitchMode::INVERTER_MODE_SKIDPAD:
+//         return "SKIDPAD";
+//       case SwitchMode::INVERTER_MODE_ENDURANCE:
+//         return "ENDURANCE";
+//       case SwitchMode::INVERTER_MODE_MAX_ATTACK:
+//         return "MAX_ATTACK";
+//       case SwitchMode::INVERTER_MODE_NULL:
+//         return "NULL";
+//       case SwitchMode::INVERTER_MODE_NULL2:
+//         return "NULL2";
+//       case SwitchMode::INVERTER_MODE_NULL3:
+//         return "NULL3";
+//       case SwitchMode::INVERTER_MODE_NULL4:
+//         return "NULL4";
+//       case SwitchMode::INVERTER_MODE_NULL5:
+//         return "NULL5";
+//       default:
+//         return "UNKNOWN";
+//     }
+//   };
+//
+//   DEBUG_PRINT("Mode: ");
+//   DEBUG_PRINT(mode_to_string(switch_mode));
+//   DEBUG_PRINT(" | i_max: ");
+//   DEBUG_PRINT(params.i_max_pk_percent);
+//   DEBUG_PRINT("% | speed: ");
+//   DEBUG_PRINT(params.speed_limit_percent);
+//   DEBUG_PRINT("% | i_cont: ");
+//   DEBUG_PRINT(params.i_cont_percent);
+//   DEBUG_PRINT("% | s_acc: ");
+//   DEBUG_PRINT(params.speed_ramp_acc);
+//   DEBUG_PRINT(" | m_acc: ");
+//   DEBUG_PRINT(params.moment_ramp_acc);
+//   DEBUG_PRINT(" | s_brk: ");
+//   DEBUG_PRINT(params.speed_ramp_brake);
+//   DEBUG_PRINT(" | m_dec: ");
+//   DEBUG_PRINTLN(params.moment_ramp_decc);
+// #endif
 
   int i_max_pk = map(params.i_max_pk_percent, 0, 100, 0, MAX_I_VALUE);
   int i_cont = map(params.i_cont_percent, 0, 100, 0, MAX_I_VALUE);
