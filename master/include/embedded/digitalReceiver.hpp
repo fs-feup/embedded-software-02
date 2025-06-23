@@ -189,8 +189,6 @@ inline void DigitalReceiver::read_pneumatic_line() {
 inline void DigitalReceiver::read_mission() {
   const int raw_value = analogRead(AMI);
   int mapped_value = map(constrain(raw_value, 0, ADC_MAX_VALUE), 0, ADC_MAX_VALUE, 0, MAX_MISSION);  // constrain just in case
-  // erial print
-  // DEBUG_PRINT("Raw AMI value: " + String(raw_value) + ", Mapped value: " + String(mapped_value));
   Mission latest_mission = static_cast<Mission>(mapped_value);
 
   if ((latest_mission == *mission_) && (latest_mission == last_tried_mission_)) {
@@ -212,14 +210,11 @@ inline void DigitalReceiver::read_asms_switch() {
 
 inline void DigitalReceiver::read_asats_state() {
   bool asats_pressed = digitalRead(ASATS);
-  //print
-  //DEBUG_PRINT("ASATS pressed: " + String(asats_pressed));
   debounce(asats_pressed, hardware_data_->asats_pressed_, aats_change_counter_);
 }
 
 inline void DigitalReceiver::read_ats() {
   bool ats_pressed = digitalRead(ATS);
-  DEBUG_PRINT_VAR(ats_pressed);
   debounce(ats_pressed, hardware_data_->ats_pressed_, ats_change_counter_);
 }
 
