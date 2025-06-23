@@ -1,9 +1,9 @@
 #include <Arduino.h>
-#include <FlexCAN_T4.h>
 #include <Bounce2.h>
+#include <FlexCAN_T4.h>
 #include <elapsedMillis.h>
-#include "SPI_MSTransfer_T4.h"
 
+#include "SPI_MSTransfer_T4.h"
 #include "constants.hpp"
 #include "structs.hpp"
 #include "utils.hpp"
@@ -17,9 +17,8 @@ elapsedMillis spi_update_timer;
 
 PARAMETERS param;
 
-bool ch_safety_pin = 1;    // This was CH safety pin status, todo: check it exists
-bool shutdown_status = 0;  // Charging shutdown status, 1 for shutdown
-bool latching_status = 0;  // Latching error status, 0 means error (open)
+bool ch_enable_pin = 1;    // This was CH enable pin status
+bool shutdown_status = 0;  // latching status, 1(high) for shutdown
 auto display_button = Bounce();
 bool display_button_pressed = false;
 
@@ -131,9 +130,7 @@ void charger_machine() {
   next_charger_status = charger_status;
   switch (charger_status) {
     case Status::IDLE: {
-      if (shutdown_status) {
-        // next_charger_status = Status::SHUTDOWN;
-      } else if (ch_safety_pin == 0 && latching_status == 1) {
+      if (shutdown_status == 0) {
         next_charger_status = Status::CHARGING;
       }
       break;
@@ -141,8 +138,6 @@ void charger_machine() {
     case Status::CHARGING: {
       if (shutdown_status) {
         next_charger_status = Status::SHUTDOWN;
-      } else if (ch_safety_pin == 1 || latching_status == 0) {
-        next_charger_status = Status::IDLE;
       }
       break;
     }
@@ -158,7 +153,7 @@ void charger_machine() {
 
 void read_inputs() {
   shutdown_status = digitalRead(SHUTDOWN_PIN);
-  ch_safety_pin = digitalRead(CH_SAFETY_PIN);
+  ch_enable_pin = digitalRead(CH_ENABLE_PIN);
   display_button.update();
   display_button_pressed = display_button.rose();
 
@@ -170,8 +165,6 @@ void read_inputs() {
     Serial.println(display_button_pressed);
     last_display_button_state = display_button_pressed;
   }
-
-  latching_status = !shutdown_status;
 }
 
 void power_on_module(const bool OnOff) {
@@ -284,29 +277,28 @@ void print_temps() {
   }
 }
 
-
 void print_all_board_temps() {
   // Temperature thresholds
-  const int TEMP_WARNING = 45;  // Celsius
-  const int TEMP_CRITICAL = 55; // Celsius
-  
+  const int TEMP_WARNING = 45;   // Celsius
+  const int TEMP_CRITICAL = 55;  // Celsius
+
   Serial.println("\n--- TEMPERATURE BOARD DATA ---");
   Serial.println("Board | Min  | Max  | Avg  | Updated");
   Serial.println("------+------+------+------+--------");
-  
+
   bool any_data = false;
   unsigned long current_time = millis();
-  
+
   for (int i = 0; i < TOTAL_BOARDS; i++) {
     if (param.cell_board_temps[i].has_data) {
       any_data = true;
-      
+
       // Calculate time since last update
       unsigned long time_since_update = current_time - param.cell_board_temps[i].last_update_ms;
-      
+
       // Format the output with padding for alignment
       Serial.printf("%4d  | ", i);
-      
+
       // Print min temp with warning indicator
       if (param.cell_board_temps[i].min_temp >= TEMP_CRITICAL)
         Serial.printf("%3d! | ", param.cell_board_temps[i].min_temp);
@@ -314,7 +306,7 @@ void print_all_board_temps() {
         Serial.printf("%3d* | ", param.cell_board_temps[i].min_temp);
       else
         Serial.printf("%3d  | ", param.cell_board_temps[i].min_temp);
-      
+
       // Print max temp with warning indicator
       if (param.cell_board_temps[i].max_temp >= TEMP_CRITICAL)
         Serial.printf("%3d! | ", param.cell_board_temps[i].max_temp);
@@ -322,7 +314,7 @@ void print_all_board_temps() {
         Serial.printf("%3d* | ", param.cell_board_temps[i].max_temp);
       else
         Serial.printf("%3d  | ", param.cell_board_temps[i].max_temp);
-      
+
       // Print avg temp with warning indicator
       if (param.cell_board_temps[i].avg_temp >= TEMP_CRITICAL)
         Serial.printf("%3d! | ", param.cell_board_temps[i].avg_temp);
@@ -330,7 +322,7 @@ void print_all_board_temps() {
         Serial.printf("%3d* | ", param.cell_board_temps[i].avg_temp);
       else
         Serial.printf("%3d  | ", param.cell_board_temps[i].avg_temp);
-      
+
       // Print time since last update
       if (time_since_update < 5000) {
         Serial.printf("%lus\n", time_since_update / 1000);
@@ -339,11 +331,11 @@ void print_all_board_temps() {
       }
     }
   }
-  
+
   if (!any_data) {
     Serial.println("No temperature data available");
   }
-  
+
   Serial.println("* = Warning temperature");
   Serial.println("! = Critical temperature");
 }
@@ -353,13 +345,12 @@ void setup() {
   Serial.begin(115'200);
   Serial.println("startup");
 
-  pinMode(CH_SAFETY_PIN, INPUT);
+  pinMode(CH_ENABLE_PIN, INPUT);
   pinMode(SHUTDOWN_PIN, INPUT);
-  pinMode(LATCHING_ERROR_PIN, INPUT);
   pinMode(DISPLAY_BUTTON_PIN, INPUT);
-
+  pinMode(SDC_BUTTON_PIN, INPUT);//todo display
   display_button.attach(DISPLAY_BUTTON_PIN, INPUT);
-  display_button.interval(10); // 50ms debounce time
+  display_button.interval(10);  // 50ms debounce time
 
   displaySPI.begin();
 
@@ -393,29 +384,32 @@ void setup() {
 }
 
 void loop() {
-
   if (step < 10) {
     return;
   }
   step = 0;
 
-  // if (spi_update_timer >= 100) {
-    // Serial.print("millis: ");
-    // Serial.println(millis());
+  read_inputs();
 
-    static uint16_t data[1]; // Define a static array to hold the values
-    static int form_num = 1;
+  charger_machine();
+  charger_status = next_charger_status;
 
-    if (display_button_pressed) {
-      Serial.println("button pressed");
-      form_num = (form_num == 1) ? 2 : 1; // toggle 1 and 2
-      data[0] = form_num;
-      displaySPI.transfer16(data, 1, 0x9999, millis() & 0xFFFF);
-      display_button_pressed = false;
-    }
-    // Send values to widgetID 0x0002
-    if (spi_update_timer >= 100) {
+  param.allowed_current = (param.ccl < SET_CURRENT) ? param.ccl : SET_CURRENT;
 
+  update_charger(charger_status);
+
+  static uint16_t data[1];  // Define a static array to hold the values
+  static int form_num = 1;
+
+  if (display_button_pressed) {
+    Serial.println("button pressed");
+    form_num = (form_num == 1) ? 2 : 1;  // toggle 1 and 2
+    data[0] = form_num;
+    displaySPI.transfer16(data, 1, 0x9999, millis() & 0xFFFF);
+    display_button_pressed = false;
+  }
+  // Send values to widgetID 0x0002
+  if (spi_update_timer >= 100) {
     data[0] = value1;
     displaySPI.transfer16(data, 1, 0x0002, millis() & 0xFFFF);
 
@@ -427,74 +421,13 @@ void loop() {
     if (increasing) {
       value1++;
       value2--;
-      if (value1 >= 99)
-        increasing = false;
+      if (value1 >= 99) increasing = false;
     } else {
       value1--;
       value2++;
-      if (value1 <= 1)
-        increasing = true;
+      if (value1 <= 1) increasing = true;
     }
 
     spi_update_timer = 0;
-    }
-  read_inputs();
-
-  charger_machine();
-  charger_status = next_charger_status;
-
-  param.allowed_current = (param.ccl < MAX_CURRENT) ? param.ccl : MAX_CURRENT;
-
-  //print_temps();
-
-  update_charger(charger_status);
-
-  // Serial.printf("ccl: %d\n", param.ccl);
-  //
-  // Serial.println("loop iteration");
-  // // print relevant parameters
-  // Serial.print("Current voltage: ");
-  // Serial.print(param.current_voltage);
-  // Serial.print(" V\n");
-  // Serial.print("Current current: ");
-  // Serial.print(param.current_current);
-  // Serial.print(" A\n");
-  // Serial.print("Set voltage: ");
-  // Serial.print(param.set_voltage);
-  // Serial.print(" V\n");
-  // Serial.print("Set current: ");
-  // Serial.print(param.set_current);
-  // Serial.print(" A\n");
-  // Serial.print("Allowed current: ");
-  // Serial.print(param.allowed_current);
-  // Serial.print(" A\n");
-  // Serial.print("Shutdown status: ");
-  // Serial.print(shutdown_status);
-  // Serial.print("\n");
-  // Serial.print("Charger safety pin: ");
-  // Serial.print(ch_safety_pin);
-  // Serial.print("\n");
-  // Serial.print("Latching status: ");
-  // Serial.print(latching_status);
-  // Serial.print("\n");
-  // Serial.print("Charger status: ");
-  // switch (charger_status) {
-  //   case Status::IDLE:
-  //     Serial.println("IDLE");
-  //     break;
-  //   case Status::CHARGING:
-  //     Serial.println("CHARGING");
-  //     break;
-  //   case Status::SHUTDOWN:
-  //     Serial.println("SHUTDOWN");
-  //     break;
-  //   default:
-  //     Serial.println("UNKNOWN");
-  //     break;
-  // }
-  //print all board temperatures
-  
-  // print_all_board_temps();
-  // Serial.println("====================================");
-  // Serial.println();
+  }
 }
