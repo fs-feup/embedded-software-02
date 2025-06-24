@@ -10,7 +10,7 @@
 
 FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> can1;
 
-// SPI_MSTransfer_T4<&SPI> displaySPI;
+SPI_MSTransfer_T4<&SPI> displaySPI;
 
 elapsedMillis step;
 elapsedMillis spi_update_timer;
@@ -52,12 +52,18 @@ void handle_read_data_response(const CAN_message_t &message) {
   switch (message.buf[1]) {
     case CURRENT_VOLTAGE_RESPONSE: {
       extract_value(param.current_voltage, message.buf);
+
+      const uint16_t buf[] = { static_cast<uint16_t>(param.current_voltage)};
+      displaySPI.transfer16(buf, 1, WIDGET_VOLTAGE, millis() & 0xFFFF);
       print_value("Current voltage= ", param.current_voltage);
       break;
     }
 
     case CURRENT_CURRENT_RESPONSE: {
       extract_value(param.current_current, message.buf);
+
+      const uint16_t buf[] = { static_cast<uint16_t>(param.current_current)};
+      displaySPI.transfer16(buf, 1, WIDGET_CURRENT, millis() & 0xFFFF);
       print_value("Current Current= ", param.current_current);
       break;
     }
@@ -93,7 +99,10 @@ void can_snifflas(const CAN_message_t &message) {
     param.ccl = message.buf[0] * 1000;  // Assuming conversion is correct
     param.ch_safety = message.buf[2] & 0x04;
 
-    uint8_t status = message.buf[2];
+    const uint16_t buf[] = { static_cast<uint16_t>(param.ch_safety)};
+    displaySPI.transfer16(buf, 1, WIDGET_CH_SAFETY, millis() & 0xFFFF);
+
+    const uint8_t status = message.buf[2];
 
     Serial.print("Discharge relay: "); Serial.println((status & 0x01) ? "ON" : "OFF");
     Serial.print("Charge relay: "); Serial.println((status & 0x02) ? "ON" : "OFF");
@@ -144,12 +153,16 @@ void charger_machine() {
     case Status::IDLE: {
       if (shutdown_status == 0) {
         next_charger_status = Status::CHARGING;
+        constexpr uint16_t buf[] = { 0x0000 };
+        displaySPI.transfer16(buf , 1, WIDGET_CH_STATUS, millis() & 0xFFFF);
       }
       break;
     }
     case Status::CHARGING: {
       if (shutdown_status) {
         next_charger_status = Status::SHUTDOWN;
+        constexpr uint16_t buf[] = { 0x0001 };
+        displaySPI.transfer16(buf , 1, WIDGET_CH_STATUS, millis() & 0xFFFF);
       }
       break;
     }
@@ -168,15 +181,6 @@ void read_inputs() {
   ch_enable_pin = digitalRead(CH_ENABLE_PIN);
   display_button.update();
   display_button_pressed = display_button.rose();
-
-  // Serial.print("Raw: ");
-  // Serial.print(digitalRead(DISPLAY_BUTTON_PIN));
-  static bool last_display_button_state = false;
-  if (display_button_pressed != last_display_button_state) {
-    Serial.print(" Bounced: ");
-    Serial.println(display_button_pressed);
-    last_display_button_state = display_button_pressed;
-  }
 }
 
 void power_on_module(const bool OnOff) {
