@@ -2,6 +2,14 @@
     "sonarlint.pathToCompileCommands": "${workspaceFolder}/compile_commands.json",
     "idf.pythonInstallPath": "/usr/bin/python",
     "files.associations": {
-        "*.tpp": "cpp"
+        "*.tpp": "cpp",
+        "system_error": "cpp",
+        "random": "cpp",
+        "limits": "cpp",
+        "new": "cpp",
+        "ostream": "cpp",
+        "stdexcept": "cpp",
+        "streambuf": "cpp",
+        "functional": "cpp"
     }
 }

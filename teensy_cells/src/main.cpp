@@ -8,7 +8,7 @@ const u_int8_t pin_ntc_temp[NTC_SENSOR_COUNT] = {A4,  A5,  A6,  A7, A8, A9,  A2,
 float cell_temps[NTC_SENSOR_COUNT];
 CAN_error_t error;
 
-const unsigned long SETUP_TIMEOUT = 15000;  // 5 seconds for CAN set up detection
+const unsigned long SETUP_TIMEOUT = 5000;  // 5 seconds for CAN set up detection
 
 bool baud_1M = true;
 unsigned long last_reading_time = 0;
@@ -171,23 +171,8 @@ void read_check_temperatures() {
   float min_temp = TEMPERATURE_MAX_C;
   float max_temp = TEMPERATURE_MIN_C;
   bool error = false;
-  static bool floated = false;
   for (int i = 0; i < NTC_SENSOR_COUNT; i++) {
     cell_temps[i] = read_ntc_temperature(analogRead(pin_ntc_temp[i]));
-    if (abs(cell_temps[i] - board_temps[BOARD_ID].temp_data.avg_temp) > 5 && !floated) {
-      error_count = 4;
-      floated = true;
-      DEBUG_PRINT("FLOAT TEMPERATURE DIFFERENCE DETECTED: ");
-      DEBUG_PRINT("Cell ");
-      DEBUG_PRINT(i + 1);
-      DEBUG_PRINT(" - Read: ");
-      DEBUG_PRINT(cell_temps[i]);
-      DEBUG_PRINT("°C, Avg: ");
-      DEBUG_PRINT(board_temps[BOARD_ID].temp_data.avg_temp);
-      DEBUG_PRINT("°C, Diff: ");
-      DEBUG_PRINTLN(abs(cell_temps[i] - board_temps[BOARD_ID].temp_data.avg_temp));
-      DEBUG_PRINTLN("°C");
-    }
     min_temp = min(min_temp, cell_temps[i]);
     max_temp = max(max_temp, cell_temps[i]);
     sum_temp += cell_temps[i];
@@ -390,14 +375,14 @@ void initialize_can(uint32_t baudRate) {
   for (uint8_t i = 0; i < TOTAL_BOARDS; i++) {  // FlexCAN typically supports 8 filters
     can1.setFIFOFilter(i, CELL_TEMPS_BASE_ID + 1 + i, STD);
   }
-  can1.setFIFOFilter(TOTAL_BOARDS, MASTER_ID, STD);
+  can1.setFIFOFilter(TOTAL_BOARDS, BMS_ID_CCL, STD);
 
   can1.onReceive(can_snifflas);
   DEBUG_PRINTLN("CAN filters configured for all board IDs");
 #else
 
   can1.setFIFOFilter(0, MASTER_CELL_ID, STD);
-  can1.setFIFOFilter(1, MASTER_ID, STD);
+  can1.setFIFOFilter(1, BMS_ID_CCL, STD);
 
   can1.onReceive(can_receive_from_master);
   DEBUG_PRINTLN("CAN filter configured for master messages");
