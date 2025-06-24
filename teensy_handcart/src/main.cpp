@@ -14,18 +14,19 @@ SPI_MSTransfer_T4<&SPI> displaySPI;
 
 elapsedMillis step;
 elapsedMillis spi_update_timer;
+elapsedMillis cell_spi_timer;
 
 PARAMETERS param;
 
 bool ch_enable_pin = 1;    // This was CH enable pin status
 bool shutdown_status = 0;  // latching status, 1(high) for shutdown
+bool sdc_status_pin = 0;
 auto display_button = Bounce();
 bool display_button_pressed = false;
 
 Status charger_status;       // current state machine status
-Status next_charger_status;  // next state machine status
 
-static uint16_t value1 = 0, value2 = 100;
+static uint16_t value1 = 0;
 static bool increasing = true;
 
 void handle_set_data_response(const CAN_message_t &message) {
@@ -104,14 +105,14 @@ void can_snifflas(const CAN_message_t &message) {
 
     const uint8_t status = message.buf[2];
 
-    Serial.print("Discharge relay: "); Serial.println((status & 0x01) ? "ON" : "OFF");
-    Serial.print("Charge relay: "); Serial.println((status & 0x02) ? "ON" : "OFF");
-    Serial.print("Charger safety: "); Serial.println((status & 0x04) ? "ON" : "OFF");
-    Serial.print("Malfunction indicator: "); Serial.println((status & 0x08) ? "ON" : "OFF");
-    Serial.print("Multi-Purpose Input: "); Serial.println((status & 0x10) ? "ON" : "OFF");
-    Serial.print("Always-on signal: "); Serial.println((status & 0x20) ? "ON" : "OFF");
-    Serial.print("Is-Ready signal: "); Serial.println((status & 0x40) ? "ON" : "OFF");
-    Serial.print("Is-Charging signal: "); Serial.println((status & 0x80) ? "ON" : "OFF");
+    // Serial.print("Discharge relay: "); Serial.println((status & 0x01) ? "ON" : "OFF");
+    // Serial.print("Charge relay: "); Serial.println((status & 0x02) ? "ON" : "OFF");
+    // Serial.print("Charger safety: "); Serial.println((status & 0x04) ? "ON" : "OFF");
+    // Serial.print("Malfunction indicator: "); Serial.println((status & 0x08) ? "ON" : "OFF");
+    // Serial.print("Multi-Purpose Input: "); Serial.println((status & 0x10) ? "ON" : "OFF");
+    // Serial.print("Always-on signal: "); Serial.println((status & 0x20) ? "ON" : "OFF");
+    // Serial.print("Is-Ready signal: "); Serial.println((status & 0x40) ? "ON" : "OFF");
+    // Serial.print("Is-Charging signal: "); Serial.println((status & 0x80) ? "ON" : "OFF");
 
   } else if (message.id == BMS_ID_ERR) {
     // Handle error messages if needed
@@ -148,20 +149,19 @@ void can_snifflas(const CAN_message_t &message) {
 }
 
 void charger_machine() {
-  next_charger_status = charger_status;
   switch (charger_status) {
     case Status::IDLE: {
       if (shutdown_status == 0) {
-        next_charger_status = Status::CHARGING;
-        constexpr uint16_t buf[] = { 0x0000 };
+        charger_status = Status::CHARGING;
+        constexpr uint16_t buf[] = { 0x0001 };
         displaySPI.transfer16(buf , 1, WIDGET_CH_STATUS, millis() & 0xFFFF);
       }
       break;
     }
     case Status::CHARGING: {
       if (shutdown_status) {
-        next_charger_status = Status::SHUTDOWN;
-        constexpr uint16_t buf[] = { 0x0001 };
+        charger_status = Status::SHUTDOWN;
+        constexpr uint16_t buf[] = { 0x0002 };
         displaySPI.transfer16(buf , 1, WIDGET_CH_STATUS, millis() & 0xFFFF);
       }
       break;
@@ -177,8 +177,19 @@ void charger_machine() {
 }
 
 void read_inputs() {
+  static bool last_sdc_status = false;
   shutdown_status = digitalRead(SHUTDOWN_PIN);
   ch_enable_pin = digitalRead(CH_ENABLE_PIN);
+
+  sdc_status_pin = digitalRead(SDC_BUTTON_PIN);
+  Serial.print("SDC: ");
+  Serial.println(sdc_status_pin ? "ON" : "OFF");
+  if (sdc_status_pin != last_sdc_status) {
+    last_sdc_status = sdc_status_pin;
+    const uint16_t buf[] = { sdc_status_pin };
+    displaySPI.transfer16(buf, 1, WIDGET_SDC_BUTTON, millis() & 0xFFFF);
+  }
+
   display_button.update();
   display_button_pressed = display_button.rose();
 }
@@ -376,7 +387,7 @@ void setup() {
   display_button.attach(DISPLAY_BUTTON_PIN, INPUT);
   display_button.interval(10);  // 50ms debounce time
 
-  // displaySPI.begin();
+  displaySPI.begin();
 
   can1.begin();
   can1.setBaudRate(125'000);
@@ -405,9 +416,26 @@ void setup() {
   }
 
   param.set_voltage = MAX_VOLTAGE;
+
+  delay(100);
+  constexpr uint16_t buf[] = { 0x0000 };
+  displaySPI.transfer16(buf , 1, WIDGET_CH_STATUS, millis() & 0xFFFF);
 }
 
 void loop() {
+  if (cell_spi_timer >= 100) {
+    uint16_t buf[TOTAL_BOARDS];
+    for (int i = 0; i < TOTAL_BOARDS; ++i) {
+        if (param.cell_board_temps[i].has_data) {
+          buf[i] = static_cast<uint16_t>(param.cell_board_temps[i].avg_temp);
+        } else {
+          buf[i] = 0;  // No data available
+        }
+    }
+    displaySPI.transfer16(buf, TOTAL_BOARDS, WIDGET_CELL_TEMPS, millis() & 0xFFFF);
+    cell_spi_timer = 0;
+  }
+
   if (step < 10) {
     return;
   }
@@ -416,42 +444,35 @@ void loop() {
   read_inputs();
 
   charger_machine();
-  charger_status = next_charger_status;
 
   param.allowed_current = (param.ccl < SET_CURRENT) ? param.ccl : SET_CURRENT;
 
   update_charger(charger_status);
 
-  // static uint16_t data[1];  // Define a static array to hold the values
-  // static int form_num = 1;
-  //
-  // if (display_button_pressed) {
-  //   Serial.println("button pressed");
-  //   form_num = (form_num == 1) ? 2 : 1;  // toggle 1 and 2
-  //   data[0] = form_num;
-  //   displaySPI.transfer16(data, 1, 0x9999, millis() & 0xFFFF);
-  //   display_button_pressed = false;
-  // }
-  // // Send values to widgetID 0x0002
-  // if (spi_update_timer >= 100) {
-  //   data[0] = value1;
-  //   displaySPI.transfer16(data, 1, 0x0002, millis() & 0xFFFF);
-  //
-  //   // Send values to widgetID 0x0001
-  //   data[0] = value2;
-  //   displaySPI.transfer16(data, 1, 0x0001, millis() & 0xFFFF);
-  //
-  //   // Update values
-  //   if (increasing) {
-  //     value1++;
-  //     value2--;
-  //     if (value1 >= 99) increasing = false;
-  //   } else {
-  //     value1--;
-  //     value2++;
-  //     if (value1 <= 1) increasing = true;
-  //   }
-  //
-  //   spi_update_timer = 0;
-  // }
+  static uint16_t data[1];  // Define a static array to hold the values
+  static int form_num = 1;
+
+  if (display_button_pressed) {
+    Serial.println("button pressed");
+    form_num = (form_num == 1) ? 2 : 1;  // toggle 1 and 2
+    data[0] = form_num;
+    displaySPI.transfer16(data, 1, 0x9999, millis() & 0xFFFF);
+    display_button_pressed = false;
+  }
+  // Send values to widgetID 0x0002
+  if (spi_update_timer >= 100) {
+    data[0] = value1;
+    displaySPI.transfer16(data, 1, 0x0007, millis() & 0xFFFF);
+
+    // Update values
+    if (increasing) {
+      value1++;
+      if (value1 >= 99) increasing = false;
+    } else {
+      value1--;
+      if (value1 <= 1) increasing = true;
+    }
+
+    spi_update_timer = 0;
+  }
 }

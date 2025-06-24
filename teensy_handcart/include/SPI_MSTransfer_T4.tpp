@@ -163,17 +163,17 @@ uint16_t SPI_MSTransfer_T4_OPT::transfer16(const uint16_t *buffer, const uint16_
 
     // Try to replace existing packet with same widgetID (position 2 in the packet)
     if (smtqueue.replace(data, length + 5, 2, -1, -1)) {
-        Serial.printf("Replaced existing packet for widget %04X\n", widgetID);
+        // Serial.printf("Replaced existing packet for widget %04X\n", widgetID);
         return packetID;
     }
 
     // If no existing packet found, try to add new one
     if (smtqueue.size() == smtqueue.capacity()) {
-        Serial.println("Queue is full, cannot transfer data.");
+        // Serial.println("Queue is full, cannot transfer data.");
         return 0;
     }
 
     smtqueue.push_back(data, length + 5);
-    Serial.printf("Added new packet for widget %04X\n", widgetID);
+    // Serial.printf("Added new packet for widget %04X\n", widgetID);
     return packetID;
 }
