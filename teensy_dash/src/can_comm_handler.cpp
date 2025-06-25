@@ -156,14 +156,24 @@ void CanCommHandler::bamocar_callback(const uint8_t* const msg_data, const uint8
       DEBUG_PRINTLN(percent);
       break;
     }
-    case SPEED_DELTAMA_ACC:
+    case SPEED_DELTAMA_ACC: {
+      int16_t speed_ramp = (msg_data[2] << 8) | msg_data[1];
+      int16_t moment_ramp = (msg_data[4] << 8) | msg_data[3];
       DEBUG_PRINT("REC. speed ramp acc: ");
-      DEBUG_PRINTLN(message_value);
-      break;
-    case SPEED_DELTAMA_DECC:
+      DEBUG_PRINT(speed_ramp);
+      DEBUG_PRINT(" ms, moment ramp acc: ");
+      DEBUG_PRINT(moment_ramp);
+      DEBUG_PRINTLN(" ms");
+    } break;
+    case SPEED_DELTAMA_DECC: {
+      int16_t speed_ramp = (msg_data[2] << 8) | msg_data[1];
+      int16_t moment_ramp = (msg_data[4] << 8) | msg_data[3];
       DEBUG_PRINT("REC. speed ramp decc: ");
-      DEBUG_PRINTLN(message_value);
-      break;
+      DEBUG_PRINT(speed_ramp);
+      DEBUG_PRINT(" ms, moment ramp decc: ");
+      DEBUG_PRINT(moment_ramp);
+      DEBUG_PRINTLN(" ms");
+    } break;
     default:
       break;
   }
@@ -339,12 +349,12 @@ void CanCommHandler::write_inverter_mode(const SwitchMode switch_mode) {
 
   accRamp_msg.buf[1] = params.speed_ramp_acc & 0xFF;          // Lower byte
   accRamp_msg.buf[2] = (params.speed_ramp_acc >> 8) & 0xFF;   // Upper byte
-  accRamp_msg.buf[3] = params.moment_ramp_acc & 0xFF;         // Upper byte
+  accRamp_msg.buf[3] = params.moment_ramp_acc & 0xFF;         // Lower byte
   accRamp_msg.buf[4] = (params.moment_ramp_acc >> 8) & 0xFF;  // Upper byte
 
   deccRamp_msg.buf[1] = params.speed_ramp_brake & 0xFF;         // Lower byte
   deccRamp_msg.buf[2] = (params.speed_ramp_brake >> 8) & 0xFF;  // Upper byte
-  deccRamp_msg.buf[3] = params.moment_ramp_decc & 0xFF;         // Upper byte
+  deccRamp_msg.buf[3] = params.moment_ramp_decc & 0xFF;         // Lower byte
   deccRamp_msg.buf[4] = (params.moment_ramp_decc >> 8) & 0xFF;  // Upper byte
 
   can1.write(i_max_msg);
