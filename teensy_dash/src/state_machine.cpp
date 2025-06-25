@@ -50,7 +50,7 @@ void StateMachine::update() {
         current_state_ = State::IDLE;
         return;
       }
-      DEBUG_PRINTLN("Torque from apps: " + String(torque_from_apps));
+      // DEBUG_PRINTLN("Torque from apps: " + String(torque_from_apps));
       can_handler.send_torque(torque_from_apps); /* VVVVVRRRRRRRRRRUUUUUUMMMMMMMMMMMMMMMMMMMMMMMm */
       break;
     case State::AS_DRIVING:

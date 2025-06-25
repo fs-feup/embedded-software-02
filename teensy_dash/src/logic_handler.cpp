@@ -8,10 +8,10 @@ LogicHandler::LogicHandler(SystemData& system_data, SystemVolatileData& current_
     : data(system_data), updated_data(current_updated_data) {}
 
 bool LogicHandler::should_start_manual_driving() const {
-  DEBUG_PRINTLN("Checking if should start manual driving v8");
+  // DEBUG_PRINTLN("Checking if should start manual driving v8");
   // print var
-  DEBUG_PRINTLN("R2D pressed: " + String(data.r2d_pressed));
-  DEBUG_PRINTLN("TSOn: " + String(updated_data.TSOn));
+  // DEBUG_PRINTLN("R2D pressed: " + String(data.r2d_pressed));
+  // DEBUG_PRINTLN("TSOn: " + String(updated_data.TSOn));
   return (data.r2d_pressed &&
           updated_data.TSOn /* && data.r2d_brake_timer < config::r2d::TIMEOUT_MS */);
 }
@@ -59,7 +59,7 @@ uint16_t LogicHandler::apps_to_bamocar_value(const uint16_t apps_higher,
 
   torque_value =
       config::apps::MAX - torque_value;  // Invert the value to match Bamocar's expected input
-  DEBUG_PRINTLN("Torque value before deadband: " + String(torque_value));
+  // DEBUG_PRINTLN("Torque value before deadband: " + String(torque_value));
   if (torque_value <= config::apps::DEADBAND) {
     return 0;
   }
@@ -124,15 +124,15 @@ bool LogicHandler::check_apps_plausibility(const uint16_t apps_higher_avg,
 uint16_t LogicHandler::calculate_torque() {
   const uint16_t apps_higher_average = average_queue(data.apps_higher_readings);
   const uint16_t apps_lower_average = average_queue(data.apps_lower_readings);
-  DEBUG_PRINTLN("Apps Higher Average v2: " + String(apps_higher_average));
-  DEBUG_PRINTLN("Apps Lower Average v2: " + String(apps_lower_average));
+  // DEBUG_PRINTLN("Apps Higher Average v2: " + String(apps_higher_average));
+  // DEBUG_PRINTLN("Apps Lower Average v2: " + String(apps_lower_average));
   if (!check_apps_plausibility(apps_higher_average, apps_lower_average)) {
     return config::apps::ERROR_PLAUSIBILITY;  // shutdown ?
   }
 
   const uint16_t bamocar_value = apps_to_bamocar_value(apps_higher_average, apps_lower_average);
 
-  DEBUG_PRINTLN("Bamocar value: " + String(bamocar_value));
+  // DEBUG_PRINTLN("Bamocar value: " + String(bamocar_value));
 
   if (apps_timeout) {
     if (bamocar_value == 0) {  // Pedal released

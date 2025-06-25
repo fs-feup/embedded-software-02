@@ -35,8 +35,8 @@ void IOManager::read_rotative_switch() const {
 
 void IOManager::read_hydraulic_pressure() const {
   insert_value_queue(analogRead(pins::analog::BRAKE_PRESSURE), data.brake_readings);
-  DEBUG_PRINTLN("Brake pressure: " +
-                 String(average_queue(data.brake_readings)));
+  // DEBUG_PRINTLN("Brake pressure: " +
+                 // String(average_queue(data.brake_readings)));
 }
 
 void IOManager::update_R2D_timer() const {
@@ -178,5 +178,5 @@ void IOManager::calculate_rpm() const {
       data.fl_rpm = 0.0f;
     }
   }
-  DEBUG_PRINTLN("FR RPM: " + String(data.fr_rpm) + ", FL RPM: " + String(data.fl_rpm));
+  // DEBUG_PRINTLN("FR RPM: " + String(data.fr_rpm) + ", FL RPM: " + String(data.fl_rpm));
 }
