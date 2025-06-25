@@ -58,15 +58,13 @@ void CanCommHandler::setup() {
   can1.write(DCVoltageRequest);
 
   CAN_message_t speed_limit_req = {
-    .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, SPEED_LIMIT, 0x64}};
-  CAN_message_t i_max_req = {
-    .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, DEVICE_I_MAX, 0x64}};
-  CAN_message_t i_cont_req = {
-    .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, DEVICE_I_CNT, 0x64}};
+      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, SPEED_LIMIT, 0x64}};
+  CAN_message_t i_max_req = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, DEVICE_I_MAX, 0x64}};
+  CAN_message_t i_cont_req = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, DEVICE_I_CNT, 0x64}};
   CAN_message_t accRamp_req = {
-    .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, SPEED_DELTAMA_ACC, 0x64}};
+      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, SPEED_DELTAMA_ACC, 0x64}};
   CAN_message_t deccRamp_req = {
-    .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, SPEED_DELTAMA_DECC, 0x64}};
+      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, SPEED_DELTAMA_DECC, 0x64}};
 
   can1.write(i_max_req);
   can1.write(speed_limit_req);
@@ -301,22 +299,22 @@ void CanCommHandler::write_inverter_mode(const SwitchMode switch_mode) {
     }
   };
 
-   DEBUG_PRINT("Mode: ");
-   DEBUG_PRINT(mode_to_string(switch_mode));
-   DEBUG_PRINT(" | i_max: ");
-   DEBUG_PRINT(params.i_max_pk_percent);
-   DEBUG_PRINT("% | speed: ");
-   DEBUG_PRINT(params.speed_limit_percent);
-   DEBUG_PRINT("% | i_cont: ");
-   DEBUG_PRINT(params.i_cont_percent);
-   DEBUG_PRINT("% | s_acc: ");
-   DEBUG_PRINT(params.speed_ramp_acc);
-   DEBUG_PRINT(" | m_acc: ");
-   DEBUG_PRINT(params.moment_ramp_acc);
-   DEBUG_PRINT(" | s_brk: ");
-   DEBUG_PRINT(params.speed_ramp_brake);
-   DEBUG_PRINT(" | m_dec: ");
-   DEBUG_PRINTLN(params.moment_ramp_decc);
+  DEBUG_PRINT("Mode: ");
+  DEBUG_PRINT(mode_to_string(switch_mode));
+  DEBUG_PRINT(" | i_max: ");
+  DEBUG_PRINT(params.i_max_pk_percent);
+  DEBUG_PRINT("% | speed: ");
+  DEBUG_PRINT(params.speed_limit_percent);
+  DEBUG_PRINT("% | i_cont: ");
+  DEBUG_PRINT(params.i_cont_percent);
+  DEBUG_PRINT("% | s_acc: ");
+  DEBUG_PRINT(params.speed_ramp_acc);
+  DEBUG_PRINT(" | m_acc: ");
+  DEBUG_PRINT(params.moment_ramp_acc);
+  DEBUG_PRINT(" | s_brk: ");
+  DEBUG_PRINT(params.speed_ramp_brake);
+  DEBUG_PRINT(" | m_dec: ");
+  DEBUG_PRINTLN(params.moment_ramp_decc);
 #endif
 
   int i_max_pk = map(params.i_max_pk_percent, 0, 100, 0, MAX_I_VALUE);
@@ -430,7 +428,6 @@ bool CanCommHandler::init_bamocar() {
         can1.write(removeDisable);
         commandSent = true;
         bamocarState = ACC_RAMP;
-        // request_dataLOG_messages();
       }
       break;
 
@@ -480,7 +477,6 @@ void CanCommHandler::send_torque(const int torque) {
     torque_message.buf[0] = 0x90;
     torque_message.buf[1] = torque & 0xFF;         // Lower byte
     torque_message.buf[2] = (torque >> 8) & 0xFF;  // Upper byte
-
 
     can1.write(torque_message);
     torque_timer = 0;
