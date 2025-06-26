@@ -20,6 +20,8 @@ StateMachine state_machine(can_comm_handler, logic_handler, io_manager);
 void setup() {
   Serial.begin(9600);
   io_manager.setup();
+  delay(100);  // Wait for Serial to be ready
+  io_manager.manage();
   can_comm_handler.setup();
 }
 

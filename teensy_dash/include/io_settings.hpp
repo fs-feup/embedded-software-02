@@ -58,7 +58,7 @@ namespace config {
         
         constexpr uint16_t DEAD_THRESHOLD_APPS_HIGHER = 780;
         constexpr uint16_t APPS_LOWER_ZEROED = 5;
-        constexpr uint16_t DEADBAND = 50;
+        constexpr uint16_t DEADBAND = 40;
         
         constexpr uint16_t APPS_HIGHER_WHEN_LOWER_ZEROES = 210;
         constexpr uint16_t APPS_LOWER_DEADZONE_IN_APPS_HIGHER_SCALE = 360;

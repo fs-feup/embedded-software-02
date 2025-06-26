@@ -11,7 +11,8 @@ enum class SwitchMode {
   INVERTER_MODE_SKIDPAD,
   INVERTER_MODE_ENDURANCE,
   INVERTER_MODE_MAX_ATTACK,
-  INVERTER_MODE_NULL
+  INVERTER_MODE_NULL,
+  INVERTER_MODE_INIT //for the initial previous mode
 };
 
 /* From NDrive Manual:

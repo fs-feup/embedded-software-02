@@ -74,7 +74,7 @@ uint16_t LogicHandler::apps_to_bamocar_value(const uint16_t apps_higher,
       1.0 / (1.0 + exp(-k * (normalized_input -
                              0.5)));  // Use desmos graphing calculator for visualization
 
-  uint16_t mapped_value = (uint16_t)(normalized_output * (config::bamocar::MAX));
+  uint16_t mapped_value = (uint16_t)(normalized_input * (config::bamocar::MAX));
 
   return min(mapped_value, config::bamocar::MAX);
 }

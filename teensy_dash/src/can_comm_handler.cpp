@@ -218,7 +218,7 @@ void CanCommHandler::write_messages() {
   }
 
   const auto& current_mode = data.switch_mode;
-  static auto previous_mode = current_mode;
+  static auto previous_mode = SwitchMode::INVERTER_MODE_INIT;
   if (previous_mode != current_mode) {
     write_inverter_mode(current_mode);
     previous_mode = current_mode;
