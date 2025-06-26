@@ -445,7 +445,7 @@ void loop() {
 
   charger_machine();
 
-  param.allowed_current = (param.ccl < SET_CURRENT) ? param.ccl : SET_CURRENT;
+  param.allowed_current = /* (param.ccl < SET_CURRENT) ? param.ccl :  */SET_CURRENT;
 
   update_charger(charger_status);
 
