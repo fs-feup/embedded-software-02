@@ -8,5 +8,6 @@ var searchData=
   ['inspection_5',['INSPECTION',['../d3/db0/structure_8hpp.html#af686af98019fe71e9f18190349618431ab95152130e074a54464df84e2086b1ad',1,'structure.hpp']]],
   ['interval_6',['interval',['../db/d60/class_metro.html#af8a0e107255e5e4ab7c5ed7e9a2b2aec',1,'Metro']]],
   ['inversor_5falive_5ftimestamp_5f_7',['inversor_alive_timestamp_',['../d3/df6/struct_failure_detection.html#aa6ff48f35e9a69d1eb8b2026c301317a',1,'FailureDetection']]],
-  ['inversor_5fdead_5f_8',['inversor_dead_',['../d3/df6/struct_failure_detection.html#a19aa96f1084b2d5681789a8942fc86a1',1,'FailureDetection']]]
+  ['inversor_5fdead_5f_8',['inversor_dead_',['../d3/df6/struct_failure_detection.html#a19aa96f1084b2d5681789a8942fc86a1',1,'FailureDetection']]],
+  ['is_5ffirst_5floop_9',['is_first_loop',['../df/d0a/main_8cpp.html#a6493030cdee0c143035a2371f2fdf52f',1,'main.cpp']]]
 ];
