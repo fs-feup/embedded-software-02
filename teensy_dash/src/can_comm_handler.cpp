@@ -16,15 +16,61 @@ CanCommHandler::CanCommHandler(SystemData& system_data,
 }
 
 void CanCommHandler::setup() {
+  DEBUG_PRINTLN("Setting up CAN communication handler...");
   can1.begin();
-  can1.setBaudRate(500'000);
+  can1.setBaudRate(1'000'000);
   can1.enableFIFO();
   can1.enableFIFOInterrupt();
   can1.setFIFOFilter(REJECT_ALL);
-  can1.setFIFOFilter(2, BMS_ID, STD);
-  can1.setFIFOFilter(3, BAMO_RESPONSE_ID, STD);
-  can1.setFIFOFilter(4, MASTER_ID, STD);
+  can1.setFIFOFilter(0, BMS_ID, STD);
+  can1.setFIFOFilter(1, BAMO_RESPONSE_ID, STD);
+  can1.setFIFOFilter(2, MASTER_ID, STD);
   can1.onReceive(can_snifflas);
+  delay(10000);
+
+  CAN_message_t disable;
+
+  disable.id = BAMO_COMMAND_ID;
+  disable.len = 3;
+  disable.buf[0] = 0x51;
+  disable.buf[1] = 0x04;
+  disable.buf[2] = 0x00;
+
+  CAN_message_t statusRequest;
+
+  statusRequest.id = BAMO_COMMAND_ID;
+  statusRequest.len = 3;
+  statusRequest.buf[0] = 0x3D;
+  statusRequest.buf[1] = 0x40;
+  statusRequest.buf[2] = 0x00;
+
+  CAN_message_t DCVoltageRequest;
+
+  DCVoltageRequest.id = BAMO_COMMAND_ID;
+  DCVoltageRequest.len = 3;
+  DCVoltageRequest.buf[0] = 0x3D;
+  DCVoltageRequest.buf[1] = 0xEB;
+  DCVoltageRequest.buf[2] = 0x64;
+
+  DEBUG_PRINTLN("Sending initial messages to BAMO-CAR...");
+  can1.write(disable);
+  can1.write(statusRequest);
+  can1.write(DCVoltageRequest);
+
+  CAN_message_t speed_limit_req = {
+      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, SPEED_LIMIT, 0x64}};
+  CAN_message_t i_max_req = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, DEVICE_I_MAX, 0x64}};
+  CAN_message_t i_cont_req = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, DEVICE_I_CNT, 0x64}};
+  CAN_message_t accRamp_req = {
+      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, SPEED_DELTAMA_ACC, 0x64}};
+  CAN_message_t deccRamp_req = {
+      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, SPEED_DELTAMA_DECC, 0x64}};
+
+  can1.write(i_max_req);
+  can1.write(speed_limit_req);
+  can1.write(i_cont_req);
+  can1.write(accRamp_req);
+  can1.write(deccRamp_req);
 }
 
 void CanCommHandler::can_snifflas(const CAN_message_t& msg) {
@@ -69,38 +115,65 @@ void CanCommHandler::bamocar_callback(const uint8_t* const msg_data, const uint8
 
   switch (msg_data[0]) {
     case DC_VOLTAGE: {
+      // DEBUG_PRINTLN("DC Voltage: " + String(message_value));
       updatable_data.TSOn = (message_value >= DC_THRESHOLD);
       break;
     }
     case BTB_READY_0:
       btb_ready = check_sequence(msg_data, BTB_READY_SEQUENCE);
-      Serial.println("BTB ready");
+      DEBUG_PRINTLN("BTB ready");
       break;
 
     case ENABLE_0:
       transmission_enabled = check_sequence(msg_data, ENABLE_SEQUENCE);
-      Serial.println("Transmission enabled");
+      DEBUG_PRINTLN("Transmission enabled");
       break;
 
     case SPEED_ACTUAL:
       updatable_data.speed = message_value;
       break;
 
+    // Next cases are for debug only.
+    // ============================================================
     case SPEED_LIMIT: {
-      // For debug purpose only, fow now
-      const int normalized_limit = map(message_value, 0, 32767, 0, 100);
-      Serial.print("Speed limit:");
-      Serial.println(normalized_limit);
+      // Reverse mapping: [0, 32767] -> [0, 100]
+      int percent = map(message_value, 0, 32767, 0, 100);
+      DEBUG_PRINT("REC. SPEED LIM %: ");
+      DEBUG_PRINTLN(percent);
       break;
     }
-
     case DEVICE_I_MAX: {
-      // Need to check if the in_max is correct or not: this value matches the ndrive read values
-      const int normalized_imax = map(message_value, 0, 16369, 0, 100);
-      Serial.print("I_max:");
-      Serial.println(normalized_imax);
+      // Reverse mapping: [0, 16383] -> [0, 100]
+      int percent = map(message_value, 0, 16383, 0, 100);
+      DEBUG_PRINT("REC. I_max%: ");
+      DEBUG_PRINTLN(percent);
       break;
     }
+    case DEVICE_I_CNT: {
+      // Reverse mapping: [0, 16383] -> [0, 100]
+      int percent = map(message_value, 0, 16383, 0, 100);
+      DEBUG_PRINT("REC. I_cont%: ");
+      DEBUG_PRINTLN(percent);
+      break;
+    }
+    case SPEED_DELTAMA_ACC: {
+      int16_t speed_ramp = (msg_data[2] << 8) | msg_data[1];
+      int16_t moment_ramp = (msg_data[4] << 8) | msg_data[3];
+      DEBUG_PRINT("REC. speed ramp acc: ");
+      DEBUG_PRINT(speed_ramp);
+      DEBUG_PRINT(" ms, moment ramp acc: ");
+      DEBUG_PRINT(moment_ramp);
+      DEBUG_PRINTLN(" ms");
+    } break;
+    case SPEED_DELTAMA_DECC: {
+      int16_t speed_ramp = (msg_data[2] << 8) | msg_data[1];
+      int16_t moment_ramp = (msg_data[4] << 8) | msg_data[3];
+      DEBUG_PRINT("REC. speed ramp decc: ");
+      DEBUG_PRINT(speed_ramp);
+      DEBUG_PRINT(" ms, moment ramp decc: ");
+      DEBUG_PRINT(moment_ramp);
+      DEBUG_PRINTLN(" ms");
+    } break;
     default:
       break;
   }
@@ -116,8 +189,6 @@ void CanCommHandler::master_callback(const uint8_t* const msg_data, const uint8_
       updatable_data.asms_on = msg_data[1];
       break;
 
-    // TODO MAY BE IMPORTANT: src/can_comm_handler.cpp:78:5: warning: case label value exceeds
-    // maximum value for type [-Wswitch-outside-range]
     case SOC_MSG:
       updatable_data.soc = msg_data[1];
       break;
@@ -136,13 +207,18 @@ void CanCommHandler::write_messages() {
     rpm_timer = 0;
   }
 
+  if (hydraulic_timer >= HYDRAULIC_MSG_PERIOD_MS) {
+    write_hydraulic_line();
+    hydraulic_timer = 0;
+  }
+
   if (apps_timer >= APPS_MSG_PERIOD_MS) {
     write_apps();
     apps_timer = 0;
   }
 
   const auto& current_mode = data.switch_mode;
-  static auto previous_mode = current_mode;
+  static auto previous_mode = SwitchMode::INVERTER_MODE_INIT;
   if (previous_mode != current_mode) {
     write_inverter_mode(current_mode);
     previous_mode = current_mode;
@@ -166,6 +242,20 @@ void CanCommHandler::write_rpm() {
 
   send_rpm(FR_RPM, data.fr_rpm);
   send_rpm(FL_RPM, data.fl_rpm);
+}
+
+void CanCommHandler::write_hydraulic_line() {
+  const uint16_t hydraulic_value = average_queue(data.brake_readings);
+
+  CAN_message_t hydraulic_message;
+  hydraulic_message.id = DASH_ID;
+  hydraulic_message.len = 3;
+
+  hydraulic_message.buf[0] = HYDRAULIC_LINE;
+  hydraulic_message.buf[1] = hydraulic_value & 0xFF;         // Lower byte
+  hydraulic_message.buf[2] = (hydraulic_value >> 8) & 0xFF;  // Upper byte
+
+  can1.write(hydraulic_message);
 }
 
 void CanCommHandler::write_apps() {
@@ -195,7 +285,7 @@ void CanCommHandler::write_inverter_mode(const SwitchMode switch_mode) {
 
   InverterModeParams params = get_inverter_mode_config(switch_mode);
 
-#ifdef CAN_DEBUG
+#ifdef DEBUG_PRINTS
   auto mode_to_string = [](SwitchMode mode) -> const char* {
     switch (mode) {
       case SwitchMode::INVERTER_MODE_0:
@@ -214,35 +304,27 @@ void CanCommHandler::write_inverter_mode(const SwitchMode switch_mode) {
         return "MAX_ATTACK";
       case SwitchMode::INVERTER_MODE_NULL:
         return "NULL";
-      case SwitchMode::INVERTER_MODE_NULL2:
-        return "NULL2";
-      case SwitchMode::INVERTER_MODE_NULL3:
-        return "NULL3";
-      case SwitchMode::INVERTER_MODE_NULL4:
-        return "NULL4";
-      case SwitchMode::INVERTER_MODE_NULL5:
-        return "NULL5";
       default:
         return "UNKNOWN";
     }
   };
 
-  Serial.print("Mode: ");
-  Serial.print(mode_to_string(switch_mode));
-  Serial.print(" | i_max: ");
-  Serial.print(params.i_max_pk_percent);
-  Serial.print("% | speed: ");
-  Serial.print(params.speed_limit_percent);
-  Serial.print("% | i_cont: ");
-  Serial.print(params.i_cont_percent);
-  Serial.print("% | s_acc: ");
-  Serial.print(params.speed_ramp_acc);
-  Serial.print(" | m_acc: ");
-  Serial.print(params.moment_ramp_acc);
-  Serial.print(" | s_brk: ");
-  Serial.print(params.speed_ramp_brake);
-  Serial.print(" | m_dec: ");
-  Serial.println(params.moment_ramp_decc);
+  DEBUG_PRINT("Mode: ");
+  DEBUG_PRINT(mode_to_string(switch_mode));
+  DEBUG_PRINT(" | i_max: ");
+  DEBUG_PRINT(params.i_max_pk_percent);
+  DEBUG_PRINT("% | speed: ");
+  DEBUG_PRINT(params.speed_limit_percent);
+  DEBUG_PRINT("% | i_cont: ");
+  DEBUG_PRINT(params.i_cont_percent);
+  DEBUG_PRINT("% | s_acc: ");
+  DEBUG_PRINT(params.speed_ramp_acc);
+  DEBUG_PRINT(" | m_acc: ");
+  DEBUG_PRINT(params.moment_ramp_acc);
+  DEBUG_PRINT(" | s_brk: ");
+  DEBUG_PRINT(params.speed_ramp_brake);
+  DEBUG_PRINT(" | m_dec: ");
+  DEBUG_PRINTLN(params.moment_ramp_decc);
 #endif
 
   int i_max_pk = map(params.i_max_pk_percent, 0, 100, 0, MAX_I_VALUE);
@@ -267,12 +349,12 @@ void CanCommHandler::write_inverter_mode(const SwitchMode switch_mode) {
 
   accRamp_msg.buf[1] = params.speed_ramp_acc & 0xFF;          // Lower byte
   accRamp_msg.buf[2] = (params.speed_ramp_acc >> 8) & 0xFF;   // Upper byte
-  accRamp_msg.buf[3] = params.moment_ramp_acc & 0xFF;         // Upper byte
+  accRamp_msg.buf[3] = params.moment_ramp_acc & 0xFF;         // Lower byte
   accRamp_msg.buf[4] = (params.moment_ramp_acc >> 8) & 0xFF;  // Upper byte
 
   deccRamp_msg.buf[1] = params.speed_ramp_brake & 0xFF;         // Lower byte
   deccRamp_msg.buf[2] = (params.speed_ramp_brake >> 8) & 0xFF;  // Upper byte
-  deccRamp_msg.buf[3] = params.moment_ramp_decc & 0xFF;         // Upper byte
+  deccRamp_msg.buf[3] = params.moment_ramp_decc & 0xFF;         // Lower byte
   deccRamp_msg.buf[4] = (params.moment_ramp_decc >> 8) & 0xFF;  // Upper byte
 
   can1.write(i_max_msg);
@@ -299,84 +381,91 @@ bool CanCommHandler::init_bamocar() {
       .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x35, 0xF4, 0x01}};
   constexpr CAN_message_t rampDecRequest = {
       .id = BAMO_COMMAND_ID, .len = 3, .buf = {0xED, 0xE8, 0x03}};
+  constexpr CAN_message_t clear_error_message = {
+      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x8E, 0x00, 0x00}};
 
   static BamocarState bamocarState = CHECK_BTB;
-  static unsigned long stateStartTime = 0;
+  static unsigned long stateStartTime = millis();
   static unsigned long lastActionTime = 0;
   static bool commandSent = false;
-  static bool transmissionEnabled = false;
   static unsigned long currentTime = 0;
   currentTime = millis();
 
   switch (bamocarState) {
     case CHECK_BTB:
       if (currentTime - lastActionTime >= actionInterval) {
-        Serial.println("Checking BTB status");
+        DEBUG_PRINTLN("Checking BTB status");
         can1.write(checkBTBStatus);
         lastActionTime = currentTime;
       }
-      if (btb_ready) {  // CLION SAYS "Condition is always false": CAP
+      if (btb_ready) {
         bamocarState = ENABLE_OFF;
         commandSent = false;
       } else if (currentTime - stateStartTime >= timeout) {
-        Serial.println("Timeout checking BTB");
-        Serial.println("Error during initialization");
+        DEBUG_PRINTLN("Timeout checking BTB");
+        DEBUG_PRINTLN("Error during initialization");
         bamocarState = ERROR;
       }
       break;
 
     case ENABLE_OFF:
-      Serial.println("Disabling");
+      DEBUG_PRINTLN("Disabling");
       can1.write(setEnableOff);
       bamocarState = ENABLE_TRANSMISSION;
       break;
 
     case ENABLE_TRANSMISSION:
       if (currentTime - lastActionTime >= actionInterval) {
-        Serial.println("Enabling transmission");
+        DEBUG_PRINTLN("Enabling transmission");
         can1.write(enableTransmission);
         lastActionTime = currentTime;
       }
-      if (transmissionEnabled) {
+      if (transmission_enabled) {
         bamocarState = ENABLE;
         commandSent = false;
         stateStartTime = currentTime;
         lastActionTime = currentTime;
       } else if (currentTime - stateStartTime >= timeout) {
-        Serial.println("Timeout enabling transmission");
-        Serial.println("Error during initialization");
+        DEBUG_PRINTLN("Timeout enabling transmission");
+        DEBUG_PRINTLN("Error during initialization");
         bamocarState = ERROR;
       }
       break;
 
     case ENABLE:
       if (!commandSent) {
-        Serial.println("Removing disable");
+        DEBUG_PRINTLN("Removing disable");
         can1.write(removeDisable);
         commandSent = true;
         bamocarState = ACC_RAMP;
-        // request_dataLOG_messages();
       }
       break;
 
     case ACC_RAMP:
-      Serial.print("Transmitting acceleration ramp: ");
-      Serial.print(rampAccRequest.buf[1] | (rampAccRequest.buf[2] << 8));
-      Serial.print("ms");
+      DEBUG_PRINT("Transmitting acceleration ramp: ");
+      DEBUG_PRINT(rampAccRequest.buf[1] | (rampAccRequest.buf[2] << 8));
+      DEBUG_PRINTLN("ms");
       can1.write(rampAccRequest);
       bamocarState = DEC_RAMP;
       break;
 
     case DEC_RAMP:
-      Serial.print("Transmitting deceleration ramp: ");
-      Serial.print(rampDecRequest.buf[1] | (rampDecRequest.buf[2] << 8));
-      Serial.print("ms");
+      DEBUG_PRINT("Transmitting deceleration ramp: ");
+      DEBUG_PRINT(rampDecRequest.buf[1] | (rampDecRequest.buf[2] << 8));
+      DEBUG_PRINTLN("ms");
       can1.write(rampDecRequest);
+      bamocarState = CLEAR_ERRORS;
+      break;
+    case CLEAR_ERRORS:
+      // This state is not used in the current initialization sequence
+      // but can be used in the future to clear errors
+      DEBUG_PRINTLN("Clearing errors");
+      can1.write(clear_error_message);
       bamocarState = INITIALIZED;
       break;
     case INITIALIZED:
       return true;
-    case ERROR:
+    case ERROR:  // in the future add a retry mechanism
       break;
   }
 

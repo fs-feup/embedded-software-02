@@ -2,19 +2,19 @@
 
 namespace pins {
     namespace analog {
-        constexpr uint8_t APPS_HIGHER = 22;
-        constexpr uint8_t APPS_LOWER = 20;
+        constexpr uint8_t APPS_HIGHER = 20;
+        constexpr uint8_t APPS_LOWER = 22;
         constexpr uint8_t BRAKE_PRESSURE = 19;
-        constexpr uint8_t ROTARY_SWITCH = 40; // TODO: romao had this at 23
+        constexpr uint8_t ROTARY_SWITCH = 23; // TODO: romao had this at 23
     }
 
     namespace digital {
         constexpr uint8_t TS = 21;
-        constexpr uint8_t BSPD = 7;
-        constexpr uint8_t INERTIA = 8;
+        constexpr uint8_t BSPD = 18;
+        constexpr uint8_t INERTIA = 7;
         constexpr uint8_t R2D = 4;
         constexpr uint8_t ATS = 5;
-        constexpr uint8_t ATS_OUT = 9;
+        constexpr uint8_t ATS_OUT = 6;
     }
 
     namespace spi {
@@ -25,17 +25,17 @@ namespace pins {
     }
 
     namespace output {
-        constexpr uint8_t RACE_LED = 14;
+        constexpr uint8_t RACE_LED = 17;
         constexpr uint8_t BUZZER = 2;
         constexpr uint8_t DISPLAY_MODE = 3;
-        constexpr uint8_t TS_LED = 13;
-        constexpr uint8_t BSPD_LED = 15;
-        constexpr uint8_t INERTIA_LED = 16;
+        constexpr uint8_t TS_LED = 16;
+        constexpr uint8_t BSPD_LED = 14;
+        constexpr uint8_t INERTIA_LED = 15;
     }
 
     namespace encoder {
-        constexpr uint8_t FRONT_RIGHT_WHEEL = 12;
-        constexpr uint8_t FRONT_LEFT_WHEEL = 11;
+        constexpr uint8_t FRONT_RIGHT_WHEEL = 9;
+        constexpr uint8_t FRONT_LEFT_WHEEL = 8;
     }
 }
 
@@ -51,20 +51,23 @@ namespace config {
     }
 
     namespace apps {
-        constexpr uint16_t UPPER_BOUND_APPS_HIGHER = 800;
-        constexpr uint16_t LOWER_BOUND_APPS_HIGHER = 240;
-        constexpr uint16_t UPPER_BOUND_APPS_LOWER = 785;
-        constexpr uint16_t LOWER_BOUND_APPS_LOWER = 220;
+        constexpr uint16_t UPPER_BOUND_APPS_HIGHER = 700;
+        constexpr uint16_t LOWER_BOUND_APPS_HIGHER = 8;
+        constexpr uint16_t UPPER_BOUND_APPS_LOWER = 600;
+        constexpr uint16_t LOWER_BOUND_APPS_LOWER = 0;
         
         constexpr uint16_t DEAD_THRESHOLD_APPS_HIGHER = 780;
-        constexpr uint16_t DEAD_THRESHOLD_APPS_LOWER = 240;
+        constexpr uint16_t APPS_LOWER_ZEROED = 5;
+        constexpr uint16_t DEADBAND = 40;
         
-        constexpr uint16_t APPS_HIGHER_DEADZONE_IN_APPS_LOWER_SCALE = 660;
+        constexpr uint16_t APPS_HIGHER_WHEN_LOWER_ZEROES = 210;
         constexpr uint16_t APPS_LOWER_DEADZONE_IN_APPS_HIGHER_SCALE = 360;
         
-        constexpr uint16_t LINEAR_OFFSET = 124;
-        constexpr uint16_t MAX = 770;
-        constexpr uint16_t MIN = 270;
+        constexpr uint16_t LINEAR_OFFSET = 140;
+        constexpr uint16_t MAX = 670;
+        constexpr uint16_t MIN = 10;
+        constexpr uint16_t MIN_FOR_TORQUE = 0;
+        constexpr uint16_t MAX_FOR_TORQUE = MAX - MIN;
         
         constexpr int8_t ERROR_PLAUSIBILITY = -4;
 
@@ -73,7 +76,7 @@ namespace config {
         
         constexpr uint8_t SAMPLES = 5;
         constexpr uint16_t BRAKE_BLOCK_THRESHOLD = 250;
-        constexpr uint32_t IMPLAUSIBLE_TIMEOUT_MS = 200;
+        constexpr uint32_t IMPLAUSIBLE_TIMEOUT_MS = 100;
         constexpr uint32_t BRAKE_PLAUSIBILITY_TIMEOUT_MS = 500;
     }
 

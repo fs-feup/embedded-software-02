@@ -115,9 +115,9 @@ public:
   void turn_on_blue();
 };
 
-inline void DigitalSender::open_sdc() { digitalWrite(CLOSE_SDC, LOW); }
+inline void DigitalSender::open_sdc() { DEBUG_PRINT("OPENING SDC"); digitalWrite(CLOSE_SDC, LOW); }
 
-inline void DigitalSender::close_sdc() { digitalWrite(CLOSE_SDC, HIGH); }
+inline void DigitalSender::close_sdc() { DEBUG_PRINT("CLOSING SDC"); digitalWrite(CLOSE_SDC, HIGH); }
 
 inline void DigitalSender::activate_ebs() {
   digitalWrite(EBS_VALVE_1_PIN, HIGH);
@@ -161,9 +161,10 @@ inline void DigitalSender::bspd_error() { digitalWrite(SDC_BSPD_OUT, HIGH); }
 inline void DigitalSender::no_bspd_error() { digitalWrite(SDC_BSPD_OUT, LOW); }
 
 inline void DigitalSender::toggle_watchdog() {
-  static bool wd_state = false;
+  static volatile bool wd_state = false;
   wd_state = !wd_state;
   digitalWrite(WD_ALIVE, wd_state);
+  // DEBUG_PRINT("Toggling watchdog: " + String(wd_state ? "ON" : "OFF"));
 }
 
 inline void DigitalSender::close_watchdog_sdc() { digitalWrite(WD_SDC_CLOSE, HIGH); }

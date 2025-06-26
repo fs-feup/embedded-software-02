@@ -12,10 +12,7 @@ enum class SwitchMode {
   INVERTER_MODE_ENDURANCE,
   INVERTER_MODE_MAX_ATTACK,
   INVERTER_MODE_NULL,
-  INVERTER_MODE_NULL2,
-  INVERTER_MODE_NULL3,
-  INVERTER_MODE_NULL4,
-  INVERTER_MODE_NULL5
+  INVERTER_MODE_INIT //for the initial previous mode
 };
 
 /* From NDrive Manual:
@@ -36,7 +33,8 @@ enum BamocarState {
   ACC_RAMP,
   DEC_RAMP,
   INITIALIZED,
-  ERROR
+  ERROR,
+  CLEAR_ERRORS
 };
 
 struct InverterModeParams {

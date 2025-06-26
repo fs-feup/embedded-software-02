@@ -18,18 +18,25 @@ DigitalSender digital_sender = DigitalSender();
 OutputCoordinator output_coordinator =
     OutputCoordinator(&system_data, &communicator, &digital_sender);
 ASState as_state = ASState(&system_data, &communicator, &output_coordinator);
-
+TeensyTimerTool::PeriodicTimer watchdog_timer_;
+bool is_first_loop = true;
 void setup() {
   Serial.begin(9600);
   Communicator::_systemData = &system_data_copy;
   communicator.init();
   output_coordinator.init();
   DEBUG_PRINT("Starting up...");
+  delay(100);
+  
 }
 
 void loop() {
+  if (is_first_loop) {
+    watchdog_timer_.begin([] { DigitalSender::toggle_watchdog(); }, 10'000);
+    is_first_loop = false;
+  }
+  digitalWrite(WD_SDC_CLOSE, HIGH);
   digital_receiver.digital_reads();
-
   noInterrupts();
   system_data = system_data_copy;
   interrupts();
@@ -41,5 +48,9 @@ void loop() {
 
   output_coordinator.process(current_master_state, current_checkup_state);
 
+
+  // DEBUG_PRINT(current_master_state);
+  // DEBUG_PRINT(system_data_copy.hardware_data_.pneumatic_line_pressure_);
+  // DEBUG_PRINT(system_data_copy.hardware_data_.hydraulic_pressure_);
   delay(LOOP_DELAY);
-}
+} 

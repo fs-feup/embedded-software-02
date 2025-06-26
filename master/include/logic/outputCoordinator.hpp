@@ -85,7 +85,9 @@ public:
   void enter_manual_state() {
     digital_sender_->turn_off_assi();
     digital_sender_->deactivate_ebs();
-    digital_sender_->close_sdc();
+    digital_sender_->open_sdc();
+    // digital_sender_->close_sdc(); // close sdc only when ats pressed and in manual mode already
+    DEBUG_PRINT("Entering manual state...");
   }
 
   /**
@@ -164,10 +166,17 @@ private:
   void update_physical_outputs() {
     brake_light_update();
     bsdp_sdc_update();
+    // digital_sender_->turn_on_blue();
+    // digital_sender_->turn_on_yellow();
   }
 
   void brake_light_update() {
     int brake_val = system_data_->hardware_data_.hydraulic_pressure_;
+    DEBUG_PRINT("Brake pressure: " + String(brake_val));
+    DEBUG_PRINT("Brake pressure lower threshold: " +
+                String(BRAKE_PRESSURE_LOWER_THRESHOLD));
+    DEBUG_PRINT("Brake pressure upper threshold: " +
+                String(BRAKE_PRESSURE_UPPER_THRESHOLD));
     if (brake_val >= BRAKE_PRESSURE_LOWER_THRESHOLD &&
         brake_val <= BRAKE_PRESSURE_UPPER_THRESHOLD) {
       digital_sender_->turn_on_brake_light();
@@ -186,8 +195,10 @@ private:
     if (system_data_->hardware_data_.ats_pressed_ &&
         current_master_state == to_underlying(State::AS_MANUAL)) {
       digital_sender_->close_sdc();
-    } else {
-      digital_sender_->open_sdc();
+    }
+    else {
+      // !! this was opening sdc as soon as ats was released
+    //   digital_sender_->open_sdc();
     }
   }
   void send_rpm() { Communicator::publish_rpm(); }
