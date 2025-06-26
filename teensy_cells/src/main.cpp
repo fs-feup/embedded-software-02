@@ -376,6 +376,7 @@ void initialize_can(uint32_t baudRate) {
     can1.setFIFOFilter(i, CELL_TEMPS_BASE_ID + 1 + i, STD);
   }
   can1.setFIFOFilter(TOTAL_BOARDS, BMS_ID_CCL, STD);
+  can1.setFIFOFilter(TOTAL_BOARDS + 1, MASTER_ID, STD);  // Set filter for master messages
 
   can1.onReceive(can_snifflas);
   DEBUG_PRINTLN("CAN filters configured for all board IDs");
@@ -383,6 +384,7 @@ void initialize_can(uint32_t baudRate) {
 
   can1.setFIFOFilter(0, MASTER_CELL_ID, STD);
   can1.setFIFOFilter(1, BMS_ID_CCL, STD);
+  can1.setFIFOFilter(2, MASTER_ID, STD);  // Set filter for master messages
 
   can1.onReceive(can_receive_from_master);
   DEBUG_PRINTLN("CAN filter configured for master messages");
