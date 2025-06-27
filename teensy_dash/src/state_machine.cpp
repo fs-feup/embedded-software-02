@@ -51,7 +51,9 @@ void StateMachine::update() {
         return;
       }
       // DEBUG_PRINTLN("Torque from apps: " + String(torque_from_apps));
-      can_handler.send_torque(torque_from_apps); /* VVVVVRRRRRRRRRRUUUUUUMMMMMMMMMMMMMMMMMMMMMMMm */
+      // can_handler.send_torque(torque_from_apps); /* VVVVVRRRRRRRRRRUUUUUUMMMMMMMMMMMMMMMMMMMMMMMm */
+      // DEBUG_PRINTLN("TORQUE: ");
+      // DEBUG_PRINTLN(torque_from_apps);
       break;
     case State::AS_DRIVING:
       if (logic_handler.should_go_idle()) {
