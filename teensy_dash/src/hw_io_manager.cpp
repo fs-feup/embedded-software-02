@@ -36,7 +36,7 @@ void IOManager::read_rotative_switch() const {
 void IOManager::read_hydraulic_pressure() const {
   insert_value_queue(analogRead(pins::analog::BRAKE_PRESSURE), data.brake_readings);
   // DEBUG_PRINTLN("Brake pressure: " +
-                 // String(average_queue(data.brake_readings)));
+  // String(average_queue(data.brake_readings)));
 }
 
 void IOManager::update_R2D_timer() const {
@@ -79,7 +79,6 @@ void IOManager::setup() {
   attachInterrupt(
       digitalPinToInterrupt(pins::encoder::FRONT_RIGHT_WHEEL),
       []() {
-        DEBUG_PRINTLN("Front right wheel pulse detected");
         instance->updatable_data.second_to_last_wheel_pulse_fr =
             instance->updatable_data.last_wheel_pulse_fr;
         instance->updatable_data.last_wheel_pulse_fr = micros();
@@ -135,7 +134,7 @@ void IOManager::read_pins_handle_leds() {
 }
 
 void IOManager::calculate_rpm() const {
-  constexpr float MICROSEC_TO_MIN = 60.0f / 1'000'000.0f;  // Convert μs to minutes
+  constexpr float MICROSEC_TO_MIN = 60'000'000.0f;  // Convert μs to minutes
   const unsigned long current_time = micros();
 
   // Front right wheelLIMIT_RPM_INTERVAL
@@ -150,11 +149,10 @@ void IOManager::calculate_rpm() const {
         (updated_data.last_wheel_pulse_fr >= updated_data.second_to_last_wheel_pulse_fr)
             ? updated_data.last_wheel_pulse_fr - updated_data.second_to_last_wheel_pulse_fr
             : 0;  // Handle overflow case
-
     // Avoid division by zero
     if (time_interval_fr > 0) {
-      data.fr_rpm = (MICROSEC_TO_MIN /
-                     static_cast<float>(time_interval_fr * config::wheel::PULSES_PER_ROTATION));
+      data.fr_rpm = MICROSEC_TO_MIN /
+                    (static_cast<double>(time_interval_fr * config::wheel::PULSES_PER_ROTATION));
     } else {
       data.fr_rpm = 0.0f;  // Invalid interval
     }
@@ -173,10 +171,10 @@ void IOManager::calculate_rpm() const {
 
     if (time_interval_fl > 0) {
       data.fl_rpm = (MICROSEC_TO_MIN /
-                     static_cast<float>(time_interval_fl * config::wheel::PULSES_PER_ROTATION));
+                     static_cast<double>(time_interval_fl * config::wheel::PULSES_PER_ROTATION));
     } else {
       data.fl_rpm = 0.0f;
     }
   }
-  // DEBUG_PRINTLN("FR RPM: " + String(data.fr_rpm) + ", FL RPM: " + String(data.fl_rpm));
+  DEBUG_PRINTLN("FR RPM: " + String(data.fr_rpm) + ", FL RPM: " + String(data.fl_rpm));
 }
