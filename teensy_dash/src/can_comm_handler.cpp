@@ -65,12 +65,16 @@ void CanCommHandler::setup() {
       .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, SPEED_DELTAMA_ACC, 0x64}};
   CAN_message_t deccRamp_req = {
       .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, SPEED_DELTAMA_DECC, 0x64}};
+  CAN_message_t speed_actual_req = {
+      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, SPEED_ACTUAL, 0x64}};
 
+  // !! Don't exceed 8 requests !!
   can1.write(i_max_req);
   can1.write(speed_limit_req);
   can1.write(i_cont_req);
   can1.write(accRamp_req);
   can1.write(deccRamp_req);
+  can1.write(speed_actual_req);
 }
 
 void CanCommHandler::can_snifflas(const CAN_message_t& msg) {
@@ -131,6 +135,7 @@ void CanCommHandler::bamocar_callback(const uint8_t* const msg_data, const uint8
 
     case SPEED_ACTUAL:
       updatable_data.speed = message_value;
+      DEBUG_PRINTLN("BAMOCAR SPEED: " + String(message_value));
       break;
 
     // Next cases are for debug only.
@@ -138,41 +143,41 @@ void CanCommHandler::bamocar_callback(const uint8_t* const msg_data, const uint8
     case SPEED_LIMIT: {
       // Reverse mapping: [0, 32767] -> [0, 100]
       int percent = map(message_value, 0, 32767, 0, 100);
-      DEBUG_PRINT("REC. SPEED LIM %: ");
-      DEBUG_PRINTLN(percent);
+      // DEBUG_PRINT("REC. SPEED LIM %: ");
+      // DEBUG_PRINTLN(percent);
       break;
     }
     case DEVICE_I_MAX: {
       // Reverse mapping: [0, 16383] -> [0, 100]
       int percent = map(message_value, 0, 16383, 0, 100);
-      DEBUG_PRINT("REC. I_max%: ");
-      DEBUG_PRINTLN(percent);
+      // DEBUG_PRINT("REC. I_max%: ");
+      // DEBUG_PRINTLN(percent);
       break;
     }
     case DEVICE_I_CNT: {
       // Reverse mapping: [0, 16383] -> [0, 100]
       int percent = map(message_value, 0, 16383, 0, 100);
-      DEBUG_PRINT("REC. I_cont%: ");
-      DEBUG_PRINTLN(percent);
+      // DEBUG_PRINT("REC. I_cont%: ");
+      // DEBUG_PRINTLN(percent);
       break;
     }
     case SPEED_DELTAMA_ACC: {
       int16_t speed_ramp = (msg_data[2] << 8) | msg_data[1];
       int16_t moment_ramp = (msg_data[4] << 8) | msg_data[3];
-      DEBUG_PRINT("REC. speed ramp acc: ");
-      DEBUG_PRINT(speed_ramp);
-      DEBUG_PRINT(" ms, moment ramp acc: ");
-      DEBUG_PRINT(moment_ramp);
-      DEBUG_PRINTLN(" ms");
+      // DEBUG_PRINT("REC. speed ramp acc: ");
+      // DEBUG_PRINT(speed_ramp);
+      // DEBUG_PRINT(" ms, moment ramp acc: ");
+      // DEBUG_PRINT(moment_ramp);
+      // DEBUG_PRINTLN(" ms");
     } break;
     case SPEED_DELTAMA_DECC: {
       int16_t speed_ramp = (msg_data[2] << 8) | msg_data[1];
       int16_t moment_ramp = (msg_data[4] << 8) | msg_data[3];
-      DEBUG_PRINT("REC. speed ramp decc: ");
-      DEBUG_PRINT(speed_ramp);
-      DEBUG_PRINT(" ms, moment ramp decc: ");
-      DEBUG_PRINT(moment_ramp);
-      DEBUG_PRINTLN(" ms");
+      // DEBUG_PRINT("REC. speed ramp decc: ");
+      // DEBUG_PRINT(speed_ramp);
+      // DEBUG_PRINT(" ms, moment ramp decc: ");
+      // DEBUG_PRINT(moment_ramp);
+      // DEBUG_PRINTLN(" ms");
     } break;
     default:
       break;

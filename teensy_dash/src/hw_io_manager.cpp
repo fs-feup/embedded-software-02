@@ -178,5 +178,5 @@ void IOManager::calculate_rpm() const {
       data.fl_rpm = 0.0f;
     }
   }
-  // DEBUG_PRINTLN("FR RPM: " + String(data.fr_rpm) + ", FL RPM: " + String(data.fl_rpm));
+  DEBUG_PRINTLN("FR RPM: " + String(data.fr_rpm) + ", FL RPM: " + String(data.fl_rpm));
 }
