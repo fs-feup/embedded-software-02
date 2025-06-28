@@ -27,10 +27,10 @@ var class_checkup_manager =
     [ "EbsPressureTestPhase", "d7/d1f/class_checkup_manager.html#a80729480b8cd00c3756d18ea4f12c6d7", [
       [ "DISABLE_ACTUATOR_1", "d7/d1f/class_checkup_manager.html#a80729480b8cd00c3756d18ea4f12c6d7aa0d3ca7bb722577be349988c403e5015", null ],
       [ "CHECK_ACTUATOR_2", "d7/d1f/class_checkup_manager.html#a80729480b8cd00c3756d18ea4f12c6d7a8117b8415fee31d472f9c56b290ed045", null ],
-      [ "ENABLE_ACTUATOR_1", "d7/d1f/class_checkup_manager.html#a80729480b8cd00c3756d18ea4f12c6d7ad3a2d8a2e2015f38e3cc4c2167b21e90", null ],
-      [ "DISABLE_ACTUATOR_2", "d7/d1f/class_checkup_manager.html#a80729480b8cd00c3756d18ea4f12c6d7a2bee83def1c1588ee5394fd0e849bc31", null ],
+      [ "CHANGE_ACTUATORS", "d7/d1f/class_checkup_manager.html#a80729480b8cd00c3756d18ea4f12c6d7ae181a983fa831859f598eebcbbc82f9e", null ],
       [ "CHECK_ACTUATOR_1", "d7/d1f/class_checkup_manager.html#a80729480b8cd00c3756d18ea4f12c6d7ac4a1aedb9f23800f21b8a4045a7c51ef", null ],
       [ "ENABLE_ACTUATOR_2", "d7/d1f/class_checkup_manager.html#a80729480b8cd00c3756d18ea4f12c6d7a8148eb583d277ad3fdaca2072d1dbaef", null ],
+      [ "CHECK_BOTH_ACTUATORS", "d7/d1f/class_checkup_manager.html#a80729480b8cd00c3756d18ea4f12c6d7ad65eccbcde3c446dc5d56f3d7ea42e08", null ],
       [ "COMPLETE", "d7/d1f/class_checkup_manager.html#a80729480b8cd00c3756d18ea4f12c6d7a3de44296982e58199afc513a715b12ba", null ]
     ] ],
     [ "CheckupManager", "d7/d1f/class_checkup_manager.html#ae9d350ec3e1491f239c644bfa0521863", null ],
