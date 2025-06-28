@@ -50,6 +50,7 @@ void StateMachine::update() {
         return;
       }
       if (torque_from_apps == config::apps::ERROR_PLAUSIBILITY) {
+        can_handler.send_torque(0);
         DEBUG_PRINTLN("Torque implausible, going idle");
         DEBUG_PRINTLN("Torque implausible, going idle");
         can_handler.stop_bamocar();

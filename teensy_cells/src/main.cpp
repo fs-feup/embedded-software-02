@@ -313,6 +313,8 @@ void code_reset() {
 }
 
 void can_snifflas(const CAN_message_t& msg) {
+  DEBUG_PRINT("Received CAN message with ID: ");
+  Serial.println(msg.id, HEX);
   if (msg.id >= CELL_TEMPS_BASE_ID && msg.id < CELL_TEMPS_BASE_ID + TOTAL_BOARDS && msg.len == 4) {
     uint8_t board_from_id = msg.id - CELL_TEMPS_BASE_ID;
     uint8_t board_from_buf = msg.buf[0];
@@ -470,7 +472,7 @@ void loop() {
     send_to_bms(global_data);
     send_master_heartbeat();
 #endif
-    show_temperatures();
+    // show_temperatures();
   }
   if (no_error_iterations >= NO_ERROR_RESET_THRESHOLD) {
     error_count = 0;

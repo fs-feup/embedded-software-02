@@ -95,6 +95,8 @@ void parse_charger_message(const CAN_message_t &message) {
 }
 
 void can_snifflas(const CAN_message_t &message) {
+  Serial.print("Received CAN message with ID: ");
+  Serial.print(message.id, HEX);
   if (message.id == CHARGER_ID) {
     parse_charger_message(message);
   } else if (message.id == BMS_ID_CCL) {
@@ -187,8 +189,8 @@ void read_inputs() {
   ch_enable_pin = digitalRead(CH_ENABLE_PIN);
 
   sdc_status_pin = digitalRead(SDC_BUTTON_PIN);
-  Serial.print("SDC: ");
-  Serial.println(sdc_status_pin ? "ON" : "OFF");
+  // Serial.print("SDC: ");
+  // Serial.println(sdc_status_pin ? "ON" : "OFF");
   if (sdc_status_pin != last_sdc_status) {
     last_sdc_status = sdc_status_pin;
     const uint16_t buf[] = { sdc_status_pin };
