@@ -37,17 +37,34 @@ bool LogicHandler::plausibility(const int apps_higher,
 
   if (!valid_input) {
     return false;
+    DEBUG_PRINTLN("Apps implausible: invalid input");
   }
 
+  DEBUG_PRINTLN("Apps Higher: " + String(apps_higher));
+  DEBUG_PRINTLN("Apps Lower: " + String(apps_lower));
   const int scaled_apps_lower = scale_apps_lower_to_apps_higher(apps_lower);
+  DEBUG_PRINTLN("Scaled Apps Lower: " + String(scaled_apps_lower));
+
   const int difference = abs(scaled_apps_lower - apps_higher);
+  DEBUG_PRINTLN("Difference: " + String(difference));
+
   const int percentage_difference = (difference * 100) / apps_higher;
+  DEBUG_PRINTLN("Percentage Difference: " + String(percentage_difference));
+
   if (apps_lower < config::apps::APPS_LOWER_ZEROED) {
     if (apps_higher < config::apps::APPS_HIGHER_WHEN_LOWER_ZEROES) {
+      DEBUG_PRINTLN("Apps implausible: apps lower is zeroed, so we can ignore the implausibility");
       return true;  // apps lower is zeroed, so we can ignore the implausibility
-    } else
+      
+    } else {
+      DEBUG_PRINTLN(
+        "Apps implausible: apps lower is zeroed, but apps higher is not in the expected range");
       return false;
+      
+    }
   }
+  // print values
+  DEBUG_PRINTLN("dbg print lune");
   return (percentage_difference < config::apps::MAX_ERROR_PERCENT);
 }
 
@@ -112,12 +129,14 @@ bool LogicHandler::check_brake_plausibility(const uint16_t bamocar_value) {
 
 bool LogicHandler::check_apps_plausibility(const uint16_t apps_higher_avg,
                                            const uint16_t apps_lower_avg) {
-  if (!plausibility(apps_higher_avg, apps_lower_avg) &&
-      apps_implausibility_timer > config::apps::IMPLAUSIBLE_TIMEOUT_MS) {
+  if (plausibility(apps_higher_avg, apps_lower_avg)) {
+    apps_implausibility_timer = 0;
+    return true;
+  }
+  if (apps_implausibility_timer > config::apps::IMPLAUSIBLE_TIMEOUT_MS) {
+    apps_timeout = true;
     return false;
   }
-  apps_implausibility_timer = 0;
-
   return true;
 }
 
@@ -127,6 +146,11 @@ uint16_t LogicHandler::calculate_torque() {
   // DEBUG_PRINTLN("Apps Higher Average v2: " + String(apps_higher_average));
   // DEBUG_PRINTLN("Apps Lower Average v2: " + String(apps_lower_average));
   if (!check_apps_plausibility(apps_higher_average, apps_lower_average)) {
+    DEBUG_PRINTLN("Apps implausible, going idle");
+    DEBUG_PRINTLN("Apps implausible, going idle");
+    DEBUG_PRINTLN("Apps implausible, going idle");
+    DEBUG_PRINTLN("Apps implausible, going idle");
+
     return config::apps::ERROR_PLAUSIBILITY;  // shutdown ?
   }
 

@@ -71,7 +71,7 @@ namespace config {
         
         constexpr int8_t ERROR_PLAUSIBILITY = -4;
 
-        constexpr uint8_t MAX_ERROR_PERCENT = 15;
+        constexpr uint8_t MAX_ERROR_PERCENT = 10;
         constexpr uint16_t MAX_ERROR_ABS = UPPER_BOUND_APPS_HIGHER * MAX_ERROR_PERCENT/100;
         
         constexpr uint8_t SAMPLES = 5;
