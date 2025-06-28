@@ -23,6 +23,7 @@
   Serial.print(__LINE__);                                                      \
   Serial.print(' ');                                                           \
   Serial.print(#var);                                                          \
+  
   Serial.print(" = ");                                                         \
   Serial.println(var);
 #else

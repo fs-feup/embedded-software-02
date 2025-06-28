@@ -421,7 +421,7 @@ void setup() {
   delay(100);
   constexpr uint16_t buf[] = {0x0000};
   const auto widgetID = displaySPI.transfer16(buf , 1, WIDGET_CH_STATUS, millis() & 0xFFFF);
-  DEBUG_PRINT_VAR(widgetID);
+  DBUG_PRINT_VAR(widgetID);
 }
 
 void loop() {
@@ -435,7 +435,7 @@ void loop() {
         }
     }
     const auto widgetID = displaySPI.transfer16(buf, TOTAL_BOARDS, WIDGET_CELL_TEMPS, millis() & 0xFFFF);
-    DEBUG_PRINT_VAR(widgetID);
+    DBUG_PRINT_VAR(widgetID);
     cell_spi_timer = 0;
   }
 
@@ -460,14 +460,14 @@ void loop() {
     form_num = (form_num == 1) ? 2 : 1;  // toggle 1 and 2
     data[0] = form_num;
     const auto widgetID = displaySPI.transfer16(data, 1, 0x9999, millis() & 0xFFFF);
-    DEBUG_PRINT_VAR(widgetID);
+    DBUG_PRINT_VAR(widgetID);
     display_button_pressed = false;
   }
   // Send values to widgetID 0x0002
   if (spi_update_timer >= 10) {
     data[0] = value1;
     const auto widgetID = displaySPI.transfer16(data, 1, 0x0007, millis() & 0xFFFF);
-    DEBUG_PRINT_VAR(widgetID);
+    DBUG_PRINT_VAR(widgetID);
 
     // Update values
     if (increasing) {
