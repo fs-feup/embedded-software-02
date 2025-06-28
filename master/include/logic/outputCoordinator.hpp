@@ -171,12 +171,13 @@ private:
   }
 
   void brake_light_update() {
-    int brake_val = system_data_->hardware_data_.hydraulic_pressure_;
+    int brake_val = system_data_->hardware_data_._hydraulic_line_pressure;
     // DEBUG_PRINT("Brake pressure: " + String(brake_val));
-    // DEBUG_PRINT("Brake pressure lower threshold: " +
-                // String(BRAKE_PRESSURE_LOWER_THRESHOLD));
-    // DEBUG_PRINT("Brake pressure upper threshold: " +
-                // String(BRAKE_PRESSURE_UPPER_THRESHOLD));
+    //DEBUG_PRINT("Brake pressure lower threshold: " +
+    //            String(BRAKE_PRESSURE_LOWER_THRESHOLD));
+    //DEBUG_PRINT("Brake pressure upper threshold: " +
+    //            String(BRAKE_PRESSURE_UPPER_THRESHOLD));
+
     if (brake_val >= BRAKE_PRESSURE_LOWER_THRESHOLD &&
         brake_val <= BRAKE_PRESSURE_UPPER_THRESHOLD) {
       digital_sender_->turn_on_brake_light();

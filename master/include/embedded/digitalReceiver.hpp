@@ -172,7 +172,7 @@ inline void DigitalReceiver::read_bspd_sdc() {
 inline void DigitalReceiver::read_brake_sensor() {
   int hydraulic_pressure = analogRead(BRAKE_SENSOR);
   insert_value_queue(hydraulic_pressure, brake_readings);
-  hardware_data_->hydraulic_pressure_ = average_queue(brake_readings);
+  hardware_data_->_hydraulic_line_pressure = average_queue(brake_readings);
 }
 inline void DigitalReceiver::read_pneumatic_line() {
   bool pneumatic1 = digitalRead(EBS_SENSOR2);
@@ -180,7 +180,7 @@ inline void DigitalReceiver::read_pneumatic_line() {
 
   hardware_data_->pneumatic_line_pressure_1_ = pneumatic1;
   hardware_data_->pneumatic_line_pressure_2_ = pneumatic2;
-  bool latest_pneumatic_pressure = pneumatic2 && pneumatic1;
+  bool latest_pneumatic_pressure = pneumatic1 && pneumatic2;
 
   debounce(latest_pneumatic_pressure, hardware_data_->pneumatic_line_pressure_,
            pneumatic_change_counter_);
@@ -201,6 +201,7 @@ inline void DigitalReceiver::read_mission() {
     *mission_ = latest_mission;
     mission_change_counter_ = 0;
   }
+  *mission_ = Mission::MANUAL;
 }
 
 inline void DigitalReceiver::read_asms_switch() {
@@ -209,7 +210,7 @@ inline void DigitalReceiver::read_asms_switch() {
 }
 
 inline void DigitalReceiver::read_asats_state() {
-  bool asats_pressed = digitalRead(ASATS);
+  bool asats_pressed = !digitalRead(ASATS);
   debounce(asats_pressed, hardware_data_->asats_pressed_, aats_change_counter_);
 }
 

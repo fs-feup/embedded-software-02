@@ -12,11 +12,11 @@ struct HardwareData {
   bool ats_pressed_ = false;
   bool bspd_sdc_open_{true};
   bool wd_ready_ = false;
-  int hydraulic_pressure_ = 0;
+  int hydraulic_line_front_pressure = 0;
+  int _hydraulic_line_pressure = 0;
   uint8_t soc_ = 0;
   double _right_wheel_rpm = 0;
   double _left_wheel_rpm = 0;
-  int _hydraulic_line_pressure = 0;
   float rr_wheel_rpm = 0;
   float rl_wheel_rpm = 0;
 };
