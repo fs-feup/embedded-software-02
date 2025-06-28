@@ -13,7 +13,7 @@ bool LogicHandler::should_start_manual_driving() const {
   // DEBUG_PRINTLN("R2D pressed: " + String(data.r2d_pressed));
   // DEBUG_PRINTLN("TSOn: " + String(updated_data.TSOn));
   return (data.r2d_pressed &&
-          updated_data.TSOn /* && data.r2d_brake_timer < config::r2d::TIMEOUT_MS */);
+          updated_data.TSOn && data.r2d_brake_timer < config::r2d::TIMEOUT_MS);
 }
 
 bool LogicHandler::should_start_as_driving() const {

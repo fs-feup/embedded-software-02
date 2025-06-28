@@ -91,7 +91,7 @@ namespace config {
     }
 
     namespace r2d {
-        constexpr uint32_t TIMEOUT_MS = 15'000;
+        constexpr uint32_t TIMEOUT_MS = 1'000;
     }
 
     namespace bamocar {
