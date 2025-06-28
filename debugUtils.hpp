@@ -2,7 +2,7 @@
 
 #ifdef DEBUG
 #include <Arduino.h>
-#define DEBUG_PRINT(str)                                                       \
+#define DBUG_PRINT(str)                                                       \
   Serial.print(millis());                                                      \
   Serial.print(": ");                                                          \
   Serial.print(__PRETTY_FUNCTION__);                                           \
@@ -13,7 +13,7 @@
   Serial.print(' ');                                                           \
   Serial.println(str);
 
-#define DEBUG_PRINT_VAR(var)                                                   \
+#define DBUG_PRINT_VAR(var)                                                   \
   Serial.print(millis());                                                      \
   Serial.print(": ");                                                          \
   Serial.print(__PRETTY_FUNCTION__);                                           \
@@ -26,6 +26,6 @@
   Serial.print(" = ");                                                         \
   Serial.println(var);
 #else
-#define DEBUG_PRINT_VAR(var)
-#define DEBUG_PRINT(str)
+#define DBUG_PRINT_VAR(var)
+#define DBUG_PRINT(str)
 #endif
