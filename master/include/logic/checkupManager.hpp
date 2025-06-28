@@ -20,28 +20,6 @@ private:
   Metro _watchdog_test_timer_{WATCHDOG_TEST_DURATION};      ///< Timer for watchdog verification
 
   /**
-   * @brief Checks if the pneumatic pressure is high enough, meaning EBS worked.
-   * @return True if the pressure is high enough, false otherwise.
-   */
-  bool check_pressure_high() const;
-
-  /**
-   * @brief Checks if the pneumatic pressure is low enough, meaning EBS retracted.
-   * @return True if the pressure is low enough, false otherwise.
-   */
-  bool check_pressure_low() const;
-
-  /**
-   * @brief Checks if the vehicle has failed to build pneumatic pressure in the limit time
-   * (definido em engage ebs timestamp).
-   */
-  bool failed_to_build_pneumatic_pressure_in_engage_time() const;
-  /**
-   * @brief Checks if the vehicle has failed to build pneumatic pressure in the limit time
-   * (aqui há alguma redundância, no sentido de já ter sido feito check da linha antes).
-   */
-  bool failed_to_build_pneumatic_pressure_in_release_time() const;
-  /**
    * @brief Checks if the vehicle has failed to build hydraulic pressure in the limit time
    * (definido em engage ebs otv, quando entramos em ready ebs é ativado entao a pressão tem de
    * aumentar).
@@ -87,10 +65,10 @@ public:
   enum class EbsPressureTestPhase {
     DISABLE_ACTUATOR_1,
     CHECK_ACTUATOR_2,
-    ENABLE_ACTUATOR_1,
-    DISABLE_ACTUATOR_2,
+    CHANGE_ACTUATORS,
     CHECK_ACTUATOR_1,
     ENABLE_ACTUATOR_2,
+    CHECK_BOTH_ACTUATORS, 
     COMPLETE
   };
 
@@ -267,43 +245,51 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
       }
       break;
     case CheckupState::CHECK_BRAKE_PRESSURE:
-    DEBUG_PRINT("Hydraulic Pressure: " + String(_system_data_->hardware_data_._hydraulic_line_pressure));
-      if (_system_data_->hardware_data_._hydraulic_line_pressure >= HYDRAULIC_BRAKE_THRESHOLD) {
+    DEBUG_PRINT("Hydraulic Pressure: " + String(_system_data_->hardware_data_._hydraulic_line_pressure) + " - " +
+                String(_system_data_->hardware_data_.hydraulic_line_front_pressure));
+      if (_system_data_->hardware_data_._hydraulic_line_pressure >= HYDRAULIC_BRAKE_THRESHOLD && 
+        _system_data_->hardware_data_.hydraulic_line_front_pressure >= HYDRAULIC_BRAKE_THRESHOLD) {
         checkup_state_ = CheckupState::WAIT_FOR_ASATS;
       }
       break;
     case CheckupState::WAIT_FOR_ASATS:
-
+      DEBUG_PRINT("Waiting for AS ATS to be pressed");
       if (_system_data_->hardware_data_.asats_pressed_) {
         _system_data_->failure_detection_.emergency_signal_ = false;
         checkup_state_ = CheckupState::CLOSE_SDC;
         DEBUG_PRINT("AS ATS Pressed");
       }
       break;
-    case CheckupState::CLOSE_SDC:
-      DigitalSender::close_sdc();
-      checkup_state_ = CheckupState::WAIT_FOR_TS;
-
-      break;
-    case CheckupState::WAIT_FOR_TS:
-      if (_system_data_->failure_detection_.ts_on_) {
-        DEBUG_PRINT("TS activated");
-
-        checkup_state_ = CheckupState::EBS_CHECKS;
-      }
-      break;
-    case CheckupState::EBS_CHECKS:  
-      handle_ebs_check();
-      break;
     case CheckupState::CHECK_TIMESTAMPS: {
+      DEBUG_PRINT("Checking timestamps");
       if (_system_data_->failure_detection_.has_any_component_timed_out() ||
           _system_data_->failure_detection_.emergency_signal_) {
         return CheckupError::ERROR_TIMESTAMPS_EMERGENCY;
       }
-      checkup_state_ = CheckupState::CHECKUP_COMPLETE;
-      DEBUG_PRINT("Checkup complete and returning success");
-      return CheckupError::SUCCESS;
+      checkup_state_ = CheckupState::CLOSE_SDC;
+      break;
     }
+    case CheckupState::CLOSE_SDC:
+      DigitalSender::close_sdc();
+      checkup_state_ = CheckupState::WAIT_FOR_TS;
+      DEBUG_PRINT("Closing SDC");
+      break;
+    case CheckupState::WAIT_FOR_TS:
+      DEBUG_PRINT("Waiting for TS activation");
+      if (_system_data_->failure_detection_.ts_on_) {
+        DEBUG_PRINT("TS activated");
+        checkup_state_ = CheckupState::EBS_CHECKS;
+      }
+      break;
+    case CheckupState::EBS_CHECKS:  
+      DEBUG_PRINT("Starting EBS checks");
+      handle_ebs_check();
+      if (pressure_test_phase_ == EbsPressureTestPhase::COMPLETE) {
+        checkup_state_ = CheckupState::CHECKUP_COMPLETE;
+      }
+      DEBUG_PRINT("Checkup complete and returning success");
+      break;
+
     default:
       break;
   }
@@ -316,51 +302,57 @@ inline void CheckupManager::handle_ebs_check() {
       // Step 10: Disable EBS actuator 1
       DEBUG_PRINT("Disabling EBS actuator 1");
       DigitalSender::disable_ebs_actuator_1();
-      pressure_test_phase_ = EbsPressureTestPhase::ENABLE_ACTUATOR_1;
+      pressure_test_phase_ = EbsPressureTestPhase::CHANGE_ACTUATORS;
       break;
 
     case EbsPressureTestPhase::CHECK_ACTUATOR_2:
-      if (check_pressure_high()) {//pressure should be high even with only one actuator
+      if (_system_data_->hardware_data_.pneumatic_line_pressure_ &&
+        _system_data_->hardware_data_.hydraulic_line_front_pressure < HYDRAULIC_BRAKE_THRESHOLD &&
+        _system_data_->hardware_data_._hydraulic_line_pressure >= HYDRAULIC_BRAKE_THRESHOLD) {//pressure should be high even with only one actuator
         DEBUG_PRINT("Pressure high confirmed with only actuator 2");
-        pressure_test_phase_ = EbsPressureTestPhase::ENABLE_ACTUATOR_1;
+        pressure_test_phase_ = EbsPressureTestPhase::CHANGE_ACTUATORS;
       }
       break;
 
-    case EbsPressureTestPhase::ENABLE_ACTUATOR_1:
-      // Step 12: Enable EBS actuator 1 again
-      DEBUG_PRINT("Re-enabling EBS actuator 1");
+    case EbsPressureTestPhase::CHANGE_ACTUATORS:
+      // Step 12: Enable EBS actuator 1 again and disable actuator 2
+      DEBUG_PRINT("Re-enabling EBS actuator 1 and disabling actuator 2");
       DigitalSender::enable_ebs_actuator_1();
-      pressure_test_phase_ = EbsPressureTestPhase::DISABLE_ACTUATOR_2;
-      break;
-
-    case EbsPressureTestPhase::DISABLE_ACTUATOR_2:
-      // Step 13: Disable EBS actuator 2
-      DEBUG_PRINT("Disabling EBS actuator 2");
       DigitalSender::disable_ebs_actuator_2();
       pressure_test_phase_ = EbsPressureTestPhase::ENABLE_ACTUATOR_2;
       break;
 
     case EbsPressureTestPhase::CHECK_ACTUATOR_1:
-      // Step 14: Check that the brake pressure is still built up correctly
-      if (check_pressure_high()) {
+      // Step 13: Check that the brake pressure is still built up correctly
+      if (_system_data_->hardware_data_.pneumatic_line_pressure_ &&
+        _system_data_->hardware_data_.hydraulic_line_front_pressure >= HYDRAULIC_BRAKE_THRESHOLD &&
+        _system_data_->hardware_data_._hydraulic_line_pressure < HYDRAULIC_BRAKE_THRESHOLD) {
         DEBUG_PRINT("Pressure high confirmed with only actuator 1");
         pressure_test_phase_ = EbsPressureTestPhase::ENABLE_ACTUATOR_2;
       }
       break;
 
     case EbsPressureTestPhase::ENABLE_ACTUATOR_2:
-      // Step 15: Enable EBS actuator 2 again
+      // Step 14: Enable EBS actuator 2 again
       DEBUG_PRINT("Re-enabling EBS actuator 2");
       DigitalSender::enable_ebs_actuator_2();
       pressure_test_phase_ = EbsPressureTestPhase::COMPLETE;
       break;
 
+    case EbsPressureTestPhase::CHECK_BOTH_ACTUATORS:
+      // Step 15: Check that both actuators are working correctly
+      if (_system_data_->hardware_data_.pneumatic_line_pressure_ &&
+          _system_data_->hardware_data_.hydraulic_line_front_pressure >= HYDRAULIC_BRAKE_THRESHOLD &&
+          _system_data_->hardware_data_._hydraulic_line_pressure >= HYDRAULIC_BRAKE_THRESHOLD) {
+        DEBUG_PRINT("Both actuators confirmed working correctly");
+        pressure_test_phase_ = EbsPressureTestPhase::COMPLETE;
+      }
+      break;
+
     case EbsPressureTestPhase::COMPLETE:
-      // Step 16: Transition to ready state (isto n fazemos já mas vamos checkar as timestamps e
-      // entramos ready dps)
+      // Step 16: Transition to ready state
       DEBUG_PRINT("EBS check complete, transitioning to next state");
       pressure_test_phase_ = EbsPressureTestPhase::DISABLE_ACTUATOR_1;
-      checkup_state_ = CheckupState::CHECK_TIMESTAMPS;
       break;
   }
 }
@@ -397,7 +389,7 @@ inline bool CheckupManager::should_enter_emergency(State current_state) const {
 
 bool CheckupManager::should_enter_emergency_in_ready_state() const {
   return _system_data_->failure_detection_.emergency_signal_ ||
-         failed_to_build_pneumatic_pressure_in_engage_time() ||
+         !_system_data_->hardware_data_.pneumatic_line_pressure_ ||
          _system_data_->failure_detection_.has_any_component_timed_out() ||
          !_system_data_->hardware_data_.asms_on_ || !_system_data_->failure_detection_.ts_on_ ||
          failed_to_build_hydraulic_pressure_in_time() ||
@@ -408,36 +400,20 @@ bool CheckupManager::should_enter_emergency_in_driving_state() const {
   return _system_data_->failure_detection_.has_any_component_timed_out() ||
          _system_data_->failure_detection_.emergency_signal_ ||
          _system_data_->hardware_data_.bspd_sdc_open_ ||
-         failed_to_build_pneumatic_pressure_in_release_time() ||
+         !_system_data_->hardware_data_.pneumatic_line_pressure_ ||
          failed_to_reduce_hydraulic_pressure_in_time() || !_system_data_->hardware_data_.asms_on_ ||
          !_system_data_->failure_detection_.ts_on_;
 }
 
-inline bool CheckupManager::check_pressure_high() const {
-  return _system_data_->hardware_data_._hydraulic_line_pressure >= HYDRAULIC_BRAKE_THRESHOLD &&
-         _system_data_->hardware_data_.pneumatic_line_pressure_;
-}
-
-inline bool CheckupManager::check_pressure_low() const {
-  return _system_data_->hardware_data_._hydraulic_line_pressure < HYDRAULIC_BRAKE_THRESHOLD &&
-         _system_data_->hardware_data_.pneumatic_line_pressure_;
-}
-
-bool CheckupManager::failed_to_build_pneumatic_pressure_in_engage_time() const {
-  return _system_data_->hardware_data_.pneumatic_line_pressure_ == 0 &&
-         _system_data_->r2d_logics_.engageEbsTimestamp.checkWithoutReset();
-}
-bool CheckupManager::failed_to_build_pneumatic_pressure_in_release_time() const {
-  return _system_data_->hardware_data_.pneumatic_line_pressure_ == 0 &&
-         _system_data_->r2d_logics_.releaseEbsTimestamp.checkWithoutReset();
-}
 bool CheckupManager::failed_to_build_hydraulic_pressure_in_time() const {
-  return _system_data_->hardware_data_._hydraulic_line_pressure < HYDRAULIC_BRAKE_THRESHOLD &&
+  return _system_data_->hardware_data_._hydraulic_line_pressure < HYDRAULIC_BRAKE_THRESHOLD && 
+         _system_data_->hardware_data_.hydraulic_line_front_pressure < HYDRAULIC_BRAKE_THRESHOLD &&
          _system_data_->r2d_logics_.engageEbsTimestamp.checkWithoutReset();
 }
 
 bool CheckupManager::failed_to_reduce_hydraulic_pressure_in_time() const {
   return _system_data_->hardware_data_._hydraulic_line_pressure >= HYDRAULIC_BRAKE_THRESHOLD &&
+         _system_data_->hardware_data_.hydraulic_line_front_pressure >= HYDRAULIC_BRAKE_THRESHOLD &&
          _system_data_->r2d_logics_.releaseEbsTimestamp.checkWithoutReset();
 }
 
