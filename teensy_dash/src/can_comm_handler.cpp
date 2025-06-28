@@ -210,7 +210,7 @@ void CanCommHandler::master_callback(const uint8_t* const msg_data, const uint8_
 void CanCommHandler::write_messages() {
   if (rpm_timer >= RPM_MSG_PERIOD_MS) {
     write_rpm();
-    write_bamocar_speed();
+    // write_bamocar_speed();
     rpm_timer = 0;
   }
 
