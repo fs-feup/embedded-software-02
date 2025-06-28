@@ -206,7 +206,7 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
   switch (checkup_state_) {
     case CheckupState::WAIT_FOR_ASMS:
       if (_system_data_->hardware_data_.asms_on_) {
-        checkup_state_ = CheckupState::START_TOGGLING_WATCHDOG;
+        checkup_state_ = CheckupState::CHECK_BRAKE_PRESSURE;
         DEBUG_PRINT("ASMS activated, starting watchdog check");
       }
       break;
@@ -261,11 +261,13 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
       checkup_state_ = CheckupState::CHECK_EBS_STORAGE;
       break;
     case CheckupState::CHECK_EBS_STORAGE:
+    DEBUG_PRINT("EBS Storage - pressure: " + String(_system_data_->hardware_data_.pneumatic_line_pressure_));
       if (_system_data_->hardware_data_.pneumatic_line_pressure_) {
         checkup_state_ = CheckupState::CHECK_BRAKE_PRESSURE;
       }
       break;
     case CheckupState::CHECK_BRAKE_PRESSURE:
+    DEBUG_PRINT("Hydraulic Pressure: " + String(_system_data_->hardware_data_._hydraulic_line_pressure));
       if (_system_data_->hardware_data_._hydraulic_line_pressure >= HYDRAULIC_BRAKE_THRESHOLD) {
         checkup_state_ = CheckupState::WAIT_FOR_ASATS;
       }
@@ -275,6 +277,7 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
       if (_system_data_->hardware_data_.asats_pressed_) {
         _system_data_->failure_detection_.emergency_signal_ = false;
         checkup_state_ = CheckupState::CLOSE_SDC;
+        DEBUG_PRINT("AS ATS Pressed");
       }
       break;
     case CheckupState::CLOSE_SDC:
@@ -313,7 +316,7 @@ inline void CheckupManager::handle_ebs_check() {
       // Step 10: Disable EBS actuator 1
       DEBUG_PRINT("Disabling EBS actuator 1");
       DigitalSender::disable_ebs_actuator_1();
-      pressure_test_phase_ = EbsPressureTestPhase::CHECK_ACTUATOR_2;
+      pressure_test_phase_ = EbsPressureTestPhase::ENABLE_ACTUATOR_1;
       break;
 
     case EbsPressureTestPhase::CHECK_ACTUATOR_2:
@@ -334,7 +337,7 @@ inline void CheckupManager::handle_ebs_check() {
       // Step 13: Disable EBS actuator 2
       DEBUG_PRINT("Disabling EBS actuator 2");
       DigitalSender::disable_ebs_actuator_2();
-      pressure_test_phase_ = EbsPressureTestPhase::CHECK_ACTUATOR_1;
+      pressure_test_phase_ = EbsPressureTestPhase::ENABLE_ACTUATOR_2;
       break;
 
     case EbsPressureTestPhase::CHECK_ACTUATOR_1:

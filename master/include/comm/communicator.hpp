@@ -100,6 +100,11 @@ public:
   static void steering_callback();
 
   /**
+   * @brief Callback for dashboard
+   */
+  static void dash_callback(const uint8_t* buf);
+
+  /**
    * @brief Publish AS State to CAN
    */
   static int publish_state(int state_id);
@@ -153,7 +158,8 @@ inline void Communicator::res_state_callback(const uint8_t *buf) {
   bool emg_stop2 = buf[3] >> 7 & 0x01;
   bool go_switch = (buf[0] >> 1) & 0x01;
   bool go_button = (buf[0] >> 2) & 0x01;
-
+  DEBUG_PRINT("RES GO: " + String(go_switch) + "   EMG 1: " + String(emg_stop1) + "   EMG 2: " + String(emg_stop2));
+  
   if (go_button || go_switch)
     _systemData->r2d_logics_.process_go_signal();
   else if (!(emg_stop1 || emg_stop2)) { // If both are false 
@@ -223,6 +229,13 @@ inline void Communicator::steering_callback() {
   _systemData->failure_detection_.steer_alive_timestamp_.reset();
 }
 
+inline void Communicator::dash_callback(const uint8_t *buf) {
+  if (buf[0] == HYDRAULIC_LINE) {
+    _systemData->hardware_data_.hydraulic_line_front_pressure = (buf[2] << 8) | buf[1];
+  }
+}
+
+
 inline void Communicator::parse_message(const CAN_message_t &msg) {
   switch (msg.id) {
     case AS_CU_ID:
@@ -239,10 +252,14 @@ inline void Communicator::parse_message(const CAN_message_t &msg) {
     case STEERING_ID:
       steering_callback();
       break;
+    case DASH_ID:
+      dash_callback(msg.buf);
+      break;
     default:
       break;
   }
 }
+
 
 inline int Communicator::publish_state(const int state_id) {
   const std::array<uint8_t, 2> msg = {STATE_MSG, static_cast<uint8_t>(state_id)};
