@@ -8,7 +8,7 @@ const u_int8_t pin_ntc_temp[NTC_SENSOR_COUNT] = {A4,  A5,  A6,  A7, A8, A9,  A2,
 float cell_temps[NTC_SENSOR_COUNT];
 CAN_error_t error;
 
-const unsigned long SETUP_TIMEOUT = 5000;  // 5 seconds for CAN set up detection
+const unsigned long SETUP_TIMEOUT = 1000;  // 5 seconds for CAN set up detection
 
 bool baud_1M = true;
 unsigned long last_reading_time = 0;
@@ -27,7 +27,7 @@ bool check_master_timeout() {
 
   // Allow 2 seconds on startup before considering it a timeout
   if (!master_has_communicated) {
-    if (current_time > 2000) {
+    if (current_time > 10000) {
       DEBUG_PRINTLN("Timeout: No data ever received from master");
       return true;
     }
@@ -202,7 +202,7 @@ bool check_temperature_timeouts() {
 
     if (!board.has_communicated) {
       // Allow 2 seconds on startup before considering it a timeout
-      if (current_time > 2000) {
+      if (current_time > 15000) {
         // DEBUG_PRINT("Timeout: No data ever received from board ");
         // DEBUG_PRINTLN(board_id);
         timeout_detected = true;
@@ -392,13 +392,12 @@ void initialize_can(uint32_t baudRate) {
 
   can1.mailboxStatus();
   DEBUG_PRINTLN("CAN Initialized/Re-initialized.");
-  delay(1000);                     // Allow some time for the CAN bus to stabilize
   last_message_received_time = 0;  // Reset message timer for detection logic
 }
 
 void setup() {
   Serial.begin(115200);
-  delay(3000);
+  
 
   code_reset();
 
@@ -413,7 +412,7 @@ void setup() {
   for (int i = 0; i < NTC_SENSOR_COUNT; i++) {
     pinMode(pin_ntc_temp[i], INPUT);
   }
-
+  delay(100);
   initialize_can(CAN_DRIVING_BAUD_RATE);
 
   unsigned long can_1M_start_time = millis();
@@ -426,7 +425,7 @@ void setup() {
       received_at_1M = true;
       break;
     }
-    delay(10);  // Small delay to allow other processes
+    delay(5);  // Small delay to allow other processes
   }
 
   if (!received_at_1M) {
@@ -470,8 +469,6 @@ void loop() {
     calculate_global_stats(global_data);
     send_to_bms(global_data);
     send_master_heartbeat();
-    // debug_helper();
-    delay(200);  // Wait a bit before next loop iteration
 #endif
     show_temperatures();
   }
@@ -479,5 +476,5 @@ void loop() {
     error_count = 0;
     no_error_iterations = 0;
   }
-  delay(BOARD_ID * 300);
+  delay(2 * BOARD_ID);
 }

@@ -26,8 +26,7 @@ void CanCommHandler::setup() {
   can1.setFIFOFilter(1, BAMO_RESPONSE_ID, STD);
   can1.setFIFOFilter(2, MASTER_ID, STD);
   can1.onReceive(can_snifflas);
-  DEBUG_PRINTLN("WAITING 10 SEC");
-  delay(10000);
+  delay(100);
 
   CAN_message_t disable;
 

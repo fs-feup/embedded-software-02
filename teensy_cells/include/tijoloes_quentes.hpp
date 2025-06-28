@@ -6,14 +6,14 @@
 #include "../../CAN_IDs.h"
 // System Configuration
 constexpr uint8_t TOTAL_BOARDS = 6;
-constexpr uint16_t TEMP_SENSOR_READ_INTERVAL = 100;
+constexpr uint16_t TEMP_SENSOR_READ_INTERVAL = 95;
 constexpr int8_t NO_ERROR_RESET_THRESHOLD = 50;
 constexpr uint8_t NTC_SENSOR_COUNT = 18;
 constexpr uint16_t ANALOG_MAX = 1023;
 constexpr uint16_t ANALOG_MIN = 0;
 constexpr int ERROR_SIGNAL = 35;
 constexpr uint8_t MAX_RETRIES = 3;
-constexpr uint8_t MAX_NUM_ERRORS = 4;
+constexpr uint8_t MAX_NUM_ERRORS = 10;
 // Voltage and Resistor Configuration
 constexpr float VDD = 5.0;
 constexpr float V_REF = 3.3f;
@@ -30,7 +30,7 @@ constexpr float NTC_BETA = 3971.0;
 constexpr float MAXIMUM_TEMPERATURE = 60.0;
 constexpr int8_t MAX_INT8_T = 127;
 constexpr int8_t MIN_INT8_T = -128;
-constexpr uint16_t MAX_TEMP_DELAY_MS = 2000;
+constexpr uint16_t MAX_TEMP_DELAY_MS = 4000;
 
 // CAN Communication
 constexpr uint8_t CELLS_PER_MESSAGE = 6;
