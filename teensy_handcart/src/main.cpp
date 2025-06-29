@@ -7,6 +7,7 @@
 #include "constants.hpp"
 #include "structs.hpp"
 #include "utils.hpp"
+// #include "../../debugUtils.hpp"
 
 FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> can1;
 
@@ -99,6 +100,10 @@ void can_snifflas(const CAN_message_t &message) {
   } else if (message.id == BMS_ID_CCL) {
     param.ccl = message.buf[0] * 1000;  // Assuming conversion is correct
     param.ch_safety = message.buf[2] & 0x04;
+    //print
+    print_value("CCL= ", param.ccl);
+
+
 
     const uint16_t buf[] = { static_cast<uint16_t>(param.ch_safety)};
     displaySPI.transfer16(buf, 1, WIDGET_CH_SAFETY, millis() & 0xFFFF);
@@ -370,6 +375,7 @@ void print_all_board_temps() {
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115'200);
+  delay(2000);  // Allow time for Serial Monitor to open
   Serial.println("startup");
   Serial.println("startup");
   Serial.println("startup");
@@ -418,8 +424,9 @@ void setup() {
   param.set_voltage = MAX_VOLTAGE;
 
   delay(100);
-  constexpr uint16_t buf[] = { 0x0000 };
-  displaySPI.transfer16(buf , 1, WIDGET_CH_STATUS, millis() & 0xFFFF);
+  constexpr uint16_t buf[] = {0x0000};
+  const auto widgetID = displaySPI.transfer16(buf , 1, WIDGET_CH_STATUS, millis() & 0xFFFF);
+  // DBUG_PRINT_VAR(widgetID);
 }
 
 void loop() {
@@ -432,7 +439,8 @@ void loop() {
           buf[i] = 0;  // No data available
         }
     }
-    displaySPI.transfer16(buf, TOTAL_BOARDS, WIDGET_CELL_TEMPS, millis() & 0xFFFF);
+    const auto widgetID = displaySPI.transfer16(buf, TOTAL_BOARDS, WIDGET_CELL_TEMPS, millis() & 0xFFFF);
+    // DBUG_PRINT_VAR(widgetID);
     cell_spi_timer = 0;
   }
 
@@ -456,13 +464,15 @@ void loop() {
     Serial.println("button pressed");
     form_num = (form_num == 1) ? 2 : 1;  // toggle 1 and 2
     data[0] = form_num;
-    displaySPI.transfer16(data, 1, 0x9999, millis() & 0xFFFF);
+    const auto widgetID = displaySPI.transfer16(data, 1, 0x9999, millis() & 0xFFFF);
+    // DBUG_PRINT_VAR(widgetID);
     display_button_pressed = false;
   }
   // Send values to widgetID 0x0002
-  if (spi_update_timer >= 100) {
+  if (spi_update_timer >= 10) {
     data[0] = value1;
-    displaySPI.transfer16(data, 1, 0x0007, millis() & 0xFFFF);
+    const auto widgetID = displaySPI.transfer16(data, 1, 0x0007, millis() & 0xFFFF);
+    // DBUG_PRINT_VAR(widgetID);
 
     // Update values
     if (increasing) {

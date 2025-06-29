@@ -10,7 +10,7 @@ SystemData data;
 SystemVolatileData updated_data;
 volatile SystemVolatileData updatable_data;
 elapsedMillis loop_timer;
-constexpr uint8_t MAIN_LOOP_INTERVAL = 100;
+constexpr uint8_t MAIN_LOOP_INTERVAL = 20;
 
 IOManager io_manager(data, updatable_data, updated_data);
 CanCommHandler can_comm_handler(data, updatable_data, updated_data);
@@ -20,7 +20,7 @@ StateMachine state_machine(can_comm_handler, logic_handler, io_manager);
 void setup() {
   Serial.begin(9600);
   io_manager.setup();
-  delay(100);  // Wait for Serial to be ready
+  delay(10);  // Wait for Serial to be ready
   io_manager.manage();
   can_comm_handler.setup();
 }

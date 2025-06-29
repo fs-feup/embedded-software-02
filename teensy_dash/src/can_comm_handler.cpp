@@ -26,8 +26,7 @@ void CanCommHandler::setup() {
   can1.setFIFOFilter(1, BAMO_RESPONSE_ID, STD);
   can1.setFIFOFilter(2, MASTER_ID, STD);
   can1.onReceive(can_snifflas);
-  DEBUG_PRINTLN("WAITING 10 SEC");
-  delay(10000);
+  delay(100);
 
   CAN_message_t disable;
 
@@ -210,7 +209,7 @@ void CanCommHandler::master_callback(const uint8_t* const msg_data, const uint8_
 void CanCommHandler::write_messages() {
   if (rpm_timer >= RPM_MSG_PERIOD_MS) {
     write_rpm();
-    write_bamocar_speed();
+    // write_bamocar_speed();
     rpm_timer = 0;
   }
 
