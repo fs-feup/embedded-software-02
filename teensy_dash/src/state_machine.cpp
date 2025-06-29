@@ -10,12 +10,6 @@ void StateMachine::update() {
   int torque_from_apps = 0;
   switch (current_state_) {
     case State::IDLE:
-      // torque_from_apps = logic_handler.calculate_torque();
-      // DEBUG_PRINTLN("Torque from apps: " + String(torque_from_apps));
-      // if (torque_from_apps == config::apps::ERROR_PLAUSIBILITY) {
-      //   DEBUG_PRINTLN("Torque implausible, going idle");
-      //   DEBUG_PRINTLN("Torque implausible, going idle");
-      // }
       if (logic_handler.should_start_manual_driving()) {
         current_state_ = State::INITIALIZING_DRIVING;
         DEBUG_PRINTLN("Starting manual driving");
@@ -58,9 +52,6 @@ void StateMachine::update() {
         return;
       }
       DEBUG_PRINTLN("Torque from apps: " + String(torque_from_apps));
-
-      // extra if error plausibility it will not send torque
-
       if (torque_from_apps > 0 && torque_from_apps <= config::bamocar::MAX) {
         can_handler.send_torque(
             torque_from_apps); /* VVVVVRRRRRRRRRRUUUUUUMMMMMMMMMMMMMMMMMMMMMMMm*/

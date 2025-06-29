@@ -143,19 +143,19 @@ bool LogicHandler::check_apps_plausibility(const uint16_t apps_higher_avg,
   return true;
 }
 
-uint16_t LogicHandler::calculate_torque() {
+int LogicHandler::calculate_torque() {
   const uint16_t apps_higher_average = average_queue(data.apps_higher_readings);
   const uint16_t apps_lower_average = average_queue(data.apps_lower_readings);
   // DEBUG_PRINTLN("Apps Higher Average v2: " + String(apps_higher_average));
   // DEBUG_PRINTLN("Apps Lower Average v2: " + String(apps_lower_average));
-  if (!check_apps_plausibility(apps_higher_average, apps_lower_average)) {
-    DEBUG_PRINTLN("Apps implausible, going idle");
-    DEBUG_PRINTLN("Apps implausible, going idle");
-    DEBUG_PRINTLN("Apps implausible, going idle");
-    DEBUG_PRINTLN("Apps implausible, going idle");
+  // if (!check_apps_plausibility(apps_higher_average, apps_lower_average)) {
+  //   DEBUG_PRINTLN("Apps implausible, going idle");
+  //   // DEBUG_PRINTLN("Apps implausible, going idle");
+  //   // DEBUG_PRINTLN("Apps implausible, going idle");
+  //   // DEBUG_PRINTLN("Apps implausible, going idle");
 
-    return config::apps::ERROR_PLAUSIBILITY;  // shutdown ?
-  }
+  //   return config::apps::ERROR_PLAUSIBILITY;  // shutdown ?
+  // }
 
   const uint16_t bamocar_value = apps_to_bamocar_value(apps_higher_average, apps_lower_average);
 
@@ -169,9 +169,9 @@ uint16_t LogicHandler::calculate_torque() {
     }
   }
 
-  if (!check_brake_plausibility(bamocar_value)) {
-    return 0;
-  }
+  // if (!check_brake_plausibility(bamocar_value)) {
+  //   return 0;
+  // }
 
   return bamocar_value;
 }
