@@ -253,10 +253,9 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
       }
       break;
     case CheckupState::WAIT_FOR_ASATS:
-      DEBUG_PRINT("Waiting for AS ATS to be pressed");
       if (_system_data_->hardware_data_.asats_pressed_) {
         _system_data_->failure_detection_.emergency_signal_ = false;
-        checkup_state_ = CheckupState::CLOSE_SDC;
+        checkup_state_ = CheckupState::CHECK_TIMESTAMPS;
         DEBUG_PRINT("AS ATS Pressed");
       }
       break;
@@ -284,11 +283,12 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
     case CheckupState::EBS_CHECKS:  
       DEBUG_PRINT("Starting EBS checks");
       handle_ebs_check();
-      if (pressure_test_phase_ == EbsPressureTestPhase::COMPLETE) {
-        checkup_state_ = CheckupState::CHECKUP_COMPLETE;
-      }
-      DEBUG_PRINT("Checkup complete and returning success");
       break;
+    case CheckupState::CHECKUP_COMPLETE:
+      // Final state, all checks passed
+      // DEBUG_PRINT("Checkup complete, transitioning to ready state");
+      return CheckupError::SUCCESS;
+
 
     default:
       break;
@@ -341,6 +341,7 @@ inline void CheckupManager::handle_ebs_check() {
 
     case EbsPressureTestPhase::CHECK_BOTH_ACTUATORS:
       // Step 15: Check that both actuators are working correctly
+      DEBUG_PRINT("Final pressure check");
       if (_system_data_->hardware_data_.pneumatic_line_pressure_ &&
           _system_data_->hardware_data_.hydraulic_line_front_pressure >= HYDRAULIC_BRAKE_THRESHOLD &&
           _system_data_->hardware_data_._hydraulic_line_pressure >= HYDRAULIC_BRAKE_THRESHOLD) {
@@ -352,6 +353,7 @@ inline void CheckupManager::handle_ebs_check() {
     case EbsPressureTestPhase::COMPLETE:
       // Step 16: Transition to ready state
       DEBUG_PRINT("EBS check complete, transitioning to next state");
+      checkup_state_ = CheckupState::CHECKUP_COMPLETE;
       pressure_test_phase_ = EbsPressureTestPhase::DISABLE_ACTUATOR_1;
       break;
   }
