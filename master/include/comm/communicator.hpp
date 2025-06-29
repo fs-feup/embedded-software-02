@@ -174,7 +174,7 @@ inline void Communicator::res_state_callback(const uint8_t *buf) {
                    // DEBUG_PRINT("SIGNAL OKAY");
   } else {
     // Too many will violate the disconnection time limit
-    // DEBUG_PRINT("SIGNAL LOSS");
+    DEBUG_PRINT("SIGNAL LOSS");
   }
 }
 
@@ -216,6 +216,7 @@ inline void Communicator::bamocar_callback(const uint8_t *buf) {
 }
 
 inline void Communicator::pc_callback(const uint8_t *buf) {
+  DEBUG_PRINT("PC alive signal received");
   if (buf[0] == PC_ALIVE) {
     _systemData->failure_detection_.pc_alive_timestamp_.reset();
   } else if (buf[0] == MISSION_FINISHED) {

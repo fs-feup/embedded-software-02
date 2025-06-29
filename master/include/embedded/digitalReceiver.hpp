@@ -201,7 +201,7 @@ inline void DigitalReceiver::read_mission() {
     *mission_ = latest_mission;
     mission_change_counter_ = 0;
   }
-  *mission_ = Mission::MANUAL;
+  *mission_ = Mission::INSPECTION;
 }
 
 inline void DigitalReceiver::read_asms_switch() {

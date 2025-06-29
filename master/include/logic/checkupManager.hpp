@@ -168,7 +168,7 @@ inline bool CheckupManager::should_stay_manual_driving() const {
   //   return false;
   // }
 
-  return true;
+  return false;
 }
 
 inline bool CheckupManager::should_stay_off() {
@@ -184,7 +184,7 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
   switch (checkup_state_) {
     case CheckupState::WAIT_FOR_ASMS:
       if (_system_data_->hardware_data_.asms_on_) {
-        checkup_state_ = CheckupState::CHECK_BRAKE_PRESSURE;
+        checkup_state_ = CheckupState::WAIT_FOR_ASATS;
         DEBUG_PRINT("ASMS activated, starting watchdog check");
       }
       break;
@@ -255,7 +255,7 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
     case CheckupState::WAIT_FOR_ASATS:
       if (_system_data_->hardware_data_.asats_pressed_) {
         _system_data_->failure_detection_.emergency_signal_ = false;
-        checkup_state_ = CheckupState::CLOSE_SDC;
+        checkup_state_ = CheckupState::CHECK_TIMESTAMPS;
         DEBUG_PRINT("AS ATS Pressed");
       }
       break;
@@ -277,7 +277,7 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
       DEBUG_PRINT("Waiting for TS activation");
       if (_system_data_->failure_detection_.ts_on_) {
         DEBUG_PRINT("TS activated");
-        checkup_state_ = CheckupState::EBS_CHECKS;
+        checkup_state_ = CheckupState::CHECKUP_COMPLETE;
       }
       break;
     case CheckupState::EBS_CHECKS:  
