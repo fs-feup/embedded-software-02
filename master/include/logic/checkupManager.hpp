@@ -168,7 +168,7 @@ inline bool CheckupManager::should_stay_manual_driving() const {
   //   return false;
   // }
 
-  return false;
+  return true;
 }
 
 inline bool CheckupManager::should_stay_off() {
@@ -260,7 +260,6 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
       }
       break;
     case CheckupState::CHECK_TIMESTAMPS: {
-      DEBUG_PRINT("Checking timestamps");
       if (_system_data_->failure_detection_.has_any_component_timed_out() ||
           _system_data_->failure_detection_.emergency_signal_) {
         return CheckupError::ERROR_TIMESTAMPS_EMERGENCY;
@@ -274,7 +273,7 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
       DEBUG_PRINT("Closing SDC");
       break;
     case CheckupState::WAIT_FOR_TS:
-      DEBUG_PRINT("Waiting for TS activation");
+      // DEBUG_PRINT("Waiting for TS activation");
       if (_system_data_->failure_detection_.ts_on_) {
         DEBUG_PRINT("TS activated");
         checkup_state_ = CheckupState::CHECKUP_COMPLETE;
@@ -361,7 +360,6 @@ inline void CheckupManager::handle_ebs_check() {
 
 inline bool CheckupManager::should_go_ready_from_off() const {
   if (!_system_data_->hardware_data_.asms_on_ || !_system_data_->failure_detection_.ts_on_ ||
-      !_system_data_->hardware_data_.asats_pressed_ ||
       _system_data_->hardware_data_.bspd_sdc_open_) {
     return false;
   }
@@ -391,10 +389,10 @@ inline bool CheckupManager::should_enter_emergency(State current_state) const {
 
 bool CheckupManager::should_enter_emergency_in_ready_state() const {
   return _system_data_->failure_detection_.emergency_signal_ ||
-         !_system_data_->hardware_data_.pneumatic_line_pressure_ ||
+        //  !_system_data_->hardware_data_.pneumatic_line_pressure_ ||
          _system_data_->failure_detection_.has_any_component_timed_out() ||
          !_system_data_->hardware_data_.asms_on_ || !_system_data_->failure_detection_.ts_on_ ||
-         failed_to_build_hydraulic_pressure_in_time() ||
+        //  failed_to_build_hydraulic_pressure_in_time() ||
          _system_data_->hardware_data_.bspd_sdc_open_;
 }
 
@@ -402,8 +400,9 @@ bool CheckupManager::should_enter_emergency_in_driving_state() const {
   return _system_data_->failure_detection_.has_any_component_timed_out() ||
          _system_data_->failure_detection_.emergency_signal_ ||
          _system_data_->hardware_data_.bspd_sdc_open_ ||
-         !_system_data_->hardware_data_.pneumatic_line_pressure_ ||
-         failed_to_reduce_hydraulic_pressure_in_time() || !_system_data_->hardware_data_.asms_on_ ||
+        //  !_system_data_->hardware_data_.pneumatic_line_pressure_ ||
+        //  failed_to_reduce_hydraulic_pressure_in_time() || 
+         !_system_data_->hardware_data_.asms_on_ ||
          !_system_data_->failure_detection_.ts_on_;
 }
 
@@ -443,9 +442,6 @@ inline bool CheckupManager::emergency_sequence_complete() const {
 }
 
 inline bool CheckupManager::res_triggered() const {
-  if (_system_data_->failure_detection_.emergency_signal_) {
-    return true;
-  }
-  return false;
+  return _system_data_->failure_detection_.emergency_signal_;
 }
 

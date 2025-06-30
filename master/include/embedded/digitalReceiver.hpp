@@ -34,8 +34,8 @@ public:
   /**
    * @brief Constructor for the class, sets pintmodes and buttons
    */
-  DigitalReceiver(HardwareData *digital_data, Mission *mission)
-      : hardware_data_(digital_data), mission_(mission) {
+  DigitalReceiver(HardwareData *digital_data, Mission *mission, SystemData* system_data)
+      : hardware_data_(digital_data), mission_(mission), system_data_(system_data) {
     pinMode(SDC_BSPD_STATE_PIN, INPUT);
     pinMode(AMI, INPUT);
     pinMode(ASMS_IN_PIN, INPUT);
@@ -70,6 +70,7 @@ public:
 private:
   HardwareData *hardware_data_;  ///< Pointer to the digital data storage
   Mission *mission_;             ///< Pointer to the current mission status
+  SystemData *system_data_; // TODO: remove this shit
 
   std::deque<int> brake_readings;                 ///< Buffer for brake sensor readings
   unsigned int asms_change_counter_ = 0;          ///< counter to avoid noise on asms
@@ -201,7 +202,7 @@ inline void DigitalReceiver::read_mission() {
     *mission_ = latest_mission;
     mission_change_counter_ = 0;
   }
-  *mission_ = Mission::INSPECTION;
+  *mission_ = Mission::MANUAL;
 }
 
 inline void DigitalReceiver::read_asms_switch() {
@@ -212,6 +213,9 @@ inline void DigitalReceiver::read_asms_switch() {
 inline void DigitalReceiver::read_asats_state() {
   bool asats_pressed = !digitalRead(ASATS);
   debounce(asats_pressed, hardware_data_->asats_pressed_, aats_change_counter_);
+  if (hardware_data_->asats_pressed_) { // TODO: remove this, shitty workaround
+    system_data_->failure_detection_.emergency_signal_ = false;
+  }
 }
 
 inline void DigitalReceiver::read_ats() {

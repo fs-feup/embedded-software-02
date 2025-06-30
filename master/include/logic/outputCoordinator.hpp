@@ -133,16 +133,8 @@ private:
   // Communication functions
   void send_debug_on_state_change(uint8_t current_master_state, uint8_t current_checkup_state) {
     uint8_t current_mission = to_underlying(system_data_->mission_);
-
-    if (previous_master_state_ != current_master_state ||
-        previous_checkup_state_ != current_checkup_state || previous_mission_ != current_mission) {
-      previous_master_state_ = current_master_state;
-      previous_checkup_state_ = current_checkup_state;
-      previous_mission_ = current_mission;
-
-      Communicator::publish_debug_morning_log(*system_data_, current_master_state,
+    Communicator::publish_debug_morning_log(*system_data_, current_master_state,
                                               current_checkup_state);
-    }
   }
 
   void send_soc() { Communicator::publish_soc(system_data_->hardware_data_.soc_); }
