@@ -283,32 +283,33 @@ $(document).ready(function(){initNavTree('d0/dad/output_coordinator_8hpp_source.
 <div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>    <span class="comment">//            String(BRAKE_PRESSURE_LOWER_THRESHOLD));</span></div>
 <div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>    <span class="comment">//DEBUG_PRINT(&quot;Brake pressure upper threshold: &quot; +</span></div>
 <div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>    <span class="comment">//            String(BRAKE_PRESSURE_UPPER_THRESHOLD));</span></div>
-<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>    <span class="keywordflow">if</span> (brake_val &gt;= <a class="code hl_variable" href="../../d4/d7d/hardware_settings_8hpp.html#a6cddc9cbad50e1d5bde5dc8daa04fbbb">BRAKE_PRESSURE_LOWER_THRESHOLD</a> &amp;&amp;</div>
-<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>        brake_val &lt;= <a class="code hl_variable" href="../../d4/d7d/hardware_settings_8hpp.html#a6bb57ea910675d78af1bec76f2bca817">BRAKE_PRESSURE_UPPER_THRESHOLD</a>) {</div>
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>      digital_sender_-&gt;<a class="code hl_function" href="../../da/db9/class_digital_sender.html#a3255f3934a5e9bd70f09e5cca202db1e">turn_on_brake_light</a>();</div>
-<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>      digital_sender_-&gt;<a class="code hl_function" href="../../da/db9/class_digital_sender.html#a724814744a90f8fe733ad5edf0ebf7a5">turn_off_brake_light</a>();</div>
-<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>    }</div>
-<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>  }</div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>  <span class="keywordtype">void</span> bsdp_sdc_update() {</div>
-<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>    <span class="keywordflow">if</span> (system_data_-&gt;<a class="code hl_variable" href="../../d0/d9d/struct_system_data.html#a7fa234796adf4a7358926c188780124f">hardware_data_</a>.<a class="code hl_variable" href="../../df/d95/struct_hardware_data.html#aaeb880298080d5340c286767a2464090">bspd_sdc_open_</a>) {</div>
-<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>      digital_sender_-&gt;<a class="code hl_function" href="../../da/db9/class_digital_sender.html#a0c34655a6486bd1e1d6be342813dc124">bspd_error</a>();</div>
-<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>      digital_sender_-&gt;<a class="code hl_function" href="../../da/db9/class_digital_sender.html#a4c09d9be2ad9c547835b445d7164425c">no_bspd_error</a>();</div>
-<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>    }</div>
-<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>  }</div>
-<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>  <span class="keywordtype">void</span> dash_ats_update(uint8_t current_master_state) {</div>
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>    <span class="keywordflow">if</span> (system_data_-&gt;<a class="code hl_variable" href="../../d0/d9d/struct_system_data.html#a7fa234796adf4a7358926c188780124f">hardware_data_</a>.<a class="code hl_variable" href="../../df/d95/struct_hardware_data.html#a983673f7bb0f74137b7c429bcdd9ca96">ats_pressed_</a> &amp;&amp;</div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>        current_master_state == <a class="code hl_function" href="../../db/dac/enum__utils_8hpp.html#a7c51004dded6296bb71c6dd83c7ad4a9">to_underlying</a>(<a class="code hl_enumvalue" href="../../d3/db0/structure_8hpp.html#a5d74787dedbc4e11c1ab15bf487e61f8aa50a933cc29982f8013eb520b5a468f3">State::AS_MANUAL</a>)) {</div>
-<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>      digital_sender_-&gt;<a class="code hl_function" href="../../da/db9/class_digital_sender.html#aeba7623043aeabfc9c4340cf5185fbca">close_sdc</a>();</div>
-<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>    }</div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>    <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>      <span class="comment">// !! this was opening sdc as soon as ats was released</span></div>
-<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>    <span class="comment">//   digital_sender_-&gt;open_sdc();</span></div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>    }</div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>  }</div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>  <span class="keywordtype">void</span> send_rpm() { <a class="code hl_function" href="../../d0/d02/class_communicator.html#a10e1a7c874f16014cd32ce09fccc58de">Communicator::publish_rpm</a>(); }</div>
-<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>};</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span> </div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>    <span class="keywordflow">if</span> (brake_val &gt;= <a class="code hl_variable" href="../../d4/d7d/hardware_settings_8hpp.html#a6cddc9cbad50e1d5bde5dc8daa04fbbb">BRAKE_PRESSURE_LOWER_THRESHOLD</a> &amp;&amp;</div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>        brake_val &lt;= <a class="code hl_variable" href="../../d4/d7d/hardware_settings_8hpp.html#a6bb57ea910675d78af1bec76f2bca817">BRAKE_PRESSURE_UPPER_THRESHOLD</a>) {</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>      digital_sender_-&gt;<a class="code hl_function" href="../../da/db9/class_digital_sender.html#a3255f3934a5e9bd70f09e5cca202db1e">turn_on_brake_light</a>();</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>      digital_sender_-&gt;<a class="code hl_function" href="../../da/db9/class_digital_sender.html#a724814744a90f8fe733ad5edf0ebf7a5">turn_off_brake_light</a>();</div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>    }</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>  }</div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>  <span class="keywordtype">void</span> bsdp_sdc_update() {</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>    <span class="keywordflow">if</span> (system_data_-&gt;<a class="code hl_variable" href="../../d0/d9d/struct_system_data.html#a7fa234796adf4a7358926c188780124f">hardware_data_</a>.<a class="code hl_variable" href="../../df/d95/struct_hardware_data.html#aaeb880298080d5340c286767a2464090">bspd_sdc_open_</a>) {</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>      digital_sender_-&gt;<a class="code hl_function" href="../../da/db9/class_digital_sender.html#a0c34655a6486bd1e1d6be342813dc124">bspd_error</a>();</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>      digital_sender_-&gt;<a class="code hl_function" href="../../da/db9/class_digital_sender.html#a4c09d9be2ad9c547835b445d7164425c">no_bspd_error</a>();</div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>    }</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>  }</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>  <span class="keywordtype">void</span> dash_ats_update(uint8_t current_master_state) {</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>    <span class="keywordflow">if</span> (system_data_-&gt;<a class="code hl_variable" href="../../d0/d9d/struct_system_data.html#a7fa234796adf4a7358926c188780124f">hardware_data_</a>.<a class="code hl_variable" href="../../df/d95/struct_hardware_data.html#a983673f7bb0f74137b7c429bcdd9ca96">ats_pressed_</a> &amp;&amp;</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>        current_master_state == <a class="code hl_function" href="../../db/dac/enum__utils_8hpp.html#a7c51004dded6296bb71c6dd83c7ad4a9">to_underlying</a>(<a class="code hl_enumvalue" href="../../d3/db0/structure_8hpp.html#a5d74787dedbc4e11c1ab15bf487e61f8aa50a933cc29982f8013eb520b5a468f3">State::AS_MANUAL</a>)) {</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>      digital_sender_-&gt;<a class="code hl_function" href="../../da/db9/class_digital_sender.html#aeba7623043aeabfc9c4340cf5185fbca">close_sdc</a>();</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>    }</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>    <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>      <span class="comment">// !! this was opening sdc as soon as ats was released</span></div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>    <span class="comment">//   digital_sender_-&gt;open_sdc();</span></div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>    }</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>  }</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>  <span class="keywordtype">void</span> send_rpm() { <a class="code hl_function" href="../../d0/d02/class_communicator.html#a10e1a7c874f16014cd32ce09fccc58de">Communicator::publish_rpm</a>(); }</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>};</div>
 </div>
 <div class="ttc" id="aclass_communicator_html"><div class="ttname"><a href="../../d0/d02/class_communicator.html">Communicator</a></div><div class="ttdoc">Class that contains definitions of typical messages to send via CAN It serves only as an example of t...</div><div class="ttdef"><b>Definition</b> <a href="../../d4/d32/communicator_8hpp_source.html#l00041">communicator.hpp:41</a></div></div>
 <div class="ttc" id="aclass_communicator_html_a0cb8407cb7663056508998783d6db3cf"><div class="ttname"><a href="../../d0/d02/class_communicator.html#a0cb8407cb7663056508998783d6db3cf">Communicator::publish_mission</a></div><div class="ttdeci">static int publish_mission(int mission_id)</div><div class="ttdoc">Publish AS Mission to CAN.</div><div class="ttdef"><b>Definition</b> <a href="../../d4/d32/communicator_8hpp_source.html#l00270">communicator.hpp:270</a></div></div>
