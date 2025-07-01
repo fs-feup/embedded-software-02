@@ -13,7 +13,7 @@ public:
   [[nodiscard]] bool should_go_idle() const;
   bool just_entered_emergency();
   [[nodiscard]] static uint16_t scale_apps_lower_to_apps_higher(uint16_t apps_lower) ;
-  uint16_t calculate_torque();
+  int calculate_torque();
 
 private:
   [[nodiscard]] static bool plausibility(int apps_higher, int apps_lower) ;

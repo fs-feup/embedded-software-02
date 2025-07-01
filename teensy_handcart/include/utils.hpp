@@ -12,5 +12,5 @@ void extract_value(uint32_t &param_value, const uint8_t *buf) {
 
 void print_value(const char *label, const uint32_t value) {
     Serial.print(label);
-    Serial.print(value);
+    Serial.println(value);
 }

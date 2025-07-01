@@ -187,7 +187,7 @@ inline void DigitalReceiver::read_pneumatic_line() {
 }
 
 inline void DigitalReceiver::read_mission() {
-  const int raw_value = analogRead(AMI);
+  int raw_value = analogRead(AMI);
   int mapped_value = map(constrain(raw_value, 0, ADC_MAX_VALUE), 0, ADC_MAX_VALUE, 0, MAX_MISSION);  // constrain just in case
   Mission latest_mission = static_cast<Mission>(mapped_value);
 
