@@ -497,6 +497,7 @@ void CanCommHandler::stop_bamocar() {
 
 void CanCommHandler::send_torque(const int torque) {
   if (torque_timer >= TORQUE_MSG_PERIOD_MS) {
+    DEBUG_PRINT("Sending torque: " + String(torque));
     CAN_message_t torque_message;
     torque_message.id = BAMO_COMMAND_ID;
     torque_message.len = 3;

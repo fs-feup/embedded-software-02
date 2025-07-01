@@ -51,12 +51,10 @@ void StateMachine::update() {
         break;
       }
       DEBUG_PRINTLN("Torque from apps: " + String(torque_from_apps));
-      if (torque_from_apps > 0 && torque_from_apps <= config::bamocar::MAX) {
+      if (torque_from_apps >= 0 && torque_from_apps <= config::bamocar::MAX) {
         can_handler.send_torque(
             torque_from_apps); /* VVVVVRRRRRRRRRRUUUUUUMMMMMMMMMMMMMMMMMMMMMMMm*/
       }
-      DEBUG_PRINTLN("TORQUE: ");
-      DEBUG_PRINTLN(torque_from_apps);
       break;
     case State::AS_DRIVING:
       if (logic_handler.should_go_idle()) {
