@@ -87,7 +87,7 @@ namespace config {
 
     namespace wheel {
         constexpr uint32_t LIMIT_RPM_INTERVAL = 500'000;
-        constexpr uint8_t PULSES_PER_ROTATION = 36;
+        constexpr uint8_t PULSES_PER_ROTATION = 48;
     }
 
     namespace r2d {
