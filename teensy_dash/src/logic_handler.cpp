@@ -53,21 +53,22 @@ bool LogicHandler::plausibility(const int apps_higher,
 
   const int percentage_difference = (difference * 100) / apps_higher;
   DEBUG_PRINTLN("Percentage Difference: " + String(percentage_difference));
+  DEBUG_PRINTLN("Percentage Difference: " + String(percentage_difference));
+  DEBUG_PRINTLN("Percentage Difference: " + String(percentage_difference));
 
-  if (apps_lower < config::apps::APPS_LOWER_ZEROED) {
-    if (apps_higher < config::apps::APPS_HIGHER_WHEN_LOWER_ZEROES) {
-      DEBUG_PRINTLN("Apps implausible: apps lower is zeroed, so we can ignore the implausibility");
-      return true;  // apps lower is zeroed, so we can ignore the implausibility
+  // if (apps_lower < config::apps::APPS_LOWER_ZEROED) {
+  //   if (apps_higher < config::apps::APPS_HIGHER_WHEN_LOWER_ZEROES) {
+  //     DEBUG_PRINTLN("Apps implausible: apps lower is zeroed, so we can ignore the implausibility");
+  //     return true;  // apps lower is zeroed, so we can ignore the implausibility
       
-    } else {
-      DEBUG_PRINTLN(
-        "Apps implausible: apps lower is zeroed, but apps higher is not in the expected range");
-      return false;
+  //   } else {
+  //     DEBUG_PRINTLN(
+  //       "Apps implausible: apps lower is zeroed, but apps higher is not in the expected range");
+  //     return false;
       
-    }
-  }
+  //   }
+  // }
   // print values
-  DEBUG_PRINTLN("dbg print lune");
   return (percentage_difference < config::apps::MAX_ERROR_PERCENT);
 }
 
@@ -148,14 +149,14 @@ int LogicHandler::calculate_torque() {
   const uint16_t apps_lower_average = average_queue(data.apps_lower_readings);
   // DEBUG_PRINTLN("Apps Higher Average v2: " + String(apps_higher_average));
   // DEBUG_PRINTLN("Apps Lower Average v2: " + String(apps_lower_average));
-  // if (!check_apps_plausibility(apps_higher_average, apps_lower_average)) {
-  //   DEBUG_PRINTLN("Apps implausible, going idle");
-  //   // DEBUG_PRINTLN("Apps implausible, going idle");
-  //   // DEBUG_PRINTLN("Apps implausible, going idle");
-  //   // DEBUG_PRINTLN("Apps implausible, going idle");
+  if (!check_apps_plausibility(apps_higher_average, apps_lower_average)) {
+    DEBUG_PRINTLN("Apps implausible, going idle");
+    // DEBUG_PRINTLN("Apps implausible, going idle");
+    // DEBUG_PRINTLN("Apps implausible, going idle");
+    // DEBUG_PRINTLN("Apps implausible, going idle");
 
-  //   return config::apps::ERROR_PLAUSIBILITY;  // shutdown ?
-  // }
+    return config::apps::ERROR_PLAUSIBILITY;  // shutdown ?
+  }
 
   const uint16_t bamocar_value = apps_to_bamocar_value(apps_higher_average, apps_lower_average);
 

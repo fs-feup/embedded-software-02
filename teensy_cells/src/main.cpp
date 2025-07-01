@@ -11,6 +11,8 @@ CAN_error_t error;
 const unsigned long SETUP_TIMEOUT = 1000;  // 5 seconds for CAN set up detection
 
 bool baud_1M = true;
+bool bitrate_switched = false;
+uint32_t current_bitrate = CAN_DRIVING_BAUD_RATE;  // Start with driving
 unsigned long last_reading_time = 0;
 volatile unsigned long last_message_received_time = 0;
 uint8_t error_count = 0;
@@ -394,12 +396,11 @@ void initialize_can(uint32_t baudRate) {
 
   can1.mailboxStatus();
   DEBUG_PRINTLN("CAN Initialized/Re-initialized.");
-  last_message_received_time = 0;  // Reset message timer for detection logic
+  last_message_received_time = millis();  // Reset message timer for detection logic
 }
 
 void setup() {
   Serial.begin(115200);
-  
 
   code_reset();
 
@@ -417,34 +418,23 @@ void setup() {
   delay(100);
   initialize_can(CAN_DRIVING_BAUD_RATE);
 
-  unsigned long can_1M_start_time = millis();
-  bool received_at_1M = false;
-  while (millis() - can_1M_start_time < SETUP_TIMEOUT) {
-    // can1.events(); // Process events to ensure ISRs run and parse_message can be called.
-    // Important for message detection during this timed window.
-    if (last_message_received_time > can_1M_start_time) {  // Check if a message came *after* init
-      DEBUG_PRINTLN("Message received at 1000000 baud.");
-      received_at_1M = true;
-      break;
-    }
-    delay(5);  // Small delay to allow other processes
-  }
-
-  if (!received_at_1M) {
-    DEBUG_PRINTLN("No message received at 1000000 baud within 5 seconds.");
-    DEBUG_PRINTLN("Switching to 125000 baud.");
-
-    // delay(1000);  // Wait a bit before re-initializing
-    // can1.disableFIFOInterrupt();  // Disable FIFO interrupts before re-initializing
-    // can1.disableFIFO();  // Disable FIFO before re-initializing
-    // can1.reset();  // Reset before re-initializing, data sheet 44.8.1
-    // delay(100);  // Short delay to ensure reset is complete
-
-    initialize_can(CAN_CHARGING_BAUD_RATE);
-  }
+  // delay(1000);  // Wait a bit before re-initializing
+  // can1.disableFIFOInterrupt();  // Disable FIFO interrupts before re-initializing
+  // can1.disableFIFO();  // Disable FIFO before re-initializing
+  // can1.reset();  // Reset before re-initializing, data sheet 44.8.1
+  // delay(100);  // Short delay to ensure reset is complete
 }
 void loop() {
   unsigned long current_time = millis();
+
+  if (!bitrate_switched && (current_time - last_message_received_time > 1000)) {
+    if (current_bitrate == CAN_DRIVING_BAUD_RATE) {
+      DEBUG_PRINTLN("Timeout: No CAN message for 1s. Switching from 1Mbps to 125kbps permanently.");
+      current_bitrate = CAN_CHARGING_BAUD_RATE;
+      can1.setBaudRate(current_bitrate);  // Dynamically change the bitrate
+      bitrate_switched = true;            // Set the flag to prevent further switching
+    }
+  }
 
   if (current_time - last_reading_time > TEMP_SENSOR_READ_INTERVAL) {
     last_reading_time = current_time;

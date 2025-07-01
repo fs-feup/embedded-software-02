@@ -120,7 +120,17 @@ void CanCommHandler::bamocar_callback(const uint8_t* const msg_data, const uint8
   switch (msg_data[0]) {
     case DC_VOLTAGE: {
       // DEBUG_PRINTLN("DC Voltage: " + String(message_value));
-      updatable_data.TSOn = (message_value >= DC_THRESHOLD);
+      static int a = 0;
+      bool current_ts_on = (message_value >= DC_THRESHOLD);
+      if (current_ts_on != updatable_data.TSOn) {
+        a++;
+      }else {
+        a = 0;
+      }
+      if (a >= 5) {
+        updatable_data.TSOn = current_ts_on;
+        a = 0;
+      }
       break;
     }
     case BTB_READY_0:

@@ -52,9 +52,9 @@ namespace config {
 
     namespace apps {
         constexpr uint16_t UPPER_BOUND_APPS_HIGHER = 700;
-        constexpr uint16_t LOWER_BOUND_APPS_HIGHER = 8;
+        constexpr uint16_t LOWER_BOUND_APPS_HIGHER = 200;
         constexpr uint16_t UPPER_BOUND_APPS_LOWER = 600;
-        constexpr uint16_t LOWER_BOUND_APPS_LOWER = 0;
+        constexpr uint16_t LOWER_BOUND_APPS_LOWER = 60;
         
         constexpr uint16_t DEAD_THRESHOLD_APPS_HIGHER = 780;
         constexpr uint16_t APPS_LOWER_ZEROED = 5;
@@ -64,8 +64,8 @@ namespace config {
         constexpr uint16_t APPS_LOWER_DEADZONE_IN_APPS_HIGHER_SCALE = 360;
         
         constexpr uint16_t LINEAR_OFFSET = 140;
-        constexpr uint16_t MAX = 670;
-        constexpr uint16_t MIN = 10;
+        constexpr uint16_t MAX = 677;
+        constexpr uint16_t MIN = 210;
         constexpr uint16_t MIN_FOR_TORQUE = 0;
         constexpr uint16_t MAX_FOR_TORQUE = MAX - MIN;
         

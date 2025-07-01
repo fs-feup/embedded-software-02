@@ -29,11 +29,11 @@ constexpr uint32_t CH_ID = 0x0220'7446;  // 0x0220'7446
 constexpr uint8_t PC_ALIVE = 0x41;          // 0x41
 constexpr uint8_t MISSION_FINISHED = 0x42;  // 0x42
 
-constexpr uint8_t AS_READY = 2;      // 2
 constexpr uint8_t AS_OFF = 0;        // 0
+constexpr uint8_t AS_READY = 2;      // 2
 constexpr uint8_t AS_DRIVING = 3;    // 3
-constexpr uint8_t AS_EMERGENCY = 4;  // 4
-constexpr uint8_t AS_FINISHED = 5;   // 5
+constexpr uint8_t AS_FINISHED = 4;   // 4
+constexpr uint8_t AS_EMERGENCY = 5;  // 5
 
 constexpr uint8_t AS_CU_EMERGENCY_SIGNAL = 0x43;  // 0x43
 constexpr uint8_t STATE_MSG = 0x31;               // 0x31
