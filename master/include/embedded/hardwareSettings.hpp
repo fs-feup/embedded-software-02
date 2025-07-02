@@ -39,8 +39,8 @@ constexpr int WATCHDOG_TEST_DURATION = 1000;
 constexpr int ASSI_BLUE_PIN = 25;
 constexpr int ASSI_YELLOW_PIN = 12;
 
-constexpr int EBS_VALVE_1_PIN = 17;
-constexpr int EBS_VALVE_2_PIN = 13;
+constexpr int EBS_VALVE_REAR_PIN = 17;
+constexpr int EBS_VALVE_FRONT_PIN = 13;
 
 constexpr int CLOSE_SDC = 21;
 // #define SDC_LOGIC_WATCHDOG_OUT_PIN 10
