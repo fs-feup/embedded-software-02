@@ -6,6 +6,7 @@
 
 #include "Arduino.h"
 #include "circular_buffer.h"
+// #include "../../debugUtils.hpp"
 
 #if defined(__IMXRT1062__)
 // 48.5.1.1 LPSPI memory map
@@ -21,12 +22,19 @@
 #define SLAVE_TCR_REFRESH spiAddr[24] = (2UL << 27) | LPSPI_TCR_FRAMESZ(16 - 1) // Prescale Divide by 4 | Frame Size 16 bits
 
 #define SPI_WAIT_STATE \
-    while ( !(SLAVE_SR & (1UL << 9)) ) { /* FCF: Frame Complete Flag, set when PCS deasserts */ \
-      if ( !(SLAVE_FSR & 0x1F0000) ) continue; /* wait for received data */ \
-      if ( (SLAVE_SR & (1UL << 8)) ) { /* WCF set */
+    { \
+        uint32_t __spi_wait_start_cycles__ = ARM_DWT_CYCCNT; \
+        while (!(SLAVE_SR & (1UL << 9))) { \
+            if ((ARM_DWT_CYCCNT - __spi_wait_start_cycles__) > F_CPU / 20) { \
+                SPI_ISR_EXIT \
+            } \
+            uint32_t __spi_wait_start_cycles__ = ARM_DWT_CYCCNT; \
+            if (!(SLAVE_FSR & 0x1F0000)) continue; \
+            if ((SLAVE_SR & (1UL << 8))) {
 
 #define SPI_ENDWAIT_STATE \
-      } \
+            } \
+        } \
     }
 
 #define SPI_ISR_EXIT \

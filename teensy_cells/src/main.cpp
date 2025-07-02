@@ -8,9 +8,11 @@ const u_int8_t pin_ntc_temp[NTC_SENSOR_COUNT] = {A4,  A5,  A6,  A7, A8, A9,  A2,
 float cell_temps[NTC_SENSOR_COUNT];
 CAN_error_t error;
 
-const unsigned long SETUP_TIMEOUT = 5000;  // 5 seconds for CAN set up detection
+const unsigned long SETUP_TIMEOUT = 1000;  // 5 seconds for CAN set up detection
 
 bool baud_1M = true;
+bool bitrate_switched = false;
+uint32_t current_bitrate = CAN_DRIVING_BAUD_RATE;  // Start with driving
 unsigned long last_reading_time = 0;
 volatile unsigned long last_message_received_time = 0;
 uint8_t error_count = 0;
@@ -27,7 +29,7 @@ bool check_master_timeout() {
 
   // Allow 2 seconds on startup before considering it a timeout
   if (!master_has_communicated) {
-    if (current_time > 2000) {
+    if (current_time > 10000) {
       DEBUG_PRINTLN("Timeout: No data ever received from master");
       return true;
     }
@@ -202,7 +204,7 @@ bool check_temperature_timeouts() {
 
     if (!board.has_communicated) {
       // Allow 2 seconds on startup before considering it a timeout
-      if (current_time > 2000) {
+      if (current_time > 15000) {
         // DEBUG_PRINT("Timeout: No data ever received from board ");
         // DEBUG_PRINTLN(board_id);
         timeout_detected = true;
@@ -313,6 +315,8 @@ void code_reset() {
 }
 
 void can_snifflas(const CAN_message_t& msg) {
+  DEBUG_PRINT("Received CAN message with ID: ");
+  Serial.println(msg.id, HEX);
   if (msg.id >= CELL_TEMPS_BASE_ID && msg.id < CELL_TEMPS_BASE_ID + TOTAL_BOARDS && msg.len == 4) {
     uint8_t board_from_id = msg.id - CELL_TEMPS_BASE_ID;
     uint8_t board_from_buf = msg.buf[0];
@@ -392,13 +396,11 @@ void initialize_can(uint32_t baudRate) {
 
   can1.mailboxStatus();
   DEBUG_PRINTLN("CAN Initialized/Re-initialized.");
-  delay(1000);                     // Allow some time for the CAN bus to stabilize
-  last_message_received_time = 0;  // Reset message timer for detection logic
+  last_message_received_time = millis();  // Reset message timer for detection logic
 }
 
 void setup() {
   Serial.begin(115200);
-  delay(3000);
 
   code_reset();
 
@@ -413,37 +415,26 @@ void setup() {
   for (int i = 0; i < NTC_SENSOR_COUNT; i++) {
     pinMode(pin_ntc_temp[i], INPUT);
   }
-
+  delay(100);
   initialize_can(CAN_DRIVING_BAUD_RATE);
 
-  unsigned long can_1M_start_time = millis();
-  bool received_at_1M = false;
-  while (millis() - can_1M_start_time < SETUP_TIMEOUT) {
-    // can1.events(); // Process events to ensure ISRs run and parse_message can be called.
-    // Important for message detection during this timed window.
-    if (last_message_received_time > can_1M_start_time) {  // Check if a message came *after* init
-      DEBUG_PRINTLN("Message received at 1000000 baud.");
-      received_at_1M = true;
-      break;
-    }
-    delay(10);  // Small delay to allow other processes
-  }
-
-  if (!received_at_1M) {
-    DEBUG_PRINTLN("No message received at 1000000 baud within 5 seconds.");
-    DEBUG_PRINTLN("Switching to 125000 baud.");
-
-    // delay(1000);  // Wait a bit before re-initializing
-    // can1.disableFIFOInterrupt();  // Disable FIFO interrupts before re-initializing
-    // can1.disableFIFO();  // Disable FIFO before re-initializing
-    // can1.reset();  // Reset before re-initializing, data sheet 44.8.1
-    // delay(100);  // Short delay to ensure reset is complete
-
-    initialize_can(CAN_CHARGING_BAUD_RATE);
-  }
+  // delay(1000);  // Wait a bit before re-initializing
+  // can1.disableFIFOInterrupt();  // Disable FIFO interrupts before re-initializing
+  // can1.disableFIFO();  // Disable FIFO before re-initializing
+  // can1.reset();  // Reset before re-initializing, data sheet 44.8.1
+  // delay(100);  // Short delay to ensure reset is complete
 }
 void loop() {
   unsigned long current_time = millis();
+
+  if (!bitrate_switched && (current_time - last_message_received_time > 1000)) {
+    if (current_bitrate == CAN_DRIVING_BAUD_RATE) {
+      DEBUG_PRINTLN("Timeout: No CAN message for 1s. Switching from 1Mbps to 125kbps permanently.");
+      current_bitrate = CAN_CHARGING_BAUD_RATE;
+      can1.setBaudRate(current_bitrate);  // Dynamically change the bitrate
+      bitrate_switched = true;            // Set the flag to prevent further switching
+    }
+  }
 
   if (current_time - last_reading_time > TEMP_SENSOR_READ_INTERVAL) {
     last_reading_time = current_time;
@@ -470,14 +461,12 @@ void loop() {
     calculate_global_stats(global_data);
     send_to_bms(global_data);
     send_master_heartbeat();
-    // debug_helper();
-    delay(200);  // Wait a bit before next loop iteration
 #endif
-    show_temperatures();
+    // show_temperatures();
   }
   if (no_error_iterations >= NO_ERROR_RESET_THRESHOLD) {
     error_count = 0;
     no_error_iterations = 0;
   }
-  delay(BOARD_ID * 300);
+  delay(2 * BOARD_ID);
 }

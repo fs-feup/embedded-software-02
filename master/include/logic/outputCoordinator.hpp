@@ -168,6 +168,7 @@ private:
     //            String(BRAKE_PRESSURE_LOWER_THRESHOLD));
     //DEBUG_PRINT("Brake pressure upper threshold: " +
     //            String(BRAKE_PRESSURE_UPPER_THRESHOLD));
+
     if (brake_val >= BRAKE_PRESSURE_LOWER_THRESHOLD &&
         brake_val <= BRAKE_PRESSURE_UPPER_THRESHOLD) {
       digital_sender_->turn_on_brake_light();
