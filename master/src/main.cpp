@@ -13,7 +13,7 @@ SystemData
     system_data_copy;  // Copy of the model for Communicator (where interrupt updates are stored)
 Communicator communicator = Communicator(&system_data_copy);  // CAN
 DigitalReceiver digital_receiver =
-    DigitalReceiver(&system_data_copy.hardware_data_, &system_data_copy.mission_, &system_data_copy);
+    DigitalReceiver(&system_data_copy);
 DigitalSender digital_sender = DigitalSender();
 OutputCoordinator output_coordinator =
     OutputCoordinator(&system_data, &communicator, &digital_sender);

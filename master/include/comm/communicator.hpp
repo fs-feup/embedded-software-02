@@ -291,7 +291,7 @@ inline int Communicator::publish_soc(uint8_t soc) {
 }
 
 inline int Communicator::publish_asms_on(bool asms_on) {
-  const std::array<uint8_t, 2> msg = {ASMS_ON, asms_on};
+  const std::array<uint8_t, 2> msg = {ASMS, asms_on};
   send_message(2, msg, MASTER_ID);
   return 0;
 }

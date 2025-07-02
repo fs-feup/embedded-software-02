@@ -132,7 +132,6 @@ public:
 private:
   // Communication functions
   void send_debug_on_state_change(uint8_t current_master_state, uint8_t current_checkup_state) {
-    uint8_t current_mission = to_underlying(system_data_->mission_);
     Communicator::publish_debug_morning_log(*system_data_, current_master_state,
                                               current_checkup_state);
   }

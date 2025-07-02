@@ -105,7 +105,6 @@ constexpr uint16_t DC_THRESHOLD = 1890;  // 1890
 
 /** Also used for ASMS_ON */
 constexpr uint16_t ASMS = 0x91;      // 0x91
-constexpr uint16_t ASMS_ON = 0x201;  // 0x201
 
 //-----------------------------------------------------------------------------
 // Sensors
