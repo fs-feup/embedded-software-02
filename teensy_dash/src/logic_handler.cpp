@@ -88,13 +88,6 @@ uint16_t LogicHandler::apps_to_bamocar_value(const uint16_t apps_higher,
   float normalized_input = (float)(torque_value - config::apps::DEADBAND) /
                            (float)(config::apps::MAX_FOR_TORQUE - config::apps::DEADBAND);
 
-  // Apply sigmoid mapping for smooth transition
-  // Sigmoid: output = 1 / (1 + e^(-k * (x - 0.5)))
-  const float k = 15.0;  // Steepness of the sigmoid curve (adjust for responsiveness)
-  float normalized_output =
-      1.0 / (1.0 + exp(-k * (normalized_input -
-                             0.5)));  // Use desmos graphing calculator for visualization
-
   uint16_t mapped_value = (uint16_t)(normalized_input * (config::bamocar::MAX));
 
   return min(mapped_value, config::bamocar::MAX);
@@ -113,22 +106,6 @@ bool LogicHandler::just_entered_emergency() {
   }
 
   return false;
-}
-
-bool LogicHandler::check_brake_plausibility(const uint16_t bamocar_value) {
-  if (const float pedal_travel_percentage =
-          (static_cast<float>(bamocar_value) / static_cast<float>(config::bamocar::MAX)) * 100.0f;
-      updated_data.brake_pressure >= config::apps::BRAKE_BLOCK_THRESHOLD &&
-      pedal_travel_percentage >= 25.0) {
-    if (brake_implausibility_timer > config::apps::BRAKE_PLAUSIBILITY_TIMEOUT_MS) {
-      apps_timeout = true;
-      return false;
-    }
-  } else {
-    brake_implausibility_timer = 0;
-  }
-
-  return true;
 }
 
 bool LogicHandler::check_apps_plausibility(const uint16_t apps_higher_avg,
@@ -169,10 +146,6 @@ int LogicHandler::calculate_torque() {
       return 0;
     }
   }
-
-  // if (!check_brake_plausibility(bamocar_value)) {
-  //   return 0;
-  // }
-
+  
   return bamocar_value;
 }

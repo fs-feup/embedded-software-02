@@ -10,8 +10,7 @@ void StateMachine::update() {
   int torque_from_apps = 0;
   switch (current_state_) {
     case State::IDLE:
-      torque_from_apps = logic_handler.calculate_torque();
-      DEBUG_PRINTLN("Torque from apps in IDLE: " + String(torque_from_apps));
+      DEBUG_PRINTLN("Torque from apps in IDLE: " + String(logic_handler.calculate_torque()));
 
       if (logic_handler.should_start_manual_driving()) {
         current_state_ = State::INITIALIZING_DRIVING;
@@ -42,8 +41,7 @@ void StateMachine::update() {
         DEBUG_PRINTLN("Going idle from driving state");
         DEBUG_PRINTLN("Going idle from driving state");
 
-        current_state_ = State::IDLE;
-        can_handler.stop_bamocar();
+        transition_to_idle();
         return;
       }
       if (torque_from_apps == config::apps::ERROR_PLAUSIBILITY) {
@@ -57,23 +55,22 @@ void StateMachine::update() {
       }
       break;
     case State::AS_DRIVING:
-      if (logic_handler.should_go_idle()) {
-        DEBUG_PRINTLN("Going idle from AS driving state");
-        DEBUG_PRINTLN("Going idle from AS driving state");
-        DEBUG_PRINTLN("Going idle from AS driving state");
-        DEBUG_PRINTLN("Going idle from AS driving state");
-        current_state_ = State::IDLE;
-        can_handler.stop_bamocar();
-      }
+      
       if (logic_handler.just_entered_emergency()) {
         DEBUG_PRINTLN("Going idle from AS driving state");
         DEBUG_PRINTLN("Going idle from AS driving state");
         DEBUG_PRINTLN("Going idle from AS driving state");
         DEBUG_PRINTLN("Going idle from AS driving state");
 
-        can_handler.stop_bamocar();
-        current_state_ = State::IDLE;
+        transition_to_idle();
         io_manager.play_buzzer(config::buzzer::EMERGENCY_DURATION);
+      }
+      if (logic_handler.should_go_idle()) {
+        DEBUG_PRINTLN("Going idle from AS driving state");
+        DEBUG_PRINTLN("Going idle from AS driving state");
+        DEBUG_PRINTLN("Going idle from AS driving state");
+        DEBUG_PRINTLN("Going idle from AS driving state");
+        transition_to_idle();
       }
       break;
     default:
@@ -84,4 +81,12 @@ void StateMachine::update() {
 bool StateMachine::transition_to_driving() const {
   const bool done = can_handler.init_bamocar();
   return done;
+}
+
+void StateMachine::transition_to_idle() {
+  if (current_state_ == State::DRIVING || current_state_ == State::AS_DRIVING) {
+    can_handler.stop_bamocar();
+    can_handler.reset_bamocar_init();
+    current_state_ = State::IDLE;
+  }
 }

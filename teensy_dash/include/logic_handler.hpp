@@ -24,6 +24,5 @@ private:
   bool entered_emergency = false;
   SystemData& data;
   SystemVolatileData& updated_data;
-  bool check_brake_plausibility(uint16_t bamocar_value);
   bool check_apps_plausibility(uint16_t apps_higher_avg, uint16_t apps_lower_avg);
 };

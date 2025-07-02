@@ -12,7 +12,7 @@ CanCommHandler::CanCommHandler(SystemData& system_data,
     : data(system_data),
       updatable_data(volatile_updatable_data),
       updated_data(volatile_updated_data) {
-  staticCallback = [this](const CAN_message_t& msg) { this->handleCanMessage(msg); };
+  static_callback = [this](const CAN_message_t& msg) { this->handle_can_message(msg); };
 }
 
 void CanCommHandler::setup() {
@@ -78,11 +78,11 @@ void CanCommHandler::setup() {
 }
 
 void CanCommHandler::can_snifflas(const CAN_message_t& msg) {
-  if (staticCallback) {
-    staticCallback(msg);
+  if (static_callback) {
+    static_callback(msg);
   }
 }
-void CanCommHandler::handleCanMessage(const CAN_message_t& msg) {
+void CanCommHandler::handle_can_message(const CAN_message_t& msg) {
   switch (msg.id) {
     case BMS_ID:
       break;
@@ -119,17 +119,18 @@ void CanCommHandler::bamocar_callback(const uint8_t* const msg_data, const uint8
 
   switch (msg_data[0]) {
     case DC_VOLTAGE: {
-      // DEBUG_PRINTLN("DC Voltage: " + String(message_value));
-      static int a = 0;
+      static elapsedMillis stable_timer = 0;
+      static bool stable_state = false;
+
       bool current_ts_on = (message_value >= DC_THRESHOLD);
-      if (current_ts_on != updatable_data.TSOn) {
-        a++;
-      }else {
-        a = 0;
-      }
-      if (a >= 5) {
-        updatable_data.TSOn = current_ts_on;
-        a = 0;
+
+      if (current_ts_on != stable_state) {
+        // State changed, restart timing
+        stable_state = current_ts_on;
+        stable_timer = 0;
+      } else if (stable_timer >= STABLE_TIME_MS && stable_state != updatable_data.TSOn) {
+        // State has been stable long enough, update
+        updatable_data.TSOn = stable_state;
       }
       break;
     }
@@ -189,6 +190,7 @@ void CanCommHandler::bamocar_callback(const uint8_t* const msg_data, const uint8
       // DEBUG_PRINT(moment_ramp);
       // DEBUG_PRINTLN(" ms");
     } break;
+    
     default:
       break;
   }
@@ -400,60 +402,57 @@ bool CanCommHandler::init_bamocar() {
   constexpr CAN_message_t clear_error_message = {
       .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x8E, 0x00, 0x00}};
 
-  static BamocarState bamocarState = CHECK_BTB;
-  static unsigned long stateStartTime = millis();
-  static unsigned long lastActionTime = 0;
-  static bool commandSent = false;
+  
   static unsigned long currentTime = 0;
   currentTime = millis();
 
-  switch (bamocarState) {
+  switch (bamocar_state) {
     case CHECK_BTB:
-      if (currentTime - lastActionTime >= actionInterval) {
+      if (currentTime - last_action_time >= actionInterval) {
         DEBUG_PRINTLN("Checking BTB status");
         can1.write(checkBTBStatus);
-        lastActionTime = currentTime;
+        last_action_time = currentTime;
       }
       if (btb_ready) {
-        bamocarState = ENABLE_OFF;
-        commandSent = false;
-      } else if (currentTime - stateStartTime >= timeout) {
+        bamocar_state = ENABLE_OFF;
+        command_sent = false;
+      } else if (currentTime - state_start_time >= timeout) {
         DEBUG_PRINTLN("Timeout checking BTB");
         DEBUG_PRINTLN("Error during initialization");
-        bamocarState = ERROR;
+        bamocar_state = ERROR;
       }
       break;
 
     case ENABLE_OFF:
       DEBUG_PRINTLN("Disabling");
       can1.write(setEnableOff);
-      bamocarState = ENABLE_TRANSMISSION;
+      bamocar_state = ENABLE_TRANSMISSION;
       break;
 
     case ENABLE_TRANSMISSION:
-      if (currentTime - lastActionTime >= actionInterval) {
+      if (currentTime - last_action_time >= actionInterval) {
         DEBUG_PRINTLN("Enabling transmission");
         can1.write(enableTransmission);
-        lastActionTime = currentTime;
+        last_action_time = currentTime;
       }
       if (transmission_enabled) {
-        bamocarState = ENABLE;
-        commandSent = false;
-        stateStartTime = currentTime;
-        lastActionTime = currentTime;
-      } else if (currentTime - stateStartTime >= timeout) {
+        bamocar_state = ENABLE;
+        command_sent = false;
+        state_start_time = currentTime;
+        last_action_time = currentTime;
+      } else if (currentTime - state_start_time >= timeout) {
         DEBUG_PRINTLN("Timeout enabling transmission");
         DEBUG_PRINTLN("Error during initialization");
-        bamocarState = ERROR;
+        bamocar_state = ERROR;
       }
       break;
 
     case ENABLE:
-      if (!commandSent) {
+      if (!command_sent) {
         DEBUG_PRINTLN("Removing disable");
         can1.write(removeDisable);
-        commandSent = true;
-        bamocarState = ACC_RAMP;
+        command_sent = true;
+        bamocar_state = ACC_RAMP;
       }
       break;
 
@@ -462,7 +461,7 @@ bool CanCommHandler::init_bamocar() {
       DEBUG_PRINT(rampAccRequest.buf[1] | (rampAccRequest.buf[2] << 8));
       DEBUG_PRINTLN("ms");
       can1.write(rampAccRequest);
-      bamocarState = DEC_RAMP;
+      bamocar_state = DEC_RAMP;
       break;
 
     case DEC_RAMP:
@@ -470,14 +469,14 @@ bool CanCommHandler::init_bamocar() {
       DEBUG_PRINT(rampDecRequest.buf[1] | (rampDecRequest.buf[2] << 8));
       DEBUG_PRINTLN("ms");
       can1.write(rampDecRequest);
-      bamocarState = CLEAR_ERRORS;
+      bamocar_state = CLEAR_ERRORS;
       break;
     case CLEAR_ERRORS:
       // This state is not used in the current initialization sequence
       // but can be used in the future to clear errors
       DEBUG_PRINTLN("Clearing errors");
       can1.write(clear_error_message);
-      bamocarState = INITIALIZED;
+      bamocar_state = INITIALIZED;
       break;
     case INITIALIZED:
       return true;
@@ -486,6 +485,13 @@ bool CanCommHandler::init_bamocar() {
   }
 
   return false;
+}
+
+void CanCommHandler::reset_bamocar_init() {
+  bamocar_state = CHECK_BTB;
+  state_start_time = millis();
+  last_action_time = 0;
+  command_sent = false;
 }
 
 void CanCommHandler::stop_bamocar() {
