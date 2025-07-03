@@ -17,7 +17,7 @@ private:
 public:
   // Array of valid output pins
   static constexpr std::array<int, 9> validOutputPins = {
-      ASSI_BLUE_PIN, ASSI_YELLOW_PIN, EBS_VALVE_1_PIN, EBS_VALVE_2_PIN, SDC_BSPD_OUT,
+      ASSI_BLUE_PIN, ASSI_YELLOW_PIN, EBS_VALVE_REAR_PIN, EBS_VALVE_FRONT_PIN, SDC_BSPD_OUT,
       CLOSE_SDC,     BRAKE_LIGHT,     WD_SDC_CLOSE,    WD_ALIVE
       // SDC_LOGIC_WATCHDOG_OUT_PIN
   };
@@ -31,6 +31,7 @@ public:
     for (const auto pin : validOutputPins) {
       pinMode(pin, OUTPUT);
     }
+    activate_ebs();
   }
   /**
    * @brief Turns off both ASSI LEDs (yellow and blue).
@@ -60,22 +61,22 @@ public:
   /**
    * @brief Disables EBS actuator 1.
    */
-  static void disable_ebs_actuator_1();
+  static void disable_ebs_actuator_REAR();
 
   /**
    * @brief Enables EBS actuator 1.
    */
-  static void enable_ebs_actuator_1();
+  static void enable_ebs_actuator_REAR();
 
   /**
    * @brief Disables EBS actuator 2.
    */
-  static void disable_ebs_actuator_2();
+  static void disable_ebs_actuator_FRONT();
 
   /**
    * @brief Enables EBS actuator 2.
    */
-  static void enable_ebs_actuator_2();
+  static void enable_ebs_actuator_FRONT();
   /**
    * @brief Blinks the LED at the given pin.
    * @param pin The pin to blink.
@@ -120,22 +121,22 @@ inline void DigitalSender::open_sdc() { DEBUG_PRINT("OPENING SDC"); digitalWrite
 inline void DigitalSender::close_sdc() { DEBUG_PRINT("CLOSING SDC"); digitalWrite(CLOSE_SDC, HIGH); }
 
 inline void DigitalSender::activate_ebs() {
-  digitalWrite(EBS_VALVE_1_PIN, HIGH);
-  digitalWrite(EBS_VALVE_2_PIN, HIGH);
+  digitalWrite(EBS_VALVE_REAR_PIN, HIGH);
+  digitalWrite(EBS_VALVE_FRONT_PIN, HIGH);
 }
 
 inline void DigitalSender::deactivate_ebs() {
-  digitalWrite(EBS_VALVE_1_PIN, LOW);
-  digitalWrite(EBS_VALVE_2_PIN, LOW);
+  digitalWrite(EBS_VALVE_REAR_PIN, LOW);
+  digitalWrite(EBS_VALVE_FRONT_PIN, LOW);
 }
 
-inline void DigitalSender::disable_ebs_actuator_1() { digitalWrite(EBS_VALVE_1_PIN, LOW); }
+inline void DigitalSender::disable_ebs_actuator_REAR() { digitalWrite(EBS_VALVE_REAR_PIN, LOW); }
 
-inline void DigitalSender::enable_ebs_actuator_1() { digitalWrite(EBS_VALVE_1_PIN, HIGH); }
+inline void DigitalSender::enable_ebs_actuator_REAR() { digitalWrite(EBS_VALVE_REAR_PIN, HIGH); }
 
-inline void DigitalSender::disable_ebs_actuator_2() { digitalWrite(EBS_VALVE_2_PIN, LOW); }
+inline void DigitalSender::disable_ebs_actuator_FRONT() { digitalWrite(EBS_VALVE_FRONT_PIN, LOW); }
 
-inline void DigitalSender::enable_ebs_actuator_2() { digitalWrite(EBS_VALVE_2_PIN, HIGH); }
+inline void DigitalSender::enable_ebs_actuator_FRONT() { digitalWrite(EBS_VALVE_FRONT_PIN, HIGH); }
 
 inline void DigitalSender::turn_off_assi() {
   analogWrite(ASSI_YELLOW_PIN, LOW);

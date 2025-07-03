@@ -276,7 +276,7 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
       // DEBUG_PRINT("Waiting for TS activation");
       if (_system_data_->failure_detection_.ts_on_) {
         DEBUG_PRINT("TS activated");
-        checkup_state_ = CheckupState::CHECKUP_COMPLETE;
+        checkup_state_ = CheckupState::EBS_CHECKS;
       }
       break;
     case CheckupState::EBS_CHECKS:  
@@ -285,7 +285,7 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
       break;
     case CheckupState::CHECKUP_COMPLETE:
       // Final state, all checks passed
-      // DEBUG_PRINT("Checkup complete, transitioning to ready state");
+      DEBUG_PRINT("Checkup complete, transitioning to ready state");
       return CheckupError::SUCCESS;
 
 
@@ -300,7 +300,7 @@ inline void CheckupManager::handle_ebs_check() {
     case EbsPressureTestPhase::DISABLE_ACTUATOR_1:
       // Step 10: Disable EBS actuator 1
       DEBUG_PRINT("Disabling EBS actuator 1");
-      DigitalSender::disable_ebs_actuator_1();
+      DigitalSender::disable_ebs_actuator_REAR();
       pressure_test_phase_ = EbsPressureTestPhase::CHANGE_ACTUATORS;
       break;
 
@@ -316,8 +316,8 @@ inline void CheckupManager::handle_ebs_check() {
     case EbsPressureTestPhase::CHANGE_ACTUATORS:
       // Step 12: Enable EBS actuator 1 again and disable actuator 2
       DEBUG_PRINT("Re-enabling EBS actuator 1 and disabling actuator 2");
-      DigitalSender::enable_ebs_actuator_1();
-      DigitalSender::disable_ebs_actuator_2();
+      DigitalSender::enable_ebs_actuator_REAR();
+      DigitalSender::disable_ebs_actuator_FRONT();
       pressure_test_phase_ = EbsPressureTestPhase::ENABLE_ACTUATOR_2;
       break;
 
@@ -334,7 +334,7 @@ inline void CheckupManager::handle_ebs_check() {
     case EbsPressureTestPhase::ENABLE_ACTUATOR_2:
       // Step 14: Enable EBS actuator 2 again
       DEBUG_PRINT("Re-enabling EBS actuator 2");
-      DigitalSender::enable_ebs_actuator_2();
+      DigitalSender::enable_ebs_actuator_FRONT();
       pressure_test_phase_ = EbsPressureTestPhase::COMPLETE;
       break;
 
@@ -388,20 +388,38 @@ inline bool CheckupManager::should_enter_emergency(State current_state) const {
 }
 
 bool CheckupManager::should_enter_emergency_in_ready_state() const {
+  bool component_timed_out = _system_data_->failure_detection_.has_any_component_timed_out();
+  bool failed_to_build_pressure = failed_to_build_hydraulic_pressure_in_time();
+  DEBUG_PRINT_VAR(component_timed_out);
+  DEBUG_PRINT_VAR(failed_to_build_pressure);
+  DEBUG_PRINT_VAR(_system_data_->hardware_data_.asms_on_);
+  DEBUG_PRINT_VAR(_system_data_->failure_detection_.ts_on_);
+  DEBUG_PRINT_VAR(_system_data_->hardware_data_.bspd_sdc_open_);
+  DEBUG_PRINT_VAR(_system_data_->failure_detection_.emergency_signal_);
+  DEBUG_PRINT_VAR(!_system_data_->hardware_data_.pneumatic_line_pressure_);
   return _system_data_->failure_detection_.emergency_signal_ ||
         //  !_system_data_->hardware_data_.pneumatic_line_pressure_ ||
-         _system_data_->failure_detection_.has_any_component_timed_out() ||
+         component_timed_out ||
          !_system_data_->hardware_data_.asms_on_ || !_system_data_->failure_detection_.ts_on_ ||
-        //  failed_to_build_hydraulic_pressure_in_time() ||
+        //  failed_to_build_pressure ||
          _system_data_->hardware_data_.bspd_sdc_open_;
 }
 
 bool CheckupManager::should_enter_emergency_in_driving_state() const {
-  return _system_data_->failure_detection_.has_any_component_timed_out() ||
+  bool component_timed_out = _system_data_->failure_detection_.has_any_component_timed_out();
+  bool failed_to_reduce_pressure = failed_to_reduce_hydraulic_pressure_in_time();
+  DEBUG_PRINT_VAR(component_timed_out);
+  DEBUG_PRINT_VAR(failed_to_reduce_pressure);
+  DEBUG_PRINT_VAR(_system_data_->hardware_data_.asms_on_);
+  DEBUG_PRINT_VAR(_system_data_->failure_detection_.ts_on_);
+  DEBUG_PRINT_VAR(_system_data_->hardware_data_.bspd_sdc_open_);
+  DEBUG_PRINT_VAR(_system_data_->failure_detection_.emergency_signal_);
+  DEBUG_PRINT_VAR(!_system_data_->hardware_data_.pneumatic_line_pressure_);
+  return /* component_timed_out || */
          _system_data_->failure_detection_.emergency_signal_ ||
          _system_data_->hardware_data_.bspd_sdc_open_ ||
         //  !_system_data_->hardware_data_.pneumatic_line_pressure_ ||
-        //  failed_to_reduce_hydraulic_pressure_in_time() || 
+        //  failed_to_reduce_pressure || 
          !_system_data_->hardware_data_.asms_on_ ||
          !_system_data_->failure_detection_.ts_on_;
 }
