@@ -446,7 +446,7 @@ void loop() {
     cell_spi_timer = 0;
   }
 
-  if (step < 10) {
+  if (step < 100) {
     return;
   }
   step = 0;

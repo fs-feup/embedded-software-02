@@ -3,7 +3,7 @@
 FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> can1;  // todo
 
 const u_int8_t pin_ntc_temp[NTC_SENSOR_COUNT] = {A4,  A5,  A6,  A7, A8, A9,  A2,  A3,  A10,
-                                                 A11, A12, A13, A0, A1, A17, A16, A15, A14};
+                                                 A11, A12, A13, A0, A1, A17, A16, A15, A14};//after A12 is A13 in teensy 1
 
 float cell_temps[NTC_SENSOR_COUNT];
 CAN_error_t error;
@@ -45,6 +45,17 @@ bool check_master_timeout() {
 
   return false;
 }
+
+
+void can_receive_from_master(const CAN_message_t& msg) {
+  if (msg.id == MASTER_CELL_ID) {
+    last_master_message_time = millis();
+    master_has_communicated = true;
+  }
+  last_message_received_time = millis();
+}
+
+#endif
 void debug_helper() {
   DEBUG_PRINTLN("----------- DEBUG HELPER -----------");
 
@@ -130,16 +141,8 @@ void debug_helper() {
   DEBUG_PRINTLN("--------- END DEBUG HELPER ---------");
   DEBUG_PRINTLN();  // Add a blank line for readability
 }
-void can_receive_from_master(const CAN_message_t& msg) {
-  DEBUG_PRINT("RECIEIVED FROM MASTER: ID");
-  if (msg.id == MASTER_CELL_ID) {
-    last_master_message_time = millis();
-    master_has_communicated = true;
-  }
-  last_message_received_time = millis();
-}
 
-#endif
+
 
 #if THIS_IS_MASTER
 void send_master_heartbeat() {
@@ -175,6 +178,10 @@ void read_check_temperatures() {
   bool error = false;
   for (int i = 0; i < NTC_SENSOR_COUNT; i++) {
     cell_temps[i] = read_ntc_temperature(analogRead(pin_ntc_temp[i]));
+    DEBUG_PRINT("Cell ");
+    DEBUG_PRINT(i+1);
+    DEBUG_PRINT(": ");
+    DEBUG_PRINTLN(analogRead(pin_ntc_temp[i]));
     min_temp = min(min_temp, cell_temps[i]);
     max_temp = max(max_temp, cell_temps[i]);
     sum_temp += cell_temps[i];
@@ -315,8 +322,6 @@ void code_reset() {
 }
 
 void can_snifflas(const CAN_message_t& msg) {
-  DEBUG_PRINT("Received CAN message with ID: ");
-  Serial.println(msg.id, HEX);
   if (msg.id >= CELL_TEMPS_BASE_ID && msg.id < CELL_TEMPS_BASE_ID + TOTAL_BOARDS && msg.len == 4) {
     uint8_t board_from_id = msg.id - CELL_TEMPS_BASE_ID;
     uint8_t board_from_buf = msg.buf[0];
@@ -348,8 +353,18 @@ void calculate_global_stats(TemperatureData& global_data) {
   global_data.min_temp = MAX_INT8_T;
   global_data.max_temp = MIN_INT8_T;
 
-  for (const auto& board : board_temps) {
+  for (uint8_t i = 0; i < TOTAL_BOARDS; i++) {
+    const auto& board = board_temps[i];
     if (board.has_communicated) {
+      //print board id and the 3 values
+      DEBUG_PRINT("Board ID: ");
+      DEBUG_PRINT(i); // Use the array index instead of board.id
+      DEBUG_PRINT(" Min: ");
+      DEBUG_PRINT(board.temp_data.min_temp);
+      DEBUG_PRINT(" Max: ");
+      DEBUG_PRINT(board.temp_data.max_temp);
+      DEBUG_PRINT(" Avg: ");
+      DEBUG_PRINTLN(board.temp_data.avg_temp);
       global_data.min_temp = min(global_data.min_temp, board.temp_data.min_temp);
       global_data.max_temp = max(global_data.max_temp, board.temp_data.max_temp);
       sum += board.temp_data.avg_temp;
@@ -462,7 +477,7 @@ void loop() {
     send_to_bms(global_data);
     send_master_heartbeat();
 #endif
-    // show_temperatures();
+    show_temperatures();
   }
   if (no_error_iterations >= NO_ERROR_RESET_THRESHOLD) {
     error_count = 0;
