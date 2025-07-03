@@ -119,19 +119,37 @@ void CanCommHandler::bamocar_callback(const uint8_t* const msg_data, const uint8
 
   switch (msg_data[0]) {
     case DC_VOLTAGE: {
-      static elapsedMillis stable_timer = 0;
-      static bool stable_state = false;
+      static String low_voltage_log = "";
+      static elapsedMillis print_timer = 0;
 
-      bool current_ts_on = (message_value >= DC_THRESHOLD);
+      // Always print current voltage on receive
+      DEBUG_PRINT("DC Voltage received: ");
+      DEBUG_PRINTLN(message_value);
 
-      if (current_ts_on != stable_state) {
-        // State changed, restart timing
-        stable_state = current_ts_on;
-        stable_timer = 0;
-      } else if (stable_timer >= STABLE_TIME_MS && stable_state != updatable_data.TSOn) {
-        // State has been stable long enough, update
-        updatable_data.TSOn = stable_state;
+      // Check if below threshold and append to log
+      if (message_value < DC_THRESHOLD) {
+        if (low_voltage_log.length() > 0) {
+          low_voltage_log += ", ";
+        }
+        low_voltage_log += String(message_value);
+
+        // Print accumulated low voltage readings every 2 seconds
+        if (print_timer >= 2000) {
+          DEBUG_PRINT("Low voltage readings: ");
+          DEBUG_PRINTLN(low_voltage_log);
+          print_timer = 0;
+        }
+      } else {
+        // If we have accumulated low readings and now voltage is good, print final log
+        if (low_voltage_log.length() > 0) {
+          DEBUG_PRINT("Final low voltage readings: ");
+          DEBUG_PRINTLN(low_voltage_log);
+          low_voltage_log = "";  // Clear the log
+          print_timer = 0;
+        }
       }
+
+      updatable_data.TSOn = (message_value >= DC_THRESHOLD);
       break;
     }
     case BTB_READY_0:
@@ -190,7 +208,7 @@ void CanCommHandler::bamocar_callback(const uint8_t* const msg_data, const uint8
       // DEBUG_PRINT(moment_ramp);
       // DEBUG_PRINTLN(" ms");
     } break;
-    
+
     default:
       break;
   }
@@ -223,16 +241,19 @@ void CanCommHandler::write_messages() {
     write_rpm();
     // write_bamocar_speed();
     rpm_timer = 0;
+    // DEBUG_PRINTLN("RPM message sent");
   }
 
   if (hydraulic_timer >= HYDRAULIC_MSG_PERIOD_MS) {
     write_hydraulic_line();
     hydraulic_timer = 0;
+    // DEBUG_PRINTLN("Hydraulic line message sent");
   }
 
   if (apps_timer >= APPS_MSG_PERIOD_MS) {
     write_apps();
     apps_timer = 0;
+    // DEBUG_PRINTLN("APPS message sent");
   }
 
   const auto& current_mode = data.switch_mode;
@@ -402,7 +423,6 @@ bool CanCommHandler::init_bamocar() {
   constexpr CAN_message_t clear_error_message = {
       .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x8E, 0x00, 0x00}};
 
-  
   static unsigned long currentTime = 0;
   currentTime = millis();
 
@@ -503,7 +523,7 @@ void CanCommHandler::stop_bamocar() {
 
 void CanCommHandler::send_torque(const int torque) {
   if (torque_timer >= TORQUE_MSG_PERIOD_MS) {
-    DEBUG_PRINT("Sending torque: " + String(torque));
+    // DEBUG_PRINT("Sending torque: " + String(torque));
     CAN_message_t torque_message;
     torque_message.id = BAMO_COMMAND_ID;
     torque_message.len = 3;

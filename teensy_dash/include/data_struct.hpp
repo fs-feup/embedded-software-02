@@ -37,7 +37,7 @@ enum BamocarState {
   ERROR,
   CLEAR_ERRORS
 };
-constexpr unsigned long STABLE_TIME_MS = 250;
+constexpr unsigned long STABLE_TIME_MS = 150;
 
 struct InverterModeParams {
   int i_max_pk_percent = 0;
@@ -57,6 +57,9 @@ struct SystemData {
   bool buzzer_active = false;
   unsigned long buzzer_start_time;
   unsigned long buzzer_duration_ms;
+  bool emergency_buzzer_active = false;
+  unsigned long emergency_buzzer_start_time;
+  bool emergency_buzzer_state = false;
   std::deque<uint16_t> apps_higher_readings;
   std::deque<uint16_t> apps_lower_readings;
   float fr_rpm = 0;

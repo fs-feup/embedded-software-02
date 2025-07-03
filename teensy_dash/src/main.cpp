@@ -10,7 +10,7 @@ SystemData data;
 SystemVolatileData updated_data;
 volatile SystemVolatileData updatable_data;
 elapsedMillis loop_timer;
-constexpr uint8_t MAIN_LOOP_INTERVAL = 20;
+constexpr uint8_t MAIN_LOOP_INTERVAL = 10;
 
 IOManager io_manager(data, updatable_data, updated_data);
 CanCommHandler can_comm_handler(data, updatable_data, updated_data);

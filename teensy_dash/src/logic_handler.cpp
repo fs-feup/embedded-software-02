@@ -16,7 +16,7 @@ bool LogicHandler::should_start_manual_driving() const {
   // DEBUG_PRINTLN("R2D brake timer: " + String(data.r2d_brake_timer));
   // DEBUG_PRINTLN("R2D brake timer: " + String(data
   return (data.r2d_pressed &&
-          updated_data.TSOn /* && data.r2d_brake_timer < config::r2d::TIMEOUT_MS */);
+          updated_data.TSOn && data.r2d_brake_timer < config::r2d::TIMEOUT_MS );
 }
 
 bool LogicHandler::should_start_as_driving() const {
@@ -43,18 +43,11 @@ bool LogicHandler::plausibility(const int apps_higher,
     DEBUG_PRINTLN("Apps implausible: invalid input");
   }
 
-  DEBUG_PRINTLN("Apps Higher: " + String(apps_higher));
-  DEBUG_PRINTLN("Apps Lower: " + String(apps_lower));
   const int scaled_apps_lower = scale_apps_lower_to_apps_higher(apps_lower);
-  DEBUG_PRINTLN("Scaled Apps Lower: " + String(scaled_apps_lower));
 
   const int difference = abs(scaled_apps_lower - apps_higher);
-  DEBUG_PRINTLN("Difference: " + String(difference));
 
   const int percentage_difference = (difference * 100) / apps_higher;
-  DEBUG_PRINTLN("Percentage Difference: " + String(percentage_difference));
-  DEBUG_PRINTLN("Percentage Difference: " + String(percentage_difference));
-  DEBUG_PRINTLN("Percentage Difference: " + String(percentage_difference));
 
   // if (apps_lower < config::apps::APPS_LOWER_ZEROED) {
   //   if (apps_higher < config::apps::APPS_HIGHER_WHEN_LOWER_ZEROES) {
@@ -114,11 +107,11 @@ bool LogicHandler::check_apps_plausibility(const uint16_t apps_higher_avg,
     apps_implausibility_timer = 0;
     return true;
   }
-  if (apps_implausibility_timer > config::apps::IMPLAUSIBLE_TIMEOUT_MS) {
-    apps_timeout = true;
-    return false;
-  }
-  return true;
+  // if (apps_implausibility_timer > config::apps::IMPLAUSIBLE_TIMEOUT_MS) {
+  //   apps_timeout = true;
+  //   return false;
+  // }
+  return false;
 }
 
 int LogicHandler::calculate_torque() {

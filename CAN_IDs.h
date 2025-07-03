@@ -7,9 +7,9 @@
 //-----------------------------------------------------------------------------
 
 constexpr unsigned CAN_TIMEOUT_MS = 100;         // 100
-constexpr uint8_t RPM_MSG_PERIOD_MS = 50;        // 50
-constexpr uint8_t HYDRAULIC_MSG_PERIOD_MS = 50;  // 50
-constexpr uint8_t APPS_MSG_PERIOD_MS = 50;       // 50
+constexpr uint8_t RPM_MSG_PERIOD_MS = 30;        // 30
+constexpr uint8_t HYDRAULIC_MSG_PERIOD_MS = 20;  // 20
+constexpr uint8_t APPS_MSG_PERIOD_MS = 150;       // 150
 constexpr uint8_t TORQUE_MSG_PERIOD_MS = 10;     // 10
 constexpr float WHEEL_PRECISION = 1e-2;          // 1e-2
 
