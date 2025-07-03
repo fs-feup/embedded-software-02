@@ -168,7 +168,7 @@ inline bool CheckupManager::should_stay_manual_driving() const {
   //   return false;
   // }
 
-  return false;
+  return true;
 }
 
 inline bool CheckupManager::should_stay_off() {
@@ -415,7 +415,7 @@ bool CheckupManager::should_enter_emergency_in_driving_state() const {
   DEBUG_PRINT_VAR(_system_data_->hardware_data_.bspd_sdc_open_);
   DEBUG_PRINT_VAR(_system_data_->failure_detection_.emergency_signal_);
   DEBUG_PRINT_VAR(!_system_data_->hardware_data_.pneumatic_line_pressure_);
-  return component_timed_out ||
+  return /* component_timed_out || */
          _system_data_->failure_detection_.emergency_signal_ ||
          _system_data_->hardware_data_.bspd_sdc_open_ ||
         //  !_system_data_->hardware_data_.pneumatic_line_pressure_ ||

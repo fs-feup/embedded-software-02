@@ -202,7 +202,7 @@ inline void DigitalReceiver::read_mission() {
     *mission_ = latest_mission;
     mission_change_counter_ = 0;
   }
-  *mission_ = Mission::AUTOCROSS;
+  *mission_ = Mission::MANUAL;
 }
 
 inline void DigitalReceiver::read_asms_switch() {

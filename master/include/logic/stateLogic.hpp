@@ -87,7 +87,7 @@ inline void ASState::calculate_state() {
         state_ = State::AS_MANUAL;
         break;
       }
-
+      _communicator_->reset_r2d();
       if (_checkup_manager_.should_stay_off()) break;
       if (!_checkup_manager_.should_go_ready_from_off()) break;  // recheck all states
 

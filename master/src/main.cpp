@@ -48,5 +48,4 @@ void loop() {
 
   output_coordinator.process(current_master_state, current_checkup_state);
 
-  delay(LOOP_DELAY);
 } 

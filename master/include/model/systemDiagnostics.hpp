@@ -40,7 +40,9 @@ struct R2DLogics {
    * It performs the necessary actions based on the received signal.
    *
    */
-
+  void reset() {
+    r2d = false;
+  }
   void process_go_signal() {
     //if 5 seconds have passed all good, VVVRRRUUUMMMMM 
     if (readyTimestamp.check()) {
@@ -61,10 +63,10 @@ struct FailureDetection {
                                                          // threshold for more than 150ms
   Metro dc_voltage_hold_timestamp_{
       DC_VOLTAGE_HOLD};  // timer for ts on, only after enough voltage for 1 sec
-  bool steer_dead_{true};
-  bool pc_dead_{true};
-  bool inversor_dead_{true};
-  bool res_dead_{true};
+  bool steer_dead_{false};
+  bool pc_dead_{false};
+  bool inversor_dead_{false};
+  bool res_dead_{false};
   bool emergency_signal_{false};
   bool ts_on_{false};
   double radio_quality_{0};
