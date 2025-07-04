@@ -43,6 +43,7 @@ bool check_master_timeout() {
 
   return false;
 }
+#endif
 void debug_helper() {
   DEBUG_PRINTLN("----------- DEBUG HELPER -----------");
 
@@ -128,6 +129,7 @@ void debug_helper() {
   DEBUG_PRINTLN("--------- END DEBUG HELPER ---------");
   DEBUG_PRINTLN();  // Add a blank line for readability
 }
+#if !THIS_IS_MASTER
 void can_receive_from_master(const CAN_message_t& msg) {
   DEBUG_PRINT("RECIEIVED FROM MASTER: ID");
   if (msg.id == MASTER_CELL_ID) {
@@ -258,14 +260,6 @@ void send_can_max_min_avg_temperatures() {
   msg.buf[1] = board_temps[BOARD_ID].temp_data.min_temp;
   msg.buf[2] = board_temps[BOARD_ID].temp_data.max_temp;
   msg.buf[3] = board_temps[BOARD_ID].temp_data.avg_temp;
-  // print min max avg
-
-  // DEBUG_PRINT("CAN MSG - ID: 0x109 | Min: ");
-  // DEBUG_PRINT(static_cast<int8_t>(msg.buf[1]));
-  // DEBUG_PRINT("°C, Max: ");
-  // DEBUG_PRINT(static_cast<int8_t>(msg.buf[2]));
-  // DEBUG_PRINT("°C, Avg: ");
-  // DEBUG_PRINTLN(static_cast<int8_t>(msg.buf[3]));
 
   if (send_can_message(msg)) {
     // DEBUG_PRINTLN("Sent CAN message with min, max, and avg temperatures");
@@ -478,5 +472,6 @@ void loop() {
     error_count = 0;
     no_error_iterations = 0;
   }
+  debug_helper();
   delay(2 * BOARD_ID);
 }
