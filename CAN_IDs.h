@@ -135,6 +135,10 @@ constexpr uint16_t BMS_ID_CCL = 0x101;               // 0x101
 constexpr uint16_t BMS_ID_ERR = 0x123;               // 0x123
 constexpr uint32_t BMS_THERMISTOR_ID = 0x1839'F380;  // 0x1839'F380
 
+constexpr uint16_t BMS_DUMP_ROW_0 = 0x6B6;
+constexpr uint16_t BMS_DUMP_ROW_1 = 0x22F028;
+constexpr uint16_t BMS_DUMP_ROW_2 = 0x22F029;
+
 //-----------------------------------------------------------------------------
 // Remote Emergency System (RES)
 //-----------------------------------------------------------------------------
@@ -187,3 +191,7 @@ constexpr uint16_t WIDGET_VOLTAGE = 0x0008;
 constexpr uint16_t WIDGET_CURRENT = 0x0009;
 constexpr uint16_t WIDGET_CH_STATUS = 0x000A;
 constexpr uint16_t WIDGET_SDC_BUTTON = 0x000B;
+constexpr uint16_t WIDGET_BMS_DUMP_0 = 0xBB00;
+constexpr uint16_t WIDGET_BMS_DUMP_1 = 0xBB01;
+constexpr uint16_t WIDGET_BMS_DUMP_2 = 0xBB02;
+constexpr uint16_t WIDGET_BMS_DUMP_3 = 0xBB03;

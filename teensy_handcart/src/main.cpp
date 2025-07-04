@@ -142,9 +142,39 @@ void can_snifflas(const CAN_message_t &message) {
         }
       }
     }
-  } else if (message.id == BMS_THERMISTOR_ID) {
-    // Handles BMS thermistor messages
-    Serial.println("BMS Thermistor Data");
+  }
+  else if (message.id == BMS_DUMP_ROW_0) {
+    uint16_t buf16[8];
+    for (int i = 0; i < 8; ++i) {
+      buf16[i] = static_cast<uint16_t>(message.buf[i]);
+    }
+    displaySPI.transfer16(buf16, 8, WIDGET_BMS_DUMP_0, millis() & 0xFFFF);
+  }
+  else if (message.id == BMS_DUMP_ROW_1) {
+    uint16_t buf16[8];
+    for (int i = 0; i < 8; ++i) {
+      buf16[i] = static_cast<uint16_t>(message.buf[i]);
+    }
+    displaySPI.transfer16(buf16, 8, WIDGET_BMS_DUMP_1, millis() & 0xFFFF);
+  }  else if (message.id == BMS_DUMP_ROW_2) {
+    uint16_t buf16[8];
+    for (int i = 0; i < 8; ++i) {
+      buf16[i] = static_cast<uint16_t>(message.buf[i]);
+    }
+    displaySPI.transfer16(buf16, 8, WIDGET_BMS_DUMP_2, millis() & 0xFFFF);
+  }
+  else if (message.id == BMS_THERMISTOR_ID) {
+    const auto min_temp = static_cast<uint16_t>(message.buf[1]);
+    const auto max_temp = static_cast<uint16_t>(message.buf[2]);
+
+    displaySPI.transfer16(&min_temp, 1, WIDGET_CELLS_MIN, millis() & 0xFFFF);
+    displaySPI.transfer16(&max_temp, 1, WIDGET_CELLS_MAX, millis() & 0xFFFF);
+
+    uint16_t buf16[8];
+    for (int i = 0; i < 8; ++i) {
+      buf16[i] = static_cast<uint16_t>(message.buf[i]);
+    }
+    displaySPI.transfer16(buf16, 8, WIDGET_BMS_DUMP_3, millis() & 0xFFFF);
   }
 }
 
@@ -397,20 +427,29 @@ void setup() {
 
   can1.setFIFOFilter(REJECT_ALL);
 
-  if (!can1.setFIFOFilter(0, CHARGER_ID, STD);) {
+  if (!can1.setFIFOFilter(0, CHARGER_ID, STD)) {
     Serial.println("Failed to set FIFO filter to CHARGER_ID");
   }
-  if (!can1.setFIFOFilter(1, BMS_ID_CCL, STD);) {
+  if (!can1.setFIFOFilter(1, BMS_ID_CCL, STD)) {
     Serial.println("Failed to set FIFO filter to BMS_ID_CCL");
   }
-  if (can1.setFIFOFilter(2, BMS_ID_ERR, STD);) {
+  if (can1.setFIFOFilter(2, BMS_ID_ERR, STD)) {
     Serial.println("Failed to set FIFO filter to BMS_ID_ERR");
   }
   if (!can1.setFIFOFilter(3, BMS_THERMISTOR_ID, EXT)) {  // Extended frame
     Serial.println("Failed to set FIFO filter to BMS_THERMISTOR_ID");
   }
+  if (!can1.setFIFOFilter(4, BMS_DUMP_ROW_0, EXT)) {
+    Serial.println("Failed to set FIFO filter to BMS_DUMP_ROW_0");
+  }
+  if (!can1.setFIFOFilter(5, BMS_DUMP_ROW_1, EXT)) {
+    Serial.println("Failed to set FIFO filter to BMS_DUMP_ROW_1");
+  }
+  if (!can1.setFIFOFilter(6, BMS_DUMP_ROW_2, EXT)) {
+    Serial.println("Failed to set FIFO filter to BMS_DUMP_ROW_2");
+  }
 
-  uint8_t filter_idx_start = 4;
+  uint8_t filter_idx_start = 7;
   for (int i = 0; i < TOTAL_BOARDS; ++i) {
     if (!can1.setFIFOFilter(filter_idx_start + i, CELL_TEMPS_BASE_ID + i, STD)) {
       Serial.println("Warning: Not enough FIFO filters for all teensy_cell boards.");
@@ -445,25 +484,11 @@ void setup() {
 
   delay(100);
   constexpr uint16_t buf[] = {0x0000};
-  const auto widgetID = displaySPI.transfer16(buf, 1, WIDGET_CH_STATUS, millis() & 0xFFFF);
+  displaySPI.transfer16(buf, 1, WIDGET_CH_STATUS, millis() & 0xFFFF);
   // DBUG_PRINT_VAR(widgetID);
 }
 
 void loop() {
-  // if (cell_spi_timer >= 200) {
-  //   uint16_t buf[TOTAL_BOARDS];
-  //   for (int i = 0; i < TOTAL_BOARDS; ++i) {
-  //       if (param.cell_board_temps[i].has_data) {
-  //         buf[i] = static_cast<uint16_t>(param.cell_board_temps[i].avg_temp);
-  //       } else {
-  //         buf[i] = 0;  // No data available
-  //       }
-  //   }
-  //   const auto widgetID = displaySPI.transfer16(buf, TOTAL_BOARDS, WIDGET_CELL_TEMPS, millis() &
-  //   0xFFFF);
-  //   // DBUG_PRINT_VAR(widgetID);
-  //   cell_spi_timer = 0;
-  // }
 
   if (step < 400) {
     return;
@@ -490,22 +515,5 @@ void loop() {
     displaySPI.transfer16(data, 1, 0x9999, millis() & 0xFFFF);
     // DBUG_PRINT_VAR(widgetID);
     display_button_pressed = false;
-  }
-  // Send values to widgetID 0x0002
-  if (spi_update_timer >= 10) {
-    data[0] = value1;
-    displaySPI.transfer16(data, 1, 0x0007, millis() & 0xFFFF);
-    // DBUG_PRINT_VAR(widgetID);
-
-    // Update values
-    if (increasing) {
-      value1++;
-      if (value1 >= 99) increasing = false;
-    } else {
-      value1--;
-      if (value1 <= 1) increasing = true;
-    }
-
-    spi_update_timer = 0;
   }
 }
