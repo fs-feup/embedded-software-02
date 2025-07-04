@@ -136,8 +136,8 @@ constexpr uint16_t BMS_ID_ERR = 0x123;               // 0x123
 constexpr uint32_t BMS_THERMISTOR_ID = 0x1839'F380;  // 0x1839'F380
 
 constexpr uint16_t BMS_DUMP_ROW_0 = 0x6B6;
-constexpr uint16_t BMS_DUMP_ROW_1 = 0x22F028;
-constexpr uint16_t BMS_DUMP_ROW_2 = 0x22F029;
+constexpr uint32_t BMS_DUMP_ROW_1 = 0x22'F028;
+constexpr uint32_t BMS_DUMP_ROW_2 = 0x22'F029;
 
 //-----------------------------------------------------------------------------
 // Remote Emergency System (RES)

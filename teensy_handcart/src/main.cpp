@@ -30,9 +30,6 @@ bool display_button_pressed = false;
 
 Status charger_status;  // current state machine status
 
-static uint16_t value1 = 0;
-static bool increasing = true;
-
 void handle_set_data_response(const CAN_message_t &message) {
   switch (message.buf[1]) {
     case SET_VOLTAGE_RESPONSE: {
@@ -107,8 +104,6 @@ void can_snifflas(const CAN_message_t &message) {
     param.ch_safety = message.buf[2] & 0x04;
     // print
     print_value("CCL= ", param.ccl);
-
-    const uint8_t status = message.buf[2];
 
     // Serial.print("Discharge relay: "); Serial.println((status & 0x01) ? "ON" : "OFF");
     // Serial.print("Charge relay: "); Serial.println((status & 0x02) ? "ON" : "OFF");

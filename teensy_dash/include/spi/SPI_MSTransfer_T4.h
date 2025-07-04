@@ -28,7 +28,6 @@
             if ((ARM_DWT_CYCCNT - __spi_wait_start_cycles__) > F_CPU / 20) { \
                 SPI_ISR_EXIT \
             } \
-            uint32_t __spi_wait_start_cycles__ = ARM_DWT_CYCCNT; \
             if (!(SLAVE_FSR & 0x1F0000)) continue; \
             if ((SLAVE_SR & (1UL << 8))) {
 
