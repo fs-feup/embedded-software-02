@@ -3,11 +3,11 @@
 #include <FlexCAN_T4.h>
 #include <elapsedMillis.h>
 
+#include "../../CAN_IDs.h"
 #include "SPI_MSTransfer_T4.h"
 #include "constants.hpp"
 #include "structs.hpp"
 #include "utils.hpp"
-#include "../../CAN_IDs.h"
 // #include "../../debugUtils.hpp"
 
 FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> can1;
@@ -20,13 +20,15 @@ elapsedMillis cell_spi_timer;
 
 PARAMETERS param;
 
+const CAN_message_t HC_msg = {.id = HC_ID, .len = 1, .buf = {0x00}};
+
 bool ch_enable_pin = 1;    // This was CH enable pin status
 bool shutdown_status = 0;  // latching status, 1(high) for shutdown
 bool sdc_status_pin = 0;
 auto display_button = Bounce();
 bool display_button_pressed = false;
 
-Status charger_status;       // current state machine status
+Status charger_status;  // current state machine status
 
 static uint16_t value1 = 0;
 static bool increasing = true;
@@ -56,7 +58,7 @@ void handle_read_data_response(const CAN_message_t &message) {
     case CURRENT_VOLTAGE_RESPONSE: {
       extract_value(param.current_voltage, message.buf);
 
-      const uint16_t buf[] = { static_cast<uint16_t>(param.current_voltage)};
+      const uint16_t buf[] = {static_cast<uint16_t>(param.current_voltage)};
       displaySPI.transfer16(buf, 1, WIDGET_VOLTAGE, millis() & 0xFFFF);
       print_value("Current voltage= ", param.current_voltage);
       break;
@@ -65,7 +67,7 @@ void handle_read_data_response(const CAN_message_t &message) {
     case CURRENT_CURRENT_RESPONSE: {
       extract_value(param.current_current, message.buf);
 
-      const uint16_t buf[] = { static_cast<uint16_t>(param.current_current)};
+      const uint16_t buf[] = {static_cast<uint16_t>(param.current_current)};
       displaySPI.transfer16(buf, 1, WIDGET_CURRENT, millis() & 0xFFFF);
       print_value("Current Current= ", param.current_current);
       break;
@@ -103,7 +105,7 @@ void can_snifflas(const CAN_message_t &message) {
   } else if (message.id == BMS_ID_CCL) {
     param.ccl = message.buf[0] * 1000;  // Assuming conversion is correct
     param.ch_safety = message.buf[2] & 0x04;
-    //print
+    // print
     print_value("CCL= ", param.ccl);
 
     const uint8_t status = message.buf[2];
@@ -138,16 +140,11 @@ void can_snifflas(const CAN_message_t &message) {
           param.cell_board_temps[board_id_from_can_id].has_data = true;
           param.cell_board_temps[board_id_from_can_id].last_update_ms = millis();
         }
-      } else {
-        // Optional: Log board ID mismatch
-        // Serial.printf("Cell Temp Msg: Board ID mismatch! CAN_ID implies %d, Payload says %d\n",
-        // board_id_from_can_id, board_id_from_payload);
       }
-    } else {
-      // Optional: Log incorrect message length
-      // Serial.printf("Cell Temp Msg: Incorrect length %d for board %d (ID 0x%X)\n", message.len,
-      // board_id_from_can_id, message.id);
     }
+  } else if (message.id == BMS_THERMISTOR_ID) {
+    // Handles BMS thermistor messages
+    Serial.println("BMS Thermistor Data");
   }
 }
 
@@ -156,16 +153,16 @@ void charger_machine() {
     case Status::IDLE: {
       if (shutdown_status == 0) {
         charger_status = Status::CHARGING;
-        constexpr uint16_t buf[] = { 0x0001 };
-        displaySPI.transfer16(buf , 1, WIDGET_CH_STATUS, millis() & 0xFFFF);
+        constexpr uint16_t buf[] = {0x0001};
+        displaySPI.transfer16(buf, 1, WIDGET_CH_STATUS, millis() & 0xFFFF);
       }
       break;
     }
     case Status::CHARGING: {
       if (shutdown_status) {
         charger_status = Status::SHUTDOWN;
-        constexpr uint16_t buf[] = { 0x0002 };
-        displaySPI.transfer16(buf , 1, WIDGET_CH_STATUS, millis() & 0xFFFF);
+        constexpr uint16_t buf[] = {0x0002};
+        displaySPI.transfer16(buf, 1, WIDGET_CH_STATUS, millis() & 0xFFFF);
       }
       break;
     }
@@ -189,7 +186,7 @@ void read_inputs() {
   // Serial.println(sdc_status_pin ? "ON" : "OFF");
   if (sdc_status_pin != last_sdc_status) {
     last_sdc_status = sdc_status_pin;
-    const uint16_t buf[] = { sdc_status_pin };
+    const uint16_t buf[] = {sdc_status_pin};
     displaySPI.transfer16(buf, 1, WIDGET_SDC_BUTTON, millis() & 0xFFFF);
   }
 
@@ -387,7 +384,7 @@ void setup() {
   pinMode(CH_ENABLE_PIN, INPUT);
   pinMode(SHUTDOWN_PIN, INPUT);
   pinMode(DISPLAY_BUTTON_PIN, INPUT);
-  pinMode(SDC_BUTTON_PIN, INPUT);//todo display
+  pinMode(SDC_BUTTON_PIN, INPUT);  // todo display
   display_button.attach(DISPLAY_BUTTON_PIN, INPUT);
   display_button.interval(10);  // 50ms debounce time
 
@@ -397,18 +394,26 @@ void setup() {
   can1.setBaudRate(125'000);
   can1.enableFIFO();
   can1.enableFIFOInterrupt();
-  can1.setFIFOFilter(REJECT_ALL);
-  can1.setFIFOFilter(0, CHARGER_ID, STD);
-  can1.setFIFOFilter(1, BMS_ID_CCL, STD);
-  can1.setFIFOFilter(2, BMS_ID_ERR, STD);
 
-  uint8_t filter_idx_start = 3;
+  can1.setFIFOFilter(REJECT_ALL);
+
+  if (!can1.setFIFOFilter(0, CHARGER_ID, STD);) {
+    Serial.println("Failed to set FIFO filter to CHARGER_ID");
+  }
+  if (!can1.setFIFOFilter(1, BMS_ID_CCL, STD);) {
+    Serial.println("Failed to set FIFO filter to BMS_ID_CCL");
+  }
+  if (can1.setFIFOFilter(2, BMS_ID_ERR, STD);) {
+    Serial.println("Failed to set FIFO filter to BMS_ID_ERR");
+  }
+  if (!can1.setFIFOFilter(3, BMS_THERMISTOR_ID, EXT)) {  // Extended frame
+    Serial.println("Failed to set FIFO filter to BMS_THERMISTOR_ID");
+  }
+
+  uint8_t filter_idx_start = 4;
   for (int i = 0; i < TOTAL_BOARDS; ++i) {
-    if (filter_idx_start + i < 8) {
-      can1.setFIFOFilter(filter_idx_start + i, CELL_TEMPS_BASE_ID + i, STD);
-    } else {
+    if (!can1.setFIFOFilter(filter_idx_start + i, CELL_TEMPS_BASE_ID + i, STD)) {
       Serial.println("Warning: Not enough FIFO filters for all teensy_cell boards.");
-      break;
     }
   }
 
@@ -421,37 +426,57 @@ void setup() {
 
   param.set_voltage = MAX_VOLTAGE;
 
+  can1.write(HC_msg);  // send message
+
+  delay(100);
+  can1.write(HC_msg);  // send message
+
+  delay(100);
+  can1.write(HC_msg);  // send message
+
+  delay(100);
+  can1.write(HC_msg);  // send message
+
+  delay(100);
+  can1.write(HC_msg);  // send message
+
+  delay(100);
+  can1.write(HC_msg);  // send message
+
   delay(100);
   constexpr uint16_t buf[] = {0x0000};
-  const auto widgetID = displaySPI.transfer16(buf , 1, WIDGET_CH_STATUS, millis() & 0xFFFF);
+  const auto widgetID = displaySPI.transfer16(buf, 1, WIDGET_CH_STATUS, millis() & 0xFFFF);
   // DBUG_PRINT_VAR(widgetID);
 }
 
 void loop() {
-  if (cell_spi_timer >= 100) {
-    uint16_t buf[TOTAL_BOARDS];
-    for (int i = 0; i < TOTAL_BOARDS; ++i) {
-        if (param.cell_board_temps[i].has_data) {
-          buf[i] = static_cast<uint16_t>(param.cell_board_temps[i].avg_temp);
-        } else {
-          buf[i] = 0;  // No data available
-        }
-    }
-    const auto widgetID = displaySPI.transfer16(buf, TOTAL_BOARDS, WIDGET_CELL_TEMPS, millis() & 0xFFFF);
-    // DBUG_PRINT_VAR(widgetID);
-    cell_spi_timer = 0;
-  }
+  // if (cell_spi_timer >= 200) {
+  //   uint16_t buf[TOTAL_BOARDS];
+  //   for (int i = 0; i < TOTAL_BOARDS; ++i) {
+  //       if (param.cell_board_temps[i].has_data) {
+  //         buf[i] = static_cast<uint16_t>(param.cell_board_temps[i].avg_temp);
+  //       } else {
+  //         buf[i] = 0;  // No data available
+  //       }
+  //   }
+  //   const auto widgetID = displaySPI.transfer16(buf, TOTAL_BOARDS, WIDGET_CELL_TEMPS, millis() &
+  //   0xFFFF);
+  //   // DBUG_PRINT_VAR(widgetID);
+  //   cell_spi_timer = 0;
+  // }
 
-  if (step < 100) {
+  if (step < 400) {
     return;
   }
   step = 0;
+
+  can1.write(HC_msg);  // send message
 
   read_inputs();
 
   charger_machine();
 
-  param.allowed_current = /* (param.ccl < SET_CURRENT) ? param.ccl :  */SET_CURRENT;
+  param.allowed_current = /* (param.ccl < SET_CURRENT) ? param.ccl :  */ SET_CURRENT;
 
   update_charger(charger_status);
 

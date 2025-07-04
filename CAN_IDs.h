@@ -9,7 +9,7 @@
 constexpr unsigned CAN_TIMEOUT_MS = 100;         // 100
 constexpr uint8_t RPM_MSG_PERIOD_MS = 60;        // 60
 constexpr uint8_t HYDRAULIC_MSG_PERIOD_MS = 65;  // 65
-constexpr uint8_t APPS_MSG_PERIOD_MS = 150;       // 150
+constexpr uint8_t APPS_MSG_PERIOD_MS = 150;      // 150
 constexpr float WHEEL_PRECISION = 1e-2;          // 1e-2
 
 //-----------------------------------------------------------------------------
@@ -20,6 +20,7 @@ constexpr uint16_t DASH_ID = 0x132;      // 0x132
 constexpr uint16_t AS_CU_ID = 0x400;     // 0x400
 constexpr uint16_t TA_ID = 0x301;        // 0x301
 constexpr uint32_t CH_ID = 0x0220'7446;  // 0x0220'7446
+constexpr uint16_t HC_ID = 0x105;        // 0x105
 
 //-----------------------------------------------------------------------------
 

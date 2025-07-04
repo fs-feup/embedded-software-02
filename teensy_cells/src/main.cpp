@@ -129,17 +129,6 @@ void debug_helper() {
   DEBUG_PRINTLN("--------- END DEBUG HELPER ---------");
   DEBUG_PRINTLN();  // Add a blank line for readability
 }
-#if !THIS_IS_MASTER
-void can_receive_from_master(const CAN_message_t& msg) {
-  DEBUG_PRINT("RECIEIVED FROM MASTER: ID");
-  if (msg.id == MASTER_CELL_ID) {
-    last_master_message_time = millis();
-    master_has_communicated = true;
-  }
-  last_message_received_time = millis();
-}
-
-#endif
 
 #if THIS_IS_MASTER
 void send_master_heartbeat() {
@@ -241,7 +230,7 @@ int8_t safe_temperature_cast(const float temp) {
 
 bool send_can_message(CAN_message_t& msg) {
   for (uint8_t attempt = 0; attempt < MAX_RETRIES; attempt++) {
-    if (can1.write(msg)) {
+    if (can1.write(msg) == 1) {
       return true;
     }
     DEBUG_PRINTLN("CAN send failed, retrying...");
@@ -305,6 +294,19 @@ void code_reset() {
   pinMode(ERROR_SIGNAL, OUTPUT);
   digitalWrite(ERROR_SIGNAL, LOW);
 }
+
+#if !THIS_IS_MASTER
+void can_receive_from_master(const CAN_message_t& msg) {
+  DEBUG_PRINT("RECIEIVED FROM ID: ");
+  Serial.println(msg.id, HEX);
+  if (msg.id == MASTER_CELL_ID) {
+    last_master_message_time = millis();
+    master_has_communicated = true;
+  }
+  last_message_received_time = millis();
+}
+
+#endif
 
 void can_snifflas(const CAN_message_t& msg) {
   DEBUG_PRINT("Received CAN message with ID: ");
@@ -371,7 +373,7 @@ void initialize_can(uint32_t baudRate) {
   for (uint8_t i = 0; i < TOTAL_BOARDS; i++) {  // FlexCAN typically supports 8 filters
     can1.setFIFOFilter(i, CELL_TEMPS_BASE_ID + 1 + i, STD);
   }
-  can1.setFIFOFilter(TOTAL_BOARDS, BMS_ID_CCL, STD);
+  can1.setFIFOFilter(TOTAL_BOARDS, HC_ID, STD);
   can1.setFIFOFilter(TOTAL_BOARDS + 1, MASTER_ID, STD);  // Set filter for master messages
 
   can1.onReceive(can_snifflas);
@@ -379,7 +381,7 @@ void initialize_can(uint32_t baudRate) {
 #else
 
   can1.setFIFOFilter(0, MASTER_CELL_ID, STD);
-  can1.setFIFOFilter(1, BMS_ID_CCL, STD);
+  can1.setFIFOFilter(1, HC_ID, STD);
   can1.setFIFOFilter(2, MASTER_ID, STD);  // Set filter for master messages
 
   can1.onReceive(can_receive_from_master);
@@ -393,7 +395,6 @@ void initialize_can(uint32_t baudRate) {
 
 void setup() {
   Serial.begin(115200);
-  
 
   code_reset();
 
@@ -408,20 +409,20 @@ void setup() {
   for (int i = 0; i < NTC_SENSOR_COUNT; i++) {
     pinMode(pin_ntc_temp[i], INPUT);
   }
-  delay(100);
   initialize_can(CAN_DRIVING_BAUD_RATE);
 
   unsigned long can_1M_start_time = millis();
   bool received_at_1M = false;
   while (millis() - can_1M_start_time < SETUP_TIMEOUT) {
-    // can1.events(); // Process events to ensure ISRs run and parse_message can be called.
     // Important for message detection during this timed window.
     if (last_message_received_time > can_1M_start_time) {  // Check if a message came *after* init
+      DEBUG_PRINTLN("Message received at 1000000 baud.");
+      DEBUG_PRINTLN("Message received at 1000000 baud.");
       DEBUG_PRINTLN("Message received at 1000000 baud.");
       received_at_1M = true;
       break;
     }
-    delay(5);  // Small delay to allow other processes
+    delay(5);  // Short delay to avoid busy-waiting
   }
 
   if (!received_at_1M) {
@@ -436,11 +437,18 @@ void setup() {
 
     initialize_can(CAN_CHARGING_BAUD_RATE);
   }
+  Serial.flush();
+  delay(50);
 }
 void loop() {
   unsigned long current_time = millis();
+#if THIS_IS_MASTER
+constexpr unsigned long LOOP_INTERVAL = 30;  
+#else
+constexpr unsigned long LOOP_INTERVAL = 1000 + BOARD_ID;  
 
-  if (current_time - last_reading_time > TEMP_SENSOR_READ_INTERVAL) {
+#endif
+  if (current_time - last_reading_time > (LOOP_INTERVAL)) {
     last_reading_time = current_time;
     read_check_temperatures();
 
@@ -472,6 +480,9 @@ void loop() {
     error_count = 0;
     no_error_iterations = 0;
   }
-  debug_helper();
-  delay(2 * BOARD_ID);
+  static unsigned long last_debug_time = 0;
+  if (current_time - last_debug_time >= 1000) {
+    debug_helper();
+    last_debug_time = current_time;
+  }
 }
