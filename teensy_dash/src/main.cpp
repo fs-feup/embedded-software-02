@@ -11,7 +11,7 @@ SystemData data;
 SystemVolatileData updated_data;
 volatile SystemVolatileData updatable_data;
 elapsedMillis loop_timer;
-constexpr uint8_t MAIN_LOOP_INTERVAL = 10;
+constexpr uint8_t MAIN_LOOP_INTERVAL = 15;
 
 SPI_MSTransfer_T4<&SPI> display_spi;
 IOManager io_manager(data, updatable_data, updated_data);
@@ -25,7 +25,7 @@ void setup() {
 
   display_spi.begin();
   io_manager.setup();
-  delay(10);  // Wait for Serial to be ready
+  delay(10);
   io_manager.manage();
   can_comm_handler.setup();
 }
@@ -36,7 +36,6 @@ void loop() {
     can_comm_handler.write_messages();
     copy_volatile_data(updated_data, updatable_data);
     state_machine.update();
-
     loop_timer = 0;
   }
 }

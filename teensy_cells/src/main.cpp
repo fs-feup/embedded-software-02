@@ -3,7 +3,7 @@
 FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> can1;  // todo
 
 const u_int8_t pin_ntc_temp[NTC_SENSOR_COUNT] = {A4,  A5,  A6,  A7, A8, A9,  A2,  A3,  A10,
-                                                 A11, A12, A13, A0, A1, A17, A16, A15, A14};//after A12 is A13 in teensy 1
+                                                 A11, A12, A13, A0, A1, A17, A16, A15, A14};
 
 float cell_temps[NTC_SENSOR_COUNT];
 CAN_error_t error;
@@ -11,8 +11,6 @@ CAN_error_t error;
 const unsigned long SETUP_TIMEOUT = 1000;  // 5 seconds for CAN set up detection
 
 bool baud_1M = true;
-bool bitrate_switched = false;
-uint32_t current_bitrate = CAN_DRIVING_BAUD_RATE;  // Start with driving
 unsigned long last_reading_time = 0;
 volatile unsigned long last_message_received_time = 0;
 uint8_t error_count = 0;
@@ -45,17 +43,6 @@ bool check_master_timeout() {
 
   return false;
 }
-
-
-void can_receive_from_master(const CAN_message_t& msg) {
-  if (msg.id == MASTER_CELL_ID) {
-    last_master_message_time = millis();
-    master_has_communicated = true;
-  }
-  last_message_received_time = millis();
-}
-
-#endif
 void debug_helper() {
   DEBUG_PRINTLN("----------- DEBUG HELPER -----------");
 
@@ -141,8 +128,16 @@ void debug_helper() {
   DEBUG_PRINTLN("--------- END DEBUG HELPER ---------");
   DEBUG_PRINTLN();  // Add a blank line for readability
 }
+void can_receive_from_master(const CAN_message_t& msg) {
+  DEBUG_PRINT("RECIEIVED FROM MASTER: ID");
+  if (msg.id == MASTER_CELL_ID) {
+    last_master_message_time = millis();
+    master_has_communicated = true;
+  }
+  last_message_received_time = millis();
+}
 
-
+#endif
 
 #if THIS_IS_MASTER
 void send_master_heartbeat() {
@@ -178,10 +173,6 @@ void read_check_temperatures() {
   bool error = false;
   for (int i = 0; i < NTC_SENSOR_COUNT; i++) {
     cell_temps[i] = read_ntc_temperature(analogRead(pin_ntc_temp[i]));
-    DEBUG_PRINT("Cell ");
-    DEBUG_PRINT(i+1);
-    DEBUG_PRINT(": ");
-    DEBUG_PRINTLN(analogRead(pin_ntc_temp[i]));
     min_temp = min(min_temp, cell_temps[i]);
     max_temp = max(max_temp, cell_temps[i]);
     sum_temp += cell_temps[i];
@@ -322,6 +313,8 @@ void code_reset() {
 }
 
 void can_snifflas(const CAN_message_t& msg) {
+  DEBUG_PRINT("Received CAN message with ID: ");
+  Serial.println(msg.id, HEX);
   if (msg.id >= CELL_TEMPS_BASE_ID && msg.id < CELL_TEMPS_BASE_ID + TOTAL_BOARDS && msg.len == 4) {
     uint8_t board_from_id = msg.id - CELL_TEMPS_BASE_ID;
     uint8_t board_from_buf = msg.buf[0];
@@ -353,18 +346,8 @@ void calculate_global_stats(TemperatureData& global_data) {
   global_data.min_temp = MAX_INT8_T;
   global_data.max_temp = MIN_INT8_T;
 
-  for (uint8_t i = 0; i < TOTAL_BOARDS; i++) {
-    const auto& board = board_temps[i];
+  for (const auto& board : board_temps) {
     if (board.has_communicated) {
-      //print board id and the 3 values
-      DEBUG_PRINT("Board ID: ");
-      DEBUG_PRINT(i); // Use the array index instead of board.id
-      DEBUG_PRINT(" Min: ");
-      DEBUG_PRINT(board.temp_data.min_temp);
-      DEBUG_PRINT(" Max: ");
-      DEBUG_PRINT(board.temp_data.max_temp);
-      DEBUG_PRINT(" Avg: ");
-      DEBUG_PRINTLN(board.temp_data.avg_temp);
       global_data.min_temp = min(global_data.min_temp, board.temp_data.min_temp);
       global_data.max_temp = max(global_data.max_temp, board.temp_data.max_temp);
       sum += board.temp_data.avg_temp;
@@ -411,11 +394,12 @@ void initialize_can(uint32_t baudRate) {
 
   can1.mailboxStatus();
   DEBUG_PRINTLN("CAN Initialized/Re-initialized.");
-  last_message_received_time = millis();  // Reset message timer for detection logic
+  last_message_received_time = 0;  // Reset message timer for detection logic
 }
 
 void setup() {
   Serial.begin(115200);
+  
 
   code_reset();
 
@@ -433,23 +417,34 @@ void setup() {
   delay(100);
   initialize_can(CAN_DRIVING_BAUD_RATE);
 
-  // delay(1000);  // Wait a bit before re-initializing
-  // can1.disableFIFOInterrupt();  // Disable FIFO interrupts before re-initializing
-  // can1.disableFIFO();  // Disable FIFO before re-initializing
-  // can1.reset();  // Reset before re-initializing, data sheet 44.8.1
-  // delay(100);  // Short delay to ensure reset is complete
+  unsigned long can_1M_start_time = millis();
+  bool received_at_1M = false;
+  while (millis() - can_1M_start_time < SETUP_TIMEOUT) {
+    // can1.events(); // Process events to ensure ISRs run and parse_message can be called.
+    // Important for message detection during this timed window.
+    if (last_message_received_time > can_1M_start_time) {  // Check if a message came *after* init
+      DEBUG_PRINTLN("Message received at 1000000 baud.");
+      received_at_1M = true;
+      break;
+    }
+    delay(5);  // Small delay to allow other processes
+  }
+
+  if (!received_at_1M) {
+    DEBUG_PRINTLN("No message received at 1000000 baud within 5 seconds.");
+    DEBUG_PRINTLN("Switching to 125000 baud.");
+
+    // delay(1000);  // Wait a bit before re-initializing
+    // can1.disableFIFOInterrupt();  // Disable FIFO interrupts before re-initializing
+    // can1.disableFIFO();  // Disable FIFO before re-initializing
+    // can1.reset();  // Reset before re-initializing, data sheet 44.8.1
+    // delay(100);  // Short delay to ensure reset is complete
+
+    initialize_can(CAN_CHARGING_BAUD_RATE);
+  }
 }
 void loop() {
   unsigned long current_time = millis();
-
-  if (!bitrate_switched && (current_time - last_message_received_time > 1000)) {
-    if (current_bitrate == CAN_DRIVING_BAUD_RATE) {
-      DEBUG_PRINTLN("Timeout: No CAN message for 1s. Switching from 1Mbps to 125kbps permanently.");
-      current_bitrate = CAN_CHARGING_BAUD_RATE;
-      can1.setBaudRate(current_bitrate);  // Dynamically change the bitrate
-      bitrate_switched = true;            // Set the flag to prevent further switching
-    }
-  }
 
   if (current_time - last_reading_time > TEMP_SENSOR_READ_INTERVAL) {
     last_reading_time = current_time;
@@ -477,7 +472,7 @@ void loop() {
     send_to_bms(global_data);
     send_master_heartbeat();
 #endif
-    show_temperatures();
+    // show_temperatures();
   }
   if (no_error_iterations >= NO_ERROR_RESET_THRESHOLD) {
     error_count = 0;

@@ -44,7 +44,6 @@ private:
   elapsedMillis rpm_timer;        // Timer for RPM messages
   elapsedMillis hydraulic_timer;  // Timer for brake messages
   elapsedMillis apps_timer;       // Timer for APPS messages
-  elapsedMillis torque_timer;     // Timer for torque commands
   volatile bool transmission_enabled = false;
   volatile bool btb_ready = false;
 

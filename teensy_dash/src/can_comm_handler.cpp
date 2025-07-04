@@ -134,36 +134,6 @@ void CanCommHandler::bamocar_callback(const uint8_t* const msg_data, const uint8
 
   switch (msg_data[0]) {
     case DC_VOLTAGE: {
-      static String low_voltage_log = "";
-      static elapsedMillis print_timer = 0;
-
-      // Always print current voltage on receive
-      DEBUG_PRINT("DC Voltage received: ");
-      DEBUG_PRINTLN(message_value);
-
-      // Check if below threshold and append to log
-      if (message_value < DC_THRESHOLD) {
-        if (low_voltage_log.length() > 0) {
-          low_voltage_log += ", ";
-        }
-        low_voltage_log += String(message_value);
-
-        // Print accumulated low voltage readings every 2 seconds
-        if (print_timer >= 2000) {
-          DEBUG_PRINT("Low voltage readings: ");
-          DEBUG_PRINTLN(low_voltage_log);
-          print_timer = 0;
-        }
-      } else {
-        // If we have accumulated low readings and now voltage is good, print final log
-        if (low_voltage_log.length() > 0) {
-          DEBUG_PRINT("Final low voltage readings: ");
-          DEBUG_PRINTLN(low_voltage_log);
-          low_voltage_log = "";  // Clear the log
-          print_timer = 0;
-        }
-      }
-
       updatable_data.TSOn = (message_value >= DC_THRESHOLD);
       break;
     }
@@ -560,16 +530,12 @@ void CanCommHandler::stop_bamocar() {
 }
 
 void CanCommHandler::send_torque(const int torque) {
-  if (torque_timer >= TORQUE_MSG_PERIOD_MS) {
-    // DEBUG_PRINT("Sending torque: " + String(torque));
-    CAN_message_t torque_message;
-    torque_message.id = BAMO_COMMAND_ID;
-    torque_message.len = 3;
-    torque_message.buf[0] = 0x90;
-    torque_message.buf[1] = torque & 0xFF;         // Lower byte
-    torque_message.buf[2] = (torque >> 8) & 0xFF;  // Upper byte
+  CAN_message_t torque_message;
+  torque_message.id = BAMO_COMMAND_ID;
+  torque_message.len = 3;
+  torque_message.buf[0] = 0x90;
+  torque_message.buf[1] = torque & 0xFF;         // Lower byte
+  torque_message.buf[2] = (torque >> 8) & 0xFF;  // Upper byte
 
-    can1.write(torque_message);
-    torque_timer = 0;
-  }
+  can1.write(torque_message);
 }
