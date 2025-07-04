@@ -9,7 +9,7 @@
 constexpr unsigned CAN_TIMEOUT_MS = 100;         // 100
 constexpr uint8_t RPM_MSG_PERIOD_MS = 30;        // 30
 constexpr uint8_t HYDRAULIC_MSG_PERIOD_MS = 20;  // 20
-constexpr uint8_t APPS_MSG_PERIOD_MS = 150;       // 150
+constexpr uint8_t APPS_MSG_PERIOD_MS = 150;      // 150
 constexpr uint8_t TORQUE_MSG_PERIOD_MS = 10;     // 10
 constexpr float WHEEL_PRECISION = 1e-2;          // 1e-2
 
@@ -104,7 +104,7 @@ constexpr uint8_t BTB_READY = 0xE2;  // 0xE2
 constexpr uint16_t DC_THRESHOLD = 1890;  // 1890
 
 /** Also used for ASMS_ON */
-constexpr uint16_t ASMS = 0x91;      // 0x91
+constexpr uint16_t ASMS = 0x91;  // 0x91
 
 //-----------------------------------------------------------------------------
 // Sensors
@@ -171,3 +171,19 @@ constexpr uint8_t DEVICE_I_CNT = 0xC5;                          // 0xC5
 
 constexpr uint32_t MASTER_CELL_ID = 0x109;      // 0x109
 constexpr uint32_t CELL_TEMPS_BASE_ID = 0x110;  // 0x110
+
+// -----------------------------------------------------------------------------
+// DISPLAY WIDGET IDS
+// -----------------------------------------------------------------------------
+constexpr uint16_t WIDGET_FORM_CMD = 0x9999;
+constexpr uint16_t WIDGET_THROTTLE = 0x0001;
+constexpr uint16_t WIDGET_BRAKE = 0x0002;
+constexpr uint16_t WIDGET_SPEED = 0x0003;
+constexpr uint16_t WIDGET_INVERTER_MODE = 0x0004;
+constexpr uint16_t WIDGET_CELLS_MIN = 0x0005;
+constexpr uint16_t WIDGET_CELLS_MAX = 0x0006;
+constexpr uint16_t WIDGET_SOC = 0x0007;
+constexpr uint16_t WIDGET_VOLTAGE = 0x0008;
+constexpr uint16_t WIDGET_CURRENT = 0x0009;
+constexpr uint16_t WIDGET_CH_STATUS = 0x000A;
+constexpr uint16_t WIDGET_SDC_BUTTON = 0x000B;

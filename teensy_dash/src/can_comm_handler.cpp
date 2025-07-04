@@ -5,13 +5,16 @@
 #include <utils.hpp>
 
 #include "../../CAN_IDs.h"
+#include "io_settings.hpp"
 
 CanCommHandler::CanCommHandler(SystemData& system_data,
                                volatile SystemVolatileData& volatile_updatable_data,
-                               SystemVolatileData& volatile_updated_data)
+                               SystemVolatileData& volatile_updated_data,
+                               SPI_MSTransfer_T4<&SPI>& display_spi)
     : data(system_data),
       updatable_data(volatile_updatable_data),
-      updated_data(volatile_updated_data) {
+      updated_data(volatile_updated_data),
+      display_spi(display_spi) {
   static_callback = [this](const CAN_message_t& msg) { this->handle_can_message(msg); };
 }
 
@@ -22,7 +25,7 @@ void CanCommHandler::setup() {
   can1.enableFIFO();
   can1.enableFIFOInterrupt();
   can1.setFIFOFilter(REJECT_ALL);
-  can1.setFIFOFilter(0, BMS_ID, STD);
+  can1.setFIFOFilter(0, BMS_THERMISTOR_ID, STD);
   can1.setFIFOFilter(1, BAMO_RESPONSE_ID, STD);
   can1.setFIFOFilter(2, MASTER_ID, STD);
   can1.onReceive(can_snifflas);
@@ -84,7 +87,8 @@ void CanCommHandler::can_snifflas(const CAN_message_t& msg) {
 }
 void CanCommHandler::handle_can_message(const CAN_message_t& msg) {
   switch (msg.id) {
-    case BMS_ID:
+    case BMS_THERMISTOR_ID:
+      bms_callback(msg.buf, msg.len);
       break;
     case BAMO_RESPONSE_ID:
       bamocar_callback(msg.buf, msg.len);
@@ -95,6 +99,17 @@ void CanCommHandler::handle_can_message(const CAN_message_t& msg) {
     default:
       break;
   }
+}
+void CanCommHandler::bms_callback(const uint8_t* msg_data, uint8_t len) {
+  if (len < 8) {
+    DEBUG_PRINTLN("BMS message too short");
+    return;
+  }
+  const auto min_temp = static_cast<uint16_t>(msg_data[1]);
+  const auto max_temp = static_cast<uint16_t>(msg_data[2]);
+
+  display_spi.transfer16(&min_temp, 1, WIDGET_CELLS_MIN, millis() & 0xFFFF);
+  display_spi.transfer16(&max_temp, 1, WIDGET_CELLS_MAX, millis() & 0xFFFF);
 }
 
 void CanCommHandler::bamocar_callback(const uint8_t* const msg_data, const uint8_t len) {
@@ -226,6 +241,9 @@ void CanCommHandler::master_callback(const uint8_t* const msg_data, const uint8_
 
     case SOC_MSG:
       updatable_data.soc = msg_data[1];
+
+      const auto soc = static_cast<uint16_t>(msg_data[1]);
+      display_spi.transfer16(&soc, 1, WIDGET_SOC, millis() & 0xFFFF);
       break;
 
     case STATE_MSG:
@@ -281,11 +299,13 @@ void CanCommHandler::write_rpm() {
 
   send_rpm(FR_RPM, data.fr_rpm);
   send_rpm(FL_RPM, data.fl_rpm);
+
+  const auto avg_rpm = static_cast<uint16_t>((data.fr_rpm + data.fl_rpm) / 2);
+  display_spi.transfer16(&avg_rpm, 1, WIDGET_SPEED, millis() & 0xFFFF);
 }
 
 void CanCommHandler::write_hydraulic_line() {
   const uint16_t hydraulic_value = average_queue(data.brake_readings);
-
   CAN_message_t hydraulic_message;
   hydraulic_message.id = DASH_ID;
   hydraulic_message.len = 3;
@@ -295,6 +315,9 @@ void CanCommHandler::write_hydraulic_line() {
   hydraulic_message.buf[2] = (hydraulic_value >> 8) & 0xFF;  // Upper byte
 
   can1.write(hydraulic_message);
+
+  // TODO CONVERT TO %(0-100)
+  display_spi.transfer16(&hydraulic_value, 1, WIDGET_BRAKE, millis() & 0xFFFF);
 }
 
 void CanCommHandler::write_apps() {
@@ -316,6 +339,18 @@ void CanCommHandler::write_apps() {
 
   send_apps(APPS_HIGHER, apps_higher);
   send_apps(APPS_LOWER, apps_lower);
+
+  // send apps %(0-100) to display
+  uint16_t torque_value = constrain(apps_higher, config::apps::MIN, config::apps::MAX);
+  torque_value = config::apps::MAX - torque_value;
+  uint16_t apps_percent = 0;
+  if (torque_value > config::apps::DEADBAND) {
+    const float normalized =
+        static_cast<float>(torque_value - config::apps::DEADBAND) /
+        static_cast<float>(config::apps::MAX_FOR_TORQUE - config::apps::DEADBAND);
+    apps_percent = static_cast<uint8_t>(normalized * 100.0f);
+  }
+  display_spi.transfer16(&apps_percent, 1, WIDGET_THROTTLE, millis() & 0xFFFF);
 }
 
 void CanCommHandler::write_inverter_mode(const SwitchMode switch_mode) {
@@ -401,6 +436,9 @@ void CanCommHandler::write_inverter_mode(const SwitchMode switch_mode) {
   can1.write(i_cont_msg);
   can1.write(accRamp_msg);
   can1.write(deccRamp_msg);
+
+  const auto inverter_mode = static_cast<uint16_t>(switch_mode);
+  display_spi.transfer16(&inverter_mode, 1, WIDGET_INVERTER_MODE, millis() & 0xFFFF);
 }
 
 bool CanCommHandler::init_bamocar() {

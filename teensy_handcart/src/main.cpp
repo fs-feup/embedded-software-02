@@ -7,6 +7,7 @@
 #include "constants.hpp"
 #include "structs.hpp"
 #include "utils.hpp"
+#include "../../CAN_IDs.h"
 // #include "../../debugUtils.hpp"
 
 FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> can1;
@@ -104,11 +105,6 @@ void can_snifflas(const CAN_message_t &message) {
     param.ch_safety = message.buf[2] & 0x04;
     //print
     print_value("CCL= ", param.ccl);
-
-
-
-    const uint16_t buf[] = { static_cast<uint16_t>(param.ch_safety)};
-    displaySPI.transfer16(buf, 1, WIDGET_CH_SAFETY, millis() & 0xFFFF);
 
     const uint8_t status = message.buf[2];
 
@@ -466,14 +462,14 @@ void loop() {
     Serial.println("button pressed");
     form_num = (form_num == 1) ? 2 : 1;  // toggle 1 and 2
     data[0] = form_num;
-    const auto widgetID = displaySPI.transfer16(data, 1, 0x9999, millis() & 0xFFFF);
+    displaySPI.transfer16(data, 1, 0x9999, millis() & 0xFFFF);
     // DBUG_PRINT_VAR(widgetID);
     display_button_pressed = false;
   }
   // Send values to widgetID 0x0002
   if (spi_update_timer >= 10) {
     data[0] = value1;
-    const auto widgetID = displaySPI.transfer16(data, 1, 0x0007, millis() & 0xFFFF);
+    displaySPI.transfer16(data, 1, 0x0007, millis() & 0xFFFF);
     // DBUG_PRINT_VAR(widgetID);
 
     // Update values
