@@ -176,7 +176,7 @@ void can_snifflas(const CAN_message_t &message) {
 void charger_machine() {
   switch (charger_status) {
     case Status::IDLE: {
-      if (shutdown_status == 0) {
+      if (shutdown_status == 0 && ! ch_enable_pin) {
         charger_status = Status::CHARGING;
         constexpr uint16_t buf[] = {0x0001};
         displaySPI.transfer16(buf, 1, WIDGET_CH_STATUS, millis() & 0xFFFF);
