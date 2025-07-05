@@ -18,7 +18,6 @@ struct PARAMETERS {
   uint32_t set_current = 0;
   uint32_t current_current = 0;
   uint32_t ccl = 0;
-  int16_t temperature[60]; // For existing TEMPERATURES_ID messages
   BoardTemperatureData cell_board_temps[TOTAL_BOARDS]; // For teensy_cells
 };
 

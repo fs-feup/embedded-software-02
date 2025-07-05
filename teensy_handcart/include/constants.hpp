@@ -11,7 +11,6 @@
 #define CURRENT_CURRENT_RESPONSE 0x2f
 #define CHARGER_SAFETY_BIT_MASK 0x04
 #define CHARGER_ID 0x02207446
-#define TEMPERATURES_ID 0x301 //todo change to correct id 100 + BOARD_ID
 
 #define SHUTDOWN_PIN 16
 #define CH_ENABLE_PIN 14

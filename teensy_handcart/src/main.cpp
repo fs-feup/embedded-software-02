@@ -176,6 +176,9 @@ void can_snifflas(const CAN_message_t &message) {
 void charger_machine() {
   switch (charger_status) {
     case Status::IDLE: {
+      Serial.println("IDLE!");
+      print_value("Shutdown status: ", shutdown_status);
+      print_value("CH enable pin: ", ch_enable_pin);
       if (shutdown_status == 0 && ! ch_enable_pin) {
         charger_status = Status::CHARGING;
         constexpr uint16_t buf[] = {0x0001};
@@ -184,6 +187,7 @@ void charger_machine() {
       break;
     }
     case Status::CHARGING: {
+      Serial.println("CHARGING!");
       if (shutdown_status) {
         charger_status = Status::SHUTDOWN;
         constexpr uint16_t buf[] = {0x0002};
@@ -192,6 +196,7 @@ void charger_machine() {
       break;
     }
     case Status::SHUTDOWN:
+      Serial.println("SHUTDOWN!");
       break;
 
     default: {
