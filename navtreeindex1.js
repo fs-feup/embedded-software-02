@@ -25,7 +25,7 @@ var NAVTREEINDEX1 =
 "da/db9/class_digital_sender.html#a724814744a90f8fe733ad5edf0ebf7a5":[2,0,5,4],
 "da/db9/class_digital_sender.html#af2dad86a446fe22d6e9e16f24950e979":[2,0,5,7],
 "db/d12/class_digital_receiver.html":[2,0,4],
-"db/d12/class_digital_receiver.html#a3056d1607958eb8c7e95daf81219d3e7":[2,0,4,0],
+"db/d12/class_digital_receiver.html#a9037af1381e429e982426765390cd0f3":[2,0,4,0],
 "db/d12/class_digital_receiver.html#ae7ea7957931569cc09763d3fa132f448":[2,0,4,1],
 "db/d2c/test__digital_sender_8cpp.html":[3,0,0,2,3,0],
 "db/d2c/test__digital_sender_8cpp.html#a09dee7a067930a282732cba33e5fb4fe":[3,0,0,2,3,0,3],

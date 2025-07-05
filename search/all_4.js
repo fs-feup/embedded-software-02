@@ -21,7 +21,7 @@ var searchData=
   ['checkupstate_18',['CheckupState',['../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cb',1,'CheckupManager']]],
   ['checkwithoutreset_19',['checkWithoutReset',['../db/d60/class_metro.html#a95ed7cb80b7f56a80790c34fcea93724',1,'Metro']]],
   ['chuck_20',['CHUCK',['../d3/db0/structure_8hpp.html#af686af98019fe71e9f18190349618431a5b14a4f4972d89ead612994600609a75',1,'structure.hpp']]],
-  ['close_5fsdc_21',['close_sdc',['../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cba88eee09a185b96c31b4f1d82ae2026ca',1,'CheckupManager::CLOSE_SDC'],['../da/db9/class_digital_sender.html#aeba7623043aeabfc9c4340cf5185fbca',1,'DigitalSender::close_sdc()'],['../d4/d7d/hardware_settings_8hpp.html#a0c31db55cdf41cbe9d9019b74324c385',1,'CLOSE_SDC:&#160;hardwareSettings.hpp']]],
+  ['close_5fsdc_21',['close_sdc',['../da/db9/class_digital_sender.html#aeba7623043aeabfc9c4340cf5185fbca',1,'DigitalSender::close_sdc()'],['../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cba88eee09a185b96c31b4f1d82ae2026ca',1,'CheckupManager::CLOSE_SDC'],['../d4/d7d/hardware_settings_8hpp.html#a0c31db55cdf41cbe9d9019b74324c385',1,'CLOSE_SDC:&#160;hardwareSettings.hpp']]],
   ['close_5fwatchdog_5fsdc_22',['close_watchdog_sdc',['../da/db9/class_digital_sender.html#a306472b53ae1cf7beac1a77cdf790f1a',1,'DigitalSender']]],
   ['code_23',['code',['../db/d7a/struct_code.html',1,'Code'],['../db/d7a/struct_code.html#a3ad24f9a8f01aa88ea3c7013d049181f',1,'Code::code']]],
   ['communicator_24',['communicator',['../d0/d02/class_communicator.html#a2e0dd0b9a1c3afb728c17639180d56dd',1,'Communicator::Communicator()'],['../d0/d02/class_communicator.html',1,'Communicator'],['../df/d0a/main_8cpp.html#a1caff0851123d68f1bdf3083bef7b00b',1,'communicator:&#160;main.cpp'],['../da/dad/test__integration_8cpp.html#a1caff0851123d68f1bdf3083bef7b00b',1,'communicator:&#160;test_integration.cpp']]],
@@ -29,7 +29,7 @@ var searchData=
   ['complete_26',['COMPLETE',['../d7/d1f/class_checkup_manager.html#a80729480b8cd00c3756d18ea4f12c6d7a3de44296982e58199afc513a715b12ba',1,'CheckupManager']]],
   ['component_5ftimestamp_5ftimeout_27',['COMPONENT_TIMESTAMP_TIMEOUT',['../d4/d7d/hardware_settings_8hpp.html#a4e3a23a5620921dd101384f515f960ef',1,'hardwareSettings.hpp']]],
   ['contributing_28',['Contributing',['../index.html#autotoc_md2',1,'']]],
-  ['create_5fdebug_5fmessage_5f1_29',['create_debug_message_1',['../d5/d5d/comm_2utils_8hpp.html#a38adcb526d999f28c6901510ec723558',1,'utils.hpp']]],
+  ['create_5fdebug_5fmessage_5f1_29',['create_debug_message_1',['../d5/d5d/comm_2utils_8hpp.html#afc621da1b2c4efbdca125284a203f440',1,'utils.hpp']]],
   ['create_5fdebug_5fmessage_5f2_30',['create_debug_message_2',['../d5/d5d/comm_2utils_8hpp.html#a9fc462cd993c19edfc63e11589691e35',1,'utils.hpp']]],
   ['create_5fleft_5fwheel_5fmsg_31',['create_left_wheel_msg',['../d5/d5d/comm_2utils_8hpp.html#a64debfb46d428531f2ce27fa92f63685',1,'utils.hpp']]]
 ];
