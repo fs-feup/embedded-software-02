@@ -13,6 +13,7 @@
 #include "utils.hpp"
 #include "../utils.hpp"
 
+
 /**
  * @brief Array of standard CAN message codes to be used for FIFO filtering
  * Each Code struct contains a key and a corresponding message ID.
@@ -158,11 +159,12 @@ inline void Communicator::res_state_callback(const uint8_t *buf) {
   bool emg_stop2 = buf[3] >> 7 & 0x01;
   bool go_switch = (buf[0] >> 1) & 0x01;
   bool go_button = (buf[0] >> 2) & 0x01;
-  DEBUG_PRINT("RES GO: " + String(go_switch) + "   EMG 1: " + String(emg_stop1) + "   EMG 2: " + String(emg_stop2));
+  // DEBUG_PRINT("RES GO: " + String(go_switch) + "   EMG 1: " + String(emg_stop1) + "   EMG 2: " + String(emg_stop2));
   
   if (go_button || go_switch)
     _systemData->r2d_logics_.process_go_signal();
   else if (!(emg_stop1 || emg_stop2)) { // If both are false 
+    DEBUG_PRINT("Received Emergency from RES");
     _systemData->failure_detection_.emergency_signal_ = true;
   }
 
@@ -216,11 +218,13 @@ inline void Communicator::bamocar_callback(const uint8_t *buf) {
 }
 
 inline void Communicator::pc_callback(const uint8_t *buf) {
+  // DEBUG_PRINT("PC alive signal received");
   if (buf[0] == PC_ALIVE) {
     _systemData->failure_detection_.pc_alive_timestamp_.reset();
   } else if (buf[0] == MISSION_FINISHED) {
     _systemData->mission_finished_ = true;
   } else if (buf[0] == AS_CU_EMERGENCY_SIGNAL) {
+    DEBUG_PRINT("Received Emergency from AS CU");
     _systemData->failure_detection_.emergency_signal_ = true;
   }
 }
@@ -287,7 +291,7 @@ inline int Communicator::publish_soc(uint8_t soc) {
 }
 
 inline int Communicator::publish_asms_on(bool asms_on) {
-  const std::array<uint8_t, 2> msg = {ASMS_ON, asms_on};
+  const std::array<uint8_t, 2> msg = {ASMS, asms_on};
   send_message(2, msg, MASTER_ID);
   return 0;
 }

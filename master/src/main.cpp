@@ -13,7 +13,7 @@ SystemData
     system_data_copy;  // Copy of the model for Communicator (where interrupt updates are stored)
 Communicator communicator = Communicator(&system_data_copy);  // CAN
 DigitalReceiver digital_receiver =
-    DigitalReceiver(&system_data_copy.hardware_data_, &system_data_copy.mission_);
+    DigitalReceiver(&system_data_copy);
 DigitalSender digital_sender = DigitalSender();
 OutputCoordinator output_coordinator =
     OutputCoordinator(&system_data, &communicator, &digital_sender);
@@ -48,9 +48,5 @@ void loop() {
 
   output_coordinator.process(current_master_state, current_checkup_state);
 
-
-  // DEBUG_PRINT(current_master_state);
-  // DEBUG_PRINT(system_data_copy.hardware_data_.pneumatic_line_pressure_);
-  // DEBUG_PRINT(system_data_copy.hardware_data_.hydraulic_pressure_);
   delay(LOOP_DELAY);
 } 
