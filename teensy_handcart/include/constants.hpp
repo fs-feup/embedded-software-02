@@ -21,7 +21,7 @@
 #define MAX_VOLTAGE 600'000
 #define SET_CURRENT 14'000
 
-#define TOTAL_BOARDS 5
+#define TOTAL_BOARDS 6
 
 
 

@@ -2,7 +2,7 @@
 #include <Arduino.h>
 
 
-void extract_value(uint32_t &param_value, const uint8_t *buf) {
+void extract_value(volatile uint32_t &param_value, const uint8_t *buf) {
     param_value = 0;
     param_value |= buf[4] << 24;
     param_value |= buf[5] << 16;

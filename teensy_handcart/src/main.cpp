@@ -18,7 +18,7 @@ elapsedMillis step;
 elapsedMillis spi_update_timer;
 elapsedMillis cell_spi_timer;
 
-PARAMETERS param;
+volatile PARAMETERS param;
 
 const CAN_message_t HC_msg = {.id = HC_ID, .len = 1, .buf = {0x00}};
 
@@ -101,7 +101,7 @@ void can_snifflas(const CAN_message_t &message) {
     parse_charger_message(message);
   } else if (message.id == BMS_ID_CCL) {
     param.ccl = message.buf[0] * 1000;  // Assuming conversion is correct
-    param.ch_safety = message.buf[2] & 0x04;
+    param.ch_safety = message.buf[2] & 0x04;//yves: ch safety -> display
     // print
     print_value("CCL= ", param.ccl);
 
@@ -179,7 +179,7 @@ void charger_machine() {
       Serial.println("IDLE!");
       print_value("Shutdown status: ", shutdown_status);
       print_value("CH enable pin: ", ch_enable_pin);
-      if (shutdown_status == 0 && ! ch_enable_pin) {
+      if (shutdown_status == 0 && !param.ch_safety) {
         charger_status = Status::CHARGING;
         constexpr uint16_t buf[] = {0x0001};
         displaySPI.transfer16(buf, 1, WIDGET_CH_STATUS, millis() & 0xFFFF);

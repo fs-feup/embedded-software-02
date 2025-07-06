@@ -458,6 +458,7 @@ constexpr unsigned long LOOP_INTERVAL = 1000 + BOARD_ID;
       digitalWrite(ERROR_SIGNAL, HIGH);
     }
     send_can_max_min_avg_temperatures();
+    send_can_all_temps();
     // debug_helper();
 #endif
 
