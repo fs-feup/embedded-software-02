@@ -207,8 +207,10 @@ void CanCommHandler::bamocar_callback(const uint8_t* const msg_data, const uint8
 
     case LOGICMAP_ERRORS: {
       // Handle error bitmap
-      const uint32_t error_bitmap = static_cast<uint32_t>(message_value);
+      const auto error_bitmap = static_cast<uint16_t>(message_value & 0x00FF);
       // updatable_data.inverter_errors = error_bitmap;
+
+      display_spi.transfer16(&error_bitmap, 1, WIDGET_INVERTER_ERRORS, millis() & 0xFFFF);
 
       DEBUG_PRINTLN("LOGICMAP_ERRORS - Raw msg data:");
       for (uint8_t i = 0; i < len; i++) {
