@@ -60,6 +60,15 @@ void StateMachine::update() {
       break;
     case State::AS_DRIVING:
 
+      if (logic_handler.just_entered_driving()) {
+        DEBUG_PRINTLN("Going idle from AS driving state");
+        DEBUG_PRINTLN("Going idle from AS driving state");
+        DEBUG_PRINTLN("Going idle from AS driving state");
+        DEBUG_PRINTLN("Going idle from AS driving state");
+
+        io_manager.play_r2d_sound();
+      }
+
       if (logic_handler.just_entered_emergency()) {
         DEBUG_PRINTLN("Going idle from AS driving state");
         DEBUG_PRINTLN("Going idle from AS driving state");

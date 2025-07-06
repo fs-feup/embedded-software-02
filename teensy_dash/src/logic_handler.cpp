@@ -101,6 +101,21 @@ bool LogicHandler::just_entered_emergency() {
   return false;
 }
 
+bool LogicHandler::just_entered_driving() {
+  const bool is_driving = (updated_data.as_state == AS_DRIVING);
+
+  if (!entered_driving && is_driving) {
+    entered_driving = true;
+    return true;
+  }
+
+  if (entered_driving && !is_driving) {
+    entered_driving = false;  // reset if I left driving so if i enter again buzzer plays
+  }
+
+  return false;
+}
+
 bool LogicHandler::check_apps_plausibility(const uint16_t apps_higher_avg,
                                            const uint16_t apps_lower_avg) {
   if (plausibility(apps_higher_avg, apps_lower_avg)) {
