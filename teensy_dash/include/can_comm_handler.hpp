@@ -5,7 +5,6 @@
 #include <cstdint>
 
 #include "data_struct.hpp"
-
 #include "spi/SPI_MSTransfer_T4.h"
 
 class CanCommHandler {
@@ -47,6 +46,7 @@ private:
   volatile bool transmission_enabled = false;
   volatile bool btb_ready = false;
 
+  void send_bamo_requests();
   void write_rpm();
   void write_apps();
   void write_hydraulic_line();

@@ -29,7 +29,7 @@ enum class SwitchMode {
 enum BamocarState {
   ENABLE_TRANSMISSION,
   CHECK_BTB,
-  ENABLE_OFF,
+  DISABLE,
   ENABLE,
   ACC_RAMP,
   DEC_RAMP,
@@ -76,6 +76,7 @@ struct SystemVolatileData {
   int brake_pressure = 0;
   int speed = 0;
   uint8_t soc = 0;
+  int32_t motor_current = 0;
 
   unsigned long last_wheel_pulse_fr = 0;
   unsigned long second_to_last_wheel_pulse_fr = 0;
@@ -95,5 +96,6 @@ inline void copy_volatile_data(SystemVolatileData& dest, volatile SystemVolatile
   dest.second_to_last_wheel_pulse_fr = src.second_to_last_wheel_pulse_fr;
   dest.last_wheel_pulse_fl = src.last_wheel_pulse_fl;
   dest.second_to_last_wheel_pulse_fl = src.second_to_last_wheel_pulse_fl;
+  dest.motor_current = src.motor_current;
   interrupts();
 }

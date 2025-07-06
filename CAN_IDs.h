@@ -15,12 +15,13 @@ constexpr float WHEEL_PRECISION = 1e-2;          // 1e-2
 //-----------------------------------------------------------------------------
 // CAN Message IDs
 //-----------------------------------------------------------------------------
-constexpr uint16_t MASTER_ID = 0x300;    // 0x300
-constexpr uint16_t DASH_ID = 0x132;      // 0x132
-constexpr uint16_t AS_CU_ID = 0x400;     // 0x400
-constexpr uint16_t TA_ID = 0x301;        // 0x301
-constexpr uint32_t CH_ID = 0x0220'7446;  // 0x0220'7446
-constexpr uint16_t HC_ID = 0x105;        // 0x105
+constexpr uint16_t MASTER_ID = 0x300;      // 0x300
+constexpr uint16_t DASH_ID = 0x132;        // 0x132
+constexpr uint16_t AS_CU_ID = 0x400;       // 0x400
+constexpr uint16_t TA_ID = 0x301;          // 0x301
+constexpr uint32_t CH_ID = 0x0220'7446;    // 0x0220'7446
+constexpr uint16_t HC_ID = 0x105;          // 0x105
+constexpr uint16_t BMS_ERRORS_ID = 0x123;  // 0x123
 
 //-----------------------------------------------------------------------------
 
@@ -163,11 +164,15 @@ constexpr std::array<uint8_t, 3> ENABLE_SEQUENCE = {ENABLE_1, ENABLE_2,
                                                     ENABLE_3};  // {ENABLE_1, ENABLE_2, ENABLE_3}
 constexpr uint8_t DC_VOLTAGE = 0xEB;                            // 0xEB
 constexpr uint8_t SPEED_ACTUAL = 0x30;                          // 0x30
-constexpr uint8_t SPEED_LIMIT = 0x34;                           // 0x34
-constexpr uint8_t SPEED_DELTAMA_ACC = 0x35;                     // 0x35
-constexpr uint8_t SPEED_DELTAMA_DECC = 0xED;                    // 0xED
-constexpr uint8_t DEVICE_I_MAX = 0xC4;                          // 0xC4
-constexpr uint8_t DEVICE_I_CNT = 0xC5;                          // 0xC5
+constexpr uint8_t CURRENT_ACTUAL = 0x20;                        // 0x20
+constexpr uint8_t LOGICMAP_ERRORS = 0x8F;                       // 0x8F
+constexpr uint8_t MOTOR_TEMPERATURE = 0x49;                     // 0x49
+
+constexpr uint8_t SPEED_LIMIT = 0x34;         // 0x34
+constexpr uint8_t SPEED_DELTAMA_ACC = 0x35;   // 0x35
+constexpr uint8_t SPEED_DELTAMA_DECC = 0xED;  // 0xED
+constexpr uint8_t DEVICE_I_MAX = 0xC4;        // 0xC4
+constexpr uint8_t DEVICE_I_CNT = 0xC5;        // 0xC5
 
 //-----------------------------------------------------------------------------
 // CELLS

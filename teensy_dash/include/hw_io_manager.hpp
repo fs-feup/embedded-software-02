@@ -33,4 +33,3 @@ private:
   Bounce ats_button = Bounce();
   Bounce display_button = Bounce();
 };
-

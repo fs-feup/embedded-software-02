@@ -20,4 +20,3 @@ private:
   void transition_to_idle();
   void handle_driving();
 };
-

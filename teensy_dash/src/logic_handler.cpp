@@ -12,11 +12,10 @@ bool LogicHandler::should_start_manual_driving() const {
   // print var
   // DEBUG_PRINTLN("R2D pressed: " + String(data.r2d_pressed));
   // DEBUG_PRINTLN("TSOn: " + String(updated_data.TSOn));
-  //print timer
+  // print timer
   // DEBUG_PRINTLN("R2D brake timer: " + String(data.r2d_brake_timer));
   // DEBUG_PRINTLN("R2D brake timer: " + String(data
-  return (data.r2d_pressed &&
-          updated_data.TSOn && data.r2d_brake_timer < config::r2d::TIMEOUT_MS );
+  return (data.r2d_pressed && updated_data.TSOn && data.r2d_brake_timer < config::r2d::TIMEOUT_MS);
 }
 
 bool LogicHandler::should_start_as_driving() const {
@@ -51,14 +50,15 @@ bool LogicHandler::plausibility(const int apps_higher,
 
   // if (apps_lower < config::apps::APPS_LOWER_ZEROED) {
   //   if (apps_higher < config::apps::APPS_HIGHER_WHEN_LOWER_ZEROES) {
-  //     DEBUG_PRINTLN("Apps implausible: apps lower is zeroed, so we can ignore the implausibility");
-  //     return true;  // apps lower is zeroed, so we can ignore the implausibility
-      
+  //     DEBUG_PRINTLN("Apps implausible: apps lower is zeroed, so we can ignore the
+  //     implausibility"); return true;  // apps lower is zeroed, so we can ignore the
+  //     implausibility
+
   //   } else {
   //     DEBUG_PRINTLN(
   //       "Apps implausible: apps lower is zeroed, but apps higher is not in the expected range");
   //     return false;
-      
+
   //   }
   // }
   // print values
@@ -139,6 +139,6 @@ int LogicHandler::calculate_torque() {
       return 0;
     }
   }
-  
+
   return bamocar_value;
 }
