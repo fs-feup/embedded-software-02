@@ -391,6 +391,11 @@ void initialize_can(uint32_t baudRate) {
 }
 
 void send_can_all_temps() {
+  static elapsedMillis send_timer;
+  if (send_timer < 300) {
+    return;
+  }
+  send_timer = 0;
   const uint8_t temps_per_message = 6;  // 6 temps + board_id + msg_index = 8 bytes
   const uint8_t total_messages = (NTC_SENSOR_COUNT + temps_per_message - 1) / temps_per_message;
 
@@ -440,8 +445,7 @@ void setup() {
   unsigned long can_1M_start_time = millis();
   initialize_can(CAN_DRIVING_BAUD_RATE);
 
-  
-  bool received_at_1M = false;
+    bool received_at_1M = false;
   while (millis() - can_1M_start_time < SETUP_TIMEOUT) {
     // Important for message detection during this timed window.
     if (last_message_received_time > can_1M_start_time) {  // Check if a message came *after* init
