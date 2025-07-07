@@ -13,6 +13,7 @@
 #define CHARGER_ID 0x02207446
 
 #define SHUTDOWN_PIN 16
+#define SDC_BUTTON_OUTPUT_PIN 9 //open drain
 #define CH_ENABLE_PIN 14
 #define SDC_BUTTON_PIN 15
 #define LATCHING_ERROR_PIN 34

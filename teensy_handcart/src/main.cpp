@@ -8,7 +8,6 @@
 #include "constants.hpp"
 #include "structs.hpp"
 #include "utils.hpp"
-// #include "../../debugUtils.hpp"
 
 FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> can1;
 
@@ -23,10 +22,12 @@ volatile PARAMETERS param;
 const CAN_message_t HC_msg = {.id = HC_ID, .len = 1, .buf = {0x00}};
 
 bool ch_enable_pin = 1;    // This was CH enable pin status
-bool shutdown_status = 0;  // latching status, 1(high) for shutdown
+bool shutdown_status = 1;  // latching status, 1(high) for shutdown
 bool sdc_status_pin = 0;
-auto display_button = Bounce();
-bool display_button_pressed = false;
+auto sdc_reset_button = Bounce();
+bool sdc_reset_button_pressed = false;
+int a = 0;
+bool last_shutdown_status = false;
 
 Status charger_status;  // current state machine status
 
@@ -229,6 +230,26 @@ void charger_machine() {
   }
 }
 
+void sdc_machine() {
+  switch (a) {
+    case 0:
+      digitalWrite(SDC_BUTTON_OUTPUT_PIN, LOW);
+      if (!last_shutdown_status && shutdown_status) {  // 0->1 transition
+        digitalWrite(SDC_BUTTON_OUTPUT_PIN, HIGH);
+        a = 1;
+      }
+      last_shutdown_status = shutdown_status;
+      break;
+    case 1:
+      if (sdc_reset_button_pressed) {
+        a = 0;
+      }
+      break;
+    default:
+      break;
+  }
+}
+
 void read_inputs() {
   static bool last_sdc_status = false;
   shutdown_status = digitalRead(SHUTDOWN_PIN);
@@ -243,8 +264,8 @@ void read_inputs() {
     displaySPI.transfer16(buf, 1, WIDGET_SDC_BUTTON, millis() & 0xFFFF);
   }
 
-  display_button.update();
-  display_button_pressed = display_button.rose();
+  sdc_reset_button.update();
+  sdc_reset_button_pressed = sdc_reset_button.rose();
 }
 
 void power_on_module(const bool OnOff) {
@@ -376,20 +397,15 @@ void setup() {
   delay(2000);  // Allow time for Serial Monitor to open
   Serial.println("startup");
   Serial.println("startup");
-  Serial.println("startup");
-  Serial.println("startup");
-  Serial.println("startup");
-  Serial.println("startup");
-  Serial.println("startup");
-  Serial.println("startup");
-  Serial.println("startup");
 
   pinMode(CH_ENABLE_PIN, INPUT);
   pinMode(SHUTDOWN_PIN, INPUT);
   pinMode(DISPLAY_BUTTON_PIN, INPUT);
-  pinMode(SDC_BUTTON_PIN, INPUT);  // todo display
-  display_button.attach(DISPLAY_BUTTON_PIN, INPUT);
-  display_button.interval(10);  // 50ms debounce time
+  pinMode(SDC_BUTTON_PIN, INPUT);
+  pinMode(SDC_BUTTON_OUTPUT_PIN, OUTPUT);
+  digitalWrite(SDC_BUTTON_OUTPUT_PIN, LOW);  // Set SDC button output pin to low (open drain)
+  sdc_reset_button.attach(DISPLAY_BUTTON_PIN, INPUT);
+  sdc_reset_button.interval(10);  // 50ms debounce time
 
   displaySPI.begin();
 
@@ -485,6 +501,8 @@ void loop() {
 
   charger_machine();
 
+  sdc_machine();
+
   param.allowed_current = /* (param.ccl < SET_CURRENT) ? param.ccl :  */ SET_CURRENT;
 
   update_charger(charger_status);
@@ -492,13 +510,25 @@ void loop() {
   static uint16_t data[1];  // Define a static array to hold the values
   static int form_num = 1;
 
-  if (display_button_pressed) {
-    Serial.println("button pressed");
+  static elapsedMillis display_timer;  // Timer for display toggle
+
+  // Toggle display every 20 seconds instead of button press
+  if (display_timer >= 20000) {  // 20000 ms = 20 seconds
+    Serial.println("Display toggle - 20s elapsed");
     form_num = (form_num == 1) ? 2 : 1;  // toggle 1 and 2
     data[0] = form_num;
     displaySPI.transfer16(data, 1, 0x9999, millis() & 0xFFFF);
-    // DBUG_PRINT_VAR(widgetID);
-    display_button_pressed = false;
+    display_timer = 0;  // Reset timer
+  }
+
+  // Keep the button functionality for manual toggle if needed
+  if (sdc_reset_button_pressed && a == 0) {
+    Serial.println("button pressed - manual toggle");
+    form_num = (form_num == 1) ? 2 : 1;  // toggle 1 and 2
+    data[0] = form_num;
+    displaySPI.transfer16(data, 1, 0x9999, millis() & 0xFFFF);
+    sdc_reset_button_pressed = false;
+    display_timer = 0;  // Reset timer when manually toggled
   }
 
   print_all_board_temps();
