@@ -164,8 +164,8 @@ inline void DigitalReceiver::read_soc() {
 }
 
 inline void DigitalReceiver::read_bspd_sdc() {
-  bool is_sdc_open = (0 == digitalRead(SDC_TSMS_STATE_PIN));  // low when sdc/bspd open
-  debounce(is_sdc_open, system_data_->hardware_data_.bspd_sdc_open_, sdc_bspd_change_counter_);
+  bool is_sdc_closed = digitalRead(SDC_TSMS_STATE_PIN);  // low when sdc/bspd open
+  debounce(is_sdc_closed, system_data_->hardware_data_.tsms_sdc_closed_, sdc_bspd_change_counter_);
 }
 inline void DigitalReceiver::read_brake_sensor() {
   int hydraulic_pressure = analogRead(BRAKE_SENSOR);

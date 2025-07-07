@@ -360,7 +360,7 @@ inline void CheckupManager::handle_ebs_check() {
 
 inline bool CheckupManager::should_go_ready_from_off() const {
   if (!_system_data_->hardware_data_.asms_on_ || !_system_data_->failure_detection_.ts_on_ ||
-      _system_data_->hardware_data_.bspd_sdc_open_) {
+      !_system_data_->hardware_data_.tsms_sdc_closed_) {
     return false;
   }
   _system_data_->r2d_logics_.enter_ready_state();
@@ -394,7 +394,7 @@ bool CheckupManager::should_enter_emergency_in_ready_state() const {
   DEBUG_PRINT_VAR(failed_to_build_pressure);
   DEBUG_PRINT_VAR(_system_data_->hardware_data_.asms_on_);
   DEBUG_PRINT_VAR(_system_data_->failure_detection_.ts_on_);
-  DEBUG_PRINT_VAR(_system_data_->hardware_data_.bspd_sdc_open_);
+  DEBUG_PRINT_VAR(_system_data_->hardware_data_.tsms_sdc_closed_);
   DEBUG_PRINT_VAR(_system_data_->failure_detection_.emergency_signal_);
   DEBUG_PRINT_VAR(!_system_data_->hardware_data_.pneumatic_line_pressure_);
   return _system_data_->failure_detection_.emergency_signal_ ||
@@ -402,7 +402,7 @@ bool CheckupManager::should_enter_emergency_in_ready_state() const {
          component_timed_out ||
          !_system_data_->hardware_data_.asms_on_ || !_system_data_->failure_detection_.ts_on_ ||
         //  failed_to_build_pressure ||
-         _system_data_->hardware_data_.bspd_sdc_open_;
+         !_system_data_->hardware_data_.tsms_sdc_closed_;
 }
 
 bool CheckupManager::should_enter_emergency_in_driving_state() const {
@@ -412,12 +412,12 @@ bool CheckupManager::should_enter_emergency_in_driving_state() const {
   DEBUG_PRINT_VAR(failed_to_reduce_pressure);
   DEBUG_PRINT_VAR(_system_data_->hardware_data_.asms_on_);
   DEBUG_PRINT_VAR(_system_data_->failure_detection_.ts_on_);
-  DEBUG_PRINT_VAR(_system_data_->hardware_data_.bspd_sdc_open_);
+  DEBUG_PRINT_VAR(_system_data_->hardware_data_.tsms_sdc_closed_);
   DEBUG_PRINT_VAR(_system_data_->failure_detection_.emergency_signal_);
   DEBUG_PRINT_VAR(!_system_data_->hardware_data_.pneumatic_line_pressure_);
   return /* component_timed_out || */
          _system_data_->failure_detection_.emergency_signal_ ||
-         _system_data_->hardware_data_.bspd_sdc_open_ ||
+         !_system_data_->hardware_data_.tsms_sdc_closed_ ||
         //  !_system_data_->hardware_data_.pneumatic_line_pressure_ ||
         //  failed_to_reduce_pressure || 
          !_system_data_->hardware_data_.asms_on_ ||

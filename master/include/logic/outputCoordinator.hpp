@@ -133,7 +133,7 @@ private:
   // Communication functions
   void send_debug_on_state_change(uint8_t current_master_state, uint8_t current_checkup_state) {
     Communicator::publish_debug_morning_log(*system_data_, current_master_state,
-                                              current_checkup_state);
+                                            current_checkup_state);
   }
 
   void send_soc() { Communicator::publish_soc(system_data_->hardware_data_.soc_); }
@@ -164,9 +164,9 @@ private:
   void brake_light_update() {
     int brake_val = system_data_->hardware_data_._hydraulic_line_pressure;
     // DEBUG_PRINT("Brake pressure: " + String(brake_val));
-    //DEBUG_PRINT("Brake pressure lower threshold: " +
+    // DEBUG_PRINT("Brake pressure lower threshold: " +
     //            String(BRAKE_PRESSURE_LOWER_THRESHOLD));
-    //DEBUG_PRINT("Brake pressure upper threshold: " +
+    // DEBUG_PRINT("Brake pressure upper threshold: " +
     //            String(BRAKE_PRESSURE_UPPER_THRESHOLD));
 
     if (brake_val >= BRAKE_PRESSURE_LOWER_THRESHOLD &&
@@ -177,8 +177,8 @@ private:
     }
   }
   void bsdp_sdc_update() {
-    //TODO: implement bspd logic, update led from this output in Dash
-    if (system_data_->hardware_data_.bspd_sdc_open_) {
+    // TODO: implement bspd logic, update led from this output in Dash
+    if (!system_data_->hardware_data_.tsms_sdc_closed_) {
       digital_sender_->bspd_error();
     } else {
       digital_sender_->no_bspd_error();
@@ -186,12 +186,11 @@ private:
   }
   void dash_ats_update(uint8_t current_master_state) {
     if (system_data_->hardware_data_.ats_pressed_ &&
-        current_master_state == to_underlying(State::AS_MANUAL) /*&& BSPD/TSMS HIGH*/) {
+        current_master_state == to_underlying(State::AS_MANUAL) &&
+        system_data_->hardware_data_.tsms_sdc_closed_) {
       digital_sender_->close_sdc();
-    }
-    else {
-      // !! this was opening sdc as soon as ats was released, TODO: if TSMS ever goes low open sdc
-    //   digital_sender_->open_sdc();
+    } else if (!system_data_->hardware_data_.tsms_sdc_closed_) {
+      digital_sender_->open_sdc();
     }
   }
   void send_rpm() { Communicator::publish_rpm(); }

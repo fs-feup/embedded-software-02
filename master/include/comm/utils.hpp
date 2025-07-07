@@ -35,7 +35,7 @@ inline std::array<uint8_t, 8> create_debug_message_1(const SystemData& system_da
     // Pack byte 6 flags with explicit normalization
     uint8_t byte6 = (normalize_bool(system_data.hardware_data_.asms_on_) << 7) | 
                     (normalize_bool(system_data.failure_detection_.ts_on_) << 6) | 
-                    (normalize_bool(system_data.hardware_data_.bspd_sdc_open_) << 5) |
+                    (normalize_bool(system_data.hardware_data_.tsms_sdc_closed_) << 5) |
                     (state_checkup & 0x0F);
     
     return {
