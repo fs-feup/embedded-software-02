@@ -97,7 +97,7 @@ The project is divided into multiple Platform.io projects, each corresponding to
 
 Visual Studio Code is a general purpose IDE very widely used. VSCode is our choice due to the great quantity of extensions available, especially the Platform.io Extension.
 
-First, install the [platformio extension](https://platformio.org/install/ide?install=vscode). 
+First, install the [platformio extension](https://platformio.org/install/ide?install=vscode). You will need python3.6+ version and to install python-venv: ```sudo apt install python3-venv```
 
 Some more suggested extensions:
 - [Github Pull Requests](https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-pull-request-github)
