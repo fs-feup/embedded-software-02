@@ -20,7 +20,7 @@ public:
   void send_torque(int torque);
 
 private:
-  BamocarState bamocar_state = CHECK_BTB;
+  BamocarState bamocar_state = CLEAR_ERRORS;
   unsigned long state_start_time = millis();
   unsigned long last_action_time = 0;
   bool command_sent = false;

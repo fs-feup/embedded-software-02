@@ -476,6 +476,11 @@ bool CanCommHandler::init_bamocar() {
   currentTime = millis();
 
   switch (bamocar_state) {
+    case CLEAR_ERRORS:
+      DEBUG_PRINTLN("Clearing errors");
+      can1.write(clear_error_message);
+      bamocar_state = CHECK_BTB;
+      break;
     case CHECK_BTB:
       if (currentTime - last_action_time >= actionInterval) {
         DEBUG_PRINTLN("Checking BTB status");
@@ -538,13 +543,6 @@ bool CanCommHandler::init_bamocar() {
       DEBUG_PRINT(rampDecRequest.buf[1] | (rampDecRequest.buf[2] << 8));
       DEBUG_PRINTLN("ms");
       can1.write(rampDecRequest);
-      bamocar_state = CLEAR_ERRORS;
-      break;
-    case CLEAR_ERRORS:
-      // This state is not used in the current initialization sequence
-      // but can be used in the future to clear errors
-      DEBUG_PRINTLN("Clearing errors");
-      can1.write(clear_error_message);
       bamocar_state = INITIALIZED;
       break;
     case INITIALIZED:
@@ -557,7 +555,7 @@ bool CanCommHandler::init_bamocar() {
 }
 
 void CanCommHandler::reset_bamocar_init() {
-  bamocar_state = CHECK_BTB;
+  bamocar_state = CLEAR_ERRORS;
   state_start_time = millis();
   last_action_time = 0;
   command_sent = false;
