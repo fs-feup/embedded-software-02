@@ -95,8 +95,8 @@ void parse_charger_message(const CAN_message_t &message) {
 }
 
 void can_snifflas(const CAN_message_t &message) {
-  Serial.print("Received CAN message with ID: ");
-  Serial.print(message.id, HEX);
+  // Serial.print("Received CAN message with ID: ");
+  // Serial.print(message.id, HEX);
   if (message.id == CHARGER_ID) {
     parse_charger_message(message);
   } else if (message.id == BMS_ID_CCL) {
@@ -201,8 +201,8 @@ void charger_machine() {
     case Status::IDLE: {
       Serial.println("IDLE!");
       print_value("Shutdown status: ", shutdown_status);
-      print_value("CH enable pin: ", ch_enable_pin);
-      if (shutdown_status == 0 && !param.ch_safety) {
+      print_value("param.ch_safety: ", param.ch_safety);
+      if (shutdown_status == 0 && param.ch_safety) {
         charger_status = Status::CHARGING;
         constexpr uint16_t buf[] = {0x0001};
         displaySPI.transfer16(buf, 1, WIDGET_CH_STATUS, millis() & 0xFFFF);

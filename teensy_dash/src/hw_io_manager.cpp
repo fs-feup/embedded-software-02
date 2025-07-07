@@ -38,7 +38,7 @@ void IOManager::read_hydraulic_pressure() const {
 }
 
 void IOManager::update_R2D_timer() const {
-  if (average_queue(data.brake_readings) > config::apps::BRAKE_BLOCK_THRESHOLD) {
+  if (average_queue(data.brake_readings) > config::brake::BLOCK_THRESHOLD) {
     data.r2d_brake_timer = 0;
   }
 }
