@@ -8,7 +8,7 @@ const u_int8_t pin_ntc_temp[NTC_SENSOR_COUNT] = {A4,  A5,  A6,  A7, A8, A9,  A2,
 float cell_temps[NTC_SENSOR_COUNT];
 CAN_error_t error;
 
-const unsigned long SETUP_TIMEOUT = 1000;  // 5 seconds for CAN set up detection
+const unsigned long SETUP_TIMEOUT = 1500;  // 1.5 second for CAN set up detection
 
 bool baud_1M = true;
 unsigned long last_reading_time = 0;
@@ -27,7 +27,7 @@ bool check_master_timeout() {
 
   // Allow 2 seconds on startup before considering it a timeout
   if (!master_has_communicated) {
-    if (current_time > 10000) {
+    if (current_time > 15000) {
       DEBUG_PRINTLN("Timeout: No data ever received from master");
       return true;
     }
@@ -130,18 +130,6 @@ void debug_helper() {
   DEBUG_PRINTLN();  // Add a blank line for readability
 }
 
-#if THIS_IS_MASTER
-void send_master_heartbeat() {
-  CAN_message_t msg;
-  msg.id = MASTER_CELL_ID;
-  msg.len = 0;
-
-  if (send_can_message(msg)) {
-    // DEBUG_PRINTLN("Sent master heartbeat");
-  }
-}
-#endif
-
 float read_ntc_temperature(const int analog_value) {
   float temperature = TEMPERATURE_DEFAULT_C;
 
@@ -241,6 +229,11 @@ bool send_can_message(CAN_message_t& msg) {
 }
 
 void send_can_max_min_avg_temperatures() {
+  static elapsedMillis send_timer;
+  if (send_timer < (50 + BOARD_ID)) {
+    return;
+  }
+  send_timer = 0;
   CAN_message_t msg;
   msg.id = CELL_TEMPS_BASE_ID + BOARD_ID;
   msg.len = 4;
@@ -258,7 +251,11 @@ void send_can_max_min_avg_temperatures() {
 }
 void send_to_bms(const TemperatureData& global_data) {
   // print
-
+  static elapsedMillis send_timer;
+  if (send_timer < (5)) {
+    return;
+  }
+  send_timer = 0;
   CAN_message_t msg;
   msg.id = BMS_THERMISTOR_ID;
   msg.flags.extended = true;
@@ -299,7 +296,7 @@ void code_reset() {
 void can_receive_from_master(const CAN_message_t& msg) {
   DEBUG_PRINT("RECIEIVED FROM ID: ");
   Serial.println(msg.id, HEX);
-  if (msg.id == MASTER_CELL_ID) {
+  if (msg.id == CELL_TEMPS_BASE_ID) {
     last_master_message_time = millis();
     master_has_communicated = true;
   }
@@ -380,7 +377,7 @@ void initialize_can(uint32_t baudRate) {
   DEBUG_PRINTLN("CAN filters configured for all board IDs");
 #else
 
-  can1.setFIFOFilter(0, MASTER_CELL_ID, STD);
+  can1.setFIFOFilter(0, CELL_TEMPS_BASE_ID, STD);
   can1.setFIFOFilter(1, HC_ID, STD);
   can1.setFIFOFilter(2, MASTER_ID, STD);  // Set filter for master messages
 
@@ -391,6 +388,37 @@ void initialize_can(uint32_t baudRate) {
   can1.mailboxStatus();
   DEBUG_PRINTLN("CAN Initialized/Re-initialized.");
   last_message_received_time = 0;  // Reset message timer for detection logic
+}
+
+void send_can_all_temps() {
+  const uint8_t temps_per_message = 6;  // 6 temps + board_id + msg_index = 8 bytes
+  const uint8_t total_messages = (NTC_SENSOR_COUNT + temps_per_message - 1) / temps_per_message;
+
+  for (uint8_t msg_index = 0; msg_index < total_messages; msg_index++) {
+    CAN_message_t msg;
+    msg.id = ALL_TEMPS_ID + BOARD_ID;
+
+    msg.buf[0] = BOARD_ID;
+    msg.buf[1] = msg_index;
+
+    uint8_t data_len = 2;
+    uint8_t start_sensor = msg_index * temps_per_message;
+    uint8_t end_sensor =
+        min(start_sensor + temps_per_message, static_cast<uint8_t>(NTC_SENSOR_COUNT));
+
+    for (uint8_t i = start_sensor; i < end_sensor; i++) {
+      msg.buf[data_len++] = static_cast<uint8_t>(cell_temps[i]);
+    }
+
+    msg.len = data_len;
+
+    if (send_can_message(msg)) {
+      // DEBUG_PRINTLN("Sent CAN message chunk with temperatures");
+    } else {
+      DEBUG_PRINT("Failed to send CAN message chunk ");
+      DEBUG_PRINTLN(msg_index);
+    }
+  }
 }
 
 void setup() {
@@ -409,9 +437,10 @@ void setup() {
   for (int i = 0; i < NTC_SENSOR_COUNT; i++) {
     pinMode(pin_ntc_temp[i], INPUT);
   }
+  unsigned long can_1M_start_time = millis();
   initialize_can(CAN_DRIVING_BAUD_RATE);
 
-  unsigned long can_1M_start_time = millis();
+  
   bool received_at_1M = false;
   while (millis() - can_1M_start_time < SETUP_TIMEOUT) {
     // Important for message detection during this timed window.
@@ -422,7 +451,7 @@ void setup() {
       received_at_1M = true;
       break;
     }
-    delay(5);  // Short delay to avoid busy-waiting
+    delay(1);
   }
 
   if (!received_at_1M) {
@@ -438,18 +467,13 @@ void setup() {
     initialize_can(CAN_CHARGING_BAUD_RATE);
   }
   Serial.flush();
-  delay(50);
+  delay(5);
 }
 void loop() {
-  unsigned long current_time = millis();
-#if THIS_IS_MASTER
-constexpr unsigned long LOOP_INTERVAL = 30;  
-#else
-constexpr unsigned long LOOP_INTERVAL = 1000 + BOARD_ID;  
+  static elapsedMillis loop_timer;
 
-#endif
-  if (current_time - last_reading_time > (LOOP_INTERVAL)) {
-    last_reading_time = current_time;
+  if (loop_timer > (LOOP_INTERVAL)) {
+    loop_timer = 0;
     read_check_temperatures();
 
 #if !THIS_IS_MASTER
@@ -457,9 +481,6 @@ constexpr unsigned long LOOP_INTERVAL = 1000 + BOARD_ID;
       // DEBUG_PRINTLN("EMERGENCY SHUTDOWN: Master data timeout detected!");
       digitalWrite(ERROR_SIGNAL, HIGH);
     }
-    send_can_max_min_avg_temperatures();
-    send_can_all_temps();
-    // debug_helper();
 #endif
 
 #if THIS_IS_MASTER
@@ -473,17 +494,17 @@ constexpr unsigned long LOOP_INTERVAL = 1000 + BOARD_ID;
     TemperatureData global_data;
     calculate_global_stats(global_data);
     send_to_bms(global_data);
-    send_master_heartbeat();
 #endif
-    // show_temperatures();
+    send_can_max_min_avg_temperatures();
+    send_can_all_temps();
   }
   if (no_error_iterations >= NO_ERROR_RESET_THRESHOLD) {
     error_count = 0;
     no_error_iterations = 0;
   }
-  static unsigned long last_debug_time = 0;
-  if (current_time - last_debug_time >= 1000) {
+  static elapsedMillis debug_timer;
+  if (debug_timer >= 1500) {
     debug_helper();
-    last_debug_time = current_time;
+    debug_timer = 0;
   }
 }

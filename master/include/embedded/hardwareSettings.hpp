@@ -62,7 +62,7 @@ constexpr int AMI = 23;
 // When pressure on the line passes the threshold defined, pin is set to HIGH
 constexpr int EBS_SENSOR1 = 41;
 constexpr int EBS_SENSOR2 = 39;
-constexpr int SDC_BSPD_STATE_PIN = 22;
+constexpr int SDC_TSMS_STATE_PIN = 22;
 
 constexpr int RL_WSS = 5;
 constexpr int RR_WSS = 4;

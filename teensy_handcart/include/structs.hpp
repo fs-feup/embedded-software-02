@@ -1,12 +1,13 @@
 #pragma once
 
 #include <Arduino.h>
+
 #include "constants.hpp"
 struct BoardTemperatureData {
   int8_t min_temp = 0;
   int8_t max_temp = 0;
   int8_t avg_temp = 0;
-  bool   has_data = false;
+  bool has_data = false;
   unsigned long last_update_ms = 0;
 };
 
@@ -18,7 +19,8 @@ struct PARAMETERS {
   uint32_t set_current = 0;
   uint32_t current_current = 0;
   uint32_t ccl = 0;
-  BoardTemperatureData cell_board_temps[TOTAL_BOARDS]; // For teensy_cells
+  BoardTemperatureData cell_board_temps[TOTAL_BOARDS];          // For teensy_cells
+  int8_t cell_board_all_temps[TOTAL_BOARDS][NTC_SENSOR_COUNT];  // For individual sensor readings
 };
 
 enum class Status {  // state machine status

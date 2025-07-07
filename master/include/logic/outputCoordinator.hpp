@@ -177,6 +177,7 @@ private:
     }
   }
   void bsdp_sdc_update() {
+    //TODO: implement bspd logic, update led from this output in Dash
     if (system_data_->hardware_data_.bspd_sdc_open_) {
       digital_sender_->bspd_error();
     } else {
@@ -185,11 +186,11 @@ private:
   }
   void dash_ats_update(uint8_t current_master_state) {
     if (system_data_->hardware_data_.ats_pressed_ &&
-        current_master_state == to_underlying(State::AS_MANUAL)) {
+        current_master_state == to_underlying(State::AS_MANUAL) /*&& BSPD/TSMS HIGH*/) {
       digital_sender_->close_sdc();
     }
     else {
-      // !! this was opening sdc as soon as ats was released
+      // !! this was opening sdc as soon as ats was released, TODO: if TSMS ever goes low open sdc
     //   digital_sender_->open_sdc();
     }
   }

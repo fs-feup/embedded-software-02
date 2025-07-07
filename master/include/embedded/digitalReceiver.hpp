@@ -35,7 +35,7 @@ public:
    * @brief Constructor for the class, sets pintmodes and buttons
    */
   DigitalReceiver(SystemData* system_data) : system_data_(system_data) {
-    pinMode(SDC_BSPD_STATE_PIN, INPUT);
+    pinMode(SDC_TSMS_STATE_PIN, INPUT);
     pinMode(AMI, INPUT);
     pinMode(ASMS_IN_PIN, INPUT);
     pinMode(EBS_SENSOR2, INPUT);
@@ -164,7 +164,7 @@ inline void DigitalReceiver::read_soc() {
 }
 
 inline void DigitalReceiver::read_bspd_sdc() {
-  bool is_sdc_open = (0 == digitalRead(SDC_BSPD_STATE_PIN));  // low when sdc/bspd open
+  bool is_sdc_open = (0 == digitalRead(SDC_TSMS_STATE_PIN));  // low when sdc/bspd open
   debounce(is_sdc_open, system_data_->hardware_data_.bspd_sdc_open_, sdc_bspd_change_counter_);
 }
 inline void DigitalReceiver::read_brake_sensor() {

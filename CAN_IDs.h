@@ -178,8 +178,9 @@ constexpr uint8_t DEVICE_I_CNT = 0xC5;        // 0xC5
 // CELLS
 //-----------------------------------------------------------------------------
 
-constexpr uint32_t MASTER_CELL_ID = 0x109;      // 0x109
 constexpr uint32_t CELL_TEMPS_BASE_ID = 0x110;  // 0x110
+constexpr uint32_t ALL_TEMPS_ID = 0x280;        // 0x280
+constexpr uint8_t NTC_SENSOR_COUNT = 18;        // 18
 
 // -----------------------------------------------------------------------------
 // DISPLAY WIDGET IDS

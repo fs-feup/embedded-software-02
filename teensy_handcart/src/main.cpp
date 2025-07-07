@@ -100,10 +100,10 @@ void can_snifflas(const CAN_message_t &message) {
   if (message.id == CHARGER_ID) {
     parse_charger_message(message);
   } else if (message.id == BMS_ID_CCL) {
-    param.ccl = message.buf[0] * 1000;  // Assuming conversion is correct
-    param.ch_safety = message.buf[2] & 0x04;//yves: ch safety -> display
+    param.ccl = message.buf[0] * 1000;        // Assuming conversion is correct
+    param.ch_safety = message.buf[2] & 0x04;  // yves: ch safety -> display
     // print
-    print_value("CCL= ", param.ccl);
+    // print_value("CCL= ", param.ccl);
 
     // Serial.print("Discharge relay: "); Serial.println((status & 0x01) ? "ON" : "OFF");
     // Serial.print("Charge relay: "); Serial.println((status & 0x02) ? "ON" : "OFF");
@@ -137,28 +137,51 @@ void can_snifflas(const CAN_message_t &message) {
         }
       }
     }
-  }
-  else if (message.id == BMS_DUMP_ROW_0) {
+  } else if (message.id >= ALL_TEMPS_ID && message.id < (ALL_TEMPS_ID + TOTAL_BOARDS)) {
+    // Handle new chunked temperature messages
+    uint8_t board_id_from_can_id = message.id - ALL_TEMPS_ID;
+
+    if (message.len >= 2) {  // At least board_id + msg_index
+      uint8_t board_id_from_payload = message.buf[0];
+      uint8_t msg_index = message.buf[1];
+
+      if (board_id_from_can_id == board_id_from_payload && board_id_from_can_id < TOTAL_BOARDS) {
+        // Process temperature data starting from buf[2]
+        uint8_t temp_count = message.len - 2;        // Subtract board_id and msg_index bytes
+        uint8_t start_sensor_index = msg_index * 6;  // 6 temps per message as per your code
+
+        for (uint8_t i = 0; i < temp_count; i++) {
+          uint8_t sensor_index = start_sensor_index + i;
+          if (sensor_index < NTC_SENSOR_COUNT) {  // Make sure NTC_SENSOR_COUNT is defined
+            // Change this line to use the correct field name:
+            param.cell_board_all_temps[board_id_from_can_id][sensor_index] =
+                static_cast<int8_t>(message.buf[2 + i]);  // Store temperature
+          }
+        }
+
+        Serial.printf("Received chunked temps for board %d, chunk %d, %d temperatures\n",
+                      board_id_from_payload, msg_index, temp_count);
+      }
+    }
+  } else if (message.id == BMS_DUMP_ROW_0) {
     uint16_t buf16[8];
     for (int i = 0; i < 8; ++i) {
       buf16[i] = static_cast<uint16_t>(message.buf[i]);
     }
     displaySPI.transfer16(buf16, 8, WIDGET_BMS_DUMP_0, millis() & 0xFFFF);
-  }
-  else if (message.id == BMS_DUMP_ROW_1) {
+  } else if (message.id == BMS_DUMP_ROW_1) {
     uint16_t buf16[8];
     for (int i = 0; i < 8; ++i) {
       buf16[i] = static_cast<uint16_t>(message.buf[i]);
     }
     displaySPI.transfer16(buf16, 8, WIDGET_BMS_DUMP_1, millis() & 0xFFFF);
-  }  else if (message.id == BMS_DUMP_ROW_2) {
+  } else if (message.id == BMS_DUMP_ROW_2) {
     uint16_t buf16[8];
     for (int i = 0; i < 8; ++i) {
       buf16[i] = static_cast<uint16_t>(message.buf[i]);
     }
     displaySPI.transfer16(buf16, 8, WIDGET_BMS_DUMP_2, millis() & 0xFFFF);
-  }
-  else if (message.id == BMS_THERMISTOR_ID) {
+  } else if (message.id == BMS_THERMISTOR_ID) {
     const auto min_temp = static_cast<uint16_t>(message.buf[1]);
     const auto max_temp = static_cast<uint16_t>(message.buf[2]);
 
@@ -335,66 +358,16 @@ void print_temps() {
 }
 
 void print_all_board_temps() {
-  // Temperature thresholds
-  const int TEMP_WARNING = 45;   // Celsius
-  const int TEMP_CRITICAL = 55;  // Celsius
+  Serial.println("\n--- ALL NTC SENSOR DATA ---");
 
-  Serial.println("\n--- TEMPERATURE BOARD DATA ---");
-  Serial.println("Board | Min  | Max  | Avg  | Updated");
-  Serial.println("------+------+------+------+--------");
+  for (int board = 0; board < TOTAL_BOARDS; board++) {
+    Serial.printf("\n=== BOARD %d ===\n", board + 1);
 
-  bool any_data = false;
-  unsigned long current_time = millis();
-
-  for (int i = 0; i < TOTAL_BOARDS; i++) {
-    if (param.cell_board_temps[i].has_data) {
-      any_data = true;
-
-      // Calculate time since last update
-      unsigned long time_since_update = current_time - param.cell_board_temps[i].last_update_ms;
-
-      // Format the output with padding for alignment
-      Serial.printf("%4d  | ", i);
-
-      // Print min temp with warning indicator
-      if (param.cell_board_temps[i].min_temp >= TEMP_CRITICAL)
-        Serial.printf("%3d! | ", param.cell_board_temps[i].min_temp);
-      else if (param.cell_board_temps[i].min_temp >= TEMP_WARNING)
-        Serial.printf("%3d* | ", param.cell_board_temps[i].min_temp);
-      else
-        Serial.printf("%3d  | ", param.cell_board_temps[i].min_temp);
-
-      // Print max temp with warning indicator
-      if (param.cell_board_temps[i].max_temp >= TEMP_CRITICAL)
-        Serial.printf("%3d! | ", param.cell_board_temps[i].max_temp);
-      else if (param.cell_board_temps[i].max_temp >= TEMP_WARNING)
-        Serial.printf("%3d* | ", param.cell_board_temps[i].max_temp);
-      else
-        Serial.printf("%3d  | ", param.cell_board_temps[i].max_temp);
-
-      // Print avg temp with warning indicator
-      if (param.cell_board_temps[i].avg_temp >= TEMP_CRITICAL)
-        Serial.printf("%3d! | ", param.cell_board_temps[i].avg_temp);
-      else if (param.cell_board_temps[i].avg_temp >= TEMP_WARNING)
-        Serial.printf("%3d* | ", param.cell_board_temps[i].avg_temp);
-      else
-        Serial.printf("%3d  | ", param.cell_board_temps[i].avg_temp);
-
-      // Print time since last update
-      if (time_since_update < 5000) {
-        Serial.printf("%lus\n", time_since_update / 1000);
-      } else {
-        Serial.printf("%lus!\n", time_since_update / 1000);
-      }
+    for (int sensor = 0; sensor < NTC_SENSOR_COUNT; sensor++) {
+      int8_t temp = param.cell_board_all_temps[board][sensor];
+      Serial.printf("Sensor %2d: %3d°C\n", sensor, temp);
     }
   }
-
-  if (!any_data) {
-    Serial.println("No temperature data available");
-  }
-
-  Serial.println("* = Warning temperature");
-  Serial.println("! = Critical temperature");
 }
 
 void setup() {
@@ -422,8 +395,12 @@ void setup() {
 
   can1.begin();
   can1.setBaudRate(125'000);
+  can1.setRFFN(RFFN_32);
   can1.enableFIFO();
   can1.enableFIFOInterrupt();
+
+  uint8_t max_filters = (((FLEXCANb_CTRL2(CAN2) >> 24) & 0xF) + 1) * 8;
+  Serial.printf("Available FIFO filters: %d\n", max_filters);
 
   can1.setFIFOFilter(REJECT_ALL);
 
@@ -453,6 +430,14 @@ void setup() {
   for (int i = 0; i < TOTAL_BOARDS; ++i) {
     if (!can1.setFIFOFilter(filter_idx_start + i, CELL_TEMPS_BASE_ID + i, STD)) {
       Serial.println("Warning: Not enough FIFO filters for all teensy_cell boards.");
+    }
+  }
+
+  uint8_t all_temps_filter_start = filter_idx_start + TOTAL_BOARDS;
+  for (int i = 0; i < TOTAL_BOARDS; ++i) {
+    if (!can1.setFIFOFilter(all_temps_filter_start + i, ALL_TEMPS_ID + i, STD)) {
+      Serial.println("Warning: Not enough FIFO filters for ALL_TEMPS messages.");
+      break;
     }
   }
 
@@ -489,8 +474,7 @@ void setup() {
 }
 
 void loop() {
-
-  if (step < 400) {
+  if (step < 300) {
     return;
   }
   step = 0;
@@ -516,4 +500,7 @@ void loop() {
     // DBUG_PRINT_VAR(widgetID);
     display_button_pressed = false;
   }
+
+  print_all_board_temps();
+  // print_temps();
 }
