@@ -518,7 +518,7 @@ void loop() {
     Serial.println("Display toggle - 20s elapsed");
     form_num = (form_num == 1) ? 2 : 1;  // toggle 1 and 2
     data[0] = form_num;
-    displaySPI.transfer16(data, 1, 0x9999, millis() & 0xFFFF);
+    displaySPI.transfer16(data, 1, WIDGET_FORM_CMD, millis() & 0xFFFF);
     display_timer = 0;  // Reset timer
   }
 

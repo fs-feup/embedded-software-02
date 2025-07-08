@@ -1,5 +1,6 @@
 #include <Arduino.h>
 
+#include "../../CAN_IDs.h"
 #include "can_comm_handler.hpp"
 #include "data_struct.hpp"
 #include "hw_io_manager.hpp"
@@ -36,5 +37,13 @@ void loop() {
     copy_volatile_data(updated_data, updatable_data);
     state_machine.update();
     loop_timer = 0;
+
+    static uint16_t current_form;  // Define a static array to hold the values
+    if (data.display_pressed) {
+      current_form = (current_form == 1) ? 2 : 1;  // toggle 1 and 2
+      display_spi.transfer16(&current_form, 1, WIDGET_FORM_CMD, millis() & 0xFFFF);
+      // DBUG_PRINT_VAR(widgetID);
+      data.display_pressed = false;
+    }
   }
 }
