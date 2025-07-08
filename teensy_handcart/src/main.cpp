@@ -408,23 +408,20 @@ void setup() {
   if (!can1.setFIFOFilter(1, BMS_ID_CCL, STD)) {
     Serial.println("Failed to set FIFO filter to BMS_ID_CCL");
   }
-  if (can1.setFIFOFilter(2, BMS_ID_ERR, STD)) {
-    Serial.println("Failed to set FIFO filter to BMS_ID_ERR");
-  }
-  if (!can1.setFIFOFilter(3, BMS_THERMISTOR_ID, EXT)) {  // Extended frame
+  if (!can1.setFIFOFilter(2, BMS_THERMISTOR_ID, EXT)) {  // Extended frame
     Serial.println("Failed to set FIFO filter to BMS_THERMISTOR_ID");
   }
-  if (!can1.setFIFOFilter(4, BMS_DUMP_ROW_0, EXT)) {
+  if (!can1.setFIFOFilter(3, BMS_DUMP_ROW_0, EXT)) {
     Serial.println("Failed to set FIFO filter to BMS_DUMP_ROW_0");
   }
-  if (!can1.setFIFOFilter(5, BMS_DUMP_ROW_1, EXT)) {
+  if (!can1.setFIFOFilter(4, BMS_DUMP_ROW_1, EXT)) {
     Serial.println("Failed to set FIFO filter to BMS_DUMP_ROW_1");
   }
-  if (!can1.setFIFOFilter(6, BMS_DUMP_ROW_2, EXT)) {
+  if (!can1.setFIFOFilter(5, BMS_DUMP_ROW_2, EXT)) {
     Serial.println("Failed to set FIFO filter to BMS_DUMP_ROW_2");
   }
 
-  uint8_t filter_idx_start = 7;
+  uint8_t filter_idx_start = 6;
   for (int i = 0; i < TOTAL_BOARDS; ++i) {
     if (!can1.setFIFOFilter(filter_idx_start + i, CELL_TEMPS_BASE_ID + i, STD)) {
       Serial.println("Warning: Not enough FIFO filters for all teensy_cell boards.");
@@ -472,7 +469,7 @@ void setup() {
 }
 
 void loop() {
-  if (step < 300) {
+  if (step < 500) {
     return;
   }
   step = 0;
