@@ -42,7 +42,7 @@ inline std::array<Code, 1> fifoExtendedCodes = {{
 class Communicator {
 private:
   // Static FlexCAN_T4 object for CAN2 interface with RX and TX buffer sizes specified
-  inline static FlexCAN_T4<CAN3, RX_SIZE_256, TX_SIZE_16> can2;
+  inline static FlexCAN_T4<CAN3, RX_SIZE_256, TX_SIZE_16> can3;
 
 public:
   // Pointer to SystemData instance for storing system-related data
@@ -142,21 +142,21 @@ public:
 inline Communicator::Communicator(SystemData *system_data) { _systemData = system_data; }
 
 void Communicator::init() {
-  can2.begin();
-  can2.setBaudRate(1000000);
+  can3.begin();
+  can3.setBaudRate(1'000'000);
+  can3.setRFFN(RFFN_32);
+  can3.enableFIFO();
+  can3.enableFIFOInterrupt();
 
-  can2.enableFIFO();
-  can2.enableFIFOInterrupt();
-
-  can2.setFIFOFilter(REJECT_ALL);
-  for (auto &fifoCode : fifoCodes) can2.setFIFOFilter(fifoCode.key, fifoCode.code, STD);
+  can3.setFIFOFilter(REJECT_ALL);
+  for (auto &fifoCode : fifoCodes) can3.setFIFOFilter(fifoCode.key, fifoCode.code, STD);
 
   for (auto &fifoExtendedCode : fifoExtendedCodes)
-    can2.setFIFOFilter(fifoExtendedCode.key, fifoExtendedCode.code, EXT);
+    can3.setFIFOFilter(fifoExtendedCode.key, fifoExtendedCode.code, EXT);
 
-  can2.onReceive(FIFO, parse_message);
+  can3.onReceive(FIFO, parse_message);
 
-  can2.mailboxStatus();
+  can3.mailboxStatus();
 }
 inline void Communicator::reset_r2d() {
   // Reset R2D state machine
@@ -338,7 +338,7 @@ inline int Communicator::send_message(const unsigned len, const std::array<uint8
   for (unsigned i = 0; i < len; i++) {
     can_message.buf[i] = buffer[i];
   }
-  can2.write(can_message);
+  can3.write(can_message);
 
   return 0;
 }

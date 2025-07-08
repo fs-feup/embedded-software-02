@@ -20,6 +20,7 @@ private:
   Metro mission_timer_;
   Metro state_timer_;
   Metro process_timer_{PROCESS_INTERVAL};
+  Metro slower_process_timer_{SLOWER_PROCESS_INTERVAL};
 
   uint8_t previous_master_state_;
   uint8_t previous_checkup_state_;
@@ -44,16 +45,17 @@ public:
   }
 
   void process(uint8_t current_master_state, uint8_t current_checkup_state) {
+    dash_ats_update(current_master_state);
+    update_physical_outputs();
     if (process_timer_.check()) {
       send_soc();
       send_asms();
-      send_debug_on_state_change(current_master_state, current_checkup_state);
       send_mission_update();
       send_state_update(current_master_state);
-      dash_ats_update(current_master_state);
-      update_physical_outputs();
+    }
+    if (slower_process_timer_.check()) {
+      send_debug_on_state_change(current_master_state, current_checkup_state);
       send_rpm();
-      process_timer_.reset();
     }
   }
 
