@@ -5,12 +5,12 @@
 #include <cstdint>
 
 #include "data_struct.hpp"
-#include "spi/SPI_MSTransfer_T4.h"
+// #include "spi/SPI_MSTransfer_T4.h"
 
 class CanCommHandler {
 public:
   CanCommHandler(SystemData& system_data, volatile SystemVolatileData& volatile_updatable_data,
-                 SystemVolatileData& volatile_updated_data, SPI_MSTransfer_T4<&SPI>& display_spi);
+                 SystemVolatileData& volatile_updated_data/*, SPI_MSTransfer_T4<&SPI>& display_spi*/);
 
   void setup();
   bool init_bamocar();
@@ -36,7 +36,7 @@ private:
   volatile SystemVolatileData& updatable_data;
   SystemVolatileData& updated_data;
 
-  SPI_MSTransfer_T4<&SPI>& display_spi;
+  // SPI_MSTransfer_T4<&SPI>& display_spi;
 
   FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> can1;
   elapsedMillis can_timer;

@@ -1,14 +1,17 @@
 #pragma once
 #include <spi/SPI_MSTransfer_T4.h>
+
 #include "Arduino.h"
 #include "SPI.h"
+#include "utils.hpp"
 
 extern void __attribute__((weak)) lpspi4_slave_isr() {
+    if (LPSPI4) {
     LPSPI4->SPI_MSTransfer_SLAVE_ISR();
+    }
 }
 
-SPI_MSTransfer_T4_FUNC
-SPI_MSTransfer_T4_OPT::SPI_MSTransfer_T4() {
+SPI_MSTransfer_T4_FUNC SPI_MSTransfer_T4_OPT::SPI_MSTransfer_T4() {
 #if defined(__IMXRT1062__)
     if (port == &SPI) {
         LPSPI4 = this;
@@ -55,7 +58,6 @@ SPI_MSTransfer_T4_OPT::SPI_MSTransfer_T4() {
 
 SPI_MSTransfer_T4_FUNC
 void SPI_MSTransfer_T4_OPT::begin() const {
-#if defined(__IMXRT1062__)
     SLAVE_CR = LPSPI_CR_RST; /* Reset Module */
     SLAVE_CR = 0; /* Disable Module */
     SLAVE_FCR = 0;
@@ -68,7 +70,6 @@ void SPI_MSTransfer_T4_OPT::begin() const {
     SLAVE_TCR_REFRESH;
     SLAVE_TDR(0x0); /* dummy data, must populate initial TX slot */
     SLAVE_CR |= LPSPI_CR_MEN | LPSPI_CR_DBGEN | LPSPI_CR_DOZEN; /* Enable Module, Debug Mode, Doze Mode */
-#endif
 
     NVIC_ENABLE_IRQ(nvic_irq);
 }
@@ -76,6 +77,8 @@ void SPI_MSTransfer_T4_OPT::begin() const {
 SPI_MSTransfer_T4_FUNC
 void SPI_MSTransfer_T4_OPT::SPI_MSTransfer_SLAVE_ISR() {
     static uint16_t header;
+    static auto count = 0;
+    Serial.println(count++);
     // Blocking loop; Wait for FEED command
     SPI_WAIT_STATE
         header = SLAVE_RDR;
@@ -129,6 +132,7 @@ void SPI_MSTransfer_T4_OPT::SPI_MSTransfer_SLAVE_ISR() {
 SPI_MSTransfer_T4_FUNC
 uint16_t SPI_MSTransfer_T4_OPT::transfer16(const uint16_t *buffer, const uint16_t length, const uint16_t widgetID,
                                            const uint16_t packetID) {
+    Serial.println("TRANSFER16");
     uint16_t data[5 + length], checksum = 0, data_pos = 0;
 
     // Build the packet first
@@ -162,19 +166,19 @@ uint16_t SPI_MSTransfer_T4_OPT::transfer16(const uint16_t *buffer, const uint16_
 
     // Try to replace existing packet with same widgetID (position 2 in the packet)
     if (smtqueue.replace(data, length + 5, 2, -1, -1)) {
-        // DEBUG_PRINT("Replaced existing packet for widget ");
-        // DEBUG_PRINT_VAR(widgetID)
+        Serial.print("Replaced existing packet for widget ");
+        Serial.println(widgetID);
         return widgetID;
     }
 
     // If no existing packet found, try to add new one
     if (smtqueue.size() == smtqueue.capacity()) {
-        // DEBUG_PRINT("Queue is full, cannot transfer data.");
+        Serial.print("Queue is full, cannot transfer data.");
         return 0;
     }
 
     smtqueue.push_back(data, length + 5);
-    // DEBUG_PRINT("Added new packet for widget ");
-    // DEBUG_PRINT_VAR(widgetID);
+    Serial.print("Added new packet for widget ");
+    Serial.println(widgetID);
     return widgetID;
 }

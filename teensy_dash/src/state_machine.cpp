@@ -90,8 +90,8 @@ void StateMachine::update() {
       break;
   }
   if (print_state_timer >= 700) {
-    DEBUG_PRINTLN("Current state: " + String(static_cast<int>(current_state_)));
-    DEBUG_PRINTLN("Current torque: " + String(torque_from_apps));
+    // DEBUG_PRINTLN("Current state: " + String(static_cast<int>(current_state_)));
+    // DEBUG_PRINTLN("Current torque: " + String(torque_from_apps));
     print_state_timer = 0;
   }
 }
