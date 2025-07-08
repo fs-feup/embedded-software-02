@@ -160,8 +160,8 @@ void can_snifflas(const CAN_message_t &message) {
           }
         }
 
-        Serial.printf("Received chunked temps for board %d, chunk %d, %d temperatures\n",
-                      board_id_from_payload, msg_index, temp_count);
+        // Serial.printf("Received chunked temps for board %d, chunk %d, %d temperatures\n",
+                      // board_id_from_payload, msg_index, temp_count);
       }
     }
   } else if (message.id == BMS_DUMP_ROW_0) {
@@ -200,9 +200,9 @@ void can_snifflas(const CAN_message_t &message) {
 void charger_machine() {
   switch (charger_status) {
     case Status::IDLE: {
-      Serial.println("IDLE!");
-      print_value("Shutdown status: ", shutdown_status);
-      print_value("param.ch_safety: ", param.ch_safety);
+      // Serial.println("IDLE!");
+      // print_value("Shutdown status: ", shutdown_status);
+      // print_value("param.ch_safety: ", param.ch_safety);
       if (shutdown_status == 0 && param.ch_safety) {
         charger_status = Status::CHARGING;
         constexpr uint16_t buf[] = {0x0001};
@@ -211,7 +211,7 @@ void charger_machine() {
       break;
     }
     case Status::CHARGING: {
-      Serial.println("CHARGING!");
+      // Serial.println("CHARGING!");
       if (shutdown_status) {
         charger_status = Status::SHUTDOWN;
         constexpr uint16_t buf[] = {0x0002};
@@ -230,25 +230,7 @@ void charger_machine() {
   }
 }
 
-void sdc_machine() {
-  switch (a) {
-    case 0:
-      digitalWrite(SDC_BUTTON_OUTPUT_PIN, LOW);
-      if (!last_shutdown_status && shutdown_status) {  // 0->1 transition
-        digitalWrite(SDC_BUTTON_OUTPUT_PIN, HIGH);
-        a = 1;
-      }
-      last_shutdown_status = shutdown_status;
-      break;
-    case 1:
-      if (sdc_reset_button_pressed) {
-        a = 0;
-      }
-      break;
-    default:
-      break;
-  }
-}
+
 
 void read_inputs() {
   static bool last_sdc_status = false;
@@ -500,8 +482,27 @@ void loop() {
   read_inputs();
 
   charger_machine();
+  Serial.println("charger machine");
+    Serial.println("Charger status: ");
+  switch (charger_status) {
+    case Status::IDLE:
+      Serial.println("IDLE");
+      break;
+    case Status::CHARGING:
+      Serial.println("CHARGING");
+      break;
+    case Status::SHUTDOWN:
+      Serial.println("SHUTDOWN");
+      break;
+    default:
+      Serial.println("UNKNOWN STATUS");
+      break;
+  }
+  print_value("Shutdown status: ", shutdown_status);
+  print_value("CH enable pin: ", ch_enable_pin);
+  print_value("param.ch_safety: ", param.ch_safety);
+  print_value("SDC status pin: ", sdc_status_pin);
 
-  sdc_machine();
 
   param.allowed_current = /* (param.ccl < SET_CURRENT) ? param.ccl :  */ SET_CURRENT;
 
