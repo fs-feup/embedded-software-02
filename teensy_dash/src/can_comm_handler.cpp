@@ -25,7 +25,7 @@ void CanCommHandler::setup() {
   can1.enableFIFO();
   can1.enableFIFOInterrupt();
   can1.setFIFOFilter(REJECT_ALL);
-  can1.setFIFOFilter(0, BMS_THERMISTOR_ID, STD);
+  can1.setFIFOFilter(0, BMS_THERMISTOR_ID, EXT);
   can1.setFIFOFilter(1, BAMO_RESPONSE_ID, STD);
   can1.setFIFOFilter(2, MASTER_ID, STD);
   can1.onReceive(can_snifflas);
@@ -154,11 +154,6 @@ void CanCommHandler::bms_callback(const uint8_t* msg_data, uint8_t len) {
     DEBUG_PRINTLN("BMS message too short");
     return;
   }
-  const auto min_temp = static_cast<uint16_t>(msg_data[1]);
-  const auto max_temp = static_cast<uint16_t>(msg_data[2]);
-
-  // display_spi.transfer16(&min_temp, 1, WIDGET_CELLS_MIN, millis() & 0xFFFF);
-  // display_spi.transfer16(&max_temp, 1, WIDGET_CELLS_MAX, millis() & 0xFFFF);
 }
 
 void CanCommHandler::bamocar_callback(const uint8_t* const msg_data, const uint8_t len) {
@@ -208,35 +203,9 @@ void CanCommHandler::bamocar_callback(const uint8_t* const msg_data, const uint8
 
     case LOGICMAP_ERRORS: {
       // Handle error bitmap
-      const auto error_bitmap = static_cast<uint16_t>(message_value & 0x00FF);
-      // updatable_data.inverter_errors = error_bitmap;
+      const uint8_t error_bitmap = static_cast<uint8_t>(message_value & 0x00FF);
+      updatable_data.error_bitmap = error_bitmap;
 
-      // display_spi.transfer16(&error_bitmap, 1, WIDGET_INVERTER_ERRORS, millis() & 0xFFFF);
-
-      // DEBUG_PRINTLN("LOGICMAP_ERRORS - Raw msg data:");
-      // for (uint8_t i = 0; i < len; i++) {
-        // DEBUG_PRINTLN("  msg_data[" + String(i) + "] = 0x" + String(msg_data[i], HEX));
-      // }
-
-      // yves: estes são os erros que tem de dar display qd acontecerem, faz como achares melhor
-      // DEBUG_PRINTLN("BAMOCAR ERRORS: 0x" + String(error_bitmap, HEX));
-      // DEBUG_PRINTLN("Individual error bits:");
-      // DEBUG_PRINTLN("  Bit 0 (BADPARAS): " + String((error_bitmap & (1 << 0)) ? 1 : 0));
-      // DEBUG_PRINTLN("  Bit 1 (POWER FAULT): " + String((error_bitmap & (1 << 1)) ? 1 : 0));
-      // DEBUG_PRINTLN("  Bit 2 (RFE): " + String((error_bitmap & (1 << 2)) ? 1 : 0));
-      // DEBUG_PRINTLN("  Bit 3 (BUS TIMEOUT): " + String((error_bitmap & (1 << 3)) ? 1 : 0));
-      // DEBUG_PRINTLN("  Bit 4 (FEEDBACK): " + String((error_bitmap & (1 << 4)) ? 1 : 0));
-      // DEBUG_PRINTLN("  Bit 5 (POWERVOLTAGE): " + String((error_bitmap & (1 << 5)) ? 1 : 0));
-      // DEBUG_PRINTLN("  Bit 6 (MOTORTEMP): " + String((error_bitmap & (1 << 6)) ? 1 : 0));
-      // DEBUG_PRINTLN("  Bit 7 (DEVICETEMP): " + String((error_bitmap & (1 << 7)) ? 1 : 0));
-      // DEBUG_PRINTLN("  Bit 8 (OVERVOLTAGE): " + String((error_bitmap & (1 << 8)) ? 1 : 0));
-      // DEBUG_PRINTLN("  Bit 9 (I_PEAK): " + String((error_bitmap & (1 << 9)) ? 1 : 0));
-      // DEBUG_PRINTLN("  Bit 10 (RACEAWAY): " + String((error_bitmap & (1 << 10)) ? 1 : 0));
-      // DEBUG_PRINTLN("  Bit 11 (USER): " + String((error_bitmap & (1 << 11)) ? 1 : 0));
-      // DEBUG_PRINTLN("  Bit 12: " + String((error_bitmap & (1 << 12)) ? 1 : 0));
-      // DEBUG_PRINTLN("  Bit 13: " + String((error_bitmap & (1 << 13)) ? 1 : 0));
-      // DEBUG_PRINTLN("  Bit 14 (HW_ERR): " + String((error_bitmap & (1 << 14)) ? 1 : 0));
-      // DEBUG_PRINTLN("  Bit 15 (BALLAST): " + String((error_bitmap & (1 << 15)) ? 1 : 0));
     } break;
     default:
       break;
@@ -255,9 +224,6 @@ void CanCommHandler::master_callback(const uint8_t* const msg_data, const uint8_
 
     case SOC_MSG: {
       updatable_data.soc = msg_data[1];
-
-      const auto soc = static_cast<uint16_t>(msg_data[1]);
-      // display_spi.transfer16(&soc, 1, WIDGET_SOC, millis() & 0xFFFF);
     } break;
     case STATE_MSG:
       updatable_data.as_state = msg_data[1];
@@ -312,9 +278,6 @@ void CanCommHandler::write_rpm() {
 
   send_rpm(FR_RPM, data.fr_rpm);
   send_rpm(FL_RPM, data.fl_rpm);
-
-  const auto avg_rpm = static_cast<uint16_t>((data.fr_rpm + data.fl_rpm) / 2);
-  // display_spi.transfer16(&avg_rpm, 1, WIDGET_SPEED, millis() & 0xFFFF);
 }
 
 void CanCommHandler::write_hydraulic_line() {
@@ -328,9 +291,6 @@ void CanCommHandler::write_hydraulic_line() {
   hydraulic_message.buf[2] = (hydraulic_value >> 8) & 0xFF;  // Upper byte
 
   can1.write(hydraulic_message);
-
-  // TODO CONVERT TO %(0-100)
-  // display_spi.transfer16(&hydraulic_value, 1, WIDGET_BRAKE, millis() & 0xFFFF);
 }
 
 void CanCommHandler::write_apps() {
@@ -352,18 +312,6 @@ void CanCommHandler::write_apps() {
 
   send_apps(APPS_HIGHER, apps_higher);
   send_apps(APPS_LOWER, apps_lower);
-
-  // send apps %(0-100) to display
-  uint16_t torque_value = constrain(apps_higher, config::apps::MIN, config::apps::MAX);
-  torque_value = config::apps::MAX - torque_value;
-  uint16_t apps_percent = 0;
-  if (torque_value > config::apps::DEADBAND) {
-    const float normalized =
-        static_cast<float>(torque_value - config::apps::DEADBAND) /
-        static_cast<float>(config::apps::MAX_FOR_TORQUE - config::apps::DEADBAND);
-    apps_percent = static_cast<uint8_t>(normalized * 100.0f);
-  }
-  // display_spi.transfer16(&apps_percent, 1, WIDGET_THROTTLE, millis() & 0xFFFF);
 }
 
 void CanCommHandler::write_inverter_mode(const SwitchMode switch_mode) {
@@ -449,9 +397,6 @@ void CanCommHandler::write_inverter_mode(const SwitchMode switch_mode) {
   can1.write(i_cont_msg);
   can1.write(accRamp_msg);
   can1.write(deccRamp_msg);
-
-  const auto inverter_mode = static_cast<uint16_t>(switch_mode);
-  // display_spi.transfer16(&inverter_mode, 1, WIDGET_INVERTER_MODE, millis() & 0xFFFF);
 }
 
 bool CanCommHandler::init_bamocar() {

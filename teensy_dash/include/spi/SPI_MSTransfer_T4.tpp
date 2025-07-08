@@ -77,8 +77,6 @@ void SPI_MSTransfer_T4_OPT::begin() const {
 SPI_MSTransfer_T4_FUNC
 void SPI_MSTransfer_T4_OPT::SPI_MSTransfer_SLAVE_ISR() {
     static uint16_t header;
-    static auto count = 0;
-    Serial.println(count++);
     // Blocking loop; Wait for FEED command
     SPI_WAIT_STATE
         header = SLAVE_RDR;
@@ -132,7 +130,6 @@ void SPI_MSTransfer_T4_OPT::SPI_MSTransfer_SLAVE_ISR() {
 SPI_MSTransfer_T4_FUNC
 uint16_t SPI_MSTransfer_T4_OPT::transfer16(const uint16_t *buffer, const uint16_t length, const uint16_t widgetID,
                                            const uint16_t packetID) {
-    Serial.println("TRANSFER16");
     uint16_t data[5 + length], checksum = 0, data_pos = 0;
 
     // Build the packet first
@@ -166,19 +163,14 @@ uint16_t SPI_MSTransfer_T4_OPT::transfer16(const uint16_t *buffer, const uint16_
 
     // Try to replace existing packet with same widgetID (position 2 in the packet)
     if (smtqueue.replace(data, length + 5, 2, -1, -1)) {
-        Serial.print("Replaced existing packet for widget ");
-        Serial.println(widgetID);
         return widgetID;
     }
 
     // If no existing packet found, try to add new one
     if (smtqueue.size() == smtqueue.capacity()) {
-        Serial.print("Queue is full, cannot transfer data.");
         return 0;
     }
 
     smtqueue.push_back(data, length + 5);
-    Serial.print("Added new packet for widget ");
-    Serial.println(widgetID);
     return widgetID;
 }

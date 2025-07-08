@@ -77,6 +77,9 @@ struct SystemVolatileData {
   int speed = 0;
   uint8_t soc = 0;
   int32_t motor_current = 0;
+  uint8_t min_temp = 0;
+  uint8_t max_temp = 0;
+  uint8_t error_bitmap = 0;
 
   unsigned long last_wheel_pulse_fr = 0;
   unsigned long second_to_last_wheel_pulse_fr = 0;
@@ -97,5 +100,8 @@ inline void copy_volatile_data(SystemVolatileData& dest, volatile SystemVolatile
   dest.last_wheel_pulse_fl = src.last_wheel_pulse_fl;
   dest.second_to_last_wheel_pulse_fl = src.second_to_last_wheel_pulse_fl;
   dest.motor_current = src.motor_current;
+  dest.min_temp = src.min_temp;
+  dest.max_temp = src.max_temp;
+  dest.error_bitmap = src.error_bitmap;
   interrupts();
 }

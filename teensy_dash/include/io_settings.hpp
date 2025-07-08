@@ -81,7 +81,7 @@ constexpr uint32_t BRAKE_PLAUSIBILITY_TIMEOUT_MS = 500;
 }  // namespace apps
 
 namespace brake {
-constexpr uint16_t BLOCK_THRESHOLD = 250;
+constexpr uint16_t BLOCK_THRESHOLD = 220;
 constexpr uint16_t PRESSURE_THRESHOLD = 250;
 }  // namespace brake
 
