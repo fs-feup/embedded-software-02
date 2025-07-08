@@ -185,13 +185,30 @@ private:
     }
   }
   void dash_ats_update(uint8_t current_master_state) {
+    DEBUG_PRINT("=== ATS Update Debug ===");
+    DEBUG_PRINT("ATS Pressed: " + String(system_data_->hardware_data_.ats_pressed_));
+    DEBUG_PRINT("Current Master State: " + String(current_master_state) +
+                " (AS_MANUAL=" + String(to_underlying(State::AS_MANUAL)) + ")");
+    DEBUG_PRINT("TSMS SDC Closed: " + String(system_data_->hardware_data_.tsms_sdc_closed_));
+
     if (system_data_->hardware_data_.ats_pressed_ &&
         current_master_state == to_underlying(State::AS_MANUAL) &&
         system_data_->hardware_data_.tsms_sdc_closed_) {
+      DEBUG_PRINT(">>> CLOSING SDC - All conditions met");
       digital_sender_->close_sdc();
     } else if (!system_data_->hardware_data_.tsms_sdc_closed_) {
+      DEBUG_PRINT(">>> OPENING SDC - TSMS SDC not closed");
       digital_sender_->open_sdc();
+    } else {
+      DEBUG_PRINT(">>> NO SDC ACTION - Conditions not met");
+      if (!system_data_->hardware_data_.ats_pressed_) {
+        DEBUG_PRINT("    - ATS not pressed");
+      }
+      if (current_master_state != to_underlying(State::AS_MANUAL)) {
+        DEBUG_PRINT("    - Not in AS_MANUAL state");
+      }
     }
+    DEBUG_PRINT("========================");
   }
   void send_rpm() { Communicator::publish_rpm(); }
 };

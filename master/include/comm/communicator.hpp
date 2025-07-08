@@ -173,7 +173,7 @@ inline void Communicator::res_state_callback(const uint8_t *buf) {
   if (go_button || go_switch)
     _systemData->r2d_logics_.process_go_signal();
   else if (!(emg_stop1 || emg_stop2)) { // If both are false 
-    DEBUG_PRINT("Received Emergency from RES");
+    // DEBUG_PRINT("Received Emergency from RES");
     _systemData->failure_detection_.emergency_signal_ = true;
   }
 
