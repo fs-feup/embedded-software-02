@@ -2,8 +2,8 @@
 
 FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> can1;  // todo
 
-const u_int8_t pin_ntc_temp[NTC_SENSOR_COUNT] = {A4,  A5,  A6,  A7, A8, A9,  A2,  A3,  A10,
-                                                 A11, A12, A13, A0, A1, A17, A16, A15, A14};//T! A13
+const u_int8_t pin_ntc_temp[NTC_SENSOR_COUNT] = {A4,  A5,  A6, A7, A8,  A9,  A2,  A3, A10, A11,
+                                                 A12, A13, A0, A1, A17, A16, A15, A14};  // T! A13
 
 float cell_temps[NTC_SENSOR_COUNT];
 CAN_error_t error;
@@ -230,7 +230,7 @@ bool send_can_message(CAN_message_t& msg) {
 
 void send_can_max_min_avg_temperatures() {
   static elapsedMillis send_timer;
-  if (send_timer < (50 + BOARD_ID)) {
+  if (send_timer < (150 + BOARD_ID)) {
     return;
   }
   send_timer = 0;
@@ -361,6 +361,7 @@ void initialize_can(uint32_t baudRate) {
 
   can1.begin();
   can1.setBaudRate(baudRate);
+  can1.setRFFN(RFFN_32);
   can1.enableFIFO();
   can1.enableFIFOInterrupt();
   can1.setFIFOFilter(REJECT_ALL);
@@ -372,6 +373,7 @@ void initialize_can(uint32_t baudRate) {
   }
   can1.setFIFOFilter(TOTAL_BOARDS, HC_ID, STD);
   can1.setFIFOFilter(TOTAL_BOARDS + 1, MASTER_ID, STD);  // Set filter for master messages
+  can1.setFIFOFilter(TOTAL_BOARDS + 2, BMS_ID_CCL, STD);  // Set filter for master messages
 
   can1.onReceive(can_snifflas);
   DEBUG_PRINTLN("CAN filters configured for all board IDs");
@@ -380,6 +382,7 @@ void initialize_can(uint32_t baudRate) {
   can1.setFIFOFilter(0, CELL_TEMPS_BASE_ID, STD);
   can1.setFIFOFilter(1, HC_ID, STD);
   can1.setFIFOFilter(2, MASTER_ID, STD);  // Set filter for master messages
+  can1.setFIFOFilter(3, BMS_ID_CCL, STD);  // Set filter for master messages
 
   can1.onReceive(can_receive_from_master);
   DEBUG_PRINTLN("CAN filter configured for master messages");
@@ -392,7 +395,7 @@ void initialize_can(uint32_t baudRate) {
 
 void send_can_all_temps() {
   static elapsedMillis send_timer;
-  if (send_timer < 300) {
+  if (send_timer < 800) {
     return;
   }
   send_timer = 0;
@@ -445,7 +448,7 @@ void setup() {
   unsigned long can_1M_start_time = millis();
   initialize_can(CAN_DRIVING_BAUD_RATE);
 
-    bool received_at_1M = false;
+  bool received_at_1M = false;
   while (millis() - can_1M_start_time < SETUP_TIMEOUT) {
     // Important for message detection during this timed window.
     if (last_message_received_time > can_1M_start_time) {  // Check if a message came *after* init
