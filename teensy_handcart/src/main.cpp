@@ -9,7 +9,7 @@
 #include "structs.hpp"
 #include "utils.hpp"
 
-FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> can1;
+FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> can2;
 
 SPI_MSTransfer_T4<&SPI> displaySPI;
 
@@ -28,6 +28,7 @@ auto sdc_reset_button = Bounce();
 bool sdc_reset_button_pressed = false;
 int a = 0;
 bool last_shutdown_status = false;
+volatile bool received = false;
 
 Status charger_status;  // current state machine status
 
@@ -98,6 +99,7 @@ void parse_charger_message(const CAN_message_t &message) {
 void can_snifflas(const CAN_message_t &message) {
   // Serial.print("Received CAN message with ID: ");
   // Serial.print(message.id, HEX);
+  received = true;
   if (message.id == CHARGER_ID) {
     parse_charger_message(message);
   } else if (message.id == BMS_ID_CCL) {
@@ -161,7 +163,7 @@ void can_snifflas(const CAN_message_t &message) {
         }
 
         // Serial.printf("Received chunked temps for board %d, chunk %d, %d temperatures\n",
-                      // board_id_from_payload, msg_index, temp_count);
+        // board_id_from_payload, msg_index, temp_count);
       }
     }
   } else if (message.id == BMS_DUMP_ROW_0) {
@@ -230,8 +232,6 @@ void charger_machine() {
   }
 }
 
-
-
 void read_inputs() {
   static bool last_sdc_status = false;
   shutdown_status = digitalRead(SHUTDOWN_PIN);
@@ -269,7 +269,7 @@ void power_on_module(const bool OnOff) {
     powerMsg.buf[7] = 0x01;
   };  // turn off command
 
-  can1.write(powerMsg);  // send message
+  can2.write(powerMsg);  // send message
 }
 
 void set_voltage(uint32_t voltage) {
@@ -287,7 +287,7 @@ void set_voltage(uint32_t voltage) {
   voltageMsg.buf[6] = voltage >> 8 & 0xff;
   voltageMsg.buf[7] = voltage & 0xff;
 
-  can1.write(voltageMsg);  // send message
+  can2.write(voltageMsg);  // send message
 }
 
 void set_current(const uint32_t current) {
@@ -305,7 +305,7 @@ void set_current(const uint32_t current) {
   current_msg.buf[6] = current >> 8 & 0xff;
   current_msg.buf[7] = current & 0xff;
 
-  can1.write(current_msg);  // send message
+  can2.write(current_msg);  // send message
 }
 
 void set_low() {
@@ -323,7 +323,7 @@ void set_low() {
   low_msg.buf[6] = 0x00;
   low_msg.buf[7] = 0x00;
 
-  can1.write(low_msg);  // send message
+  can2.write(low_msg);  // send message
 }
 
 void read_current() {
@@ -339,7 +339,7 @@ void read_current() {
   request_msg.buf[6] = 0x00;  // Byte6: Reserved
   request_msg.buf[7] = 0x00;  // Byte7: Reserved
 
-  can1.write(request_msg);
+  can2.write(request_msg);
 }
 void update_charger(Status charger_status) {
   set_current(param.allowed_current);
@@ -373,6 +373,52 @@ void print_all_board_temps() {
   }
 }
 
+void can_init(uint32_t baud_rate = 125'000) {
+  can2.begin();
+  can2.setBaudRate(baud_rate);
+  can2.setRFFN(RFFN_32);
+  can2.enableFIFO();
+  can2.enableFIFOInterrupt();
+
+  can2.setFIFOFilter(REJECT_ALL);
+
+  if (!can2.setFIFOFilter(0, CHARGER_ID, STD)) {
+    Serial.println("Failed to set FIFO filter to CHARGER_ID");
+  }
+  if (!can2.setFIFOFilter(1, BMS_ID_CCL, STD)) {
+    Serial.println("Failed to set FIFO filter to BMS_ID_CCL");
+  }
+  if (!can2.setFIFOFilter(2, BMS_THERMISTOR_ID, EXT)) {  // Extended frame
+    Serial.println("Failed to set FIFO filter to BMS_THERMISTOR_ID");
+  }
+  if (!can2.setFIFOFilter(3, BMS_DUMP_ROW_0, EXT)) {
+    Serial.println("Failed to set FIFO filter to BMS_DUMP_ROW_0");
+  }
+  if (!can2.setFIFOFilter(4, BMS_DUMP_ROW_1, EXT)) {
+    Serial.println("Failed to set FIFO filter to BMS_DUMP_ROW_1");
+  }
+  if (!can2.setFIFOFilter(5, BMS_DUMP_ROW_2, EXT)) {
+    Serial.println("Failed to set FIFO filter to BMS_DUMP_ROW_2");
+  }
+
+  uint8_t filter_idx_start = 6;
+  for (int i = 0; i < TOTAL_BOARDS; ++i) {
+    if (!can2.setFIFOFilter(filter_idx_start + i, CELL_TEMPS_BASE_ID + i, STD)) {
+      Serial.println("Warning: Not enough FIFO filters for all teensy_cell boards.");
+    }
+  }
+
+  uint8_t all_temps_filter_start = filter_idx_start + TOTAL_BOARDS;
+  for (int i = 0; i < TOTAL_BOARDS; ++i) {
+    if (!can2.setFIFOFilter(all_temps_filter_start + i, ALL_TEMPS_ID + i, STD)) {
+      Serial.println("Warning: Not enough FIFO filters for ALL_TEMPS messages.");
+      break;
+    }
+  }
+
+  can2.onReceive(can_snifflas);
+}
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115'200);
@@ -391,52 +437,16 @@ void setup() {
 
   displaySPI.begin();
 
-  can1.begin();
-  can1.setBaudRate(125'000);
-  can1.setRFFN(RFFN_32);
-  can1.enableFIFO();
-  can1.enableFIFOInterrupt();
+  elapsedMillis can_timer;
 
-  uint8_t max_filters = (((FLEXCANb_CTRL2(CAN2) >> 24) & 0xF) + 1) * 8;
-  Serial.printf("Available FIFO filters: %d\n", max_filters);
+  can_timer = 0;
+  can_init();
 
-  can1.setFIFOFilter(REJECT_ALL);
-
-  if (!can1.setFIFOFilter(0, CHARGER_ID, STD)) {
-    Serial.println("Failed to set FIFO filter to CHARGER_ID");
+  while (can_timer < 1000 && !received){
   }
-  if (!can1.setFIFOFilter(1, BMS_ID_CCL, STD)) {
-    Serial.println("Failed to set FIFO filter to BMS_ID_CCL");
+  if (!received){
+    can_init(1'000'000);
   }
-  if (!can1.setFIFOFilter(2, BMS_THERMISTOR_ID, EXT)) {  // Extended frame
-    Serial.println("Failed to set FIFO filter to BMS_THERMISTOR_ID");
-  }
-  if (!can1.setFIFOFilter(3, BMS_DUMP_ROW_0, EXT)) {
-    Serial.println("Failed to set FIFO filter to BMS_DUMP_ROW_0");
-  }
-  if (!can1.setFIFOFilter(4, BMS_DUMP_ROW_1, EXT)) {
-    Serial.println("Failed to set FIFO filter to BMS_DUMP_ROW_1");
-  }
-  if (!can1.setFIFOFilter(5, BMS_DUMP_ROW_2, EXT)) {
-    Serial.println("Failed to set FIFO filter to BMS_DUMP_ROW_2");
-  }
-
-  uint8_t filter_idx_start = 6;
-  for (int i = 0; i < TOTAL_BOARDS; ++i) {
-    if (!can1.setFIFOFilter(filter_idx_start + i, CELL_TEMPS_BASE_ID + i, STD)) {
-      Serial.println("Warning: Not enough FIFO filters for all teensy_cell boards.");
-    }
-  }
-
-  uint8_t all_temps_filter_start = filter_idx_start + TOTAL_BOARDS;
-  for (int i = 0; i < TOTAL_BOARDS; ++i) {
-    if (!can1.setFIFOFilter(all_temps_filter_start + i, ALL_TEMPS_ID + i, STD)) {
-      Serial.println("Warning: Not enough FIFO filters for ALL_TEMPS messages.");
-      break;
-    }
-  }
-
-  can1.onReceive(can_snifflas);
 
   for (int i = 0; i < TOTAL_BOARDS; ++i) {
     param.cell_board_temps[i].has_data = false;
@@ -445,22 +455,22 @@ void setup() {
 
   param.set_voltage = MAX_VOLTAGE;
 
-  can1.write(HC_msg);  // send message
+  can2.write(HC_msg);  // send message
 
   delay(100);
-  can1.write(HC_msg);  // send message
+  can2.write(HC_msg);  // send message
 
   delay(100);
-  can1.write(HC_msg);  // send message
+  can2.write(HC_msg);  // send message
 
   delay(100);
-  can1.write(HC_msg);  // send message
+  can2.write(HC_msg);  // send message
 
   delay(100);
-  can1.write(HC_msg);  // send message
+  can2.write(HC_msg);  // send message
 
   delay(100);
-  can1.write(HC_msg);  // send message
+  can2.write(HC_msg);  // send message
 
   delay(100);
   constexpr uint16_t buf[] = {0x0000};
@@ -474,13 +484,13 @@ void loop() {
   }
   step = 0;
 
-  can1.write(HC_msg);  // send message
+  can2.write(HC_msg);  // send message
 
   read_inputs();
 
   charger_machine();
   Serial.println("charger machine");
-    Serial.println("Charger status: ");
+  Serial.println("Charger status: ");
   switch (charger_status) {
     case Status::IDLE:
       Serial.println("IDLE");
@@ -499,7 +509,6 @@ void loop() {
   print_value("CH enable pin: ", ch_enable_pin);
   print_value("param.ch_safety: ", param.ch_safety);
   print_value("SDC status pin: ", sdc_status_pin);
-
 
   param.allowed_current = /* (param.ccl < SET_CURRENT) ? param.ccl :  */ SET_CURRENT;
 

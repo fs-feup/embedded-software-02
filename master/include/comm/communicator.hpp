@@ -154,6 +154,7 @@ void Communicator::init() {
   for (auto &fifoExtendedCode : fifoExtendedCodes)
     can3.setFIFOFilter(fifoExtendedCode.key, fifoExtendedCode.code, EXT);
 
+
   can3.onReceive(FIFO, parse_message);
 
   can3.mailboxStatus();

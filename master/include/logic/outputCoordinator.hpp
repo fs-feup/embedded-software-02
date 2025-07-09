@@ -178,6 +178,7 @@ private:
       digital_sender_->turn_off_brake_light();
     }
   }
+  
   void bsdp_sdc_update() {
     // TODO: implement bspd logic, update led from this output in Dash
     if (!system_data_->hardware_data_.tsms_sdc_closed_) {
