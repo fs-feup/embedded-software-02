@@ -179,16 +179,6 @@ bool check_temperature_timeouts() {
   for (uint8_t board_id = 1; board_id < TOTAL_BOARDS; board_id++) {
     const BoardData& board = board_temps[board_id];
 
-    if (!board.has_communicated) {
-      // Allow 2 seconds on startup before considering it a timeout
-      if (current_time > 15000) {
-        // DEBUG_PRINT("Timeout: No data ever received from board ");
-        // DEBUG_PRINTLN(board_id);
-        timeout_detected = true;
-      }
-      continue;
-    }
-
     if (current_time - board.last_update_ms > MAX_TEMP_DELAY_MS) {
       // DEBUG_PRINT("Timeout: Stale data from board ");
       // DEBUG_PRINT(board_id);

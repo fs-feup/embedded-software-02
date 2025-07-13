@@ -30,7 +30,7 @@ constexpr float NTC_BETA = 3971.0;
 constexpr float MAXIMUM_TEMPERATURE = 60.0;
 constexpr int8_t MAX_INT8_T = 127;
 constexpr int8_t MIN_INT8_T = -128;
-constexpr uint16_t MAX_TEMP_DELAY_MS = 10000;
+constexpr uint16_t MAX_TEMP_DELAY_MS = 700;
 
 // CAN Communication
 constexpr uint8_t CELLS_PER_MESSAGE = 6;
@@ -52,7 +52,7 @@ struct TemperatureData {
 struct BoardData {
   TemperatureData temp_data;
   bool has_communicated = false;
-  unsigned long last_update_ms;
+  unsigned long last_update_ms = 0;
 };
 
 float read_ntc_temperature(int analog_value);
