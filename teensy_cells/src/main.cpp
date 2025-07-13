@@ -249,10 +249,11 @@ void send_can_max_min_avg_temperatures() {
     DEBUG_PRINTLN("Failed to send CAN message");
   }
 }
+bool global_error_true = false;
 void send_to_bms(const TemperatureData& global_data) {
   // print
   static elapsedMillis send_timer;
-  if (send_timer < (5)) {
+  if ((send_timer < (5)) || global_error_true) {
     return;
   }
   send_timer = 0;
@@ -494,7 +495,12 @@ void loop() {
 
 #if THIS_IS_MASTER
     bool timeout_detected = check_temperature_timeouts();
-
+    if (timeout_detected) {
+      global_error_true = true;
+      error_count++;
+    } else {
+      global_error_true = false;
+    }
     if (timeout_detected) {
       // DEBUG_PRINTLN("EMERGENCY SHUTDOWN: Temperature data timeout detected!");
       digitalWrite(ERROR_SIGNAL, HIGH);
