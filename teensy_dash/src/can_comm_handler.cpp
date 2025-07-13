@@ -150,10 +150,8 @@ void CanCommHandler::handle_can_message(const CAN_message_t& msg) {
   }
 }
 void CanCommHandler::bms_callback(const uint8_t* msg_data, uint8_t len) {
-  if (len < 8) {
-    DEBUG_PRINTLN("BMS message too short");
-    return;
-  }
+  updatable_data.min_temp = msg_data[1];
+  updatable_data.max_temp = msg_data[2];
 }
 
 void CanCommHandler::bamocar_callback(const uint8_t* const msg_data, const uint8_t len) {

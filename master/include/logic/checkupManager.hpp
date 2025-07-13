@@ -168,7 +168,7 @@ inline bool CheckupManager::should_stay_manual_driving() const {
   //   return false;
   // }
 
-  return true;
+  return false;
 }
 
 inline bool CheckupManager::should_stay_off() {

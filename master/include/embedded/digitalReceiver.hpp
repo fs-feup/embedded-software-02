@@ -199,11 +199,11 @@ inline void DigitalReceiver::read_mission() {
     system_data_->mission_ = latest_mission;
     mission_change_counter_ = 0;
   }
-  system_data_->mission_ = Mission::MANUAL;
+  system_data_->mission_ = Mission::AUTOCROSS;
   //print raw, mapped and current mission
-  // DEBUG_PRINT_VAR(raw_value);
-  // DEBUG_PRINT_VAR(mapped_value);
-  // DEBUG_PRINT_VAR(to_underlying(system_data_->mission_));
+  DEBUG_PRINT_VAR(raw_value);
+  DEBUG_PRINT_VAR(mapped_value);
+  DEBUG_PRINT_VAR(to_underlying(system_data_->mission_));
 }
 
 inline void DigitalReceiver::read_asms_switch() {
