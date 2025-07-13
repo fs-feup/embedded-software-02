@@ -199,7 +199,7 @@ inline void DigitalReceiver::read_mission() {
     system_data_->mission_ = latest_mission;
     mission_change_counter_ = 0;
   }
-  system_data_->mission_ = Mission::AUTOCROSS;
+  system_data_->mission_ = Mission::MANUAL;
   //print raw, mapped and current mission
   DEBUG_PRINT_VAR(raw_value);
   DEBUG_PRINT_VAR(mapped_value);
