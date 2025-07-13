@@ -6,6 +6,8 @@ const u_int8_t pin_ntc_temp[NTC_SENSOR_COUNT] = {A4,  A5,  A6, A7, A8,  A9,  A2,
                                                  A12, A13, A0, A1, A17, A16, A15, A14};  // T! A13
 
 float cell_temps[NTC_SENSOR_COUNT];
+float previous_cell_temps[NTC_SENSOR_COUNT] = {0.0};
+
 CAN_error_t error;
 
 const unsigned long SETUP_TIMEOUT = 1500;  // 1.5 second for CAN set up detection
@@ -17,6 +19,10 @@ uint8_t error_count = 0;
 uint8_t no_error_iterations = 0;
 static BoardData board_temps[TOTAL_BOARDS];
 
+SensorState sensor_states[NTC_SENSOR_COUNT];
+const float FLOAT_DETECTION_THRESHOLD = 6.0;//todo go to header
+const uint8_t FLOAT_CONFIRMATION_COUNT = 2;
+
 #if !THIS_IS_MASTER
 volatile unsigned long last_master_message_time = 0;
 volatile bool master_has_communicated = false;
@@ -27,7 +33,7 @@ bool check_master_timeout() {
 
   // Allow 2 seconds on startup before considering it a timeout
   if (!master_has_communicated) {
-    if (current_time > 15000) {
+    if (current_time > 900) {
       DEBUG_PRINTLN("Timeout: No data ever received from master");
       return true;
     }
@@ -145,6 +151,64 @@ float read_ntc_temperature(const int analog_value) {
 
   return temperature;
 }
+
+void process_sensor_float_detection(int sensor_id, float current_temp, float previous_temp) {
+  SensorState& sensor = sensor_states[sensor_id];
+
+  switch (sensor.state) {
+    case NORMAL: {
+      float temp_diff = abs(current_temp - previous_temp);
+      if (temp_diff > FLOAT_DETECTION_THRESHOLD) {
+        // Large jump detected - go to suspected state
+        sensor.state = SUSPECTED_FLOAT;
+        sensor.reference_temp = previous_temp;  // Store the last good temperature, referencia p futuros checks
+        sensor.confirmation_count = 1;
+        DEBUG_PRINT("Sensor ");
+        DEBUG_PRINT(sensor_id);
+        DEBUG_PRINTLN(" - Large jump detected, entering SUSPECTED_FLOAT");
+      }
+    } break;
+
+    case SUSPECTED_FLOAT: {
+      float ref_diff = abs(current_temp - sensor.reference_temp);
+      if (ref_diff > FLOAT_DETECTION_THRESHOLD) {
+        // Still far from reference - increment count
+        sensor.confirmation_count++;
+        if (sensor.confirmation_count >= FLOAT_CONFIRMATION_COUNT) {
+          sensor.state = CONFIRMED_FLOAT;
+          DEBUG_PRINT("Float CONFIRMED on sensor ");
+          DEBUG_PRINT(sensor_id);
+          DEBUG_PRINT(" - reference: ");
+          DEBUG_PRINT(sensor.reference_temp);
+          DEBUG_PRINT(", current: ");
+          DEBUG_PRINTLN(current_temp);
+        }
+      } else {
+        // Back to normal range - reset to normal
+        sensor.state = NORMAL;
+        sensor.confirmation_count = 0;
+        DEBUG_PRINT("Sensor ");
+        DEBUG_PRINT(sensor_id);
+        DEBUG_PRINTLN(" - Back to normal range");
+      }
+    } break;
+
+    case CONFIRMED_FLOAT: {
+      float ref_diff = abs(current_temp - sensor.reference_temp);
+      if (ref_diff <= FLOAT_DETECTION_THRESHOLD) {
+        // recovery
+        sensor.state = NORMAL;
+        sensor.confirmation_count = 0;
+        DEBUG_PRINT("Sensor ");
+        DEBUG_PRINT(sensor_id);
+        DEBUG_PRINTLN(" - RECOVERED from float");
+      }
+    } break;
+  }
+}
+
+bool is_sensor_floating(int sensor_id) { return sensor_states[sensor_id].state == CONFIRMED_FLOAT; }
+
 void read_check_temperatures() {
   float sum_temp = 0.0;
   float min_temp = TEMPERATURE_MAX_C;
@@ -152,10 +216,22 @@ void read_check_temperatures() {
   bool error = false;
   for (int i = 0; i < NTC_SENSOR_COUNT; i++) {
     cell_temps[i] = read_ntc_temperature(analogRead(pin_ntc_temp[i]));
+
+    if (previous_cell_temps[i] != 0.0) {
+      process_sensor_float_detection(i, cell_temps[i], previous_cell_temps[i]);
+    }
+
+    previous_cell_temps[i] = cell_temps[i];
+
     min_temp = min(min_temp, cell_temps[i]);
     max_temp = max(max_temp, cell_temps[i]);
     sum_temp += cell_temps[i];
     if (cell_temps[i] > MAXIMUM_TEMPERATURE && !error) {
+      error_count++;
+      error = true;
+    }
+
+    if (is_sensor_floating(i) && !error) {
       error_count++;
       error = true;
     }
@@ -243,8 +319,17 @@ bool global_error_true = false;
 void send_to_bms(const TemperatureData& global_data) {
   // print
   static elapsedMillis send_timer;
-  if ((send_timer < (5)) || global_error_true) {
+
+  int8_t min_temp = global_data.min_temp;
+  int8_t max_temp = global_data.max_temp;
+  int8_t avg_temp = global_data.avg_temp;
+  if ((send_timer < (5))) {
     return;
+  }
+  if (global_error_true) {
+    min_temp = TEMPERATURE_MAX_C;
+    max_temp = TEMPERATURE_MAX_C;
+    avg_temp = TEMPERATURE_MAX_C;
   }
   send_timer = 0;
   CAN_message_t msg;
@@ -252,9 +337,9 @@ void send_to_bms(const TemperatureData& global_data) {
   msg.flags.extended = true;
   msg.len = 8;
   msg.buf[0] = THERMISTOR_MODULE_NUMBER;
-  msg.buf[1] = global_data.min_temp;
-  msg.buf[2] = global_data.max_temp;
-  msg.buf[3] = global_data.avg_temp;
+  msg.buf[1] = min_temp;
+  msg.buf[2] = max_temp;
+  msg.buf[3] = avg_temp;
   msg.buf[4] = NUMBER_OF_THERMISTORS;
   msg.buf[5] = HIGHEST_THERMISTOR_ID;
   msg.buf[6] = LOWEST_THERMISTOR_ID;
@@ -363,7 +448,7 @@ void initialize_can(uint32_t baudRate) {
     can1.setFIFOFilter(i, CELL_TEMPS_BASE_ID + 1 + i, STD);
   }
   can1.setFIFOFilter(TOTAL_BOARDS, HC_ID, STD);
-  can1.setFIFOFilter(TOTAL_BOARDS + 1, MASTER_ID, STD);  // Set filter for master messages
+  can1.setFIFOFilter(TOTAL_BOARDS + 1, MASTER_ID, STD);   // Set filter for master messages
   can1.setFIFOFilter(TOTAL_BOARDS + 2, BMS_ID_CCL, STD);  // Set filter for master messages
 
   can1.onReceive(can_snifflas);
@@ -372,7 +457,7 @@ void initialize_can(uint32_t baudRate) {
 
   can1.setFIFOFilter(0, CELL_TEMPS_BASE_ID, STD);
   can1.setFIFOFilter(1, HC_ID, STD);
-  can1.setFIFOFilter(2, MASTER_ID, STD);  // Set filter for master messages
+  can1.setFIFOFilter(2, MASTER_ID, STD);   // Set filter for master messages
   can1.setFIFOFilter(3, BMS_ID_CCL, STD);  // Set filter for master messages
 
   can1.onReceive(can_receive_from_master);
@@ -435,6 +520,12 @@ void setup() {
 #endif
   for (int i = 0; i < NTC_SENSOR_COUNT; i++) {
     pinMode(pin_ntc_temp[i], INPUT);
+    previous_cell_temps[i] = 0.0;
+
+    // Initialize state machine
+    sensor_states[i].state = NORMAL;
+    sensor_states[i].reference_temp = 0.0;
+    sensor_states[i].confirmation_count = 0;
   }
   unsigned long can_1M_start_time = millis();
   initialize_can(CAN_DRIVING_BAUD_RATE);

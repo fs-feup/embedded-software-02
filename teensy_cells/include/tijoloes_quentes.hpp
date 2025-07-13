@@ -5,6 +5,19 @@
 #include "Arduino.h"
 #include "../../CAN_IDs.h"
 // System Configuration
+
+enum FloatDetectionState {
+  NORMAL,
+  SUSPECTED_FLOAT,
+  CONFIRMED_FLOAT
+};
+
+struct SensorState {
+  FloatDetectionState state;
+  float reference_temp;
+  uint8_t confirmation_count;
+};
+
 constexpr uint8_t TOTAL_BOARDS = 6;
 constexpr uint16_t TEMP_SENSOR_READ_INTERVAL = 95;
 constexpr int8_t NO_ERROR_RESET_THRESHOLD = 50;
@@ -12,7 +25,7 @@ constexpr uint16_t ANALOG_MAX = 1023;
 constexpr uint16_t ANALOG_MIN = 0;
 constexpr int ERROR_SIGNAL = 35;
 constexpr uint8_t MAX_RETRIES = 3;
-constexpr uint8_t MAX_NUM_ERRORS = 10;
+constexpr uint8_t MAX_NUM_ERRORS = 3;
 constexpr unsigned long LOOP_INTERVAL = 10; 
 // Voltage and Resistor Configuration
 constexpr float VDD = 5.0;
