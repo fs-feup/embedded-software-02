@@ -152,62 +152,62 @@ float read_ntc_temperature(const int analog_value) {
   return temperature;
 }
 
-// void process_sensor_float_detection(int sensor_id, float current_temp, float previous_temp) {
-//   SensorState& sensor = sensor_states[sensor_id];
+void process_sensor_float_detection(int sensor_id, float current_temp, float previous_temp) {
+  SensorState& sensor = sensor_states[sensor_id];
 
-//   switch (sensor.state) {
-//     case NORMAL: {
-//       float temp_diff = abs(current_temp - previous_temp);
-//       if (temp_diff > FLOAT_DETECTION_THRESHOLD) {
-//         // Large jump detected - go to suspected state
-//         sensor.state = SUSPECTED_FLOAT;
-//         sensor.reference_temp = previous_temp;  // Store the last good temperature, referencia p futuros checks
-//         sensor.confirmation_count = 1;
-//         DEBUG_PRINT("Sensor ");
-//         DEBUG_PRINT(sensor_id);
-//         DEBUG_PRINTLN(" - Large jump detected, entering SUSPECTED_FLOAT");
-//       }
-//     } break;
+  switch (sensor.state) {
+    case NORMAL: {
+      float temp_diff = abs(current_temp - previous_temp);
+      if (temp_diff > FLOAT_DETECTION_THRESHOLD) {
+        // Large jump detected - go to suspected state
+        sensor.state = SUSPECTED_FLOAT;
+        sensor.reference_temp = previous_temp;  // Store the last good temperature, referencia p futuros checks
+        sensor.confirmation_count = 1;
+        DEBUG_PRINT("Sensor ");
+        DEBUG_PRINT(sensor_id);
+        DEBUG_PRINTLN(" - Large jump detected, entering SUSPECTED_FLOAT");
+      }
+    } break;
 
-//     case SUSPECTED_FLOAT: {
-//       float ref_diff = abs(current_temp - sensor.reference_temp);
-//       if (ref_diff > FLOAT_DETECTION_THRESHOLD) {
-//         // Still far from reference - increment count
-//         sensor.confirmation_count++;
-//         if (sensor.confirmation_count >= FLOAT_CONFIRMATION_COUNT) {
-//           sensor.state = CONFIRMED_FLOAT;
-//           DEBUG_PRINT("Float CONFIRMED on sensor ");
-//           DEBUG_PRINT(sensor_id);
-//           DEBUG_PRINT(" - reference: ");
-//           DEBUG_PRINT(sensor.reference_temp);
-//           DEBUG_PRINT(", current: ");
-//           DEBUG_PRINTLN(current_temp);
-//         }
-//       } else {
-//         // Back to normal range - reset to normal
-//         sensor.state = NORMAL;
-//         sensor.confirmation_count = 0;
-//         DEBUG_PRINT("Sensor ");
-//         DEBUG_PRINT(sensor_id);
-//         DEBUG_PRINTLN(" - Back to normal range");
-//       }
-//     } break;
+    case SUSPECTED_FLOAT: {
+      float ref_diff = abs(current_temp - sensor.reference_temp);
+      if (ref_diff > FLOAT_DETECTION_THRESHOLD) {
+        // Still far from reference - increment count
+        sensor.confirmation_count++;
+        if (sensor.confirmation_count >= FLOAT_CONFIRMATION_COUNT) {
+          sensor.state = CONFIRMED_FLOAT;
+          DEBUG_PRINT("Float CONFIRMED on sensor ");
+          DEBUG_PRINT(sensor_id);
+          DEBUG_PRINT(" - reference: ");
+          DEBUG_PRINT(sensor.reference_temp);
+          DEBUG_PRINT(", current: ");
+          DEBUG_PRINTLN(current_temp);
+        }
+      } else {
+        // Back to normal range - reset to normal
+        sensor.state = NORMAL;
+        sensor.confirmation_count = 0;
+        DEBUG_PRINT("Sensor ");
+        DEBUG_PRINT(sensor_id);
+        DEBUG_PRINTLN(" - Back to normal range");
+      }
+    } break;
 
-//     case CONFIRMED_FLOAT: {
-//       float ref_diff = abs(current_temp - sensor.reference_temp);
-//       if (ref_diff <= FLOAT_DETECTION_THRESHOLD) {
-//         // recovery
-//         sensor.state = NORMAL;
-//         sensor.confirmation_count = 0;
-//         DEBUG_PRINT("Sensor ");
-//         DEBUG_PRINT(sensor_id);
-//         DEBUG_PRINTLN(" - RECOVERED from float");
-//       }
-//     } break;
-//   }
-// }
+    case CONFIRMED_FLOAT: {
+      float ref_diff = abs(current_temp - sensor.reference_temp);
+      if (ref_diff <= FLOAT_DETECTION_THRESHOLD) {
+        // recovery
+        sensor.state = NORMAL;
+        sensor.confirmation_count = 0;
+        DEBUG_PRINT("Sensor ");
+        DEBUG_PRINT(sensor_id);
+        DEBUG_PRINTLN(" - RECOVERED from float");
+      }
+    } break;
+  }
+}
 
-// bool is_sensor_floating(int sensor_id) { return sensor_states[sensor_id].state == CONFIRMED_FLOAT; }
+bool is_sensor_floating(int sensor_id) { return sensor_states[sensor_id].state == CONFIRMED_FLOAT; }
 
 void read_check_temperatures() {
   float sum_temp = 0.0;
@@ -217,9 +217,9 @@ void read_check_temperatures() {
   for (int i = 0; i < NTC_SENSOR_COUNT; i++) {
     cell_temps[i] = read_ntc_temperature(analogRead(pin_ntc_temp[i]));
 
-    // if (previous_cell_temps[i] != 0.0) {
-    //   process_sensor_float_detection(i, cell_temps[i], previous_cell_temps[i]);
-    // }
+    if (previous_cell_temps[i] != 0.0) {
+      process_sensor_float_detection(i, cell_temps[i], previous_cell_temps[i]);
+    }
 
     previous_cell_temps[i] = cell_temps[i];
 
@@ -231,10 +231,10 @@ void read_check_temperatures() {
       error = true;
     }
 
-    // if (is_sensor_floating(i) && !error) {
-    //   error_count++;
-    //   error = true;
-    // }
+    if (is_sensor_floating(i) && !error) {
+      error_count++;
+      error = true;
+    }
 
     board_temps[BOARD_ID].has_communicated = true;
 
@@ -447,18 +447,16 @@ void initialize_can(uint32_t baudRate) {
   for (uint8_t i = 0; i < TOTAL_BOARDS; i++) {  // FlexCAN typically supports 8 filters
     can1.setFIFOFilter(i, CELL_TEMPS_BASE_ID + 1 + i, STD);
   }
-  can1.setFIFOFilter(TOTAL_BOARDS, HC_ID, STD);
-  can1.setFIFOFilter(TOTAL_BOARDS + 1, MASTER_ID, STD);   // Set filter for master messages
-  can1.setFIFOFilter(TOTAL_BOARDS + 2, BMS_ID_CCL, STD);  // Set filter for master messages
+  can1.setFIFOFilter(TOTAL_BOARDS + 0, MASTER_ID, STD);   // Set filter for master messages
+  can1.setFIFOFilter(TOTAL_BOARDS + 1, BMS_ID_CCL, STD);  // Set filter for master messages
 
   can1.onReceive(can_snifflas);
   DEBUG_PRINTLN("CAN filters configured for all board IDs");
 #else
 
   can1.setFIFOFilter(0, CELL_TEMPS_BASE_ID, STD);
-  can1.setFIFOFilter(1, HC_ID, STD);
-  can1.setFIFOFilter(2, MASTER_ID, STD);   // Set filter for master messages
-  can1.setFIFOFilter(3, BMS_ID_CCL, STD);  // Set filter for master messages
+  can1.setFIFOFilter(1, MASTER_ID, STD);   // Set filter for master messages
+  can1.setFIFOFilter(2, BMS_ID_CCL, STD);  // Set filter for master messages
 
   can1.onReceive(can_receive_from_master);
   DEBUG_PRINTLN("CAN filter configured for master messages");
@@ -557,7 +555,6 @@ void setup() {
     initialize_can(CAN_CHARGING_BAUD_RATE);
     baud_1M = false;
   }
-  Serial.flush();
   delay(5);
 }
 void loop() {
