@@ -54,6 +54,9 @@ void SpiHandler::handle_display_update(SystemData& data, const SystemVolatileDat
   if (error_timer >= ERROR_INTERVAL) {
     uint16_t error_bitmap = updated_data.error_bitmap;
     display_spi.transfer16(&error_bitmap, 1, WIDGET_INVERTER_ERRORS, millis() & 0xFFFF);
+    uint16_t warning_bitmap = updated_data.warning_bitmap;
+    // display_spi.transfer16(&warning_bitmap, 1, WIDGET_INVERTER_WARNINGS, millis() & 0xFFFF);
+    //TODO TIJOLIN 
     error_timer = 0;
   }
 

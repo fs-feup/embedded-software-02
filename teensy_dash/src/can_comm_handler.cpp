@@ -201,8 +201,10 @@ void CanCommHandler::bamocar_callback(const uint8_t* const msg_data, const uint8
 
     case LOGICMAP_ERRORS: {
       // Handle error bitmap
-      const uint8_t error_bitmap = static_cast<uint8_t>(message_value & 0x00FF);
+      const uint16_t error_bitmap = static_cast<uint16_t>(message_value & 0xFFFF);
       updatable_data.error_bitmap = error_bitmap;
+      const uint16_t warning_bitmap = static_cast<uint16_t>((message_value >> 16) & 0xFFFF);
+      updatable_data.warning_bitmap = warning_bitmap;
 
     } break;
     default:

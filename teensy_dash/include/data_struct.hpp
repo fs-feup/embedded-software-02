@@ -79,7 +79,8 @@ struct SystemVolatileData {
   int32_t motor_current = 0;
   uint8_t min_temp = 0;
   uint8_t max_temp = 0;
-  uint8_t error_bitmap = 0;
+  uint16_t error_bitmap = 0;
+  uint16_t warning_bitmap = 0;
 
   unsigned long last_wheel_pulse_fr = 0;
   unsigned long second_to_last_wheel_pulse_fr = 0;
