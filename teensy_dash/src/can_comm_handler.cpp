@@ -249,6 +249,7 @@ void CanCommHandler::write_messages() {
 
   if (apps_timer >= APPS_MSG_PERIOD_MS) {
     write_apps();
+    write_dash_state();
     apps_timer = 0;
     // DEBUG_PRINTLN("APPS message sent");
   }
