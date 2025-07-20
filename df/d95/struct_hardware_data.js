@@ -7,6 +7,7 @@ var struct_hardware_data =
     [ "asms_on_", "df/d95/struct_hardware_data.html#ae1de5bbf96b043012ede22630db02b6f", null ],
     [ "ats_pressed_", "df/d95/struct_hardware_data.html#a983673f7bb0f74137b7c429bcdd9ca96", null ],
     [ "hydraulic_line_front_pressure", "df/d95/struct_hardware_data.html#a1130c840b66a2e34bd249ecb6d0ff964", null ],
+    [ "master_sdc_closed_", "df/d95/struct_hardware_data.html#a92b2a7a87f1f0c4a6234fdffbeb3a734", null ],
     [ "pneumatic_line_pressure_", "df/d95/struct_hardware_data.html#aa26214d7a65d4e5724e1ee6d7a64bacb", null ],
     [ "pneumatic_line_pressure_1_", "df/d95/struct_hardware_data.html#af757a778e216416d8212dd2cc7222688", null ],
     [ "pneumatic_line_pressure_2_", "df/d95/struct_hardware_data.html#aa5a539d9d54a1b553ba7f218ee86d16a", null ],

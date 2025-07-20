@@ -1,14 +1,14 @@
 <map id="Communicator" name="Communicator">
-<area shape="rect" id="Node000001" title="Class that contains definitions of typical messages to send via CAN It serves only as an example of t..." alt="" coords="197,955,357,1355"/>
-<area shape="rect" id="Node000002" href="$d0/d9d/struct_system_data.html" title="The whole model of the system: holds all the data necessary." alt="" coords="213,787,340,892"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="279,892,279,938,274,938,274,892"/>
-<area shape="rect" id="Node000003" href="$d8/deb/struct_r2_d_logics.html" title=" " alt="" coords="5,481,161,606"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="110,605,147,682,170,723,196,761,206,773,202,776,192,764,166,726,142,685,105,607"/>
+<area shape="rect" id="Node000001" title="Class that contains definitions of typical messages to send via CAN It serves only as an example of t..." alt="" coords="197,875,357,1275"/>
+<area shape="rect" id="Node000002" href="$d0/d9d/struct_system_data.html" title="The whole model of the system: holds all the data necessary." alt="" coords="213,707,340,812"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="279,812,279,858,274,858,274,812"/>
+<area shape="rect" id="Node000003" href="$d8/deb/struct_r2_d_logics.html" title=" " alt="" coords="5,441,161,566"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="118,565,154,623,196,681,207,693,203,696,192,684,149,626,114,568"/>
 <area shape="rect" id="Node000004" href="$db/d60/class_metro.html" title="Our own implementation of Metro class." alt="" coords="107,5,251,151"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="116,151,103,176,83,250,73,326,72,400,76,464,70,464,67,400,68,326,77,249,98,174,111,149"/>
-<area shape="rect" id="Node000005" href="$d3/df6/struct_failure_detection.html" title=" " alt="" coords="186,434,367,654"/>
-<area shape="poly" id="edge5_Node000005_Node000004" title=" " alt="" coords="232,149,243,174,260,234,272,297,282,416,276,417,266,298,255,236,238,176,228,151"/>
-<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="279,653,279,769,274,769,274,653"/>
-<area shape="rect" id="Node000006" href="$df/d95/struct_hardware_data.html" title=" " alt="" coords="392,364,580,724"/>
-<area shape="poly" id="edge6_Node000002_Node000006" title=" " alt="" coords="425,725,397,764,378,784,356,801,352,797,374,780,393,761,421,722"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="116,151,103,176,85,239,76,304,74,368,77,424,71,424,69,368,71,304,80,238,98,174,111,149"/>
+<area shape="rect" id="Node000005" href="$d3/df6/struct_failure_detection.html" title=" " alt="" coords="186,394,367,614"/>
+<area shape="poly" id="edge5_Node000005_Node000004" title=" " alt="" coords="232,149,243,174,258,224,268,276,279,376,274,377,263,277,253,225,238,176,227,151"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="279,613,279,690,274,690,274,613"/>
+<area shape="rect" id="Node000006" href="$df/d95/struct_hardware_data.html" title=" " alt="" coords="392,364,580,644"/>
+<area shape="poly" id="edge6_Node000002_Node000006" title=" " alt="" coords="427,645,397,685,356,719,352,715,393,681,423,642"/>
 </map>
