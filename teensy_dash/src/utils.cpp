@@ -61,19 +61,19 @@ InverterModeParams get_inverter_mode_config(const SwitchMode switch_mode) {
       params = {.i_max_pk_percent = 48,
                 .speed_limit_percent = 39,
                 .i_cont_percent = 33,
-                .speed_ramp_acc = 100,
-                .moment_ramp_acc = 10,
-                .speed_ramp_brake = 100,
-                .moment_ramp_decc = 10};
+                .speed_ramp_acc = 1000,
+                .moment_ramp_acc = 500,
+                .speed_ramp_brake = 1000,
+                .moment_ramp_decc = 500};
       break;
     case SwitchMode::INVERTER_MODE_BRAKE_TEST:
       params = {.i_max_pk_percent = 66,
                 .speed_limit_percent = 53,
                 .i_cont_percent = 44,
-                .speed_ramp_acc = 100,
-                .moment_ramp_acc = 10,
-                .speed_ramp_brake = 100,
-                .moment_ramp_decc = 10};
+                .speed_ramp_acc = 2000,
+                .moment_ramp_acc = 1000,
+                .speed_ramp_brake = 2000,
+                .moment_ramp_decc = 1000};
       break;
     case SwitchMode::INVERTER_MODE_SKIDPAD:
       params = {.i_max_pk_percent = 66,

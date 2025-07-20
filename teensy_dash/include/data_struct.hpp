@@ -4,6 +4,8 @@
 
 #include <deque>
 
+enum class State { IDLE, INITIALIZING_DRIVING, DRIVING, INITIALIZING_AS_DRIVING, AS_DRIVING };
+
 enum class SwitchMode {
   INVERTER_MODE_0,
   INVERTER_MODE_CAVALETES,
@@ -50,8 +52,10 @@ struct InverterModeParams {
 };
 
 struct SystemData {
+  State current_state = State::IDLE;
   bool r2d_pressed = false;
   bool ats_pressed = false;
+  bool implausibility = false;
   bool display_pressed = false;
   SwitchMode switch_mode = SwitchMode::INVERTER_MODE_0;
   bool buzzer_active = false;

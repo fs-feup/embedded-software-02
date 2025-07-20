@@ -9,6 +9,7 @@ StateMachine::StateMachine(CanCommHandler& can_handler, LogicHandler& logic_hand
 void StateMachine::update() {
   int torque_from_apps = 0;
 
+
   switch (current_state_) {
     case State::IDLE:
       // DEBUG_PRINTLN("Torque from apps in IDLE: " + String(logic_handler.calculate_torque()));
@@ -99,6 +100,10 @@ void StateMachine::update() {
 bool StateMachine::transition_to_driving() const {
   const bool done = can_handler.init_bamocar();
   return done;
+}
+
+State StateMachine::get_state() const {
+  return this->current_state_;
 }
 
 void StateMachine::transition_to_idle() {
