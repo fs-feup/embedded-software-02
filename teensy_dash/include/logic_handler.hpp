@@ -12,18 +12,19 @@ public:
   [[nodiscard]] bool should_start_as_driving() const;
   [[nodiscard]] bool should_go_idle() const;
   bool just_entered_emergency();
-  [[nodiscard]] static uint16_t scale_apps_lower_to_apps_higher(uint16_t apps_lower) ;
+  bool just_entered_driving();
+  [[nodiscard]] static uint16_t scale_apps_lower_to_apps_higher(uint16_t apps_lower);
   int calculate_torque();
 
 private:
-  [[nodiscard]] static bool plausibility(int apps_higher, int apps_lower) ;
-  [[nodiscard]] static uint16_t apps_to_bamocar_value(uint16_t apps_higher, uint16_t apps_lower) ;
+  [[nodiscard]] static bool plausibility(int apps_higher, int apps_lower);
+  [[nodiscard]] static uint16_t apps_to_bamocar_value(uint16_t apps_higher, uint16_t apps_lower);
   elapsedMillis brake_implausibility_timer = 0;
   elapsedMillis apps_implausibility_timer = 0;
   bool apps_timeout = false;
   bool entered_emergency = false;
+  bool entered_driving = false;
   SystemData& data;
   SystemVolatileData& updated_data;
-  bool check_brake_plausibility(uint16_t bamocar_value);
   bool check_apps_plausibility(uint16_t apps_higher_avg, uint16_t apps_lower_avg);
 };

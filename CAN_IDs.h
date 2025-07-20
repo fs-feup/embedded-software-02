@@ -6,21 +6,22 @@
 // System Constants
 //-----------------------------------------------------------------------------
 
-constexpr unsigned CAN_TIMEOUT_MS = 100;         // 100
-constexpr uint8_t RPM_MSG_PERIOD_MS = 50;        // 50
-constexpr uint8_t HYDRAULIC_MSG_PERIOD_MS = 50;  // 50
-constexpr uint8_t APPS_MSG_PERIOD_MS = 50;       // 50
-constexpr uint8_t TORQUE_MSG_PERIOD_MS = 10;     // 10
-constexpr float WHEEL_PRECISION = 1e-2;          // 1e-2
+constexpr unsigned CAN_TIMEOUT_MS = 100;          // 100
+constexpr uint8_t RPM_MSG_PERIOD_MS = 150;        // 150
+constexpr uint8_t HYDRAULIC_MSG_PERIOD_MS = 165;  // 165
+constexpr uint8_t APPS_MSG_PERIOD_MS = 250;       // 250
+constexpr float WHEEL_PRECISION = 1e-2;           // 1e-2
 
 //-----------------------------------------------------------------------------
 // CAN Message IDs
 //-----------------------------------------------------------------------------
-constexpr uint16_t MASTER_ID = 0x300;    // 0x300
-constexpr uint16_t DASH_ID = 0x132;      // 0x132
-constexpr uint16_t AS_CU_ID = 0x400;     // 0x400
-constexpr uint16_t TA_ID = 0x301;        // 0x301
-constexpr uint32_t CH_ID = 0x0220'7446;  // 0x0220'7446
+constexpr uint16_t MASTER_ID = 0x300;      // 0x300
+constexpr uint16_t DASH_ID = 0x132;        // 0x132
+constexpr uint16_t AS_CU_ID = 0x400;       // 0x400
+constexpr uint16_t TA_ID = 0x301;          // 0x301
+constexpr uint32_t CH_ID = 0x0220'7446;    // 0x0220'7446
+constexpr uint16_t HC_ID = 0x105;          // 0x105
+constexpr uint16_t BMS_ERRORS_ID = 0x123;  // 0x123
 
 //-----------------------------------------------------------------------------
 
@@ -104,7 +105,7 @@ constexpr uint8_t BTB_READY = 0xE2;  // 0xE2
 constexpr uint16_t DC_THRESHOLD = 1890;  // 1890
 
 /** Also used for ASMS_ON */
-constexpr uint16_t ASMS = 0x91;      // 0x91
+constexpr uint16_t ASMS = 0x91;  // 0x91
 
 //-----------------------------------------------------------------------------
 // Sensors
@@ -135,6 +136,10 @@ constexpr uint16_t BMS_ID_CCL = 0x101;               // 0x101
 constexpr uint16_t BMS_ID_ERR = 0x123;               // 0x123
 constexpr uint32_t BMS_THERMISTOR_ID = 0x1839'F380;  // 0x1839'F380
 
+constexpr uint16_t BMS_DUMP_ROW_0 = 0x6B6;
+constexpr uint32_t BMS_DUMP_ROW_1 = 0x22'F028;
+constexpr uint32_t BMS_DUMP_ROW_2 = 0x22'F029;
+
 //-----------------------------------------------------------------------------
 // Remote Emergency System (RES)
 //-----------------------------------------------------------------------------
@@ -159,15 +164,41 @@ constexpr std::array<uint8_t, 3> ENABLE_SEQUENCE = {ENABLE_1, ENABLE_2,
                                                     ENABLE_3};  // {ENABLE_1, ENABLE_2, ENABLE_3}
 constexpr uint8_t DC_VOLTAGE = 0xEB;                            // 0xEB
 constexpr uint8_t SPEED_ACTUAL = 0x30;                          // 0x30
-constexpr uint8_t SPEED_LIMIT = 0x34;                           // 0x34
-constexpr uint8_t SPEED_DELTAMA_ACC = 0x35;                     // 0x35
-constexpr uint8_t SPEED_DELTAMA_DECC = 0xED;                    // 0xED
-constexpr uint8_t DEVICE_I_MAX = 0xC4;                          // 0xC4
-constexpr uint8_t DEVICE_I_CNT = 0xC5;                          // 0xC5
+constexpr uint8_t CURRENT_ACTUAL = 0x20;                        // 0x20
+constexpr uint8_t LOGICMAP_ERRORS = 0x8F;                       // 0x8F
+constexpr uint8_t MOTOR_TEMPERATURE = 0x49;                     // 0x49
+
+constexpr uint8_t SPEED_LIMIT = 0x34;         // 0x34
+constexpr uint8_t SPEED_DELTAMA_ACC = 0x35;   // 0x35
+constexpr uint8_t SPEED_DELTAMA_DECC = 0xED;  // 0xED
+constexpr uint8_t DEVICE_I_MAX = 0xC4;        // 0xC4
+constexpr uint8_t DEVICE_I_CNT = 0xC5;        // 0xC5
 
 //-----------------------------------------------------------------------------
 // CELLS
 //-----------------------------------------------------------------------------
 
-constexpr uint32_t MASTER_CELL_ID = 0x109;      // 0x109
 constexpr uint32_t CELL_TEMPS_BASE_ID = 0x110;  // 0x110
+constexpr uint32_t ALL_TEMPS_ID = 0x280;        // 0x280
+constexpr uint8_t NTC_SENSOR_COUNT = 18;        // 18
+
+// -----------------------------------------------------------------------------
+// DISPLAY WIDGET IDS
+// -----------------------------------------------------------------------------
+constexpr uint16_t WIDGET_FORM_CMD = 0x9999;
+constexpr uint16_t WIDGET_THROTTLE = 0x0001;
+constexpr uint16_t WIDGET_BRAKE = 0x0002;
+constexpr uint16_t WIDGET_SPEED = 0x0003;
+constexpr uint16_t WIDGET_INVERTER_MODE = 0x0004;
+constexpr uint16_t WIDGET_CELLS_MIN = 0x0005;
+constexpr uint16_t WIDGET_CELLS_MAX = 0x0006;
+constexpr uint16_t WIDGET_SOC = 0x0007;
+constexpr uint16_t WIDGET_VOLTAGE = 0x0008;
+constexpr uint16_t WIDGET_CURRENT = 0x0009;
+constexpr uint16_t WIDGET_CH_STATUS = 0x000A;
+constexpr uint16_t WIDGET_SDC_BUTTON = 0x000B;
+constexpr uint16_t WIDGET_INVERTER_ERRORS = 0x000C;
+constexpr uint16_t WIDGET_BMS_DUMP_0 = 0xBB00;
+constexpr uint16_t WIDGET_BMS_DUMP_1 = 0xBB01;
+constexpr uint16_t WIDGET_BMS_DUMP_2 = 0xBB02;
+constexpr uint16_t WIDGET_BMS_DUMP_3 = 0xBB03;

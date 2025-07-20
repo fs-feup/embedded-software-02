@@ -35,7 +35,7 @@ public:
    * @brief Constructor for the class, sets pintmodes and buttons
    */
   DigitalReceiver(SystemData* system_data) : system_data_(system_data) {
-    pinMode(SDC_BSPD_STATE_PIN, INPUT);
+    pinMode(SDC_TSMS_STATE_PIN, INPUT);
     pinMode(AMI, INPUT);
     pinMode(ASMS_IN_PIN, INPUT);
     pinMode(EBS_SENSOR2, INPUT);
@@ -164,8 +164,8 @@ inline void DigitalReceiver::read_soc() {
 }
 
 inline void DigitalReceiver::read_bspd_sdc() {
-  bool is_sdc_open = (0 == digitalRead(SDC_BSPD_STATE_PIN));  // low when sdc/bspd open
-  debounce(is_sdc_open, system_data_->hardware_data_.bspd_sdc_open_, sdc_bspd_change_counter_);
+  bool is_sdc_closed = digitalRead(SDC_TSMS_STATE_PIN);  // low when sdc/bspd open
+  debounce(is_sdc_closed, system_data_->hardware_data_.tsms_sdc_closed_, sdc_bspd_change_counter_);
 }
 inline void DigitalReceiver::read_brake_sensor() {
   int hydraulic_pressure = analogRead(BRAKE_SENSOR);
@@ -200,6 +200,10 @@ inline void DigitalReceiver::read_mission() {
     mission_change_counter_ = 0;
   }
   system_data_->mission_ = Mission::MANUAL;
+  //print raw, mapped and current mission
+  DEBUG_PRINT_VAR(raw_value);
+  DEBUG_PRINT_VAR(mapped_value);
+  DEBUG_PRINT_VAR(to_underlying(system_data_->mission_));
 }
 
 inline void DigitalReceiver::read_asms_switch() {

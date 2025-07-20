@@ -1,0 +1,303 @@
+VERSION ""
+
+
+NS_ : 
+	NS_DESC_
+	CM_
+	BA_DEF_
+	BA_
+	VAL_
+	CAT_DEF_
+	CAT_
+	FILTER
+	BA_DEF_DEF_
+	EV_DATA_
+	ENVVAR_DATA_
+	SGTYPE_
+	SGTYPE_VAL_
+	BA_DEF_SGTYPE_
+	BA_SGTYPE_
+	SIG_TYPE_REF_
+	VAL_TABLE_
+	SIG_GROUP_
+	SIG_VALTYPE_
+	SIGTYPE_VALTYPE_
+	BO_TX_BU_
+	BA_DEF_REL_
+	BA_REL_
+	BA_DEF_DEF_REL_
+	BU_SG_REL_
+	BU_EV_REL_
+	BU_BO_REL_
+	SG_MUL_VAL_
+
+BS_:
+
+BU_: Master Dash Bamocar Cell_1 Cell_2 Cell_3 Cell_4 Cell_5 Cell_0 BoschSteeringSensor ASCU SteeringController RES BMS DataLogger
+
+
+BO_ 3221225472 VECTOR__INDEPENDENT_SIG_MSG: 0 Vector__XXX
+ SG_ NewSignal_0027 : 8|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ speed_actual_request m48 : 8|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ current_actual_request m32 : 8|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ logicmap_errors_request m143 : 8|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ motor_temperature_request m73 : 8|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ error_bitmap_1 : 8|16@1+ (1,0) [0|65535] "" Vector__XXX
+ SG_ error_bitmap_2 : 16|16@1+ (1,0) [0|65535] "" Vector__XXX
+ SG_ mission_status : 0|8@1+ (1,0) [0|255] "" Vector__XXX
+
+BO_ 768 master_msgs: 8 Master
+ SG_ multiplexor M : 0|8@1+ (1,0) [0|255] ""  Dash,ASCU
+ SG_ rr_rpm m17 : 8|32@1+ (1,0) [0|4294967295] "rpm"  Dash,ASCU
+ SG_ rl_rpm m18 : 8|32@1+ (1,0) [0|4294967295] "rpm"  Dash,ASCU
+ SG_ asms_on m145 : 8|8@1+ (1,0) [0|1] "bool"  Dash,ASCU
+ SG_ lv_soc m96 : 8|8@1+ (1,0) [0|100] "percentage"  Dash,ASCU
+ SG_ hydraulic_line_pressure m52 : 8|32@1+ (1,0) [0|1023] "adc"  Dash,ASCU
+ SG_ emergency_signal m52 : 47|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
+ SG_ pneumatic_pressure m52 : 46|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
+ SG_ engage_ebs_timestamp m52 : 45|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
+ SG_ release_ebs_timestamp m52 : 44|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
+ SG_ steer_dead m52 : 43|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
+ SG_ pc_dead m52 : 42|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
+ SG_ inverson_dead m52 : 41|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
+ SG_ res_dead m52 : 40|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
+ SG_ checkup_state m52 : 48|4@1+ (1,0) [0|15] ""  Dash,ASCU
+ SG_ tsms_state m52 : 52|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
+ SG_ ts_on m52 : 53|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
+ SG_ asms_on_log m52 : 54|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
+ SG_ mission_log m52 : 56|4@1+ (1,0) [0|15] ""  Dash,ASCU
+ SG_ master_state_log m52 : 60|4@1+ (1,0) [0|15] ""  Dash,ASCU
+ SG_ pneumatic_line_1 m53 : 8|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
+ SG_ pneumatic_line_2 m53 : 16|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
+ SG_ dcvoltage m53 : 24|32@1+ (1,0) [0|32765] ""  Dash,ASCU
+ SG_ mission m50 : 8|8@1+ (1,0) [0|7] ""  Dash,ASCU
+ SG_ master_state m49 : 8|8@1+ (1,0) [0|5] ""  Dash,ASCU
+
+BO_ 0 res_activate: 2 Master
+ SG_ node_id : 8|8@1+ (1,0) [17|17] ""  RES
+
+BO_ 306 dash_msgs: 8 Dash
+ SG_ multiplexor M : 0|8@1+ (1,0) [0|255] ""  Master,ASCU
+ SG_ hydraulic_line m144 : 8|16@1+ (1,0) [0|1023] ""  Master,ASCU
+ SG_ fr_rpm m16 : 8|32@1+ (1,0) [0|4294967295] "rpm"  Master,ASCU
+ SG_ fl_rpm m17 : 8|32@1+ (1,0) [0|4294967295] "rpm"  Master,ASCU
+ SG_ apps_higher m32 : 8|32@1+ (1,0) [0|1023] ""  Master,ASCU
+ SG_ apps_lower m33 : 8|32@1+ (1,0) [0|1023] ""  Master,ASCU
+
+BO_ 513 bamocar_rx: 8 Dash
+ SG_ multiplexor M : 0|8@1+ (1,0) [0|255] ""  Bamocar
+ SG_ enable_or_disable m81 : 8|8@1+ (1,0) [0|255] ""  Bamocar
+ SG_ value_request m61 : 8|8@1+ (1,0) [0|255] ""  Bamocar
+ SG_ speed_limit m52 : 8|16@1+ (1,0) [0|65535] ""  Bamocar
+ SG_ device_current_max m196 : 8|16@1+ (1,0) [0|65535] ""  Bamocar
+ SG_ device_current_cnt m197 : 8|16@1+ (1,0) [0|65535] ""  Bamocar
+ SG_ acc_ramp m53 : 8|32@1+ (1,0) [0|4294967295] ""  Bamocar
+ SG_ decc_ramp m237 : 8|32@1+ (1,0) [0|4294967295] ""  Bamocar
+ SG_ torque m144 : 8|16@1- (1,0) [-32768|32767] ""  Bamocar
+ SG_ clear_errors m142 : 8|24@1+ (1,0) [0|255] ""  Bamocar
+
+BO_ 2553934720 BMS_THERMISTOR_ID: 8 Cell_0
+ SG_ thermistor_module_number : 0|8@1+ (1,0) [0|255] ""  BMS
+ SG_ min_temp : 8|8@1- (1,0) [-128|127] "C"  BMS
+ SG_ max_temp : 16|8@1- (1,0) [-128|127] "C"  BMS
+ SG_ avg_temp : 24|8@1- (1,0) [-128|127] "C"  BMS
+ SG_ number_of_thermistors : 32|8@1+ (1,0) [0|255] ""  BMS
+ SG_ highest_thermistor_id : 40|8@1+ (1,0) [0|255] ""  BMS
+ SG_ lowest_thermistor_id : 48|8@1+ (1,0) [0|255] ""  BMS
+ SG_ checksum : 56|8@1+ (1,0) [0|255] ""  BMS
+
+BO_ 385 bamocar_tx: 8 Bamocar
+ SG_ dc_voltage m235 : 8|16@1- (1,0) [-32768|32767] "" Vector__XXX
+ SG_ speed m48 : 8|16@1+ (1,0) [-32768|32767] "" Vector__XXX
+ SG_ motor_current m32 : 8|16@1+ (1,0) [-32768|32767] "" Vector__XXX
+ SG_ error_bitmap m143 : 8|16@1+ (1,0) [-32768|32767] "" Vector__XXX
+ SG_ multiplexor M : 0|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ ready_sig m226 : 8|32@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ enable_sig m232 : 8|32@1+ (1,0) [0|0] "" Vector__XXX
+
+BO_ 272 CELL_TEMPS_BOARD_0: 4 Cell_0
+ SG_ board_id : 0|8@1+ (1,0) [0|5] ""  BMS,Cell_1,Cell_2,Cell_3,Cell_4,Cell_5
+ SG_ min_temp : 8|8@1- (1,0) [-128|127] "C"  BMS,Cell_1,Cell_2,Cell_3,Cell_4,Cell_5
+ SG_ max_temp : 16|8@1- (1,0) [-128|127] "C"  BMS,Cell_1,Cell_2,Cell_3,Cell_4,Cell_5
+ SG_ avg_temp : 24|8@1- (1,0) [-128|127] "C"  BMS,Cell_1,Cell_2,Cell_3,Cell_4,Cell_5
+
+BO_ 273 CELL_TEMPS_BOARD_1: 4 Cell_1
+ SG_ board_id : 0|8@1+ (1,0) [0|5] ""  BMS,Cell_0
+ SG_ min_temp : 8|8@1- (1,0) [-128|127] "C"  BMS,Cell_0
+ SG_ max_temp : 16|8@1- (1,0) [-128|127] "C"  BMS,Cell_0
+ SG_ avg_temp : 24|8@1- (1,0) [-128|127] "C"  BMS,Cell_0
+
+BO_ 274 CELL_TEMPS_BOARD_2: 4 Cell_2
+ SG_ board_id : 0|8@1+ (1,0) [0|5] ""  BMS,Cell_0
+ SG_ min_temp : 8|8@1- (1,0) [-128|127] "C"  BMS,Cell_0
+ SG_ max_temp : 16|8@1- (1,0) [-128|127] "C"  BMS,Cell_0
+ SG_ avg_temp : 24|8@1- (1,0) [-128|127] "C"  BMS,Cell_0
+
+BO_ 275 CELL_TEMPS_BOARD_3: 4 Cell_3
+ SG_ board_id : 0|8@1+ (1,0) [0|5] ""  BMS,Cell_0
+ SG_ min_temp : 8|8@1- (1,0) [-128|127] "C"  BMS,Cell_0
+ SG_ max_temp : 16|8@1- (1,0) [-128|127] "C"  BMS,Cell_0
+ SG_ avg_temp : 24|8@1- (1,0) [-128|127] "C"  BMS,Cell_0
+
+BO_ 276 CELL_TEMPS_BOARD_4: 4 Cell_4
+ SG_ board_id : 0|8@1+ (1,0) [0|5] ""  BMS,Cell_0
+ SG_ min_temp : 8|8@1- (1,0) [-128|127] "C"  BMS,Cell_0
+ SG_ max_temp : 16|8@1- (1,0) [-128|127] "C"  BMS,Cell_0
+ SG_ avg_temp : 24|8@1- (1,0) [-128|127] "C"  BMS,Cell_0
+
+BO_ 277 CELL_TEMPS_BOARD_5: 4 Cell_5
+ SG_ board_id : 0|8@1+ (1,0) [0|5] ""  BMS,Cell_0
+ SG_ min_temp : 8|8@1- (1,0) [-128|127] "C"  BMS,Cell_0
+ SG_ max_temp : 16|8@1- (1,0) [-128|127] "C"  BMS,Cell_0
+ SG_ avg_temp : 24|8@1- (1,0) [-128|127] "C"  BMS,Cell_0
+
+BO_ 640 ALL_TEMPS_BOARD_0: 8 Cell_0
+ SG_ board_id : 0|8@1+ (1,0) [0|5] "" Vector__XXX
+ SG_ msg_index : 8|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ temp_0 : 16|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ temp_1 : 24|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ temp_2 : 32|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ temp_3 : 40|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ temp_4 : 48|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ temp_5 : 56|8@1- (1,0) [-128|127] "C" Vector__XXX
+
+BO_ 641 ALL_TEMPS_BOARD_1: 8 Cell_1
+ SG_ board_id : 0|8@1+ (1,0) [0|5] "" Vector__XXX
+ SG_ msg_index : 8|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ temp_0 : 16|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ temp_1 : 24|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ temp_2 : 32|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ temp_3 : 40|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ temp_4 : 48|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ temp_5 : 56|8@1- (1,0) [-128|127] "C" Vector__XXX
+
+BO_ 642 ALL_TEMPS_BOARD_2: 8 Cell_2
+ SG_ board_id : 0|8@1+ (1,0) [0|5] "" Vector__XXX
+ SG_ msg_index : 8|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ temp_0 : 16|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ temp_1 : 24|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ temp_2 : 32|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ temp_3 : 40|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ temp_4 : 48|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ temp_5 : 56|8@1- (1,0) [-128|127] "C" Vector__XXX
+
+BO_ 643 ALL_TEMPS_BOARD_3: 8 Cell_3
+ SG_ board_id : 0|8@1+ (1,0) [0|5] "" Vector__XXX
+ SG_ msg_index : 8|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ temp_0 : 16|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ temp_1 : 24|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ temp_2 : 32|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ temp_3 : 40|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ temp_4 : 48|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ temp_5 : 56|8@1- (1,0) [-128|127] "C" Vector__XXX
+
+BO_ 644 ALL_TEMPS_BOARD_4: 8 Cell_4
+ SG_ board_id : 0|8@1+ (1,0) [0|5] "" Vector__XXX
+ SG_ msg_index : 8|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ temp_0 : 16|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ temp_1 : 24|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ temp_2 : 32|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ temp_3 : 40|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ temp_4 : 48|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ temp_5 : 56|8@1- (1,0) [-128|127] "C" Vector__XXX
+
+BO_ 645 ALL_TEMPS_BOARD_5: 8 Cell_5
+ SG_ board_id : 0|8@1+ (1,0) [0|5] "" Vector__XXX
+ SG_ msg_index : 8|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ temp_0 : 16|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ temp_1 : 24|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ temp_2 : 32|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ temp_3 : 40|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ temp_4 : 48|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ temp_5 : 56|8@1- (1,0) [-128|127] "C" Vector__XXX
+
+BO_ 1117 STEERING_MOTOR_COMMAND: 4 ASCU
+ SG_ steering_angle : 0|32@1- (0.0001,0) [-90|90] "degrees"  SteeringController
+
+BO_ 1024 AS_CU: 1 ASCU
+ SG_ emergency_status m67 : 0|8@1+ (1,0) [0|255] ""  Master,Dash
+ SG_ mux M : 0|8@1+ (1,0) [0|255] ""  Master,Dash
+ SG_ mission_finished m66 : 0|8@1+ (1,0) [0|255] ""  Master,Dash
+ SG_ alive_sig m65 : 0|8@1+ (1,0) [0|255] ""  Master,Dash
+
+BO_ 1373 STEERING_MOTOR_SET_ORIGIN: 1 ASCU
+ SG_ origin_command : 0|8@1+ (1,0) [0|0] ""  SteeringController
+
+BO_ 1829 BOSCH_STEERING_ANGLE_SET_ORIGIN: 8 ASCU
+ SG_ command_code : 0|8@1+ (1,0) [0|255] ""  BoschSteeringSensor
+
+BO_ 2147494237 STEERING_CUBEM_STATE: 8 SteeringController
+ SG_ cubem_steering_angle : 7|16@1- (0.1,0) [-32768|32767] "degrees"  ASCU
+ SG_ cubem_steering_speed : 23|16@1- (0.1,0) [-32768|32767] "RPM"  ASCU
+ SG_ cubem_motor_current : 39|16@1- (0.01,0) [-32768|32767] "Amperes"  ASCU
+ SG_ cubem_motor_temperature : 48|8@1- (1,0) [-128|127] "C"  ASCU
+ SG_ cubem_motor_error : 56|8@1- (1,0) [0|255] ""  ASCU
+
+BO_ 161 BOSCH_STEERING_ANGLE: 8 BoschSteeringSensor
+ SG_ bosch_steering_angle_value : 15|15@1+ (0.1,0) [0|32767] "degrees"  ASCU
+ SG_ bosch_steering_angle_sign : 16|1@1+ (1,0) [0|1] ""  ASCU
+ SG_ bosch_steering_speed_value : 31|15@1+ (0.1,0) [0|32767] "degrees/s"  ASCU
+ SG_ bosch_steering_speed_sign : 32|1@1+ (1,0) [0|1] ""  ASCU
+ SG_ bosch_status_bit : 53|1@1+ (1,0) [0|1] ""  ASCU
+ SG_ bosch_CRC : 56|8@1+ (1,0) [0|255] ""  ASCU
+
+BO_ 1280 DV_driving_dynamics_1: 8 ASCU
+ SG_ Speed_actual : 0|8@1+ (1,0) [0|255] "km/h"  DataLogger
+ SG_ Speed_target : 8|8@1+ (1,0) [0|255] "km/h"  DataLogger
+ SG_ Steering_angle_actual : 16|8@1- (0.5,0) [-128|127] " "  DataLogger
+ SG_ Steering_angle_target : 24|8@1- (0.5,0) [-128|127] " "  DataLogger
+ SG_ Brake_hydr_target : 40|8@1+ (1,0) [0|100] "%"  DataLogger
+ SG_ Motor_moment_actual : 48|8@1- (1,0) [0|100] "%"  DataLogger
+ SG_ Motor_moment_target : 56|8@1- (1,0) [0|100] "%"  DataLogger
+ SG_ Brake_hydr_actual : 32|8@1+ (1,0) [0|100] "%"  DataLogger
+
+BO_ 1281 DV_driving_dynamics_2: 6 ASCU
+ SG_ Acceleration_longitudinal : 0|16@1- (1,0) [-32768|32767] "m/s^2"  DataLogger
+ SG_ Acceleration_lateral : 16|16@1- (1,0) [-32768|32767] "m/s^2"  DataLogger
+ SG_ Yaw_rate : 32|16@1- (0.125,0) [-32768|32767] " /s"  DataLogger
+
+BO_ 1282 DV_system_status: 5 ASCU
+ SG_ AS_status : 0|3@1+ (1,0) [0|7] ""  DataLogger
+ SG_ ASB_EBS_state : 3|2@1+ (1,0) [0|3] ""  DataLogger
+ SG_ AMI_state : 5|3@1+ (1,0) [0|7] ""  DataLogger
+ SG_ Steering_state : 8|1@1+ (1,0) [0|1] ""  DataLogger
+ SG_ ASB_redundancy_state : 9|2@1+ (1,0) [0|3] ""  DataLogger
+ SG_ Lap_counter : 11|4@1+ (1,0) [0|15] ""  DataLogger
+ SG_ Cones_count_actual : 15|8@1+ (1,0) [0|255] ""  DataLogger
+ SG_ Cones_count_all : 23|16@1+ (1,0) [0|255] ""  DataLogger
+
+BO_ 401 RES_STATE: 8 RES
+ SG_ emg_stop1 : 0|1@0+ (1,0) [0|1] ""  Master
+ SG_ go_switch : 1|1@0+ (1,0) [0|1] ""  Master
+ SG_ go_button : 2|1@0+ (1,0) [0|1] ""  Master
+ SG_ emg_stop2 : 31|1@0+ (1,0) [0|1] ""  Master
+ SG_ radio_quality : 48|8@0+ (1,0) [0|255] ""  Master
+ SG_ signal_loss : 54|1@0+ (1,0) [0|1] ""  Master
+
+BO_ 1809 RES_READY: 1 RES
+
+BO_ 257 BMS_periodic: 8 BMS
+
+
+
+CM_ SG_ 0 node_id "competition defines this value
+";
+CM_ SG_ 513 enable_or_disable "byte 1 will be 0x04 or 0x00 depending if we are enabling or disbling bamocar
+";
+CM_ SG_ 513 value_request "requests values from the motor byte 1 determines which value will be returned
+0xEB->dc_voltage
+0x30->motor speed
+0x20->actual motor current
+0x8F->current motor erros
+0x49->motor temperature
+";
+CM_ SG_ 513 clear_errors "Command to clear errors on the Bamocar (0x8E)";
+CM_ SG_ 1024 emergency_status "";
+VAL_ 513 value_request 235 "dc_voltage" 48 "motor_speed" 32 "motor_current" 143 "motor_errors" 73 "motor_temperature" ;
+VAL_ 1829 command_code 80 "RESET_ORIGIN" 48 "SET_ORIGIN" ;
+VAL_ 1282 AS_status 1 "AS_status_off" 2 "AS_status_ready" 3 "AS_status_emergency" 4 "AS_status_driving" 5 "AS_status_finished" ;
+VAL_ 1282 ASB_EBS_state 1 "ASB_EBS_state_deactivated" 2 "ASB_EBS_state_initial_checkup_passed" 3 "ASB_EBS_state_activated" ;
+VAL_ 1282 AMI_state 1 "AMI_state_acceleration" 2 "AMI_state_skidpad" 3 "AMI_state_trackdrive" 4 "AMI_state_braketest" 5 "AMI_state_inspection" 6 "AMI_state_autocross" ;
+VAL_ 1282 Steering_state 0 "FALSE" 1 "TRUE" ;
+VAL_ 1282 ASB_redundancy_state 1 "ASB_redundancy_state_deactivated" 2 "ASB_redundancy_state_engaged" 3 "ASB_redundancy_state_initial_checkup_passed" ;
+

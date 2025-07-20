@@ -1,7 +1,8 @@
 #pragma once
-#include <deque>
 #include <Arduino.h>
 #include <elapsedMillis.h>
+
+#include <deque>
 
 enum class SwitchMode {
   INVERTER_MODE_0,
@@ -12,7 +13,7 @@ enum class SwitchMode {
   INVERTER_MODE_ENDURANCE,
   INVERTER_MODE_MAX_ATTACK,
   INVERTER_MODE_NULL,
-  INVERTER_MODE_INIT //for the initial previous mode
+  INVERTER_MODE_INIT  // for the initial previous mode
 };
 
 /* From NDrive Manual:
@@ -28,7 +29,7 @@ enum class SwitchMode {
 enum BamocarState {
   ENABLE_TRANSMISSION,
   CHECK_BTB,
-  ENABLE_OFF,
+  DISABLE,
   ENABLE,
   ACC_RAMP,
   DEC_RAMP,
@@ -36,15 +37,16 @@ enum BamocarState {
   ERROR,
   CLEAR_ERRORS
 };
+constexpr unsigned long STABLE_TIME_MS = 150;
 
 struct InverterModeParams {
   int i_max_pk_percent = 0;
   int speed_limit_percent = 0;
   int i_cont_percent = 0;
-  int speed_ramp_acc = 0; // 0..30'000
-  int moment_ramp_acc = 0; // 0..4000
-  int speed_ramp_brake = 0; // 0..30'000
-  int moment_ramp_decc = 0; // 0..4000
+  int speed_ramp_acc = 0;    // 0..30'000
+  int moment_ramp_acc = 0;   // 0..4000
+  int speed_ramp_brake = 0;  // 0..30'000
+  int moment_ramp_decc = 0;  // 0..4000
 };
 
 struct SystemData {
@@ -55,6 +57,9 @@ struct SystemData {
   bool buzzer_active = false;
   unsigned long buzzer_start_time;
   unsigned long buzzer_duration_ms;
+  bool emergency_buzzer_active = false;
+  unsigned long emergency_buzzer_start_time;
+  bool emergency_buzzer_state = false;
   std::deque<uint16_t> apps_higher_readings;
   std::deque<uint16_t> apps_lower_readings;
   float fr_rpm = 0;
@@ -71,6 +76,11 @@ struct SystemVolatileData {
   int brake_pressure = 0;
   int speed = 0;
   uint8_t soc = 0;
+  int32_t motor_current = 0;
+  uint8_t min_temp = 0;
+  uint8_t max_temp = 0;
+  uint16_t error_bitmap = 0;
+  uint16_t warning_bitmap = 0;
 
   unsigned long last_wheel_pulse_fr = 0;
   unsigned long second_to_last_wheel_pulse_fr = 0;
@@ -90,5 +100,9 @@ inline void copy_volatile_data(SystemVolatileData& dest, volatile SystemVolatile
   dest.second_to_last_wheel_pulse_fr = src.second_to_last_wheel_pulse_fr;
   dest.last_wheel_pulse_fl = src.last_wheel_pulse_fl;
   dest.second_to_last_wheel_pulse_fl = src.second_to_last_wheel_pulse_fl;
+  dest.motor_current = src.motor_current;
+  dest.min_temp = src.min_temp;
+  dest.max_temp = src.max_temp;
+  dest.error_bitmap = src.error_bitmap;
   interrupts();
 }

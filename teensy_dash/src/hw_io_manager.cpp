@@ -38,7 +38,7 @@ void IOManager::read_hydraulic_pressure() const {
 }
 
 void IOManager::update_R2D_timer() const {
-  if (average_queue(data.brake_readings) > config::apps::BRAKE_BLOCK_THRESHOLD) {
+  if (average_queue(data.brake_readings) > config::brake::BLOCK_THRESHOLD) {
     data.r2d_brake_timer = 0;
   }
 }
@@ -63,8 +63,8 @@ void IOManager::manage_ats() const {
 
 void IOManager::setup() {
   pinMode(pins::digital::INERTIA, INPUT);
-  pinMode(pins::analog::APPS_HIGHER, INPUT);
-  pinMode(pins::analog::APPS_LOWER, INPUT);
+  pinMode(pins::analog::APPS_HIGHER, INPUT_PULLDOWN);
+  pinMode(pins::analog::APPS_LOWER, INPUT_PULLDOWN);
   pinMode(pins::analog::ROTARY_SWITCH, INPUT);
   pinMode(pins::analog::BRAKE_PRESSURE, INPUT);
   pinMode(pins::digital::TS, INPUT);
@@ -118,12 +118,51 @@ void IOManager::play_buzzer(const uint8_t duration_seconds) const {
   digitalWrite(pins::output::BUZZER, HIGH);  // Use digitalWrite for buzzer
 }
 
+void IOManager::play_emergency_buzzer() const {
+  if (!data.emergency_buzzer_active) {
+    data.emergency_buzzer_active = true;
+    data.emergency_buzzer_start_time = millis();
+    data.emergency_buzzer_state = true;  // Start with buzzer ON
+    DEBUG_PRINTLN("Playing emergency buzzer");
+  }
+}
+
 void IOManager::update_buzzer() const {
   if (data.buzzer_active && (millis() - data.buzzer_start_time >= data.buzzer_duration_ms)) {
     // noTone(pins::output::BUZZER);
     digitalWrite(pins::output::BUZZER, LOW);  // Stop the buzzer
     data.buzzer_active = false;
   }
+
+  if (data.emergency_buzzer_active) {
+    constexpr unsigned long EMERGENCY_DURATION_MS = 9000; // 9 seconds
+    constexpr unsigned long EMERGENCY_CYCLE_MS = 250;     // 4Hz (250ms cycle)
+    
+    unsigned long elapsed = millis() - data.emergency_buzzer_start_time;
+    
+    // Check if emergency duration exceeded
+    if (elapsed >= EMERGENCY_DURATION_MS) {
+      data.emergency_buzzer_active = false;
+      digitalWrite(pins::output::BUZZER, LOW);
+      DEBUG_PRINTLN("Emergency buzzer finished");
+      return;
+    }
+    
+    // Toggle buzzer every 250ms (4Hz, 50% duty cycle)
+    if ((elapsed / EMERGENCY_CYCLE_MS) % 2 == 0) {
+      if (!data.emergency_buzzer_state) {
+        data.emergency_buzzer_state = true;
+        digitalWrite(pins::output::BUZZER, HIGH);
+      }
+    } else {
+      if (data.emergency_buzzer_state) {
+        data.emergency_buzzer_state = false;
+        digitalWrite(pins::output::BUZZER, LOW);
+      }
+    }
+  }
+
+
 }
 
 void IOManager::read_pins_handle_leds() {

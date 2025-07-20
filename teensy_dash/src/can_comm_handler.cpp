@@ -5,14 +5,17 @@
 #include <utils.hpp>
 
 #include "../../CAN_IDs.h"
+#include "io_settings.hpp"
 
 CanCommHandler::CanCommHandler(SystemData& system_data,
                                volatile SystemVolatileData& volatile_updatable_data,
-                               SystemVolatileData& volatile_updated_data)
+                               SystemVolatileData& volatile_updated_data/*,
+                               SPI_MSTransfer_T4<&SPI>& display_spi*/)
     : data(system_data),
       updatable_data(volatile_updatable_data),
-      updated_data(volatile_updated_data) {
-  staticCallback = [this](const CAN_message_t& msg) { this->handleCanMessage(msg); };
+      updated_data(volatile_updated_data)/*,
+      display_spi(display_spi)*/ {
+  static_callback = [this](const CAN_message_t& msg) { this->handle_can_message(msg); };
 }
 
 void CanCommHandler::setup() {
@@ -22,69 +25,50 @@ void CanCommHandler::setup() {
   can1.enableFIFO();
   can1.enableFIFOInterrupt();
   can1.setFIFOFilter(REJECT_ALL);
-  can1.setFIFOFilter(0, BMS_ID, STD);
+  can1.setFIFOFilter(0, BMS_THERMISTOR_ID, EXT);
   can1.setFIFOFilter(1, BAMO_RESPONSE_ID, STD);
   can1.setFIFOFilter(2, MASTER_ID, STD);
   can1.onReceive(can_snifflas);
   delay(100);
 
-  CAN_message_t disable;
+  send_bamo_requests();
+}
 
-  disable.id = BAMO_COMMAND_ID;
-  disable.len = 3;
-  disable.buf[0] = 0x51;
-  disable.buf[1] = 0x04;
-  disable.buf[2] = 0x00;
+void CanCommHandler::send_bamo_requests() {
+  constexpr CAN_message_t disable = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0x51, 0x04, 0x00}};
 
-  CAN_message_t statusRequest;
+  // DC voltage request
+  constexpr CAN_message_t dc_voltage_request = {
+      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, 0xEB, 0x64}};
 
-  statusRequest.id = BAMO_COMMAND_ID;
-  statusRequest.len = 3;
-  statusRequest.buf[0] = 0x3D;
-  statusRequest.buf[1] = 0x40;
-  statusRequest.buf[2] = 0x00;
-
-  CAN_message_t DCVoltageRequest;
-
-  DCVoltageRequest.id = BAMO_COMMAND_ID;
-  DCVoltageRequest.len = 3;
-  DCVoltageRequest.buf[0] = 0x3D;
-  DCVoltageRequest.buf[1] = 0xEB;
-  DCVoltageRequest.buf[2] = 0x64;
-
-  DEBUG_PRINTLN("Sending initial messages to BAMO-CAR...");
+  // Speed actual request
+  constexpr CAN_message_t speed_actual_request = {
+      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, SPEED_ACTUAL, 0xFB}};
+  constexpr CAN_message_t current_actual_request = {
+      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, CURRENT_ACTUAL, 0xFA}};
+  constexpr CAN_message_t logicmap_errors_request = {
+      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, LOGICMAP_ERRORS, 0xEE}};
+  constexpr CAN_message_t motor_temperature_request = {
+      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, MOTOR_TEMPERATURE, 0xEF}};
+  // Send all messages (don't exceed 8 requests)
   can1.write(disable);
-  can1.write(statusRequest);
-  can1.write(DCVoltageRequest);
-
-  CAN_message_t speed_limit_req = {
-      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, SPEED_LIMIT, 0x64}};
-  CAN_message_t i_max_req = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, DEVICE_I_MAX, 0x64}};
-  CAN_message_t i_cont_req = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, DEVICE_I_CNT, 0x64}};
-  CAN_message_t accRamp_req = {
-      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, SPEED_DELTAMA_ACC, 0x64}};
-  CAN_message_t deccRamp_req = {
-      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, SPEED_DELTAMA_DECC, 0x64}};
-  CAN_message_t speed_actual_req = {
-      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, SPEED_ACTUAL, 0x64}};
-
-  // !! Don't exceed 8 requests !!
-  can1.write(i_max_req);
-  can1.write(speed_limit_req);
-  can1.write(i_cont_req);
-  can1.write(accRamp_req);
-  can1.write(deccRamp_req);
-  can1.write(speed_actual_req);
+  can1.write(dc_voltage_request);
+  can1.write(speed_actual_request);
+  can1.write(current_actual_request);
+  can1.write(logicmap_errors_request);
+  can1.write(motor_temperature_request);
 }
 
 void CanCommHandler::can_snifflas(const CAN_message_t& msg) {
-  if (staticCallback) {
-    staticCallback(msg);
+  if (static_callback) {
+    static_callback(msg);
   }
 }
-void CanCommHandler::handleCanMessage(const CAN_message_t& msg) {
+void CanCommHandler::handle_can_message(const CAN_message_t& msg) {
+  // DEBUG_PRINTLN("CAN INT");
   switch (msg.id) {
-    case BMS_ID:
+    case BMS_THERMISTOR_ID:
+      bms_callback(msg.buf, msg.len);
       break;
     case BAMO_RESPONSE_ID:
       bamocar_callback(msg.buf, msg.len);
@@ -92,9 +76,82 @@ void CanCommHandler::handleCanMessage(const CAN_message_t& msg) {
     case MASTER_ID:
       master_callback(msg.buf, msg.len);
       break;
+    case BMS_ERRORS_ID: {
+      // yves: estes são menos importantes mas se der mete tb
+      DEBUG_PRINTLN("BMS Error ID received - Raw msg data:");
+      for (uint8_t i = 0; i < msg.len; i++) {
+        DEBUG_PRINTLN("  msg_data[" + String(i) + "] = 0x" + String(msg.buf[i], HEX));
+      }
+
+      // Handle DTC Status #1 (indices 0 and 1)
+      if (msg.len >= 2) {
+        uint16_t error_bitmap_1 = (msg.buf[1] << 8) | msg.buf[0];
+        DEBUG_PRINTLN("BMS ERRORS #1: 0x" + String(error_bitmap_1, HEX));
+        DEBUG_PRINTLN("DTC Status #1 error bits:");
+        DEBUG_PRINTLN("  Bit 1 (0x0001): P0A07 (Discharge Limit Enforcement Fault): " +
+                      String((error_bitmap_1 & (1 << 0)) ? 1 : 0));
+        DEBUG_PRINTLN("  Bit 2 (0x0002): P0A08 (Charger Safety Relay Fault): " +
+                      String((error_bitmap_1 & (1 << 1)) ? 1 : 0));
+        DEBUG_PRINTLN("  Bit 3 (0x0004): P0A09 (Internal Hardware Fault): " +
+                      String((error_bitmap_1 & (1 << 2)) ? 1 : 0));
+        DEBUG_PRINTLN("  Bit 4 (0x0008): P0A0A (Internal Heatsink Thermistor Fault): " +
+                      String((error_bitmap_1 & (1 << 3)) ? 1 : 0));
+        DEBUG_PRINTLN("  Bit 5 (0x0010): P0A0B (Internal Software Fault): " +
+                      String((error_bitmap_1 & (1 << 4)) ? 1 : 0));
+        DEBUG_PRINTLN("  Bit 6 (0x0020): P0A0C (Highest Cell Voltage Too High Fault): " +
+                      String((error_bitmap_1 & (1 << 5)) ? 1 : 0));
+        DEBUG_PRINTLN("  Bit 7 (0x0040): P0A0E (Lowest Cell Voltage Too Low Fault): " +
+                      String((error_bitmap_1 & (1 << 6)) ? 1 : 0));
+        DEBUG_PRINTLN("  Bit 8 (0x0080): P0A10 (Pack Too Hot Fault): " +
+                      String((error_bitmap_1 & (1 << 7)) ? 1 : 0));
+      }
+
+      // Handle DTC Status #2 (indices 2 and 3)
+      if (msg.len >= 4) {
+        uint16_t error_bitmap_2 = (msg.buf[3] << 8) | msg.buf[2];
+        DEBUG_PRINTLN("BMS ERRORS #2: 0x" + String(error_bitmap_2, HEX));
+        DEBUG_PRINTLN("DTC Status #2 error bits:");
+        DEBUG_PRINTLN("  Bit 1 (0x0001): P0A1F (Internal Communication Fault): " +
+                      String((error_bitmap_2 & (1 << 0)) ? 1 : 0));
+        DEBUG_PRINTLN("  Bit 2 (0x0002): P0A12 (Cell Balancing Stuck Off Fault): " +
+                      String((error_bitmap_2 & (1 << 1)) ? 1 : 0));
+        DEBUG_PRINTLN("  Bit 3 (0x0004): P0A80 (Weak Cell Fault): " +
+                      String((error_bitmap_2 & (1 << 2)) ? 1 : 0));
+        DEBUG_PRINTLN("  Bit 4 (0x0008): P0AFA (Low Cell Voltage Fault): " +
+                      String((error_bitmap_2 & (1 << 3)) ? 1 : 0));
+        DEBUG_PRINTLN("  Bit 5 (0x0010): P0A04 (Open Wiring Fault): " +
+                      String((error_bitmap_2 & (1 << 4)) ? 1 : 0));
+        DEBUG_PRINTLN("  Bit 6 (0x0020): P0AC0 (Current Sensor Fault): " +
+                      String((error_bitmap_2 & (1 << 5)) ? 1 : 0));
+        DEBUG_PRINTLN("  Bit 7 (0x0040): P0A0D (Highest Cell Voltage Over 5V Fault): " +
+                      String((error_bitmap_2 & (1 << 6)) ? 1 : 0));
+        DEBUG_PRINTLN("  Bit 8 (0x0080): P0A0F (Cell ASIC Fault): " +
+                      String((error_bitmap_2 & (1 << 7)) ? 1 : 0));
+        DEBUG_PRINTLN("  Bit 9 (0x0100): P0A02 (Weak Pack Fault): " +
+                      String((error_bitmap_2 & (1 << 8)) ? 1 : 0));
+        DEBUG_PRINTLN("  Bit 10 (0x0200): P0A81 (Fan Monitor Fault): " +
+                      String((error_bitmap_2 & (1 << 9)) ? 1 : 0));
+        DEBUG_PRINTLN("  Bit 11 (0x0400): P0A9C (Thermistor Fault): " +
+                      String((error_bitmap_2 & (1 << 10)) ? 1 : 0));
+        DEBUG_PRINTLN("  Bit 12 (0x0800): U0100 (External Communication Fault): " +
+                      String((error_bitmap_2 & (1 << 11)) ? 1 : 0));
+        DEBUG_PRINTLN("  Bit 13 (0x1000): P0560 (Redundant Power Supply Fault): " +
+                      String((error_bitmap_2 & (1 << 12)) ? 1 : 0));
+        DEBUG_PRINTLN("  Bit 14 (0x2000): P0AA6 (High Voltage Isolation Fault): " +
+                      String((error_bitmap_2 & (1 << 13)) ? 1 : 0));
+        DEBUG_PRINTLN("  Bit 15 (0x4000): P0A05 (Input Power Supply Fault): " +
+                      String((error_bitmap_2 & (1 << 14)) ? 1 : 0));
+        DEBUG_PRINTLN("  Bit 16 (0x8000): P0A06 (Charge Limit Enforcement Fault): " +
+                      String((error_bitmap_2 & (1 << 15)) ? 1 : 0));
+      }
+    } break;
     default:
       break;
   }
+}
+void CanCommHandler::bms_callback(const uint8_t* msg_data, uint8_t len) {
+  updatable_data.min_temp = msg_data[1];
+  updatable_data.max_temp = msg_data[2];
 }
 
 void CanCommHandler::bamocar_callback(const uint8_t* const msg_data, const uint8_t len) {
@@ -104,8 +161,8 @@ void CanCommHandler::bamocar_callback(const uint8_t* const msg_data, const uint8
   // ---------|-----|-------------|-------------|-------------|-----------
   // TX       | 4   | RegID       | Data 07..00 | Data 15..08 | Stuff
   // |--------------| msg_data[0] | msg_data[1] | msg_data[2] | msg_data[3]
-  // "To get the drive to send all replies as 6 byte messages (32-bit data) a bit in RegID 0xDC has
-  // to be manually modified." - CAN-BUS BAMOCAR Manual
+  // "To get the drive to send all replies as 6 byte messages (32-bit data) a bit in RegID 0xDC
+  // has to be manually modified." - CAN-BUS BAMOCAR Manual
 
   // almost all messages seem to be signed
   int32_t message_value = 0;
@@ -119,18 +176,7 @@ void CanCommHandler::bamocar_callback(const uint8_t* const msg_data, const uint8
 
   switch (msg_data[0]) {
     case DC_VOLTAGE: {
-      // DEBUG_PRINTLN("DC Voltage: " + String(message_value));
-      static int a = 0;
-      bool current_ts_on = (message_value >= DC_THRESHOLD);
-      if (current_ts_on != updatable_data.TSOn) {
-        a++;
-      }else {
-        a = 0;
-      }
-      if (a >= 5) {
-        updatable_data.TSOn = current_ts_on;
-        a = 0;
-      }
+      updatable_data.TSOn = (message_value >= DC_THRESHOLD);
       break;
     }
     case BTB_READY_0:
@@ -147,47 +193,19 @@ void CanCommHandler::bamocar_callback(const uint8_t* const msg_data, const uint8
       updatable_data.speed = message_value;
       // DEBUG_PRINTLN("BAMOCAR SPEED: " + String(message_value));
       break;
+    case CURRENT_ACTUAL:
+      // yves: corrente para o display
+      updatable_data.motor_current = message_value;
+      // DEBUG_PRINTLN("BAMOCAR CURRENT: " + String(message_value));
+      break;
 
-    // Next cases are for debug only.
-    // ============================================================
-    case SPEED_LIMIT: {
-      // Reverse mapping: [0, 32767] -> [0, 100]
-      int percent = map(message_value, 0, 32767, 0, 100);
-      // DEBUG_PRINT("REC. SPEED LIM %: ");
-      // DEBUG_PRINTLN(percent);
-      break;
-    }
-    case DEVICE_I_MAX: {
-      // Reverse mapping: [0, 16383] -> [0, 100]
-      int percent = map(message_value, 0, 16383, 0, 100);
-      // DEBUG_PRINT("REC. I_max%: ");
-      // DEBUG_PRINTLN(percent);
-      break;
-    }
-    case DEVICE_I_CNT: {
-      // Reverse mapping: [0, 16383] -> [0, 100]
-      int percent = map(message_value, 0, 16383, 0, 100);
-      // DEBUG_PRINT("REC. I_cont%: ");
-      // DEBUG_PRINTLN(percent);
-      break;
-    }
-    case SPEED_DELTAMA_ACC: {
-      int16_t speed_ramp = (msg_data[2] << 8) | msg_data[1];
-      int16_t moment_ramp = (msg_data[4] << 8) | msg_data[3];
-      // DEBUG_PRINT("REC. speed ramp acc: ");
-      // DEBUG_PRINT(speed_ramp);
-      // DEBUG_PRINT(" ms, moment ramp acc: ");
-      // DEBUG_PRINT(moment_ramp);
-      // DEBUG_PRINTLN(" ms");
-    } break;
-    case SPEED_DELTAMA_DECC: {
-      int16_t speed_ramp = (msg_data[2] << 8) | msg_data[1];
-      int16_t moment_ramp = (msg_data[4] << 8) | msg_data[3];
-      // DEBUG_PRINT("REC. speed ramp decc: ");
-      // DEBUG_PRINT(speed_ramp);
-      // DEBUG_PRINT(" ms, moment ramp decc: ");
-      // DEBUG_PRINT(moment_ramp);
-      // DEBUG_PRINTLN(" ms");
+    case LOGICMAP_ERRORS: {
+      // Handle error bitmap
+      const uint16_t error_bitmap = static_cast<uint16_t>(message_value & 0xFFFF);
+      updatable_data.error_bitmap = error_bitmap;
+      const uint16_t warning_bitmap = static_cast<uint16_t>((message_value >> 16) & 0xFFFF);
+      updatable_data.warning_bitmap = warning_bitmap;
+
     } break;
     default:
       break;
@@ -204,10 +222,9 @@ void CanCommHandler::master_callback(const uint8_t* const msg_data, const uint8_
       updatable_data.asms_on = msg_data[1];
       break;
 
-    case SOC_MSG:
+    case SOC_MSG: {
       updatable_data.soc = msg_data[1];
-      break;
-
+    } break;
     case STATE_MSG:
       updatable_data.as_state = msg_data[1];
       break;
@@ -221,16 +238,19 @@ void CanCommHandler::write_messages() {
     write_rpm();
     // write_bamocar_speed();
     rpm_timer = 0;
+    // DEBUG_PRINTLN("RPM message sent");
   }
 
   if (hydraulic_timer >= HYDRAULIC_MSG_PERIOD_MS) {
     write_hydraulic_line();
     hydraulic_timer = 0;
+    // DEBUG_PRINTLN("Hydraulic line message sent");
   }
 
   if (apps_timer >= APPS_MSG_PERIOD_MS) {
     write_apps();
     apps_timer = 0;
+    // DEBUG_PRINTLN("APPS message sent");
   }
 
   const auto& current_mode = data.switch_mode;
@@ -262,7 +282,6 @@ void CanCommHandler::write_rpm() {
 
 void CanCommHandler::write_hydraulic_line() {
   const uint16_t hydraulic_value = average_queue(data.brake_readings);
-
   CAN_message_t hydraulic_message;
   hydraulic_message.id = DASH_ID;
   hydraulic_message.len = 3;
@@ -381,12 +400,11 @@ void CanCommHandler::write_inverter_mode(const SwitchMode switch_mode) {
 }
 
 bool CanCommHandler::init_bamocar() {
-  constexpr unsigned long actionInterval = 100;
+  constexpr unsigned long actionInterval = 101;
   constexpr unsigned long timeout = 2000;
 
   // Drive disabled Enable internally switched off
-  constexpr CAN_message_t setEnableOff = {
-      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x51, 0x04, 0x00}};
+  constexpr CAN_message_t disable = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0x51, 0x04, 0x00}};
   constexpr CAN_message_t removeDisable = {
       .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x51, 0x00, 0x00}};
   constexpr CAN_message_t checkBTBStatus = {
@@ -400,60 +418,61 @@ bool CanCommHandler::init_bamocar() {
   constexpr CAN_message_t clear_error_message = {
       .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x8E, 0x00, 0x00}};
 
-  static BamocarState bamocarState = CHECK_BTB;
-  static unsigned long stateStartTime = millis();
-  static unsigned long lastActionTime = 0;
-  static bool commandSent = false;
   static unsigned long currentTime = 0;
   currentTime = millis();
 
-  switch (bamocarState) {
+  switch (bamocar_state) {
+    case CLEAR_ERRORS:
+      DEBUG_PRINTLN("Clearing errors");
+      can1.write(clear_error_message);
+      bamocar_state = CHECK_BTB;
+      break;
     case CHECK_BTB:
-      if (currentTime - lastActionTime >= actionInterval) {
+      if (currentTime - last_action_time >= actionInterval) {
         DEBUG_PRINTLN("Checking BTB status");
         can1.write(checkBTBStatus);
-        lastActionTime = currentTime;
+        last_action_time = currentTime;
       }
       if (btb_ready) {
-        bamocarState = ENABLE_OFF;
-        commandSent = false;
-      } else if (currentTime - stateStartTime >= timeout) {
+        bamocar_state = DISABLE;
+        command_sent = false;
+      } else if (currentTime - state_start_time >= timeout) {
         DEBUG_PRINTLN("Timeout checking BTB");
         DEBUG_PRINTLN("Error during initialization");
-        bamocarState = ERROR;
+        bamocar_state = ERROR;
       }
       break;
 
-    case ENABLE_OFF:
+    case DISABLE:
       DEBUG_PRINTLN("Disabling");
-      can1.write(setEnableOff);
-      bamocarState = ENABLE_TRANSMISSION;
+      can1.write(disable);
+      bamocar_state = ENABLE_TRANSMISSION;
       break;
 
     case ENABLE_TRANSMISSION:
-      if (currentTime - lastActionTime >= actionInterval) {
+      if (currentTime - last_action_time >= actionInterval) {
         DEBUG_PRINTLN("Enabling transmission");
         can1.write(enableTransmission);
-        lastActionTime = currentTime;
+        last_action_time = currentTime;
       }
       if (transmission_enabled) {
-        bamocarState = ENABLE;
-        commandSent = false;
-        stateStartTime = currentTime;
-        lastActionTime = currentTime;
-      } else if (currentTime - stateStartTime >= timeout) {
+        bamocar_state = ENABLE;
+        command_sent = false;
+        state_start_time = currentTime;
+        last_action_time = currentTime;
+      } else if (currentTime - state_start_time >= timeout) {
         DEBUG_PRINTLN("Timeout enabling transmission");
         DEBUG_PRINTLN("Error during initialization");
-        bamocarState = ERROR;
+        bamocar_state = ERROR;
       }
       break;
 
     case ENABLE:
-      if (!commandSent) {
+      if (!command_sent) {
         DEBUG_PRINTLN("Removing disable");
         can1.write(removeDisable);
-        commandSent = true;
-        bamocarState = ACC_RAMP;
+        command_sent = true;
+        bamocar_state = ACC_RAMP;
       }
       break;
 
@@ -462,7 +481,7 @@ bool CanCommHandler::init_bamocar() {
       DEBUG_PRINT(rampAccRequest.buf[1] | (rampAccRequest.buf[2] << 8));
       DEBUG_PRINTLN("ms");
       can1.write(rampAccRequest);
-      bamocarState = DEC_RAMP;
+      bamocar_state = DEC_RAMP;
       break;
 
     case DEC_RAMP:
@@ -470,14 +489,7 @@ bool CanCommHandler::init_bamocar() {
       DEBUG_PRINT(rampDecRequest.buf[1] | (rampDecRequest.buf[2] << 8));
       DEBUG_PRINTLN("ms");
       can1.write(rampDecRequest);
-      bamocarState = CLEAR_ERRORS;
-      break;
-    case CLEAR_ERRORS:
-      // This state is not used in the current initialization sequence
-      // but can be used in the future to clear errors
-      DEBUG_PRINTLN("Clearing errors");
-      can1.write(clear_error_message);
-      bamocarState = INITIALIZED;
+      bamocar_state = INITIALIZED;
       break;
     case INITIALIZED:
       return true;
@@ -488,24 +500,26 @@ bool CanCommHandler::init_bamocar() {
   return false;
 }
 
-void CanCommHandler::stop_bamocar() {
-  constexpr CAN_message_t setEnableOff = {
-      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x51, 0x04, 0x00}};
+void CanCommHandler::reset_bamocar_init() {
+  bamocar_state = CLEAR_ERRORS;
+  state_start_time = millis();
+  last_action_time = 0;
+  command_sent = false;
+}
 
-  can1.write(setEnableOff);
+void CanCommHandler::stop_bamocar() {
+  constexpr CAN_message_t disable = {.id = BAMO_COMMAND_ID, .len = 3, .buf = {0x51, 0x04, 0x00}};
+
+  can1.write(disable);
 }
 
 void CanCommHandler::send_torque(const int torque) {
-  if (torque_timer >= TORQUE_MSG_PERIOD_MS) {
-    DEBUG_PRINT("Sending torque: " + String(torque));
-    CAN_message_t torque_message;
-    torque_message.id = BAMO_COMMAND_ID;
-    torque_message.len = 3;
-    torque_message.buf[0] = 0x90;
-    torque_message.buf[1] = torque & 0xFF;         // Lower byte
-    torque_message.buf[2] = (torque >> 8) & 0xFF;  // Upper byte
+  CAN_message_t torque_message;
+  torque_message.id = BAMO_COMMAND_ID;
+  torque_message.len = 3;
+  torque_message.buf[0] = 0x90;
+  torque_message.buf[1] = torque & 0xFF;         // Lower byte
+  torque_message.buf[2] = (torque >> 8) & 0xFF;  // Upper byte
 
-    can1.write(torque_message);
-    torque_timer = 0;
-  }
+  can1.write(torque_message);
 }

@@ -17,6 +17,6 @@ private:
   IOManager& io_manager;
   State current_state_ = State::IDLE;
   [[nodiscard]] bool transition_to_driving() const;
+  void transition_to_idle();
   void handle_driving();
 };
-

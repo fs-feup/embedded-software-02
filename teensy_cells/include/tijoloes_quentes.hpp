@@ -5,15 +5,28 @@
 #include "Arduino.h"
 #include "../../CAN_IDs.h"
 // System Configuration
+
+enum FloatDetectionState {
+  NORMAL,
+  SUSPECTED_FLOAT,
+  CONFIRMED_FLOAT
+};
+
+struct SensorState {
+  FloatDetectionState state;
+  float reference_temp;
+  uint8_t confirmation_count;
+};
+
 constexpr uint8_t TOTAL_BOARDS = 6;
 constexpr uint16_t TEMP_SENSOR_READ_INTERVAL = 95;
 constexpr int8_t NO_ERROR_RESET_THRESHOLD = 50;
-constexpr uint8_t NTC_SENSOR_COUNT = 18;
 constexpr uint16_t ANALOG_MAX = 1023;
 constexpr uint16_t ANALOG_MIN = 0;
 constexpr int ERROR_SIGNAL = 35;
 constexpr uint8_t MAX_RETRIES = 3;
-constexpr uint8_t MAX_NUM_ERRORS = 10;
+constexpr uint8_t MAX_NUM_ERRORS = 3;
+constexpr unsigned long LOOP_INTERVAL = 10; 
 // Voltage and Resistor Configuration
 constexpr float VDD = 5.0;
 constexpr float V_REF = 3.3f;
@@ -30,7 +43,7 @@ constexpr float NTC_BETA = 3971.0;
 constexpr float MAXIMUM_TEMPERATURE = 60.0;
 constexpr int8_t MAX_INT8_T = 127;
 constexpr int8_t MIN_INT8_T = -128;
-constexpr uint16_t MAX_TEMP_DELAY_MS = 4000;
+constexpr uint16_t MAX_TEMP_DELAY_MS = 700;
 
 // CAN Communication
 constexpr uint8_t CELLS_PER_MESSAGE = 6;
@@ -52,7 +65,7 @@ struct TemperatureData {
 struct BoardData {
   TemperatureData temp_data;
   bool has_communicated = false;
-  unsigned long last_update_ms;
+  unsigned long last_update_ms = 0;
 };
 
 float read_ntc_temperature(int analog_value);
@@ -65,7 +78,6 @@ bool send_can_message(CAN_message_t& msg);
 
 // Functions specific to master board
 #if THIS_IS_MASTER
-void send_master_heartbeat();
 void can_snifflas(const CAN_message_t& msg);
 void calculate_global_stats(TemperatureData& global_data);
 bool check_temperature_timeouts();

@@ -40,7 +40,9 @@ struct R2DLogics {
    * It performs the necessary actions based on the received signal.
    *
    */
-
+  void reset() {
+    r2d = false;
+  }
   void process_go_signal() {
     //if 5 seconds have passed all good, VVVRRRUUUMMMMM 
     if (readyTimestamp.check()) {
@@ -61,10 +63,10 @@ struct FailureDetection {
                                                          // threshold for more than 150ms
   Metro dc_voltage_hold_timestamp_{
       DC_VOLTAGE_HOLD};  // timer for ts on, only after enough voltage for 1 sec
-  bool steer_dead_{true};
-  bool pc_dead_{true};
-  bool inversor_dead_{true};
-  bool res_dead_{true};
+  bool steer_dead_{false};
+  bool pc_dead_{false};
+  bool inversor_dead_{false};
+  bool res_dead_{false};
   bool emergency_signal_{false};
   bool ts_on_{false};
   double radio_quality_{0};
@@ -76,15 +78,21 @@ struct FailureDetection {
     pc_dead_ = pc_alive_timestamp_.checkWithoutReset();
     inversor_dead_ = inversor_alive_timestamp_.checkWithoutReset();
     res_dead_ = res_signal_loss_timestamp_.checkWithoutReset();
-    // DEBUG_PRINT("=== System Component Status Check ===");
-    // DEBUG_PRINT("Steering System: " + String(steer_dead_ ? "DEAD" : "ALIVE"));
-    // DEBUG_PRINT("PC Connection: " + String(pc_dead_ ? "DEAD" : "ALIVE"));
-    // DEBUG_PRINT("Inverter Status: " + String(inversor_dead_ ? "DEAD" : "ALIVE"));
-    // DEBUG_PRINT("RES Signal: " + String(res_dead_ ? "DEAD" : "ALIVE"));
-    // Print final result
-    // DEBUG_PRINT("Overall System Status: " +
-    //             String((steer_dead_ || pc_dead_ || inversor_dead_ || res_dead_) ? "FAULT DETECTED"
-    //                                                                             : "ALL OK"));
+    if (steer_dead_ || pc_dead_ || inversor_dead_ || res_dead_) {
+      DEBUG_PRINT("=== System Component Status Check ===");
+    }
+    if (steer_dead_) {
+      DEBUG_PRINT("Steering System: " + String(steer_dead_ ? "DEAD" : "ALIVE"));
+    }
+    if (pc_dead_) {
+      DEBUG_PRINT("PC Connection: " + String(pc_dead_ ? "DEAD" : "ALIVE"));
+    }
+    if (inversor_dead_) {
+      DEBUG_PRINT("Inverter Status: " + String(inversor_dead_ ? "DEAD" : "ALIVE"));
+    }
+    if (res_dead_) {
+      DEBUG_PRINT("RES Signal: " + String(res_dead_ ? "DEAD" : "ALIVE"));
+    }
 
     return steer_dead_ || pc_dead_ || inversor_dead_ || res_dead_;
   }

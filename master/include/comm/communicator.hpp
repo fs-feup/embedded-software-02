@@ -42,7 +42,7 @@ inline std::array<Code, 1> fifoExtendedCodes = {{
 class Communicator {
 private:
   // Static FlexCAN_T4 object for CAN2 interface with RX and TX buffer sizes specified
-  inline static FlexCAN_T4<CAN3, RX_SIZE_256, TX_SIZE_16> can2;
+  inline static FlexCAN_T4<CAN3, RX_SIZE_256, TX_SIZE_16> can3;
 
 public:
   // Pointer to SystemData instance for storing system-related data
@@ -85,6 +85,11 @@ public:
    */
   static void res_state_callback(const uint8_t *buf);
 
+
+  /**
+   * @brief Reset R2D state machine
+   */
+  static void reset_r2d();
   /**
    * @brief Callback for RES activation
    */
@@ -137,23 +142,28 @@ public:
 inline Communicator::Communicator(SystemData *system_data) { _systemData = system_data; }
 
 void Communicator::init() {
-  can2.begin();
-  can2.setBaudRate(1000000);
+  can3.begin();
+  can3.setBaudRate(1'000'000);
+  can3.setRFFN(RFFN_32);
+  can3.enableFIFO();
+  can3.enableFIFOInterrupt();
 
-  can2.enableFIFO();
-  can2.enableFIFOInterrupt();
-
-  can2.setFIFOFilter(REJECT_ALL);
-  for (auto &fifoCode : fifoCodes) can2.setFIFOFilter(fifoCode.key, fifoCode.code, STD);
+  can3.setFIFOFilter(REJECT_ALL);
+  for (auto &fifoCode : fifoCodes) can3.setFIFOFilter(fifoCode.key, fifoCode.code, STD);
 
   for (auto &fifoExtendedCode : fifoExtendedCodes)
-    can2.setFIFOFilter(fifoExtendedCode.key, fifoExtendedCode.code, EXT);
+    can3.setFIFOFilter(fifoExtendedCode.key, fifoExtendedCode.code, EXT);
 
-  can2.onReceive(FIFO, parse_message);
 
-  can2.mailboxStatus();
+  can3.onReceive(FIFO, parse_message);
+
+  can3.mailboxStatus();
 }
-
+inline void Communicator::reset_r2d() {
+  // Reset R2D state machine
+  _systemData->r2d_logics_.reset();
+  _systemData->mission_finished_ = false;
+}
 inline void Communicator::res_state_callback(const uint8_t *buf) {
   bool emg_stop1 = buf[0] & 0x01;
   bool emg_stop2 = buf[3] >> 7 & 0x01;
@@ -164,7 +174,7 @@ inline void Communicator::res_state_callback(const uint8_t *buf) {
   if (go_button || go_switch)
     _systemData->r2d_logics_.process_go_signal();
   else if (!(emg_stop1 || emg_stop2)) { // If both are false 
-    DEBUG_PRINT("Received Emergency from RES");
+    // DEBUG_PRINT("Received Emergency from RES");
     _systemData->failure_detection_.emergency_signal_ = true;
   }
 
@@ -329,7 +339,7 @@ inline int Communicator::send_message(const unsigned len, const std::array<uint8
   for (unsigned i = 0; i < len; i++) {
     can_message.buf[i] = buffer[i];
   }
-  can2.write(can_message);
+  can3.write(can_message);
 
   return 0;
 }

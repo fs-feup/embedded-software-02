@@ -12,11 +12,10 @@ bool LogicHandler::should_start_manual_driving() const {
   // print var
   // DEBUG_PRINTLN("R2D pressed: " + String(data.r2d_pressed));
   // DEBUG_PRINTLN("TSOn: " + String(updated_data.TSOn));
-  //print timer
+  // print timer
   // DEBUG_PRINTLN("R2D brake timer: " + String(data.r2d_brake_timer));
   // DEBUG_PRINTLN("R2D brake timer: " + String(data
-  return (data.r2d_pressed &&
-          updated_data.TSOn /* && data.r2d_brake_timer < config::r2d::TIMEOUT_MS */);
+  return (data.r2d_pressed && updated_data.TSOn && data.r2d_brake_timer < config::r2d::TIMEOUT_MS);
 }
 
 bool LogicHandler::should_start_as_driving() const {
@@ -43,29 +42,23 @@ bool LogicHandler::plausibility(const int apps_higher,
     DEBUG_PRINTLN("Apps implausible: invalid input");
   }
 
-  DEBUG_PRINTLN("Apps Higher: " + String(apps_higher));
-  DEBUG_PRINTLN("Apps Lower: " + String(apps_lower));
   const int scaled_apps_lower = scale_apps_lower_to_apps_higher(apps_lower);
-  DEBUG_PRINTLN("Scaled Apps Lower: " + String(scaled_apps_lower));
 
   const int difference = abs(scaled_apps_lower - apps_higher);
-  DEBUG_PRINTLN("Difference: " + String(difference));
 
   const int percentage_difference = (difference * 100) / apps_higher;
-  DEBUG_PRINTLN("Percentage Difference: " + String(percentage_difference));
-  DEBUG_PRINTLN("Percentage Difference: " + String(percentage_difference));
-  DEBUG_PRINTLN("Percentage Difference: " + String(percentage_difference));
 
   // if (apps_lower < config::apps::APPS_LOWER_ZEROED) {
   //   if (apps_higher < config::apps::APPS_HIGHER_WHEN_LOWER_ZEROES) {
-  //     DEBUG_PRINTLN("Apps implausible: apps lower is zeroed, so we can ignore the implausibility");
-  //     return true;  // apps lower is zeroed, so we can ignore the implausibility
-      
+  //     DEBUG_PRINTLN("Apps implausible: apps lower is zeroed, so we can ignore the
+  //     implausibility"); return true;  // apps lower is zeroed, so we can ignore the
+  //     implausibility
+
   //   } else {
   //     DEBUG_PRINTLN(
   //       "Apps implausible: apps lower is zeroed, but apps higher is not in the expected range");
   //     return false;
-      
+
   //   }
   // }
   // print values
@@ -88,13 +81,6 @@ uint16_t LogicHandler::apps_to_bamocar_value(const uint16_t apps_higher,
   float normalized_input = (float)(torque_value - config::apps::DEADBAND) /
                            (float)(config::apps::MAX_FOR_TORQUE - config::apps::DEADBAND);
 
-  // Apply sigmoid mapping for smooth transition
-  // Sigmoid: output = 1 / (1 + e^(-k * (x - 0.5)))
-  const float k = 15.0;  // Steepness of the sigmoid curve (adjust for responsiveness)
-  float normalized_output =
-      1.0 / (1.0 + exp(-k * (normalized_input -
-                             0.5)));  // Use desmos graphing calculator for visualization
-
   uint16_t mapped_value = (uint16_t)(normalized_input * (config::bamocar::MAX));
 
   return min(mapped_value, config::bamocar::MAX);
@@ -115,20 +101,19 @@ bool LogicHandler::just_entered_emergency() {
   return false;
 }
 
-bool LogicHandler::check_brake_plausibility(const uint16_t bamocar_value) {
-  if (const float pedal_travel_percentage =
-          (static_cast<float>(bamocar_value) / static_cast<float>(config::bamocar::MAX)) * 100.0f;
-      updated_data.brake_pressure >= config::apps::BRAKE_BLOCK_THRESHOLD &&
-      pedal_travel_percentage >= 25.0) {
-    if (brake_implausibility_timer > config::apps::BRAKE_PLAUSIBILITY_TIMEOUT_MS) {
-      apps_timeout = true;
-      return false;
-    }
-  } else {
-    brake_implausibility_timer = 0;
+bool LogicHandler::just_entered_driving() {
+  const bool is_driving = (updated_data.as_state == AS_DRIVING);
+
+  if (!entered_driving && is_driving) {
+    entered_driving = true;
+    return true;
   }
 
-  return true;
+  if (entered_driving && !is_driving) {
+    entered_driving = false;  // reset if I left driving so if i enter again buzzer plays
+  }
+
+  return false;
 }
 
 bool LogicHandler::check_apps_plausibility(const uint16_t apps_higher_avg,
@@ -137,11 +122,11 @@ bool LogicHandler::check_apps_plausibility(const uint16_t apps_higher_avg,
     apps_implausibility_timer = 0;
     return true;
   }
-  if (apps_implausibility_timer > config::apps::IMPLAUSIBLE_TIMEOUT_MS) {
-    apps_timeout = true;
-    return false;
-  }
-  return true;
+  // if (apps_implausibility_timer > config::apps::IMPLAUSIBLE_TIMEOUT_MS) {
+  //   apps_timeout = true;
+  //   return false;
+  // }
+  return false;
 }
 
 int LogicHandler::calculate_torque() {
@@ -169,10 +154,6 @@ int LogicHandler::calculate_torque() {
       return 0;
     }
   }
-
-  // if (!check_brake_plausibility(bamocar_value)) {
-  //   return 0;
-  // }
 
   return bamocar_value;
 }

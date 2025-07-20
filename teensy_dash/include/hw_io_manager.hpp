@@ -15,6 +15,7 @@ public:
   void read_apps() const;
   void play_r2d_sound() const;
   void play_buzzer(uint8_t duration_seconds) const;
+  void play_emergency_buzzer() const;
   void calculate_rpm() const;
   void manage_ats() const;
   void read_rotative_switch() const;
@@ -32,4 +33,3 @@ private:
   Bounce ats_button = Bounce();
   Bounce display_button = Bounce();
 };
-

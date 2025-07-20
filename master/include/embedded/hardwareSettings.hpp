@@ -6,7 +6,8 @@ constexpr int DC_VOLTAGE_TIMEOUT = 150;
 constexpr int DC_VOLTAGE_HOLD = 1000;
 constexpr int EBS_BUZZER_TIMEOUT = 8000;
 constexpr int LED_BLINK_INTERVAL = 500;
-constexpr int PROCESS_INTERVAL = 100;
+constexpr int PROCESS_INTERVAL = 200;
+constexpr int SLOWER_PROCESS_INTERVAL = 500;
 constexpr int INITIAL_CHECKUP_STEP_TIMEOUT = 500;
 constexpr unsigned long READY_TIMEOUT_MS = 5000;
 constexpr unsigned long RELEASE_EBS_TIMEOUT_MS = 1000;
@@ -39,8 +40,8 @@ constexpr int WATCHDOG_TEST_DURATION = 1000;
 constexpr int ASSI_BLUE_PIN = 25;
 constexpr int ASSI_YELLOW_PIN = 12;
 
-constexpr int EBS_VALVE_1_PIN = 17;
-constexpr int EBS_VALVE_2_PIN = 13;
+constexpr int EBS_VALVE_REAR_PIN = 17;
+constexpr int EBS_VALVE_FRONT_PIN = 13;
 
 constexpr int CLOSE_SDC = 21;
 // #define SDC_LOGIC_WATCHDOG_OUT_PIN 10
@@ -62,7 +63,7 @@ constexpr int AMI = 23;
 // When pressure on the line passes the threshold defined, pin is set to HIGH
 constexpr int EBS_SENSOR1 = 41;
 constexpr int EBS_SENSOR2 = 39;
-constexpr int SDC_BSPD_STATE_PIN = 22;
+constexpr int SDC_TSMS_STATE_PIN = 22;
 
 constexpr int RL_WSS = 5;
 constexpr int RR_WSS = 4;

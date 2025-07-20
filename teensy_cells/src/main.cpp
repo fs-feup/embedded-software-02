@@ -2,22 +2,26 @@
 
 FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> can1;  // todo
 
-const u_int8_t pin_ntc_temp[NTC_SENSOR_COUNT] = {A4,  A5,  A6,  A7, A8, A9,  A2,  A3,  A10,
-                                                 A11, A12, A13, A0, A1, A17, A16, A15, A14};
+const u_int8_t pin_ntc_temp[NTC_SENSOR_COUNT] = {A4,  A5,  A6, A7, A8,  A9,  A2,  A3, A10, A11,
+                                                 A12, A13, A0, A1, A17, A16, A15, A14};  // T! A13
 
 float cell_temps[NTC_SENSOR_COUNT];
+float previous_cell_temps[NTC_SENSOR_COUNT] = {0.0};
+
 CAN_error_t error;
 
-const unsigned long SETUP_TIMEOUT = 1000;  // 5 seconds for CAN set up detection
+const unsigned long SETUP_TIMEOUT = 1500;  // 1.5 second for CAN set up detection
 
 bool baud_1M = true;
-bool bitrate_switched = false;
-uint32_t current_bitrate = CAN_DRIVING_BAUD_RATE;  // Start with driving
 unsigned long last_reading_time = 0;
 volatile unsigned long last_message_received_time = 0;
 uint8_t error_count = 0;
 uint8_t no_error_iterations = 0;
 static BoardData board_temps[TOTAL_BOARDS];
+
+SensorState sensor_states[NTC_SENSOR_COUNT];
+const float FLOAT_DETECTION_THRESHOLD = 6.0;//todo go to header
+const uint8_t FLOAT_CONFIRMATION_COUNT = 2;
 
 #if !THIS_IS_MASTER
 volatile unsigned long last_master_message_time = 0;
@@ -29,7 +33,7 @@ bool check_master_timeout() {
 
   // Allow 2 seconds on startup before considering it a timeout
   if (!master_has_communicated) {
-    if (current_time > 10000) {
+    if (current_time > 900) {
       DEBUG_PRINTLN("Timeout: No data ever received from master");
       return true;
     }
@@ -45,6 +49,7 @@ bool check_master_timeout() {
 
   return false;
 }
+#endif
 void debug_helper() {
   DEBUG_PRINTLN("----------- DEBUG HELPER -----------");
 
@@ -130,28 +135,6 @@ void debug_helper() {
   DEBUG_PRINTLN("--------- END DEBUG HELPER ---------");
   DEBUG_PRINTLN();  // Add a blank line for readability
 }
-void can_receive_from_master(const CAN_message_t& msg) {
-  DEBUG_PRINT("RECIEIVED FROM MASTER: ID");
-  if (msg.id == MASTER_CELL_ID) {
-    last_master_message_time = millis();
-    master_has_communicated = true;
-  }
-  last_message_received_time = millis();
-}
-
-#endif
-
-#if THIS_IS_MASTER
-void send_master_heartbeat() {
-  CAN_message_t msg;
-  msg.id = MASTER_CELL_ID;
-  msg.len = 0;
-
-  if (send_can_message(msg)) {
-    // DEBUG_PRINTLN("Sent master heartbeat");
-  }
-}
-#endif
 
 float read_ntc_temperature(const int analog_value) {
   float temperature = TEMPERATURE_DEFAULT_C;
@@ -168,6 +151,64 @@ float read_ntc_temperature(const int analog_value) {
 
   return temperature;
 }
+
+void process_sensor_float_detection(int sensor_id, float current_temp, float previous_temp) {
+  SensorState& sensor = sensor_states[sensor_id];
+
+  switch (sensor.state) {
+    case NORMAL: {
+      float temp_diff = abs(current_temp - previous_temp);
+      if (temp_diff > FLOAT_DETECTION_THRESHOLD) {
+        // Large jump detected - go to suspected state
+        sensor.state = SUSPECTED_FLOAT;
+        sensor.reference_temp = previous_temp;  // Store the last good temperature, referencia p futuros checks
+        sensor.confirmation_count = 1;
+        DEBUG_PRINT("Sensor ");
+        DEBUG_PRINT(sensor_id);
+        DEBUG_PRINTLN(" - Large jump detected, entering SUSPECTED_FLOAT");
+      }
+    } break;
+
+    case SUSPECTED_FLOAT: {
+      float ref_diff = abs(current_temp - sensor.reference_temp);
+      if (ref_diff > FLOAT_DETECTION_THRESHOLD) {
+        // Still far from reference - increment count
+        sensor.confirmation_count++;
+        if (sensor.confirmation_count >= FLOAT_CONFIRMATION_COUNT) {
+          sensor.state = CONFIRMED_FLOAT;
+          DEBUG_PRINT("Float CONFIRMED on sensor ");
+          DEBUG_PRINT(sensor_id);
+          DEBUG_PRINT(" - reference: ");
+          DEBUG_PRINT(sensor.reference_temp);
+          DEBUG_PRINT(", current: ");
+          DEBUG_PRINTLN(current_temp);
+        }
+      } else {
+        // Back to normal range - reset to normal
+        sensor.state = NORMAL;
+        sensor.confirmation_count = 0;
+        DEBUG_PRINT("Sensor ");
+        DEBUG_PRINT(sensor_id);
+        DEBUG_PRINTLN(" - Back to normal range");
+      }
+    } break;
+
+    case CONFIRMED_FLOAT: {
+      float ref_diff = abs(current_temp - sensor.reference_temp);
+      if (ref_diff <= FLOAT_DETECTION_THRESHOLD) {
+        // recovery
+        sensor.state = NORMAL;
+        sensor.confirmation_count = 0;
+        DEBUG_PRINT("Sensor ");
+        DEBUG_PRINT(sensor_id);
+        DEBUG_PRINTLN(" - RECOVERED from float");
+      }
+    } break;
+  }
+}
+
+bool is_sensor_floating(int sensor_id) { return sensor_states[sensor_id].state == CONFIRMED_FLOAT; }
+
 void read_check_temperatures() {
   float sum_temp = 0.0;
   float min_temp = TEMPERATURE_MAX_C;
@@ -175,10 +216,22 @@ void read_check_temperatures() {
   bool error = false;
   for (int i = 0; i < NTC_SENSOR_COUNT; i++) {
     cell_temps[i] = read_ntc_temperature(analogRead(pin_ntc_temp[i]));
+
+    if (previous_cell_temps[i] != 0.0) {
+      process_sensor_float_detection(i, cell_temps[i], previous_cell_temps[i]);
+    }
+
+    previous_cell_temps[i] = cell_temps[i];
+
     min_temp = min(min_temp, cell_temps[i]);
     max_temp = max(max_temp, cell_temps[i]);
     sum_temp += cell_temps[i];
     if (cell_temps[i] > MAXIMUM_TEMPERATURE && !error) {
+      error_count++;
+      error = true;
+    }
+
+    if (is_sensor_floating(i) && !error) {
       error_count++;
       error = true;
     }
@@ -201,16 +254,6 @@ bool check_temperature_timeouts() {
 
   for (uint8_t board_id = 1; board_id < TOTAL_BOARDS; board_id++) {
     const BoardData& board = board_temps[board_id];
-
-    if (!board.has_communicated) {
-      // Allow 2 seconds on startup before considering it a timeout
-      if (current_time > 15000) {
-        // DEBUG_PRINT("Timeout: No data ever received from board ");
-        // DEBUG_PRINTLN(board_id);
-        timeout_detected = true;
-      }
-      continue;
-    }
 
     if (current_time - board.last_update_ms > MAX_TEMP_DELAY_MS) {
       // DEBUG_PRINT("Timeout: Stale data from board ");
@@ -241,7 +284,7 @@ int8_t safe_temperature_cast(const float temp) {
 
 bool send_can_message(CAN_message_t& msg) {
   for (uint8_t attempt = 0; attempt < MAX_RETRIES; attempt++) {
-    if (can1.write(msg)) {
+    if (can1.write(msg) == 1) {
       return true;
     }
     DEBUG_PRINTLN("CAN send failed, retrying...");
@@ -252,6 +295,11 @@ bool send_can_message(CAN_message_t& msg) {
 }
 
 void send_can_max_min_avg_temperatures() {
+  static elapsedMillis send_timer;
+  if (send_timer < (150 + BOARD_ID)) {
+    return;
+  }
+  send_timer = 0;
   CAN_message_t msg;
   msg.id = CELL_TEMPS_BASE_ID + BOARD_ID;
   msg.len = 4;
@@ -260,14 +308,6 @@ void send_can_max_min_avg_temperatures() {
   msg.buf[1] = board_temps[BOARD_ID].temp_data.min_temp;
   msg.buf[2] = board_temps[BOARD_ID].temp_data.max_temp;
   msg.buf[3] = board_temps[BOARD_ID].temp_data.avg_temp;
-  // print min max avg
-
-  // DEBUG_PRINT("CAN MSG - ID: 0x109 | Min: ");
-  // DEBUG_PRINT(static_cast<int8_t>(msg.buf[1]));
-  // DEBUG_PRINT("°C, Max: ");
-  // DEBUG_PRINT(static_cast<int8_t>(msg.buf[2]));
-  // DEBUG_PRINT("°C, Avg: ");
-  // DEBUG_PRINTLN(static_cast<int8_t>(msg.buf[3]));
 
   if (send_can_message(msg)) {
     // DEBUG_PRINTLN("Sent CAN message with min, max, and avg temperatures");
@@ -275,17 +315,31 @@ void send_can_max_min_avg_temperatures() {
     DEBUG_PRINTLN("Failed to send CAN message");
   }
 }
+bool global_error_true = false;
 void send_to_bms(const TemperatureData& global_data) {
   // print
+  static elapsedMillis send_timer;
 
+  int8_t min_temp = global_data.min_temp;
+  int8_t max_temp = global_data.max_temp;
+  int8_t avg_temp = global_data.avg_temp;
+  if ((send_timer < (5))) {
+    return;
+  }
+  if (global_error_true) {
+    min_temp = TEMPERATURE_MAX_C;
+    max_temp = TEMPERATURE_MAX_C;
+    avg_temp = TEMPERATURE_MAX_C;
+  }
+  send_timer = 0;
   CAN_message_t msg;
   msg.id = BMS_THERMISTOR_ID;
   msg.flags.extended = true;
   msg.len = 8;
   msg.buf[0] = THERMISTOR_MODULE_NUMBER;
-  msg.buf[1] = global_data.min_temp;
-  msg.buf[2] = global_data.max_temp;
-  msg.buf[3] = global_data.avg_temp;
+  msg.buf[1] = min_temp;
+  msg.buf[2] = max_temp;
+  msg.buf[3] = avg_temp;
   msg.buf[4] = NUMBER_OF_THERMISTORS;
   msg.buf[5] = HIGHEST_THERMISTOR_ID;
   msg.buf[6] = LOWEST_THERMISTOR_ID;
@@ -313,6 +367,19 @@ void code_reset() {
   pinMode(ERROR_SIGNAL, OUTPUT);
   digitalWrite(ERROR_SIGNAL, LOW);
 }
+
+#if !THIS_IS_MASTER
+void can_receive_from_master(const CAN_message_t& msg) {
+  DEBUG_PRINT("RECIEIVED FROM ID: ");
+  Serial.println(msg.id, HEX);
+  if (msg.id == CELL_TEMPS_BASE_ID) {
+    last_master_message_time = millis();
+    master_has_communicated = true;
+  }
+  last_message_received_time = millis();
+}
+
+#endif
 
 void can_snifflas(const CAN_message_t& msg) {
   DEBUG_PRINT("Received CAN message with ID: ");
@@ -370,6 +437,7 @@ void initialize_can(uint32_t baudRate) {
 
   can1.begin();
   can1.setBaudRate(baudRate);
+  can1.setRFFN(RFFN_32);
   can1.enableFIFO();
   can1.enableFIFOInterrupt();
   can1.setFIFOFilter(REJECT_ALL);
@@ -379,16 +447,16 @@ void initialize_can(uint32_t baudRate) {
   for (uint8_t i = 0; i < TOTAL_BOARDS; i++) {  // FlexCAN typically supports 8 filters
     can1.setFIFOFilter(i, CELL_TEMPS_BASE_ID + 1 + i, STD);
   }
-  can1.setFIFOFilter(TOTAL_BOARDS, BMS_ID_CCL, STD);
-  can1.setFIFOFilter(TOTAL_BOARDS + 1, MASTER_ID, STD);  // Set filter for master messages
+  can1.setFIFOFilter(TOTAL_BOARDS + 0, MASTER_ID, STD);   // Set filter for master messages
+  can1.setFIFOFilter(TOTAL_BOARDS + 1, BMS_ID_CCL, STD);  // Set filter for master messages
 
   can1.onReceive(can_snifflas);
   DEBUG_PRINTLN("CAN filters configured for all board IDs");
 #else
 
-  can1.setFIFOFilter(0, MASTER_CELL_ID, STD);
-  can1.setFIFOFilter(1, BMS_ID_CCL, STD);
-  can1.setFIFOFilter(2, MASTER_ID, STD);  // Set filter for master messages
+  can1.setFIFOFilter(0, CELL_TEMPS_BASE_ID, STD);
+  can1.setFIFOFilter(1, MASTER_ID, STD);   // Set filter for master messages
+  can1.setFIFOFilter(2, BMS_ID_CCL, STD);  // Set filter for master messages
 
   can1.onReceive(can_receive_from_master);
   DEBUG_PRINTLN("CAN filter configured for master messages");
@@ -396,7 +464,43 @@ void initialize_can(uint32_t baudRate) {
 
   can1.mailboxStatus();
   DEBUG_PRINTLN("CAN Initialized/Re-initialized.");
-  last_message_received_time = millis();  // Reset message timer for detection logic
+  last_message_received_time = 0;  // Reset message timer for detection logic
+}
+
+void send_can_all_temps() {
+  static elapsedMillis send_timer;
+  if (send_timer < 800) {
+    return;
+  }
+  send_timer = 0;
+  const uint8_t temps_per_message = 6;  // 6 temps + board_id + msg_index = 8 bytes
+  const uint8_t total_messages = (NTC_SENSOR_COUNT + temps_per_message - 1) / temps_per_message;
+
+  for (uint8_t msg_index = 0; msg_index < total_messages; msg_index++) {
+    CAN_message_t msg;
+    msg.id = ALL_TEMPS_ID + BOARD_ID;
+
+    msg.buf[0] = BOARD_ID;
+    msg.buf[1] = msg_index;
+
+    uint8_t data_len = 2;
+    uint8_t start_sensor = msg_index * temps_per_message;
+    uint8_t end_sensor =
+        min(start_sensor + temps_per_message, static_cast<uint8_t>(NTC_SENSOR_COUNT));
+
+    for (uint8_t i = start_sensor; i < end_sensor; i++) {
+      msg.buf[data_len++] = static_cast<uint8_t>(cell_temps[i]);
+    }
+
+    msg.len = data_len;
+
+    if (send_can_message(msg)) {
+      // DEBUG_PRINTLN("Sent CAN message chunk with temperatures");
+    } else {
+      DEBUG_PRINT("Failed to send CAN message chunk ");
+      DEBUG_PRINTLN(msg_index);
+    }
+  }
 }
 
 void setup() {
@@ -414,30 +518,50 @@ void setup() {
 #endif
   for (int i = 0; i < NTC_SENSOR_COUNT; i++) {
     pinMode(pin_ntc_temp[i], INPUT);
+    previous_cell_temps[i] = 0.0;
+
+    // Initialize state machine
+    sensor_states[i].state = NORMAL;
+    sensor_states[i].reference_temp = 0.0;
+    sensor_states[i].confirmation_count = 0;
   }
-  delay(100);
+  unsigned long can_1M_start_time = millis();
   initialize_can(CAN_DRIVING_BAUD_RATE);
 
-  // delay(1000);  // Wait a bit before re-initializing
-  // can1.disableFIFOInterrupt();  // Disable FIFO interrupts before re-initializing
-  // can1.disableFIFO();  // Disable FIFO before re-initializing
-  // can1.reset();  // Reset before re-initializing, data sheet 44.8.1
-  // delay(100);  // Short delay to ensure reset is complete
-}
-void loop() {
-  unsigned long current_time = millis();
-
-  if (!bitrate_switched && (current_time - last_message_received_time > 1000)) {
-    if (current_bitrate == CAN_DRIVING_BAUD_RATE) {
-      DEBUG_PRINTLN("Timeout: No CAN message for 1s. Switching from 1Mbps to 125kbps permanently.");
-      current_bitrate = CAN_CHARGING_BAUD_RATE;
-      can1.setBaudRate(current_bitrate);  // Dynamically change the bitrate
-      bitrate_switched = true;            // Set the flag to prevent further switching
+  bool received_at_1M = false;
+  while (millis() - can_1M_start_time < SETUP_TIMEOUT) {
+    // Important for message detection during this timed window.
+    if (last_message_received_time > can_1M_start_time) {  // Check if a message came *after* init
+      DEBUG_PRINTLN("Message received at 1000000 baud.");
+      DEBUG_PRINTLN("Message received at 1000000 baud.");
+      DEBUG_PRINTLN("Message received at 1000000 baud.");
+      received_at_1M = true;
+      baud_1M = true;
+      break;
     }
+    delay(1);
   }
 
-  if (current_time - last_reading_time > TEMP_SENSOR_READ_INTERVAL) {
-    last_reading_time = current_time;
+  if (!received_at_1M) {
+    DEBUG_PRINTLN("No message received at 1000000 baud within 5 seconds.");
+    DEBUG_PRINTLN("Switching to 125000 baud.");
+
+    // delay(1000);  // Wait a bit before re-initializing
+    // can1.disableFIFOInterrupt();  // Disable FIFO interrupts before re-initializing
+    // can1.disableFIFO();  // Disable FIFO before re-initializing
+    // can1.reset();  // Reset before re-initializing, data sheet 44.8.1
+    // delay(100);  // Short delay to ensure reset is complete
+
+    initialize_can(CAN_CHARGING_BAUD_RATE);
+    baud_1M = false;
+  }
+  delay(5);
+}
+void loop() {
+  static elapsedMillis loop_timer;
+
+  if (loop_timer > (LOOP_INTERVAL)) {
+    loop_timer = 0;
     read_check_temperatures();
 
 #if !THIS_IS_MASTER
@@ -445,13 +569,16 @@ void loop() {
       // DEBUG_PRINTLN("EMERGENCY SHUTDOWN: Master data timeout detected!");
       digitalWrite(ERROR_SIGNAL, HIGH);
     }
-    send_can_max_min_avg_temperatures();
-    // debug_helper();
 #endif
 
 #if THIS_IS_MASTER
     bool timeout_detected = check_temperature_timeouts();
-
+    if (timeout_detected) {
+      global_error_true = true;
+      error_count++;
+    } else {
+      global_error_true = false;
+    }
     if (timeout_detected) {
       // DEBUG_PRINTLN("EMERGENCY SHUTDOWN: Temperature data timeout detected!");
       digitalWrite(ERROR_SIGNAL, HIGH);
@@ -460,13 +587,18 @@ void loop() {
     TemperatureData global_data;
     calculate_global_stats(global_data);
     send_to_bms(global_data);
-    send_master_heartbeat();
 #endif
-    // show_temperatures();
+    send_can_max_min_avg_temperatures();
+    send_can_all_temps();
   }
   if (no_error_iterations >= NO_ERROR_RESET_THRESHOLD) {
     error_count = 0;
     no_error_iterations = 0;
   }
-  delay(2 * BOARD_ID);
+  static elapsedMillis debug_timer;
+  if (debug_timer >= 1500) {
+    debug_helper();
+    show_temperatures();
+    debug_timer = 0;
+  }
 }
