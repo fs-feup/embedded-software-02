@@ -11,11 +11,10 @@ var searchData=
   ['brake_5fpressure_5fupper_5fthreshold_8',['BRAKE_PRESSURE_UPPER_THRESHOLD',['../d4/d7d/hardware_settings_8hpp.html#a6bb57ea910675d78af1bec76f2bca817',1,'hardwareSettings.hpp']]],
   ['brake_5fsensor_9',['BRAKE_SENSOR',['../d4/d7d/hardware_settings_8hpp.html#ae7790c92e03e3d3f8823aca4a9df3383',1,'hardwareSettings.hpp']]],
   ['bspd_5ferror_10',['bspd_error',['../da/db9/class_digital_sender.html#a0c34655a6486bd1e1d6be342813dc124',1,'DigitalSender']]],
-  ['bspd_5fsdc_5fopen_5f_11',['bspd_sdc_open_',['../df/d95/struct_hardware_data.html#aaeb880298080d5340c286767a2464090',1,'HardwareData']]],
-  ['button_5f1_12',['BUTTON_1',['../dd/d46/test__digital_receiver_8cpp.html#af58f5adf2c4e479e30f2efaa24e38324',1,'test_digitalReceiver.cpp']]],
-  ['button_5f2_13',['BUTTON_2',['../dd/d46/test__digital_receiver_8cpp.html#a46acb6114f87027ec8fa196c02ea7d81',1,'test_digitalReceiver.cpp']]],
-  ['button_5f3_14',['BUTTON_3',['../dd/d46/test__digital_receiver_8cpp.html#aec518359a13ecef01c1f596fea855364',1,'test_digitalReceiver.cpp']]],
-  ['button_5f4_15',['BUTTON_4',['../dd/d46/test__digital_receiver_8cpp.html#a9bbe94022b11df96e0f4e9147822ed79',1,'test_digitalReceiver.cpp']]],
-  ['button_5f5_16',['BUTTON_5',['../dd/d46/test__digital_receiver_8cpp.html#a400f0f2ee5defcf2f0fc3a21f10669b1',1,'test_digitalReceiver.cpp']]],
-  ['button_5f6_17',['BUTTON_6',['../dd/d46/test__digital_receiver_8cpp.html#a0373e0d4f2cbd4fcb55ada29be95347d',1,'test_digitalReceiver.cpp']]]
+  ['button_5f1_11',['BUTTON_1',['../dd/d46/test__digital_receiver_8cpp.html#af58f5adf2c4e479e30f2efaa24e38324',1,'test_digitalReceiver.cpp']]],
+  ['button_5f2_12',['BUTTON_2',['../dd/d46/test__digital_receiver_8cpp.html#a46acb6114f87027ec8fa196c02ea7d81',1,'test_digitalReceiver.cpp']]],
+  ['button_5f3_13',['BUTTON_3',['../dd/d46/test__digital_receiver_8cpp.html#aec518359a13ecef01c1f596fea855364',1,'test_digitalReceiver.cpp']]],
+  ['button_5f4_14',['BUTTON_4',['../dd/d46/test__digital_receiver_8cpp.html#a9bbe94022b11df96e0f4e9147822ed79',1,'test_digitalReceiver.cpp']]],
+  ['button_5f5_15',['BUTTON_5',['../dd/d46/test__digital_receiver_8cpp.html#a400f0f2ee5defcf2f0fc3a21f10669b1',1,'test_digitalReceiver.cpp']]],
+  ['button_5f6_16',['BUTTON_6',['../dd/d46/test__digital_receiver_8cpp.html#a0373e0d4f2cbd4fcb55ada29be95347d',1,'test_digitalReceiver.cpp']]]
 ];

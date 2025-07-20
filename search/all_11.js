@@ -27,12 +27,13 @@ var searchData=
   ['res_5fstate_5fcallback_24',['res_state_callback',['../d0/d02/class_communicator.html#a42cf4c62a4ff6b22f9c0151f60ce53b2',1,'Communicator']]],
   ['res_5ftimestamp_5ftimeout_25',['RES_TIMESTAMP_TIMEOUT',['../d4/d7d/hardware_settings_8hpp.html#a31160ef2ab321f72b1a9923f644fb02c',1,'hardwareSettings.hpp']]],
   ['res_5ftriggered_26',['res_triggered',['../d7/d1f/class_checkup_manager.html#ae13f419b624cefcf107ac6a192a85aaa',1,'CheckupManager']]],
-  ['reset_27',['reset',['../db/d60/class_metro.html#a40a8e2c535e7558224f4336628797dbd',1,'Metro::reset()'],['../da/dad/test__integration_8cpp.html#ad20897c5c8bd47f5d4005989bead0e55',1,'reset():&#160;test_integration.cpp']]],
+  ['reset_27',['reset',['../da/dad/test__integration_8cpp.html#ad20897c5c8bd47f5d4005989bead0e55',1,'reset():&#160;test_integration.cpp'],['../d8/deb/struct_r2_d_logics.html#a65ceb87fffc31e606a851bb74c4b2fcb',1,'R2DLogics::reset()'],['../db/d60/class_metro.html#a40a8e2c535e7558224f4336628797dbd',1,'Metro::reset()']]],
   ['reset_5fcheckup_5fstate_28',['reset_checkup_state',['../d7/d1f/class_checkup_manager.html#aa810d7c8863657dbc9a850d9026b3cbb',1,'CheckupManager']]],
   ['reset_5febs_5ftimestamp_29',['reset_ebs_timestamp',['../d8/deb/struct_r2_d_logics.html#a33c5da56ad44e42e0c3d9bcfa1a96e4e',1,'R2DLogics']]],
-  ['rl_5fwheel_5frpm_30',['rl_wheel_rpm',['../df/d95/struct_hardware_data.html#a5941b1a40a58abaafeec1ee67999004e',1,'HardwareData']]],
-  ['rl_5fwss_31',['RL_WSS',['../d4/d7d/hardware_settings_8hpp.html#a7976989c70e8a2e86129e6ddcbe8a3c9',1,'hardwareSettings.hpp']]],
-  ['rpm_5f2_5fbyte_32',['rpm_2_byte',['../df/d93/utils_8hpp.html#a08bce81832e54a9419b914bb3c92487a',1,'utils.hpp']]],
-  ['rr_5fwheel_5frpm_33',['rr_wheel_rpm',['../df/d95/struct_hardware_data.html#a114f0067ec04b6b7a740e7f763b37b68',1,'HardwareData']]],
-  ['rr_5fwss_34',['RR_WSS',['../d4/d7d/hardware_settings_8hpp.html#a2bcbcc8907256d348eaaf18e7be866f3',1,'hardwareSettings.hpp']]]
+  ['reset_5fr2d_30',['reset_r2d',['../d0/d02/class_communicator.html#a7a81f4a1b94246b5073d852033be7afb',1,'Communicator']]],
+  ['rl_5fwheel_5frpm_31',['rl_wheel_rpm',['../df/d95/struct_hardware_data.html#a5941b1a40a58abaafeec1ee67999004e',1,'HardwareData']]],
+  ['rl_5fwss_32',['RL_WSS',['../d4/d7d/hardware_settings_8hpp.html#a7976989c70e8a2e86129e6ddcbe8a3c9',1,'hardwareSettings.hpp']]],
+  ['rpm_5f2_5fbyte_33',['rpm_2_byte',['../df/d93/utils_8hpp.html#a08bce81832e54a9419b914bb3c92487a',1,'utils.hpp']]],
+  ['rr_5fwheel_5frpm_34',['rr_wheel_rpm',['../df/d95/struct_hardware_data.html#a114f0067ec04b6b7a740e7f763b37b68',1,'HardwareData']]],
+  ['rr_5fwss_35',['RR_WSS',['../d4/d7d/hardware_settings_8hpp.html#a2bcbcc8907256d348eaaf18e7be866f3',1,'hardwareSettings.hpp']]]
 ];

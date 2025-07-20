@@ -26,7 +26,7 @@
 <area shape="rect" id="Node000010" href="$d0/d02/class_communicator.html#a55c912e8973aa10866ae3fd9f2df8de7" title="Sends a message to the CAN bus." alt="" coords="726,5,865,46"/>
 <area shape="poly" id="edge10_Node000009_Node000010" title=" " alt="" coords="655,23,710,23,710,28,655,28"/>
 <area shape="poly" id="edge14_Node000011_Node000006" title=" " alt="" coords="641,175,662,188,678,202,687,217,696,231,710,245,737,260,735,264,707,249,691,234,682,220,674,206,659,192,638,180"/>
-<area shape="rect" id="Node000012" href="$d8/deb/struct_r2_d_logics.html#ac12d9b344b39a8a5da25dcc6cdfb3a3b" title="Processes the go signal." alt="" coords="727,136,864,177"/>
+<area shape="rect" id="Node000012" href="$d8/deb/struct_r2_d_logics.html#ac12d9b344b39a8a5da25dcc6cdfb3a3b" title=" " alt="" coords="727,136,864,177"/>
 <area shape="poly" id="edge12_Node000011_Node000012" title=" " alt="" coords="653,154,711,154,711,159,653,159"/>
 <area shape="rect" id="Node000013" href="$db/d60/class_metro.html#aca78646b9ae992c81ffc395c1a1da997" title="Checks if the interval has passed and resets the timer if true." alt="" coords="930,144,1025,169"/>
 <area shape="poly" id="edge13_Node000012_Node000013" title=" " alt="" coords="865,154,915,154,915,159,865,159"/>

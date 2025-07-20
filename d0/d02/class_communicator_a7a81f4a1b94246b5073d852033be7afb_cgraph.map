@@ -1,0 +1,5 @@
+<map id="Communicator::reset_r2d" name="Communicator::reset_r2d">
+<area shape="rect" id="Node000001" title="Reset R2D state machine." alt="" coords="5,5,171,31"/>
+<area shape="rect" id="Node000002" href="$d8/deb/struct_r2_d_logics.html#a65ceb87fffc31e606a851bb74c4b2fcb" title="Processes the go signal." alt="" coords="219,5,339,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="171,16,203,16,203,21,171,21"/>
+</map>

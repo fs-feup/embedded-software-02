@@ -6,7 +6,6 @@ var struct_hardware_data =
     [ "asats_pressed_", "df/d95/struct_hardware_data.html#a0575eb8f0a950490ede7b4d8e1b89448", null ],
     [ "asms_on_", "df/d95/struct_hardware_data.html#ae1de5bbf96b043012ede22630db02b6f", null ],
     [ "ats_pressed_", "df/d95/struct_hardware_data.html#a983673f7bb0f74137b7c429bcdd9ca96", null ],
-    [ "bspd_sdc_open_", "df/d95/struct_hardware_data.html#aaeb880298080d5340c286767a2464090", null ],
     [ "hydraulic_line_front_pressure", "df/d95/struct_hardware_data.html#a1130c840b66a2e34bd249ecb6d0ff964", null ],
     [ "pneumatic_line_pressure_", "df/d95/struct_hardware_data.html#aa26214d7a65d4e5724e1ee6d7a64bacb", null ],
     [ "pneumatic_line_pressure_1_", "df/d95/struct_hardware_data.html#af757a778e216416d8212dd2cc7222688", null ],
@@ -14,5 +13,6 @@ var struct_hardware_data =
     [ "rl_wheel_rpm", "df/d95/struct_hardware_data.html#a5941b1a40a58abaafeec1ee67999004e", null ],
     [ "rr_wheel_rpm", "df/d95/struct_hardware_data.html#a114f0067ec04b6b7a740e7f763b37b68", null ],
     [ "soc_", "df/d95/struct_hardware_data.html#a8edacdef98b69f2ed0d245ab0bd1e245", null ],
+    [ "tsms_sdc_closed_", "df/d95/struct_hardware_data.html#ac2cb871a83e1d4212e5998559cf8022d", null ],
     [ "wd_ready_", "df/d95/struct_hardware_data.html#ad4431dd9adac050bb098e761630d6243", null ]
 ];

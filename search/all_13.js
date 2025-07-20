@@ -51,9 +51,10 @@ var searchData=
   ['toggling_5fwatchdog_48',['TOGGLING_WATCHDOG',['../d7/d1f/class_checkup_manager.html#a8bcbd0781d0b8ffcd769356db1ac30cba4c214e794c8eabaa278cf6b66a8a74f4',1,'CheckupManager']]],
   ['trackdrive_49',['TRACKDRIVE',['../d3/db0/structure_8hpp.html#af686af98019fe71e9f18190349618431a0ca25c5af22edc019d28afcf211c34dd',1,'structure.hpp']]],
   ['ts_5fon_5f_50',['ts_on_',['../d3/df6/struct_failure_detection.html#a70152d3e0448090d3e4cca333e1aaa6b',1,'FailureDetection']]],
-  ['turn_5foff_5fassi_51',['turn_off_assi',['../da/db9/class_digital_sender.html#a1db8385e42b643db5de2390a2bcf5a20',1,'DigitalSender']]],
-  ['turn_5foff_5fbrake_5flight_52',['turn_off_brake_light',['../da/db9/class_digital_sender.html#a724814744a90f8fe733ad5edf0ebf7a5',1,'DigitalSender']]],
-  ['turn_5fon_5fblue_53',['turn_on_blue',['../da/db9/class_digital_sender.html#a5a90832e1fe9c2657e9c882ef74e00d5',1,'DigitalSender']]],
-  ['turn_5fon_5fbrake_5flight_54',['turn_on_brake_light',['../da/db9/class_digital_sender.html#a3255f3934a5e9bd70f09e5cca202db1e',1,'DigitalSender']]],
-  ['turn_5fon_5fyellow_55',['turn_on_yellow',['../da/db9/class_digital_sender.html#af2dad86a446fe22d6e9e16f24950e979',1,'DigitalSender']]]
+  ['tsms_5fsdc_5fclosed_5f_51',['tsms_sdc_closed_',['../df/d95/struct_hardware_data.html#ac2cb871a83e1d4212e5998559cf8022d',1,'HardwareData']]],
+  ['turn_5foff_5fassi_52',['turn_off_assi',['../da/db9/class_digital_sender.html#a1db8385e42b643db5de2390a2bcf5a20',1,'DigitalSender']]],
+  ['turn_5foff_5fbrake_5flight_53',['turn_off_brake_light',['../da/db9/class_digital_sender.html#a724814744a90f8fe733ad5edf0ebf7a5',1,'DigitalSender']]],
+  ['turn_5fon_5fblue_54',['turn_on_blue',['../da/db9/class_digital_sender.html#a5a90832e1fe9c2657e9c882ef74e00d5',1,'DigitalSender']]],
+  ['turn_5fon_5fbrake_5flight_55',['turn_on_brake_light',['../da/db9/class_digital_sender.html#a3255f3934a5e9bd70f09e5cca202db1e',1,'DigitalSender']]],
+  ['turn_5fon_5fyellow_56',['turn_on_yellow',['../da/db9/class_digital_sender.html#af2dad86a446fe22d6e9e16f24950e979',1,'DigitalSender']]]
 ];

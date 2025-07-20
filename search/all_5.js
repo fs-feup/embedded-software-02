@@ -22,7 +22,7 @@ var searchData=
   ['digitalsender_19',['digitalsender',['../da/dad/test__integration_8cpp.html#a97caf154728d778c2f1590be4e8c67d5',1,'digitalSender:&#160;test_integration.cpp'],['../da/db9/class_digital_sender.html',1,'DigitalSender'],['../da/db9/class_digital_sender.html#a2e0fa655e0b95399f874c32de1e30a5d',1,'DigitalSender::DigitalSender()']]],
   ['digitalsender_2ehpp_20',['digitalSender.hpp',['../da/d46/digital_sender_8hpp.html',1,'']]],
   ['disable_5factuator_5f1_21',['DISABLE_ACTUATOR_1',['../d7/d1f/class_checkup_manager.html#a80729480b8cd00c3756d18ea4f12c6d7aa0d3ca7bb722577be349988c403e5015',1,'CheckupManager']]],
-  ['disable_5febs_5factuator_5f1_22',['disable_ebs_actuator_1',['../da/db9/class_digital_sender.html#aa5774dc5ae48aaf0fcbffc3282284c7b',1,'DigitalSender']]],
-  ['disable_5febs_5factuator_5f2_23',['disable_ebs_actuator_2',['../da/db9/class_digital_sender.html#a22a104c845a1a2528116ead3fc89b7b6',1,'DigitalSender']]],
+  ['disable_5febs_5factuator_5ffront_22',['disable_ebs_actuator_FRONT',['../da/db9/class_digital_sender.html#aaefc74687405598928d91f955aa95049',1,'DigitalSender']]],
+  ['disable_5febs_5factuator_5frear_23',['disable_ebs_actuator_REAR',['../da/db9/class_digital_sender.html#ad05ef19f0ba994c3227dd2490b57f12f',1,'DigitalSender']]],
   ['documentation_24',['Documentation',['../index.html#autotoc_md3',1,'']]]
 ];
