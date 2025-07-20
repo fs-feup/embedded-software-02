@@ -50,7 +50,9 @@ inline std::array<uint8_t, 8> create_debug_message_1(const SystemData& system_da
     };
 }
 
-inline std::array<uint8_t, 7> create_debug_message_2(const SystemData& system_data) {
+inline std::array<uint8_t, 8> create_debug_message_2(const SystemData& system_data) {
+    // Ensure boolean values are normalized to 0 or 1
+    auto normalize_bool = [](bool value) -> uint8_t { return value ? 1 : 0; };
     return {
         DBG_LOG_MSG_2,
         static_cast<uint8_t>((system_data.failure_detection_.dc_voltage_ >> 24) & 0xFF),
@@ -58,6 +60,7 @@ inline std::array<uint8_t, 7> create_debug_message_2(const SystemData& system_da
         static_cast<uint8_t>((system_data.failure_detection_.dc_voltage_ >> 8) & 0xFF),
         static_cast<uint8_t>(system_data.failure_detection_.dc_voltage_ & 0xFF),
         static_cast<uint8_t>(system_data.hardware_data_.pneumatic_line_pressure_1_ & 0x01),
-        static_cast<uint8_t>(system_data.hardware_data_.pneumatic_line_pressure_2_ & 0x01)
+        static_cast<uint8_t>(system_data.hardware_data_.pneumatic_line_pressure_2_ & 0x01),
+        normalize_bool(system_data.hardware_data_.master_sdc_closed_)
     };
 }

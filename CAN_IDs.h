@@ -46,7 +46,7 @@ constexpr uint8_t DBG_LOG_MSG_2 = 0x35;           // 0x35
 //-----------------------------------------------------------------------------
 // Logging Status IDs
 //-----------------------------------------------------------------------------
-constexpr uint16_t DRIVING_STATE = 0x500;    // 0x500
+constexpr uint8_t DRIVING_STATE = 0x500;    // 0x500
 constexpr uint16_t DRIVING_CONTROL = 0x501;  // 0x501
 constexpr uint16_t SYSTEM_STATUS = 0x502;    // 0x502
 constexpr uint16_t SOC_MSG = 0x60;           // 0x60

@@ -79,6 +79,7 @@ public:
     blink_timer_.reset();
     digital_sender_->activate_ebs();
     digital_sender_->open_sdc();
+    this->system_data_->hardware_data_.master_sdc_closed_ = false;
   }
 
   /**
@@ -89,6 +90,7 @@ public:
     digital_sender_->deactivate_ebs();
     digital_sender_->open_sdc();
     // digital_sender_->close_sdc(); // close sdc only when ats pressed and in manual mode already
+    this->system_data_->hardware_data_.master_sdc_closed_ = false;
     DEBUG_PRINT("Entering manual state...");
   }
 
@@ -99,6 +101,7 @@ public:
     digital_sender_->turn_off_assi();
     digital_sender_->deactivate_ebs();
     digital_sender_->open_sdc();
+    this->system_data_->hardware_data_.master_sdc_closed_ = false;   
   }
 
   /**
@@ -109,6 +112,7 @@ public:
     digital_sender_->turn_on_yellow();
     digital_sender_->activate_ebs();
     digital_sender_->close_sdc();
+    this->system_data_->hardware_data_.master_sdc_closed_ = true;
   }
 
   /**
@@ -119,6 +123,7 @@ public:
     blink_timer_.reset();
     digital_sender_->deactivate_ebs();
     digital_sender_->close_sdc();
+    this->system_data_->hardware_data_.master_sdc_closed_ = true;
   }
 
   /**
@@ -129,6 +134,7 @@ public:
     digital_sender_->turn_on_blue();
     digital_sender_->activate_ebs();
     digital_sender_->open_sdc();
+    this->system_data_->hardware_data_.master_sdc_closed_ = false;
   }
 
 private:
@@ -199,9 +205,11 @@ private:
         system_data_->hardware_data_.tsms_sdc_closed_) {
       DEBUG_PRINT(">>> CLOSING SDC - All conditions met");
       digital_sender_->close_sdc();
+      this->system_data_->hardware_data_.master_sdc_closed_ = true;
     } else if (!system_data_->hardware_data_.tsms_sdc_closed_) {
       DEBUG_PRINT(">>> OPENING SDC - TSMS SDC not closed");
       digital_sender_->open_sdc();
+      this->system_data_->hardware_data_.master_sdc_closed_ = false;
     } else {
       DEBUG_PRINT(">>> NO SDC ACTION - Conditions not met");
       if (!system_data_->hardware_data_.ats_pressed_) {

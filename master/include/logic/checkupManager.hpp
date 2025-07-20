@@ -269,6 +269,7 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
     }
     case CheckupState::CLOSE_SDC:
       DigitalSender::close_sdc();
+      this->_system_data_->hardware_data_.master_sdc_closed_ = true;
       checkup_state_ = CheckupState::WAIT_FOR_TS;
       DEBUG_PRINT("Closing SDC");
       break;
