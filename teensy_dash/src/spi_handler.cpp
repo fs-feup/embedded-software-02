@@ -11,7 +11,7 @@ void SpiHandler::setup() {
 
 void SpiHandler::handle_display_update(SystemData& data, const SystemVolatileData& updated_data) {
   if (data.display_pressed) {
-    current_form = (current_form == 1) ? 2 : 1;  // toggle 1 and 2
+    current_form = (current_form % 3) + 1;
     display_spi.transfer16(&current_form, 1, WIDGET_FORM_CMD, millis() & 0xFFFF);
     data.display_pressed = false;
   }
@@ -55,8 +55,7 @@ void SpiHandler::handle_display_update(SystemData& data, const SystemVolatileDat
     uint16_t error_bitmap = updated_data.error_bitmap;
     display_spi.transfer16(&error_bitmap, 1, WIDGET_INVERTER_ERRORS, millis() & 0xFFFF);
     uint16_t warning_bitmap = updated_data.warning_bitmap;
-    // display_spi.transfer16(&warning_bitmap, 1, WIDGET_INVERTER_WARNINGS, millis() & 0xFFFF);
-    //TODO TIJOLIN 
+    display_spi.transfer16(&warning_bitmap, 1, WIDGET_INVERTER_WARNINGS, millis() & 0xFFFF);
     error_timer = 0;
   }
 
