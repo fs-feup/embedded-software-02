@@ -6,8 +6,6 @@ const u_int8_t pin_ntc_temp[NTC_SENSOR_COUNT] = {A4,  A5,  A6, A7, A8,  A9,  A2,
                                                  A12, A13, A0, A1, A17, A16, A15, A14};  // T! A13
 
 float cell_temps[NTC_SENSOR_COUNT];
-float previous_cell_temps[NTC_SENSOR_COUNT] = {0.0};
-
 CAN_error_t error;
 
 const unsigned long SETUP_TIMEOUT = 1500;  // 1.5 second for CAN set up detection
@@ -18,10 +16,7 @@ volatile unsigned long last_message_received_time = 0;
 uint8_t error_count = 0;
 uint8_t no_error_iterations = 0;
 static BoardData board_temps[TOTAL_BOARDS];
-
-SensorState sensor_states[NTC_SENSOR_COUNT];
-const float FLOAT_DETECTION_THRESHOLD = 6.0;//todo go to header
-const uint8_t FLOAT_CONFIRMATION_COUNT = 2;
+bool global_error_true = false;
 
 #if !THIS_IS_MASTER
 volatile unsigned long last_master_message_time = 0;
@@ -33,7 +28,7 @@ bool check_master_timeout() {
 
   // Allow 2 seconds on startup before considering it a timeout
   if (!master_has_communicated) {
-    if (current_time > 900) {
+    if (current_time > 15000) {
       DEBUG_PRINTLN("Timeout: No data ever received from master");
       return true;
     }
@@ -151,64 +146,6 @@ float read_ntc_temperature(const int analog_value) {
 
   return temperature;
 }
-
-void process_sensor_float_detection(int sensor_id, float current_temp, float previous_temp) {
-  SensorState& sensor = sensor_states[sensor_id];
-
-  switch (sensor.state) {
-    case NORMAL: {
-      float temp_diff = abs(current_temp - previous_temp);
-      if (temp_diff > FLOAT_DETECTION_THRESHOLD) {
-        // Large jump detected - go to suspected state
-        sensor.state = SUSPECTED_FLOAT;
-        sensor.reference_temp = previous_temp;  // Store the last good temperature, referencia p futuros checks
-        sensor.confirmation_count = 1;
-        DEBUG_PRINT("Sensor ");
-        DEBUG_PRINT(sensor_id);
-        DEBUG_PRINTLN(" - Large jump detected, entering SUSPECTED_FLOAT");
-      }
-    } break;
-
-    case SUSPECTED_FLOAT: {
-      float ref_diff = abs(current_temp - sensor.reference_temp);
-      if (ref_diff > FLOAT_DETECTION_THRESHOLD) {
-        // Still far from reference - increment count
-        sensor.confirmation_count++;
-        if (sensor.confirmation_count >= FLOAT_CONFIRMATION_COUNT) {
-          sensor.state = CONFIRMED_FLOAT;
-          DEBUG_PRINT("Float CONFIRMED on sensor ");
-          DEBUG_PRINT(sensor_id);
-          DEBUG_PRINT(" - reference: ");
-          DEBUG_PRINT(sensor.reference_temp);
-          DEBUG_PRINT(", current: ");
-          DEBUG_PRINTLN(current_temp);
-        }
-      } else {
-        // Back to normal range - reset to normal
-        sensor.state = NORMAL;
-        sensor.confirmation_count = 0;
-        DEBUG_PRINT("Sensor ");
-        DEBUG_PRINT(sensor_id);
-        DEBUG_PRINTLN(" - Back to normal range");
-      }
-    } break;
-
-    case CONFIRMED_FLOAT: {
-      float ref_diff = abs(current_temp - sensor.reference_temp);
-      if (ref_diff <= FLOAT_DETECTION_THRESHOLD) {
-        // recovery
-        sensor.state = NORMAL;
-        sensor.confirmation_count = 0;
-        DEBUG_PRINT("Sensor ");
-        DEBUG_PRINT(sensor_id);
-        DEBUG_PRINTLN(" - RECOVERED from float");
-      }
-    } break;
-  }
-}
-
-bool is_sensor_floating(int sensor_id) { return sensor_states[sensor_id].state == CONFIRMED_FLOAT; }
-
 void read_check_temperatures() {
   float sum_temp = 0.0;
   float min_temp = TEMPERATURE_MAX_C;
@@ -216,22 +153,10 @@ void read_check_temperatures() {
   bool error = false;
   for (int i = 0; i < NTC_SENSOR_COUNT; i++) {
     cell_temps[i] = read_ntc_temperature(analogRead(pin_ntc_temp[i]));
-
-    if (previous_cell_temps[i] != 0.0) {
-      process_sensor_float_detection(i, cell_temps[i], previous_cell_temps[i]);
-    }
-
-    previous_cell_temps[i] = cell_temps[i];
-
     min_temp = min(min_temp, cell_temps[i]);
     max_temp = max(max_temp, cell_temps[i]);
     sum_temp += cell_temps[i];
     if (cell_temps[i] > MAXIMUM_TEMPERATURE && !error) {
-      error_count++;
-      error = true;
-    }
-
-    if (is_sensor_floating(i) && !error) {
       error_count++;
       error = true;
     }
@@ -254,6 +179,16 @@ bool check_temperature_timeouts() {
 
   for (uint8_t board_id = 1; board_id < TOTAL_BOARDS; board_id++) {
     const BoardData& board = board_temps[board_id];
+
+    if (!board.has_communicated) {
+      // Allow 2 seconds on startup before considering it a timeout
+      if (current_time > 10000) { // estava 15000 tem que se meter menos que 1seg
+        // DEBUG_PRINT("Timeout: No data ever received from board ");
+        // DEBUG_PRINTLN(board_id);
+        timeout_detected = true;
+      }
+      continue;
+    }
 
     if (current_time - board.last_update_ms > MAX_TEMP_DELAY_MS) {
       // DEBUG_PRINT("Timeout: Stale data from board ");
@@ -315,18 +250,17 @@ void send_can_max_min_avg_temperatures() {
     DEBUG_PRINTLN("Failed to send CAN message");
   }
 }
-bool global_error_true = false;
 void send_to_bms(const TemperatureData& global_data) {
   // print
   static elapsedMillis send_timer;
-
   int8_t min_temp = global_data.min_temp;
   int8_t max_temp = global_data.max_temp;
   int8_t avg_temp = global_data.avg_temp;
-  if ((send_timer < (5))) {
+  if (send_timer < (5)) {
     return;
   }
   if (global_error_true) {
+    DEBUG_PRINTLN("SENDING ERROR");
     min_temp = TEMPERATURE_MAX_C;
     max_temp = TEMPERATURE_MAX_C;
     avg_temp = TEMPERATURE_MAX_C;
@@ -382,8 +316,8 @@ void can_receive_from_master(const CAN_message_t& msg) {
 #endif
 
 void can_snifflas(const CAN_message_t& msg) {
-  DEBUG_PRINT("Received CAN message with ID: ");
-  Serial.println(msg.id, HEX);
+  // DEBUG_PRINT("Received CAN message with ID: ");
+  // Serial.println(msg.id, HEX);
   if (msg.id >= CELL_TEMPS_BASE_ID && msg.id < CELL_TEMPS_BASE_ID + TOTAL_BOARDS && msg.len == 4) {
     uint8_t board_from_id = msg.id - CELL_TEMPS_BASE_ID;
     uint8_t board_from_buf = msg.buf[0];
@@ -447,16 +381,18 @@ void initialize_can(uint32_t baudRate) {
   for (uint8_t i = 0; i < TOTAL_BOARDS; i++) {  // FlexCAN typically supports 8 filters
     can1.setFIFOFilter(i, CELL_TEMPS_BASE_ID + 1 + i, STD);
   }
-  can1.setFIFOFilter(TOTAL_BOARDS + 0, MASTER_ID, STD);   // Set filter for master messages
-  can1.setFIFOFilter(TOTAL_BOARDS + 1, BMS_ID_CCL, STD);  // Set filter for master messages
+  can1.setFIFOFilter(TOTAL_BOARDS, HC_ID, STD);
+  can1.setFIFOFilter(TOTAL_BOARDS + 1, MASTER_ID, STD);  // Set filter for master messages
+  can1.setFIFOFilter(TOTAL_BOARDS + 2, BMS_ID_CCL, STD);  // Set filter for master messages
 
   can1.onReceive(can_snifflas);
   DEBUG_PRINTLN("CAN filters configured for all board IDs");
 #else
 
   can1.setFIFOFilter(0, CELL_TEMPS_BASE_ID, STD);
-  can1.setFIFOFilter(1, MASTER_ID, STD);   // Set filter for master messages
-  can1.setFIFOFilter(2, BMS_ID_CCL, STD);  // Set filter for master messages
+  can1.setFIFOFilter(1, HC_ID, STD);
+  can1.setFIFOFilter(2, MASTER_ID, STD);  // Set filter for master messages
+  can1.setFIFOFilter(3, BMS_ID_CCL, STD);  // Set filter for master messages
 
   can1.onReceive(can_receive_from_master);
   DEBUG_PRINTLN("CAN filter configured for master messages");
@@ -517,13 +453,7 @@ void setup() {
   }
 #endif
   for (int i = 0; i < NTC_SENSOR_COUNT; i++) {
-    pinMode(pin_ntc_temp[i], INPUT);
-    previous_cell_temps[i] = 0.0;
-
-    // Initialize state machine
-    sensor_states[i].state = NORMAL;
-    sensor_states[i].reference_temp = 0.0;
-    sensor_states[i].confirmation_count = 0;
+    pinMode(pin_ntc_temp[i], INPUT_PULLDOWN);
   }
   unsigned long can_1M_start_time = millis();
   initialize_can(CAN_DRIVING_BAUD_RATE);
@@ -555,6 +485,7 @@ void setup() {
     initialize_can(CAN_CHARGING_BAUD_RATE);
     baud_1M = false;
   }
+  Serial.flush();
   delay(5);
 }
 void loop() {
@@ -573,15 +504,13 @@ void loop() {
 
 #if THIS_IS_MASTER
     bool timeout_detected = check_temperature_timeouts();
-    if (timeout_detected) {
-      global_error_true = true;
-      error_count++;
-    } else {
-      global_error_true = false;
-    }
+
     if (timeout_detected) {
       // DEBUG_PRINTLN("EMERGENCY SHUTDOWN: Temperature data timeout detected!");
       digitalWrite(ERROR_SIGNAL, HIGH);
+      global_error_true = true;
+    } else {
+      global_error_true = false;
     }
 
     TemperatureData global_data;

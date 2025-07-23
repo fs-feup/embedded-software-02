@@ -4,12 +4,11 @@
 #include "hw_io_manager.hpp"
 #include "logic_handler.hpp"
 
-enum class State { IDLE, INITIALIZING_DRIVING, DRIVING, INITIALIZING_AS_DRIVING, AS_DRIVING };
-
 class StateMachine {
 public:
   StateMachine(CanCommHandler& can_handler, LogicHandler& logic_handler, IOManager& io_manager);
   void update();
+  State get_state() const;
 
 private:
   CanCommHandler& can_handler;

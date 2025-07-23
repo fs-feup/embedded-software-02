@@ -38,6 +38,7 @@ void loop() {
   digitalWrite(WD_SDC_CLOSE, HIGH);
   digital_receiver.digital_reads();
   noInterrupts();
+  system_data_copy.hardware_data_.master_sdc_closed_ = system_data.hardware_data_.master_sdc_closed_;
   system_data = system_data_copy;
   interrupts();
 

@@ -119,13 +119,17 @@ bool LogicHandler::just_entered_driving() {
 bool LogicHandler::check_apps_plausibility(const uint16_t apps_higher_avg,
                                            const uint16_t apps_lower_avg) {
   if (plausibility(apps_higher_avg, apps_lower_avg)) {
-    apps_implausibility_timer = 0;
+    if (apps_implausibility_timer > config::apps::IMPLAUSIBLE_TIMEOUT_MS) {
+      this->data.implausibility = false; 
+    }
     return true;
   }
   // if (apps_implausibility_timer > config::apps::IMPLAUSIBLE_TIMEOUT_MS) {
   //   apps_timeout = true;
   //   return false;
   // }
+  apps_implausibility_timer = 0;
+  this->data.implausibility = true;
   return false;
 }
 
