@@ -26,6 +26,9 @@ private:
   uint8_t previous_checkup_state_;
   uint8_t previous_mission_;
 
+  unsigned long tsms_open_time_ = 0;  ///< Time when TSMS opened
+  bool tsms_was_closed_ = true;       ///< Track previous TSMS state
+
 public:
   OutputCoordinator(SystemData* system_data, Communicator* communicator,
                     DigitalSender* digital_sender)
@@ -101,7 +104,7 @@ public:
     digital_sender_->turn_off_assi();
     digital_sender_->deactivate_ebs();
     digital_sender_->open_sdc();
-    this->system_data_->hardware_data_.master_sdc_closed_ = false;   
+    this->system_data_->hardware_data_.master_sdc_closed_ = false;
   }
 
   /**
@@ -137,9 +140,7 @@ public:
     this->system_data_->hardware_data_.master_sdc_closed_ = false;
   }
 
-  void refresh_r2d_vars() {
-    this->system_data_->r2d_logics_.refresh_r2d_vars();
-  }
+  void refresh_r2d_vars() { this->system_data_->r2d_logics_.refresh_r2d_vars(); }
   void refresh_emergency_vars() {
     this->system_data_->failure_detection_.emergency_signal_ = false;
     this->system_data_->failure_detection_.steer_dead_ = false;
@@ -195,7 +196,7 @@ private:
       digital_sender_->turn_off_brake_light();
     }
   }
-  
+
   void bsdp_sdc_update() {
     // TODO: implement bspd logic, update led from this output in Dash
     if (!system_data_->hardware_data_.tsms_sdc_closed_) {
@@ -211,14 +212,22 @@ private:
                 " (AS_MANUAL=" + String(to_underlying(State::AS_MANUAL)) + ")");
     DEBUG_PRINT("TSMS SDC Closed: " + String(system_data_->hardware_data_.tsms_sdc_closed_));
 
+    if (tsms_was_closed_ && !system_data_->hardware_data_.tsms_sdc_closed_) {
+      DEBUG_PRINT(">>> TSMS opened - recording time for 100ms delay");
+      tsms_open_time_ = millis();
+    }
+
+    tsms_was_closed_ = system_data_->hardware_data_.tsms_sdc_closed_;
+
     if (system_data_->hardware_data_.ats_pressed_ &&
         current_master_state == to_underlying(State::AS_MANUAL) &&
         system_data_->hardware_data_.tsms_sdc_closed_) {
       DEBUG_PRINT(">>> CLOSING SDC - All conditions met");
       digital_sender_->close_sdc();
       this->system_data_->hardware_data_.master_sdc_closed_ = true;
-    } else if (!system_data_->hardware_data_.tsms_sdc_closed_) {
-      DEBUG_PRINT(">>> OPENING SDC - TSMS SDC not closed");
+    } else if (!system_data_->hardware_data_.tsms_sdc_closed_ && tsms_open_time_ > 0 &&
+               (millis() - tsms_open_time_) >= 100) {
+      DEBUG_PRINT(">>> OPENING SDC - TSMS SDC not closed (100ms delay elapsed)");
       digital_sender_->open_sdc();
       this->system_data_->hardware_data_.master_sdc_closed_ = false;
     } else {
