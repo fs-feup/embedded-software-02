@@ -162,11 +162,11 @@ inline void CheckupManager::reset_checkup_state() {
 }
 
 inline bool CheckupManager::should_stay_manual_driving() const {
-  // if (true//_system_data_->mission_ != Mission::MANUAL ||
-  //     //_system_data_->hardware_data_.pneumatic_line_pressure_ != 0 ||
-  //     /* _system_data_->hardware_data_.asms_on_ */) {
-  //   return false;
-  // }
+  if (_system_data_->mission_ != Mission::MANUAL ||
+      _system_data_->hardware_data_.pneumatic_line_pressure_ != 0 ||
+       _system_data_->hardware_data_.asms_on_) {
+    return false;
+  }
 
   return true;
 }
@@ -400,7 +400,7 @@ bool CheckupManager::should_enter_emergency_in_ready_state() const {
   DEBUG_PRINT_VAR(!_system_data_->hardware_data_.pneumatic_line_pressure_);
   return _system_data_->failure_detection_.emergency_signal_ ||
         //  !_system_data_->hardware_data_.pneumatic_line_pressure_ ||
-         component_timed_out ||
+        //  component_timed_out ||
          !_system_data_->hardware_data_.asms_on_ || !_system_data_->failure_detection_.ts_on_ ||
         //  failed_to_build_pressure ||
          !_system_data_->hardware_data_.tsms_sdc_closed_;

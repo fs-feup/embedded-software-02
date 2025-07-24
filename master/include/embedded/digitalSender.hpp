@@ -116,9 +116,9 @@ public:
   void turn_on_blue();
 };
 
-inline void DigitalSender::open_sdc() { DEBUG_PRINT("OPENING SDC"); digitalWrite(CLOSE_SDC, LOW); }
+inline void DigitalSender::open_sdc() { digitalWrite(CLOSE_SDC, LOW); }
 
-inline void DigitalSender::close_sdc() { DEBUG_PRINT("CLOSING SDC"); digitalWrite(CLOSE_SDC, HIGH); }
+inline void DigitalSender::close_sdc() { digitalWrite(CLOSE_SDC, HIGH); }
 
 inline void DigitalSender::activate_ebs() {
   digitalWrite(EBS_VALVE_REAR_PIN, HIGH);
