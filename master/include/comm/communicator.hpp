@@ -87,10 +87,6 @@ public:
 
 
   /**
-   * @brief Reset R2D state machine
-   */
-  static void reset_r2d();
-  /**
    * @brief Callback for RES activation
    */
   static void res_ready_callback();
@@ -158,11 +154,6 @@ void Communicator::init() {
   can3.onReceive(FIFO, parse_message);
 
   can3.mailboxStatus();
-}
-inline void Communicator::reset_r2d() {
-  // Reset R2D state machine
-  _systemData->r2d_logics_.reset();
-  _systemData->mission_finished_ = false;
 }
 inline void Communicator::res_state_callback(const uint8_t *buf) {
   bool emg_stop1 = buf[0] & 0x01;

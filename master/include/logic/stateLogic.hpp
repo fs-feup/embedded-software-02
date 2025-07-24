@@ -87,7 +87,8 @@ inline void ASState::calculate_state() {
         state_ = State::AS_MANUAL;
         break;
       }
-      _communicator_->reset_r2d();
+      _output_coordinator_->refresh_r2d_vars();
+      _output_coordinator_->refresh_emergency_vars();
       if (_checkup_manager_.should_stay_off()) break;
       if (!_checkup_manager_.should_go_ready_from_off()) break;  // recheck all states
 
@@ -137,6 +138,7 @@ inline void ASState::calculate_state() {
         DEBUG_PRINT("Entering OFF state from EMERGENCY");
         _output_coordinator_->enter_off_state();
         _checkup_manager_.reset_checkup_state();
+
         state_ = State::AS_OFF;
         break;
       }

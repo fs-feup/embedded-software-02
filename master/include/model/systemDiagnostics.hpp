@@ -40,7 +40,6 @@ struct R2DLogics {
    * It performs the necessary actions based on the received signal.
    *
    */
-  void reset() { r2d = false; }
   void process_go_signal() {
     // if 5 seconds have passed all good, VVVRRRUUUMMMMM
     if (readyTimestamp.check()) {

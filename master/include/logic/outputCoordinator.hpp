@@ -137,6 +137,17 @@ public:
     this->system_data_->hardware_data_.master_sdc_closed_ = false;
   }
 
+  void refresh_r2d_vars() {
+    this->system_data_->r2d_logics_.refresh_r2d_vars();
+  }
+  void refresh_emergency_vars() {
+    this->system_data_->failure_detection_.emergency_signal_ = false;
+    this->system_data_->failure_detection_.steer_dead_ = false;
+    this->system_data_->failure_detection_.pc_dead_ = false;
+    this->system_data_->failure_detection_.inversor_dead_ = false;
+    this->system_data_->failure_detection_.res_dead_ = false;
+  }
+
 private:
   // Communication functions
   void send_debug_on_state_change(uint8_t current_master_state, uint8_t current_checkup_state) {
