@@ -214,9 +214,6 @@ inline void DigitalReceiver::read_asms_switch() {
 inline void DigitalReceiver::read_asats_state() {
   bool asats_pressed = !digitalRead(ASATS);
   debounce(asats_pressed, system_data_->hardware_data_.asats_pressed_, aats_change_counter_);
-  if (system_data_->hardware_data_.asats_pressed_) {  // TODO: remove this, shitty workaround
-    system_data_->failure_detection_.emergency_signal_ = false;
-  }
 }
 
 inline void DigitalReceiver::read_ats() {
@@ -234,15 +231,15 @@ inline void DigitalReceiver::read_rpm() {
   unsigned long time_interval_rr = (last_wheel_pulse_rr - second_to_last_wheel_pulse_rr);
   unsigned long time_interval_rl = (last_wheel_pulse_rl - second_to_last_wheel_pulse_rl);
   if (micros() - last_wheel_pulse_rr > LIMIT_RPM_INTERVAL) {
-    system_data_->hardware_data_.rr_wheel_rpm = 0.0;
+    system_data_->hardware_data_._right_wheel_rpm = 0.0;
   } else {
-    system_data_->hardware_data_.rr_wheel_rpm =
+    system_data_->hardware_data_._right_wheel_rpm =
         1 / (time_interval_rr * MICRO_TO_SECONDS * PULSES_PER_ROTATION) * SECONDS_IN_MINUTE;
   }
   if (micros() - last_wheel_pulse_rl > LIMIT_RPM_INTERVAL) {
-    system_data_->hardware_data_.rl_wheel_rpm = 0.0;
+    system_data_->hardware_data_._left_wheel_rpm = 0.0;
   } else {
-    system_data_->hardware_data_.rl_wheel_rpm =
+    system_data_->hardware_data_._left_wheel_rpm =
         1 / (time_interval_rl * MICRO_TO_SECONDS * PULSES_PER_ROTATION) * SECONDS_IN_MINUTE;
   }
 }

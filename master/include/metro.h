@@ -126,3 +126,90 @@ void Metro::reset()
 
     this->previous_millis = millis();
 }
+
+/**
+ * @brief Volatile version of Metro class for interrupt-safe operations
+ * @details This class provides the same functionality as Metro but with volatile qualifiers
+ * to ensure safe access from interrupt handlers and multi-threaded contexts.
+ */
+class VolatileMetro
+{
+public:
+    /**
+     * @brief Constructor to initialize the timer with a given interval and autoreset behavior
+     * @param interval_millis The interval in milliseconds for the timer
+     * @param autoreset If set to non-zero, the timer will reset automatically upon a successful check
+     */
+    VolatileMetro(unsigned long interval_millis, uint8_t autoreset = 0);
+
+    /**
+     * @brief Sets a new interval for the timer
+     * @param interval_millis The new interval in milliseconds
+     */
+    void interval(unsigned long interval_millis) volatile;
+
+    /**
+     * @brief Checks if the interval has passed and resets the timer if true
+     * @return true if the interval has passed, false otherwise
+     */
+    bool check() volatile;
+
+    /**
+     * @brief Checks if the interval has passed without resetting the timer
+     * @return true if the interval has passed, false otherwise
+     */
+    bool checkWithoutReset() const volatile;
+
+    /**
+     * @brief Resets the timer to the current time
+     */
+    void reset() volatile;
+
+private:
+    volatile uint8_t autoreset;             ///< Controls whether the timer resets automatically or not
+    volatile unsigned long previous_millis; ///< Stores the last recorded time in milliseconds
+    volatile unsigned long interval_millis; ///< The interval duration in milliseconds
+};
+
+inline VolatileMetro::VolatileMetro(unsigned long interval_millis, uint8_t autoreset)
+{
+    this->autoreset = autoreset;
+    interval(interval_millis);
+    reset();
+}
+
+inline void VolatileMetro::interval(unsigned long interval_millis) volatile
+{
+    this->interval_millis = interval_millis;
+}
+
+inline bool VolatileMetro::check() volatile
+{
+    if (millis() - this->previous_millis >= this->interval_millis)
+    {
+        if (this->interval_millis <= 0 || this->autoreset)
+        {
+            this->previous_millis = millis();
+        }
+        else
+        {
+            this->previous_millis += this->interval_millis;
+        }
+        return 1;
+    }
+    return 0;
+}
+
+inline bool VolatileMetro::checkWithoutReset() const volatile
+{
+    if (millis() - this->previous_millis >= this->interval_millis)
+    {
+        return 1;
+    }
+    return 0;
+}
+
+inline void VolatileMetro::reset() volatile
+{
+    this->previous_millis = millis();
+}
