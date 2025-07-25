@@ -87,10 +87,6 @@ public:
 
 
   /**
-   * @brief Reset R2D state machine
-   */
-  static void reset_r2d();
-  /**
    * @brief Callback for RES activation
    */
   static void res_ready_callback();
@@ -159,11 +155,6 @@ void Communicator::init() {
 
   can3.mailboxStatus();
 }
-inline void Communicator::reset_r2d() {
-  // Reset R2D state machine
-  _systemData->r2d_logics_.reset();
-  _systemData->mission_finished_ = false;
-}
 inline void Communicator::res_state_callback(const uint8_t *buf) {
   bool emg_stop1 = buf[0] & 0x01;
   bool emg_stop2 = buf[3] >> 7 & 0x01;
@@ -181,7 +172,7 @@ inline void Communicator::res_state_callback(const uint8_t *buf) {
   _systemData->failure_detection_.radio_quality_ = buf[6];
   bool signal_loss = (buf[7] >> 6) & 0x01;
   if (!signal_loss) {
-    _systemData->failure_detection_.res_signal_loss_timestamp_
+    _systemData->updatable_timestamps_.res_signal_loss_timestamp_
         .reset();  // making sure we dont receive only signal loss for the defined time interval
                    // DEBUG_PRINT("SIGNAL OKAY");
   } else {
@@ -198,7 +189,7 @@ inline void Communicator::res_ready_callback() {
 }
 
 inline void Communicator::bamocar_callback(const uint8_t *buf) {
-  _systemData->failure_detection_.inversor_alive_timestamp_.reset();
+  _systemData->updatable_timestamps_.inversor_alive_timestamp_.reset();
 
   if (buf[0] == BTB_READY) {
     if (buf[1] == false) {
@@ -212,15 +203,15 @@ inline void Communicator::bamocar_callback(const uint8_t *buf) {
     if (dc_voltage < DC_THRESHOLD) {
       // When voltage drops/is below threshold: 
       // Reset hold timer and check if voltage has been below threshold long enough
-      _systemData->failure_detection_.dc_voltage_hold_timestamp_.reset();
-      if (_systemData->failure_detection_.dc_voltage_drop_timestamp_.checkWithoutReset()) {
+      _systemData->updatable_timestamps_.dc_voltage_hold_timestamp_.reset();
+      if (_systemData->updatable_timestamps_.dc_voltage_drop_timestamp_.checkWithoutReset()) {
         _systemData->failure_detection_.ts_on_ = false;
       }
     } else {
       // When voltage is above threshold:
       // Reset drop timer and check if voltage has been above threshold long enough
-      _systemData->failure_detection_.dc_voltage_drop_timestamp_.reset();
-      if (_systemData->failure_detection_.dc_voltage_hold_timestamp_.checkWithoutReset()) {
+      _systemData->updatable_timestamps_.dc_voltage_drop_timestamp_.reset();
+      if (_systemData->updatable_timestamps_.dc_voltage_hold_timestamp_.checkWithoutReset()) {
         _systemData->failure_detection_.ts_on_ = true;
       }
     }
@@ -230,7 +221,7 @@ inline void Communicator::bamocar_callback(const uint8_t *buf) {
 inline void Communicator::pc_callback(const uint8_t *buf) {
   // DEBUG_PRINT("PC alive signal received");
   if (buf[0] == PC_ALIVE) {
-    _systemData->failure_detection_.pc_alive_timestamp_.reset();
+    _systemData->updatable_timestamps_.pc_alive_timestamp_.reset();
   } else if (buf[0] == MISSION_FINISHED) {
     _systemData->mission_finished_ = true;
   } else if (buf[0] == AS_CU_EMERGENCY_SIGNAL) {
@@ -240,7 +231,7 @@ inline void Communicator::pc_callback(const uint8_t *buf) {
 }
 
 inline void Communicator::steering_callback() {
-  _systemData->failure_detection_.steer_alive_timestamp_.reset();
+  _systemData->updatable_timestamps_.steer_alive_timestamp_.reset();
 }
 
 inline void Communicator::dash_callback(const uint8_t *buf) {

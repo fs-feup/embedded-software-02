@@ -364,7 +364,7 @@ inline bool CheckupManager::should_go_ready_from_off() const {
       !_system_data_->hardware_data_.tsms_sdc_closed_) {
     return false;
   }
-  _system_data_->r2d_logics_.enter_ready_state();
+  _system_data_->r2d_logics_.refresh_r2d_vars();
   return true;
 }
 
