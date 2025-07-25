@@ -206,11 +206,14 @@ private:
     }
   }
   void dash_ats_update(uint8_t current_master_state) {
-    DEBUG_PRINT("=== ATS Update Debug ===");
-    DEBUG_PRINT("ATS Pressed: " + String(system_data_->hardware_data_.ats_pressed_));
-    DEBUG_PRINT("Current Master State: " + String(current_master_state) +
-                " (AS_MANUAL=" + String(to_underlying(State::AS_MANUAL)) + ")");
-    DEBUG_PRINT("TSMS SDC Closed: " + String(system_data_->hardware_data_.tsms_sdc_closed_));
+    // DEBUG_PRINT("=== ATS Update Debug ===");
+    // DEBUG_PRINT("ATS Pressed: " + String(system_data_->hardware_data_.ats_pressed_));
+    // DEBUG_PRINT("Current Master State: " + String(current_master_state) +
+    //             " (AS_MANUAL=" + String(to_underlying(State::AS_MANUAL)) + ")");
+    // DEBUG_PRINT("TSMS SDC Closed: " + String(system_data_->hardware_data_.tsms_sdc_closed_));
+    // if (system_data_->hardware_data_.tsms_sdc_closed_) {
+    //   opened_again = false;
+    // }
 
     if (tsms_was_closed_ && !system_data_->hardware_data_.tsms_sdc_closed_) {
       DEBUG_PRINT(">>> TSMS opened - recording time for 100ms delay");
@@ -222,7 +225,7 @@ private:
     if (system_data_->hardware_data_.ats_pressed_ &&
         current_master_state == to_underlying(State::AS_MANUAL) &&
         system_data_->hardware_data_.tsms_sdc_closed_) {
-      DEBUG_PRINT(">>> CLOSING SDC - All conditions met");
+      // DEBUG_PRINT(">>> CLOSING SDC - All conditions met");
       digital_sender_->close_sdc();
       this->system_data_->hardware_data_.master_sdc_closed_ = true;
     } else if (!system_data_->hardware_data_.tsms_sdc_closed_ && tsms_open_time_ > 0 &&
@@ -231,15 +234,15 @@ private:
       digital_sender_->open_sdc();
       this->system_data_->hardware_data_.master_sdc_closed_ = false;
     } else {
-      DEBUG_PRINT(">>> NO SDC ACTION - Conditions not met");
+      // DEBUG_PRINT(">>> NO SDC ACTION - Conditions not met");
       if (!system_data_->hardware_data_.ats_pressed_) {
-        DEBUG_PRINT("    - ATS not pressed");
+        // DEBUG_PRINT("    - ATS not pressed");
       }
       if (current_master_state != to_underlying(State::AS_MANUAL)) {
-        DEBUG_PRINT("    - Not in AS_MANUAL state");
+        // DEBUG_PRINT("    - Not in AS_MANUAL state");
       }
     }
-    DEBUG_PRINT("========================");
+    // DEBUG_PRINT("========================");
   }
   void send_rpm() { Communicator::publish_rpm(); }
 };

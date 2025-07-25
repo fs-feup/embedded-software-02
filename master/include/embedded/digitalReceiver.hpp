@@ -7,6 +7,7 @@
 #include <model/structure.hpp>
 
 #include "debugUtils.hpp"
+#include "metro.h"
 #include "hardwareSettings.hpp"
 #include "utils.hpp"
 
@@ -15,6 +16,7 @@
  * inputs into the Master teensy
  */
 class DigitalReceiver {
+  unsigned long tsms_timer_ = 0;
 public:
   inline static uint32_t last_wheel_pulse_rl =
       0;  // Timestamp of the last pulse for left wheel RPM calculation
@@ -199,11 +201,6 @@ inline void DigitalReceiver::read_mission() {
     system_data_->mission_ = latest_mission;
     mission_change_counter_ = 0;
   }
-  system_data_->mission_ = Mission::MANUAL;
-  //print raw, mapped and current mission
-  DEBUG_PRINT_VAR(raw_value);
-  DEBUG_PRINT_VAR(mapped_value);
-  DEBUG_PRINT_VAR(to_underlying(system_data_->mission_));
 }
 
 inline void DigitalReceiver::read_asms_switch() {
