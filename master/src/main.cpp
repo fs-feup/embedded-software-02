@@ -25,7 +25,6 @@ void setup() {
   output_coordinator.init();
   DEBUG_PRINT("Starting up...");
   delay(100);
-  
 }
 
 void loop() {
@@ -46,4 +45,5 @@ void loop() {
 
   output_coordinator.process(current_master_state, current_checkup_state);
 
+  delay(LOOP_DELAY);
 } 

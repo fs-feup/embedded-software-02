@@ -27,7 +27,9 @@ private:
   uint8_t previous_mission_;
 
   unsigned long tsms_open_time_ = 0;  ///< Time when TSMS opened
-  bool tsms_was_closed_ = true;       ///< Track previous TSMS state
+  unsigned long counter = 0;
+  bool opened = false;
+  bool tsms_was_closed_ = false;       ///< Track previous TSMS state
 
 public:
   OutputCoordinator(SystemData* system_data, Communicator* communicator,
@@ -92,7 +94,6 @@ public:
     digital_sender_->turn_off_assi();
     digital_sender_->deactivate_ebs();
     digital_sender_->open_sdc();
-    // digital_sender_->close_sdc(); // close sdc only when ats pressed and in manual mode already
     this->system_data_->hardware_data_.master_sdc_closed_ = false;
     DEBUG_PRINT("Entering manual state...");
   }
@@ -103,8 +104,8 @@ public:
   void enter_off_state() {
     digital_sender_->turn_off_assi();
     digital_sender_->deactivate_ebs();
-    digital_sender_->open_sdc();
-    this->system_data_->hardware_data_.master_sdc_closed_ = false;
+    // digital_sender_->open_sdc();
+    // this->system_data_->hardware_data_.master_sdc_closed_ = false;
   }
 
   /**
@@ -215,22 +216,37 @@ private:
     //   opened_again = false;
     // }
 
-    if (tsms_was_closed_ && !system_data_->hardware_data_.tsms_sdc_closed_) {
-      DEBUG_PRINT(">>> TSMS opened - recording time for 100ms delay");
-      tsms_open_time_ = millis();
-    }
+    // if (tsms_was_closed_ && !system_data_->hardware_data_.tsms_sdc_closed_) {
+    //   DEBUG_PRINT(">>> TSMS opened - recording time for 100ms delay");
+    //   tsms_open_time_ = millis();
+    //   opened = true;
+    // }
 
-    tsms_was_closed_ = system_data_->hardware_data_.tsms_sdc_closed_;
-
+    // DEBUG_PRINT_VAR(system_data_->hardware_data_.tsms_sdc_closed_);
+    // DEBUG_PRINT_VAR(tsms_open_time_);
+    // DEBUG_PRINT_VAR(tsms_was_closed_);
+    // DEBUG_PRINT_VAR(this->counter);
+    // DEBUG_PRINT_VAR(this->opened);
+    // DEBUG_PRINT_VAR(this->system_data_->hardware_data_.master_sdc_closed_);
+    // if (tsms_open_time_ > 0) {
+    //   this->counter++;
+      
+    // }
+    
     if (system_data_->hardware_data_.ats_pressed_ &&
-        current_master_state == to_underlying(State::AS_MANUAL) &&
-        system_data_->hardware_data_.tsms_sdc_closed_) {
-      // DEBUG_PRINT(">>> CLOSING SDC - All conditions met");
-      digital_sender_->close_sdc();
+      current_master_state == to_underlying(State::AS_MANUAL) &&
+      system_data_->hardware_data_.tsms_sdc_closed_) {
+        // DEBUG_PRINT(">>> CLOSING SDC - All conditions met");
+        digital_sender_->close_sdc();
+        // tsms_was_closed_ = system_data_->hardware_data_.tsms_sdc_closed_;
+
       this->system_data_->hardware_data_.master_sdc_closed_ = true;
-    } else if (!system_data_->hardware_data_.tsms_sdc_closed_ && tsms_open_time_ > 0 &&
-               (millis() - tsms_open_time_) >= 100) {
-      DEBUG_PRINT(">>> OPENING SDC - TSMS SDC not closed (100ms delay elapsed)");
+    } else if (!system_data_->hardware_data_.tsms_sdc_closed_ 
+      // && tsms_open_time_ > 0 &&
+      //          (millis() - tsms_open_time_) >= 100
+              ) 
+               {
+      // DEBUG_PRINT(">>> OPENING SDC - TSMS SDC not closed (100ms delay elapsed)");
       digital_sender_->open_sdc();
       this->system_data_->hardware_data_.master_sdc_closed_ = false;
     } else {

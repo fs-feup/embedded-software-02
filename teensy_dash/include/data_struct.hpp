@@ -7,14 +7,14 @@
 enum class State { IDLE, INITIALIZING_DRIVING, DRIVING, INITIALIZING_AS_DRIVING, AS_DRIVING };
 
 enum class SwitchMode {
-  INVERTER_MODE_0,
-  INVERTER_MODE_CAVALETES,
-  INVERTER_MODE_LIMITER,
-  INVERTER_MODE_BRAKE_TEST,
+  INVERTER_MODE_SCRUT,
+  INVERTER_MODE_CRUISING,
+  INVERTER_MODE_AS_ACCELERATION,
   INVERTER_MODE_SKIDPAD,
   INVERTER_MODE_ENDURANCE,
-  INVERTER_MODE_MAX_ATTACK,
-  INVERTER_MODE_NULL,
+  INVERTER_MODE_AUTOCROSS,
+  INVERTER_MODE_ACCELERATION,
+  INVERTER_MODE_FAST_ACCELERATION,
   INVERTER_MODE_INIT  // for the initial previous mode
 };
 
@@ -57,7 +57,7 @@ struct SystemData {
   bool ats_pressed = false;
   bool implausibility = false;
   bool display_pressed = false;
-  SwitchMode switch_mode = SwitchMode::INVERTER_MODE_0;
+  SwitchMode switch_mode = SwitchMode::INVERTER_MODE_SCRUT;
   bool buzzer_active = false;
   unsigned long buzzer_start_time;
   unsigned long buzzer_duration_ms;

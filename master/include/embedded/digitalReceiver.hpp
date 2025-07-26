@@ -11,11 +11,40 @@
 #include "hardwareSettings.hpp"
 #include "utils.hpp"
 
+
+struct SimulateTSMSActivate {
+  private: 
+    unsigned long timer_ = 0;
+    int state = 0;
+  public:
+    bool activate_shit(bool tsms_activated) {
+      switch(state) {
+        case 0: {
+          if (millis() - timer_ > 10000) {
+            state = 1;
+            timer_ = millis();
+          }
+          return true & tsms_activated;
+          break;
+        }
+        case 1: {
+          if (millis() - timer_ > 50) {
+            timer_ = millis();
+            state = 0;
+          }
+          return false;
+        }
+      }
+    }
+
+};
+
 /**
  * @brief Class responsible for the reading of the digital
  * inputs into the Master teensy
  */
 class DigitalReceiver {
+  SimulateTSMSActivate sim;
   unsigned long tsms_timer_ = 0;
 public:
   inline static uint32_t last_wheel_pulse_rl =
@@ -167,11 +196,14 @@ inline void DigitalReceiver::read_soc() {
 
 inline void DigitalReceiver::read_bspd_sdc() {
   bool is_sdc_closed = digitalRead(SDC_TSMS_STATE_PIN);  // low when sdc/bspd open
-  debounce(is_sdc_closed, system_data_->hardware_data_.tsms_sdc_closed_, sdc_bspd_change_counter_);
+  // is_sdc_closed = this->sim.activate_shit(is_sdc_closed);
+  debounce(is_sdc_closed, system_data_->hardware_data_.tsms_sdc_closed_, this->sdc_bspd_change_counter_, 25);
+  // DEBUG_PRINT_VAR(is_sdc_closed);
+  // DEBUG_PRINT_VAR(system_data_->hardware_data_.tsms_sdc_closed_);
 }
 inline void DigitalReceiver::read_brake_sensor() {
   int hydraulic_pressure = analogRead(BRAKE_SENSOR);
-  insert_value_queue(hydraulic_pressure, brake_readings);
+  insert_value_queue(hydraulic_pressure, brake_readings, 10);
   system_data_->hardware_data_._hydraulic_line_pressure = average_queue(brake_readings);
 }
 inline void DigitalReceiver::read_pneumatic_line() {
