@@ -255,7 +255,7 @@ void CanCommHandler::write_messages() {
   }
 
   const auto& current_mode = data.switch_mode;
-  static auto previous_mode = SwitchMode::INVERTER_MODE_INIT;
+  static auto previous_mode = SwitchMode::INVERTER_MODE_SCRUT;
   if (previous_mode != current_mode) {
     write_inverter_mode(current_mode);
     previous_mode = current_mode;
@@ -337,22 +337,22 @@ void CanCommHandler::write_inverter_mode(const SwitchMode switch_mode) {
 #ifdef DEBUG_PRINTS
   auto mode_to_string = [](SwitchMode mode) -> const char* {
     switch (mode) {
-      case SwitchMode::INVERTER_MODE_0:
-        return "MODE_0";
-      case SwitchMode::INVERTER_MODE_CAVALETES:
-        return "CAVALETES";
-      case SwitchMode::INVERTER_MODE_LIMITER:
-        return "LIMITER";
-      case SwitchMode::INVERTER_MODE_BRAKE_TEST:
-        return "BRAKE_TEST";
+      case SwitchMode::INVERTER_MODE_SCRUT:
+        return "SCRUT";
+      case SwitchMode::INVERTER_MODE_CRUISING:
+        return "CRUISING";
+      case SwitchMode::INVERTER_MODE_AS_ACCELERATION:
+        return "AS_ACCELERATION";
       case SwitchMode::INVERTER_MODE_SKIDPAD:
         return "SKIDPAD";
       case SwitchMode::INVERTER_MODE_ENDURANCE:
         return "ENDURANCE";
-      case SwitchMode::INVERTER_MODE_MAX_ATTACK:
-        return "MAX_ATTACK";
-      case SwitchMode::INVERTER_MODE_NULL:
-        return "NULL";
+      case SwitchMode::INVERTER_MODE_AUTOCROSS:
+        return "AUTOCROSS";
+      case SwitchMode::INVERTER_MODE_ACCELERATION:
+        return "ACCELERATION";
+      case SwitchMode::INVERTER_MODE_FAST_ACCELERATION:
+        return "FAST_ACCELERATION";
       default:
         return "UNKNOWN";
     }

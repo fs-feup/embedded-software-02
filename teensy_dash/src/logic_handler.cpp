@@ -67,7 +67,7 @@ bool LogicHandler::plausibility(const int apps_higher,
 
 uint16_t LogicHandler::apps_to_bamocar_value(const uint16_t apps_higher,
                                              const uint16_t apps_lower) {
-  uint16_t torque_value = apps_higher;
+  uint16_t torque_value = apps_lower; // APPS Lower works better
 
   torque_value = constrain(torque_value, config::apps::MIN, config::apps::MAX);
 

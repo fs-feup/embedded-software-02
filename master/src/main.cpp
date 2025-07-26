@@ -9,11 +9,9 @@
 #include "timings.hpp"
 
 SystemData system_data;
-SystemData
-    system_data_copy;  // Copy of the model for Communicator (where interrupt updates are stored)
-Communicator communicator = Communicator(&system_data_copy);  // CAN
+Communicator communicator = Communicator(&system_data);  // CAN
 DigitalReceiver digital_receiver =
-    DigitalReceiver(&system_data_copy);
+    DigitalReceiver(&system_data);
 DigitalSender digital_sender = DigitalSender();
 OutputCoordinator output_coordinator =
     OutputCoordinator(&system_data, &communicator, &digital_sender);
@@ -22,12 +20,11 @@ TeensyTimerTool::PeriodicTimer watchdog_timer_;
 bool is_first_loop = true;
 void setup() {
   Serial.begin(9600);
-  Communicator::_systemData = &system_data_copy;
+  Communicator::_systemData = &system_data;
   communicator.init();
   output_coordinator.init();
   DEBUG_PRINT("Starting up...");
   delay(100);
-  
 }
 
 void loop() {
@@ -38,8 +35,7 @@ void loop() {
   digitalWrite(WD_SDC_CLOSE, HIGH);
   digital_receiver.digital_reads();
   noInterrupts();
-  system_data_copy.hardware_data_.master_sdc_closed_ = system_data.hardware_data_.master_sdc_closed_;
-  system_data = system_data_copy;
+  system_data.updated_timestamps_ = system_data.updatable_timestamps_;
   interrupts();
 
   as_state.calculate_state();
@@ -49,4 +45,5 @@ void loop() {
 
   output_coordinator.process(current_master_state, current_checkup_state);
 
+  delay(LOOP_DELAY);
 } 

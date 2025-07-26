@@ -162,11 +162,11 @@ inline void CheckupManager::reset_checkup_state() {
 }
 
 inline bool CheckupManager::should_stay_manual_driving() const {
-  // if (true//_system_data_->mission_ != Mission::MANUAL ||
-  //     //_system_data_->hardware_data_.pneumatic_line_pressure_ != 0 ||
-  //     /* _system_data_->hardware_data_.asms_on_ */) {
-  //   return false;
-  // }
+  if (_system_data_->mission_ != Mission::MANUAL ||
+      _system_data_->hardware_data_.pneumatic_line_pressure_ != 0 ||
+       _system_data_->hardware_data_.asms_on_) {
+    return false;
+  }
 
   return true;
 }
@@ -302,7 +302,7 @@ inline void CheckupManager::handle_ebs_check() {
       // Step 10: Disable EBS actuator 1
       DEBUG_PRINT("Disabling EBS actuator 1");
       DigitalSender::disable_ebs_actuator_REAR();
-      pressure_test_phase_ = EbsPressureTestPhase::CHANGE_ACTUATORS;
+      pressure_test_phase_ = EbsPressureTestPhase::CHECK_ACTUATOR_2;
       break;
 
     case EbsPressureTestPhase::CHECK_ACTUATOR_2:
@@ -319,7 +319,7 @@ inline void CheckupManager::handle_ebs_check() {
       DEBUG_PRINT("Re-enabling EBS actuator 1 and disabling actuator 2");
       DigitalSender::enable_ebs_actuator_REAR();
       DigitalSender::disable_ebs_actuator_FRONT();
-      pressure_test_phase_ = EbsPressureTestPhase::ENABLE_ACTUATOR_2;
+      pressure_test_phase_ = EbsPressureTestPhase::CHECK_ACTUATOR_1;
       break;
 
     case EbsPressureTestPhase::CHECK_ACTUATOR_1:
@@ -336,7 +336,7 @@ inline void CheckupManager::handle_ebs_check() {
       // Step 14: Enable EBS actuator 2 again
       DEBUG_PRINT("Re-enabling EBS actuator 2");
       DigitalSender::enable_ebs_actuator_FRONT();
-      pressure_test_phase_ = EbsPressureTestPhase::COMPLETE;
+      pressure_test_phase_ = EbsPressureTestPhase::CHECK_BOTH_ACTUATORS;
       break;
 
     case EbsPressureTestPhase::CHECK_BOTH_ACTUATORS:
@@ -364,7 +364,7 @@ inline bool CheckupManager::should_go_ready_from_off() const {
       !_system_data_->hardware_data_.tsms_sdc_closed_) {
     return false;
   }
-  _system_data_->r2d_logics_.enter_ready_state();
+  _system_data_->r2d_logics_.refresh_r2d_vars();
   return true;
 }
 
@@ -400,7 +400,7 @@ bool CheckupManager::should_enter_emergency_in_ready_state() const {
   DEBUG_PRINT_VAR(!_system_data_->hardware_data_.pneumatic_line_pressure_);
   return _system_data_->failure_detection_.emergency_signal_ ||
         //  !_system_data_->hardware_data_.pneumatic_line_pressure_ ||
-         component_timed_out ||
+        //  component_timed_out ||
          !_system_data_->hardware_data_.asms_on_ || !_system_data_->failure_detection_.ts_on_ ||
         //  failed_to_build_pressure ||
          !_system_data_->hardware_data_.tsms_sdc_closed_;
