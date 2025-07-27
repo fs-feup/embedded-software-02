@@ -195,12 +195,92 @@ $(document).ready(function(){initNavTree('d1/d73/metro_8h_source.html','../../')
 <div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>    this-&gt;previous_millis = millis();</div>
 <div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>}</div>
 </div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span> </div>
+<div class="foldopen" id="foldopen00135" data-start="{" data-end="};">
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno"><a class="line" href="../../d6/d64/class_volatile_metro.html">  135</a></span><span class="keyword">class </span><a class="code hl_class" href="../../d6/d64/class_volatile_metro.html">VolatileMetro</a></div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>{</div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>    <a class="code hl_class" href="../../d6/d64/class_volatile_metro.html">VolatileMetro</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> interval_millis, uint8_t autoreset = 0);</div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span> </div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="../../d6/d64/class_volatile_metro.html#ad788f129e076c881f011bcc852a90a7d">interval</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> interval_millis) <span class="keyword">volatile</span>;</div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span> </div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="../../d6/d64/class_volatile_metro.html#a5ae9ecc169281906c1e5fbdc310ee8c9">check</a>() <span class="keyword">volatile</span>;</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span> </div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="../../d6/d64/class_volatile_metro.html#aa345ca0f2c0e30874a1701a2a8ca9e53">checkWithoutReset</a>() <span class="keyword">const volatile</span>;</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span> </div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="../../d6/d64/class_volatile_metro.html#a44ed714549015ecf17c88f6dcba10dbe">reset</a>() <span class="keyword">volatile</span>;</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span> </div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>    <span class="keyword">volatile</span> uint8_t autoreset;             </div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>    <span class="keyword">volatile</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> previous_millis; </div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>    <span class="keyword">volatile</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> interval_millis; </div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>};</div>
+</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span> </div>
+<div class="foldopen" id="foldopen00174" data-start="{" data-end="}">
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno"><a class="line" href="../../d6/d64/class_volatile_metro.html#abcfb073f1ab81024c862137b037cf933">  174</a></span><span class="keyword">inline</span> <a class="code hl_function" href="../../d6/d64/class_volatile_metro.html#abcfb073f1ab81024c862137b037cf933">VolatileMetro::VolatileMetro</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> interval_millis, uint8_t autoreset)</div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>{</div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>    this-&gt;autoreset = autoreset;</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>    <a class="code hl_function" href="../../d6/d64/class_volatile_metro.html#ad788f129e076c881f011bcc852a90a7d">interval</a>(interval_millis);</div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>    <a class="code hl_function" href="../../d6/d64/class_volatile_metro.html#a44ed714549015ecf17c88f6dcba10dbe">reset</a>();</div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>}</div>
+</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span> </div>
+<div class="foldopen" id="foldopen00181" data-start="{" data-end="}">
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno"><a class="line" href="../../d6/d64/class_volatile_metro.html#ad788f129e076c881f011bcc852a90a7d">  181</a></span><span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="../../d6/d64/class_volatile_metro.html#ad788f129e076c881f011bcc852a90a7d">VolatileMetro::interval</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> interval_millis)<span class="keyword"> volatile</span></div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span><span class="keyword"></span>{</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>    this-&gt;interval_millis = interval_millis;</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>}</div>
+</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span> </div>
+<div class="foldopen" id="foldopen00186" data-start="{" data-end="}">
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno"><a class="line" href="../../d6/d64/class_volatile_metro.html#a5ae9ecc169281906c1e5fbdc310ee8c9">  186</a></span><span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="../../d6/d64/class_volatile_metro.html#a5ae9ecc169281906c1e5fbdc310ee8c9">VolatileMetro::check</a>()<span class="keyword"> volatile</span></div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span><span class="keyword"></span>{</div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>    <span class="keywordflow">if</span> (millis() - this-&gt;previous_millis &gt;= this-&gt;interval_millis)</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>    {</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>        <span class="keywordflow">if</span> (this-&gt;interval_millis &lt;= 0 || this-&gt;autoreset)</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>        {</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>            this-&gt;previous_millis = millis();</div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>        }</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>        <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>        {</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>            this-&gt;previous_millis += this-&gt;interval_millis;</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>        }</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>        <span class="keywordflow">return</span> 1;</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>    }</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>    <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>}</div>
+</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span> </div>
+<div class="foldopen" id="foldopen00203" data-start="{" data-end="}">
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno"><a class="line" href="../../d6/d64/class_volatile_metro.html#aa345ca0f2c0e30874a1701a2a8ca9e53">  203</a></span><span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="../../d6/d64/class_volatile_metro.html#aa345ca0f2c0e30874a1701a2a8ca9e53">VolatileMetro::checkWithoutReset</a>()<span class="keyword"> const volatile</span></div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span><span class="keyword"></span>{</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>    <span class="keywordflow">if</span> (millis() - this-&gt;previous_millis &gt;= this-&gt;interval_millis)</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>    {</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>        <span class="keywordflow">return</span> 1;</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>    }</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>    <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>}</div>
+</div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span> </div>
+<div class="foldopen" id="foldopen00212" data-start="{" data-end="}">
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno"><a class="line" href="../../d6/d64/class_volatile_metro.html#a44ed714549015ecf17c88f6dcba10dbe">  212</a></span><span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="../../d6/d64/class_volatile_metro.html#a44ed714549015ecf17c88f6dcba10dbe">VolatileMetro::reset</a>()<span class="keyword"> volatile</span></div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span><span class="keyword"></span>{</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>    this-&gt;previous_millis = millis();</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>}</div>
+</div>
 <div class="ttc" id="aclass_metro_html"><div class="ttname"><a href="../../db/d60/class_metro.html">Metro</a></div><div class="ttdoc">Our own implementation of Metro class.</div><div class="ttdef"><b>Definition</b> <a href="../../d1/d73/metro_8h_source.html#l00012">metro.h:13</a></div></div>
 <div class="ttc" id="aclass_metro_html_a40a8e2c535e7558224f4336628797dbd"><div class="ttname"><a href="../../db/d60/class_metro.html#a40a8e2c535e7558224f4336628797dbd">Metro::reset</a></div><div class="ttdeci">void reset()</div><div class="ttdoc">Resets the timer to the current time.</div><div class="ttdef"><b>Definition</b> <a href="../../d1/d73/metro_8h_source.html#l00124">metro.h:124</a></div></div>
 <div class="ttc" id="aclass_metro_html_a95ed7cb80b7f56a80790c34fcea93724"><div class="ttname"><a href="../../db/d60/class_metro.html#a95ed7cb80b7f56a80790c34fcea93724">Metro::checkWithoutReset</a></div><div class="ttdeci">bool checkWithoutReset() const</div><div class="ttdoc">Checks if the interval has passed without resetting the timer.</div><div class="ttdef"><b>Definition</b> <a href="../../d1/d73/metro_8h_source.html#l00115">metro.h:115</a></div></div>
 <div class="ttc" id="aclass_metro_html_ab8afbe8e9358b5826823c8d79373402f"><div class="ttname"><a href="../../db/d60/class_metro.html#ab8afbe8e9358b5826823c8d79373402f">Metro::Metro</a></div><div class="ttdeci">Metro(unsigned long interval_millis, uint8_t autoreset=0)</div><div class="ttdoc">Constructor to initialize the timer with a given interval and autoreset behavior.</div><div class="ttdef"><b>Definition</b> <a href="../../d1/d73/metro_8h_source.html#l00070">metro.h:70</a></div></div>
 <div class="ttc" id="aclass_metro_html_aca78646b9ae992c81ffc395c1a1da997"><div class="ttname"><a href="../../db/d60/class_metro.html#aca78646b9ae992c81ffc395c1a1da997">Metro::check</a></div><div class="ttdeci">bool check()</div><div class="ttdoc">Checks if the interval has passed and resets the timer if true.</div><div class="ttdef"><b>Definition</b> <a href="../../d1/d73/metro_8h_source.html#l00090">metro.h:90</a></div></div>
 <div class="ttc" id="aclass_metro_html_af8a0e107255e5e4ab7c5ed7e9a2b2aec"><div class="ttname"><a href="../../db/d60/class_metro.html#af8a0e107255e5e4ab7c5ed7e9a2b2aec">Metro::interval</a></div><div class="ttdeci">void interval(unsigned long interval_millis)</div><div class="ttdoc">Sets a new interval for the timer.</div><div class="ttdef"><b>Definition</b> <a href="../../d1/d73/metro_8h_source.html#l00077">metro.h:77</a></div></div>
+<div class="ttc" id="aclass_volatile_metro_html"><div class="ttname"><a href="../../d6/d64/class_volatile_metro.html">VolatileMetro</a></div><div class="ttdoc">Volatile version of Metro class for interrupt-safe operations.</div><div class="ttdef"><b>Definition</b> <a href="../../d1/d73/metro_8h_source.html#l00135">metro.h:136</a></div></div>
+<div class="ttc" id="aclass_volatile_metro_html_a44ed714549015ecf17c88f6dcba10dbe"><div class="ttname"><a href="../../d6/d64/class_volatile_metro.html#a44ed714549015ecf17c88f6dcba10dbe">VolatileMetro::reset</a></div><div class="ttdeci">void reset() volatile</div><div class="ttdoc">Resets the timer to the current time.</div><div class="ttdef"><b>Definition</b> <a href="../../d1/d73/metro_8h_source.html#l00212">metro.h:212</a></div></div>
+<div class="ttc" id="aclass_volatile_metro_html_a5ae9ecc169281906c1e5fbdc310ee8c9"><div class="ttname"><a href="../../d6/d64/class_volatile_metro.html#a5ae9ecc169281906c1e5fbdc310ee8c9">VolatileMetro::check</a></div><div class="ttdeci">bool check() volatile</div><div class="ttdoc">Checks if the interval has passed and resets the timer if true.</div><div class="ttdef"><b>Definition</b> <a href="../../d1/d73/metro_8h_source.html#l00186">metro.h:186</a></div></div>
+<div class="ttc" id="aclass_volatile_metro_html_aa345ca0f2c0e30874a1701a2a8ca9e53"><div class="ttname"><a href="../../d6/d64/class_volatile_metro.html#aa345ca0f2c0e30874a1701a2a8ca9e53">VolatileMetro::checkWithoutReset</a></div><div class="ttdeci">bool checkWithoutReset() const volatile</div><div class="ttdoc">Checks if the interval has passed without resetting the timer.</div><div class="ttdef"><b>Definition</b> <a href="../../d1/d73/metro_8h_source.html#l00203">metro.h:203</a></div></div>
+<div class="ttc" id="aclass_volatile_metro_html_abcfb073f1ab81024c862137b037cf933"><div class="ttname"><a href="../../d6/d64/class_volatile_metro.html#abcfb073f1ab81024c862137b037cf933">VolatileMetro::VolatileMetro</a></div><div class="ttdeci">VolatileMetro(unsigned long interval_millis, uint8_t autoreset=0)</div><div class="ttdoc">Constructor to initialize the timer with a given interval and autoreset behavior.</div><div class="ttdef"><b>Definition</b> <a href="../../d1/d73/metro_8h_source.html#l00174">metro.h:174</a></div></div>
+<div class="ttc" id="aclass_volatile_metro_html_ad788f129e076c881f011bcc852a90a7d"><div class="ttname"><a href="../../d6/d64/class_volatile_metro.html#ad788f129e076c881f011bcc852a90a7d">VolatileMetro::interval</a></div><div class="ttdeci">void interval(unsigned long interval_millis) volatile</div><div class="ttdoc">Sets a new interval for the timer.</div><div class="ttdef"><b>Definition</b> <a href="../../d1/d73/metro_8h_source.html#l00181">metro.h:181</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

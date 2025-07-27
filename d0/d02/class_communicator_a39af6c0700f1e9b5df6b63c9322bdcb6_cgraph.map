@@ -12,17 +12,17 @@
 <area shape="poly" id="edge9_Node000001_Node000009" title=" " alt="" coords="118,196,198,235,214,242,212,247,196,240,116,201"/>
 <area shape="rect" id="Node000012" href="$d0/d02/class_communicator.html#a04694b4fb21ef693a32ec31a13cd3127" title="Callback for steering actuator information." alt="" coords="208,185,366,226"/>
 <area shape="poly" id="edge13_Node000001_Node000012" title=" " alt="" coords="149,185,193,190,192,196,149,190"/>
-<area shape="rect" id="Node000003" href="$db/d60/class_metro.html#a95ed7cb80b7f56a80790c34fcea93724" title="Checks if the interval has passed without resetting the timer." alt="" coords="425,13,598,39"/>
+<area shape="rect" id="Node000003" href="$d6/d64/class_volatile_metro.html#aa345ca0f2c0e30874a1701a2a8ca9e53" title="Checks if the interval has passed without resetting the timer." alt="" coords="425,5,607,46"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="368,23,409,23,409,28,368,28"/>
-<area shape="rect" id="Node000004" href="$db/d60/class_metro.html#a40a8e2c535e7558224f4336628797dbd" title="Resets the timer to the current time." alt="" coords="467,165,556,191"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="354,44,378,57,441,104,490,151,486,155,438,108,376,61,351,49"/>
-<area shape="poly" id="edge6_Node000006_Node000004" title=" " alt="" coords="378,157,452,167,451,173,377,163"/>
-<area shape="rect" id="Node000008" href="$d0/d02/class_communicator.html#a55c912e8973aa10866ae3fd9f2df8de7" title="Sends a message to the CAN bus." alt="" coords="442,316,581,357"/>
-<area shape="poly" id="edge8_Node000007_Node000008" title=" " alt="" coords="371,334,426,334,426,339,371,339"/>
-<area shape="poly" id="edge12_Node000009_Node000004" title=" " alt="" coords="345,248,376,235,467,195,469,200,378,240,347,252"/>
-<area shape="rect" id="Node000010" href="$d8/deb/struct_r2_d_logics.html#ac12d9b344b39a8a5da25dcc6cdfb3a3b" title=" " alt="" coords="443,251,580,291"/>
-<area shape="poly" id="edge10_Node000009_Node000010" title=" " alt="" coords="370,268,427,268,427,274,370,274"/>
-<area shape="rect" id="Node000011" href="$db/d60/class_metro.html#aca78646b9ae992c81ffc395c1a1da997" title="Checks if the interval has passed and resets the timer if true." alt="" coords="646,258,742,284"/>
-<area shape="poly" id="edge11_Node000010_Node000011" title=" " alt="" coords="581,268,631,268,631,274,581,274"/>
-<area shape="poly" id="edge14_Node000012_Node000004" title=" " alt="" coords="366,193,451,182,452,188,366,199"/>
+<area shape="rect" id="Node000004" href="$d6/d64/class_volatile_metro.html#a44ed714549015ecf17c88f6dcba10dbe" title="Resets the timer to the current time." alt="" coords="450,165,582,191"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="353,44,378,57,443,104,494,151,490,155,440,108,376,61,351,49"/>
+<area shape="poly" id="edge6_Node000006_Node000004" title=" " alt="" coords="377,157,435,165,435,170,377,162"/>
+<area shape="rect" id="Node000008" href="$d0/d02/class_communicator.html#a55c912e8973aa10866ae3fd9f2df8de7" title="Sends a message to the CAN bus." alt="" coords="447,316,586,357"/>
+<area shape="poly" id="edge8_Node000007_Node000008" title=" " alt="" coords="371,334,431,334,431,339,371,339"/>
+<area shape="poly" id="edge12_Node000009_Node000004" title=" " alt="" coords="344,248,376,235,471,195,473,200,378,240,346,253"/>
+<area shape="rect" id="Node000010" href="$d8/deb/struct_r2_d_logics.html#ac12d9b344b39a8a5da25dcc6cdfb3a3b" title="Processes the go signal." alt="" coords="448,251,585,291"/>
+<area shape="poly" id="edge10_Node000009_Node000010" title=" " alt="" coords="370,268,432,268,432,274,370,274"/>
+<area shape="rect" id="Node000011" href="$db/d60/class_metro.html#aca78646b9ae992c81ffc395c1a1da997" title="Checks if the interval has passed and resets the timer if true." alt="" coords="655,258,751,284"/>
+<area shape="poly" id="edge11_Node000010_Node000011" title=" " alt="" coords="585,268,640,268,640,274,585,274"/>
+<area shape="poly" id="edge14_Node000012_Node000004" title=" " alt="" coords="365,193,434,185,435,190,366,199"/>
 </map>

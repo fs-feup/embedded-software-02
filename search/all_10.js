@@ -1,7 +1,7 @@
 var searchData=
 [
   ['parse_5fmessage_0',['parse_message',['../d0/d02/class_communicator.html#a39af6c0700f1e9b5df6b63c9322bdcb6',1,'Communicator']]],
-  ['pc_5falive_5ftimestamp_5f_1',['pc_alive_timestamp_',['../d3/df6/struct_failure_detection.html#a020befcc7c90bd54e806c596ed29ffe2',1,'FailureDetection']]],
+  ['pc_5falive_5ftimestamp_5f_1',['pc_alive_timestamp_',['../da/d6f/struct_non_unitary_failure_detection.html#a2f3917a853eb355da4908c6e43dbf4b2',1,'NonUnitaryFailureDetection']]],
   ['pc_5fcallback_2',['pc_callback',['../d0/d02/class_communicator.html#a6e76ba59f478d3957c757b4cd211935b',1,'Communicator']]],
   ['pc_5fdead_5f_3',['pc_dead_',['../d3/df6/struct_failure_detection.html#adf7f3beb8dcee760aeeb0adf4f6aedb0',1,'FailureDetection']]],
   ['pcb_4',['Master PCB',['../d7/de5/md_master_2_r_e_a_d_m_e.html',1,'']]],

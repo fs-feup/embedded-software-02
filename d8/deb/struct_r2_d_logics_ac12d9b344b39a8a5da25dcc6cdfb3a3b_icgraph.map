@@ -1,5 +1,5 @@
 <map id="R2DLogics::process_go_signal" name="R2DLogics::process_go_signal">
-<area shape="rect" id="Node000001" title=" " alt="" coords="689,154,826,195"/>
+<area shape="rect" id="Node000001" title="Processes the go signal." alt="" coords="689,154,826,195"/>
 <area shape="rect" id="Node000002" href="$d0/d02/class_communicator.html#a42cf4c62a4ff6b22f9c0151f60ce53b2" title="Callback RES default callback." alt="" coords="475,154,641,195"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="673,177,641,177,641,172,673,172"/>
 <area shape="rect" id="Node000003" href="$d0/d02/class_communicator.html#a39af6c0700f1e9b5df6b63c9322bdcb6" title="Parses the message received from the CAN bus." alt="" coords="284,89,427,129"/>

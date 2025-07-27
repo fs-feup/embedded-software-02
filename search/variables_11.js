@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['validoutputpins_0',['validOutputPins',['../da/db9/class_digital_sender.html#a0c4ea4e071a26eb7692a45dd7011bacc',1,'DigitalSender']]]
+  ['updatable_5ftimestamps_5f_0',['updatable_timestamps_',['../d0/d9d/struct_system_data.html#aa542af0e2daf43875c1f8c605b7651fe',1,'SystemData']]],
+  ['updated_5ftimestamps_5f_1',['updated_timestamps_',['../d0/d9d/struct_system_data.html#ad3a0e561a17e164712cbb38a1abb0dd0',1,'SystemData']]]
 ];

@@ -12,8 +12,7 @@ var searchData=
   ['soc_5fpercent_5fmax_9',['SOC_PERCENT_MAX',['../d4/d7d/hardware_settings_8hpp.html#add8fc9e55c5ad9415b794ddfd48d1cb9',1,'hardwareSettings.hpp']]],
   ['state_5f_10',['state_',['../d2/d46/class_a_s_state.html#adff8ebf0b1622d1921851576d43983ec',1,'ASState']]],
   ['state_5fpublish_5finterval_11',['STATE_PUBLISH_INTERVAL',['../d2/d0c/timings_8hpp.html#ae094a8dbf72853ca00a1b07a1a530374',1,'timings.hpp']]],
-  ['steer_5falive_5ftimestamp_5f_12',['steer_alive_timestamp_',['../d3/df6/struct_failure_detection.html#a65ab5d5e22c5dd4aa483a482689a2060',1,'FailureDetection']]],
+  ['steer_5falive_5ftimestamp_5f_12',['steer_alive_timestamp_',['../da/d6f/struct_non_unitary_failure_detection.html#a04a564e1032d28fe167a8392b2ea610e',1,'NonUnitaryFailureDetection']]],
   ['steer_5fdead_5f_13',['steer_dead_',['../d3/df6/struct_failure_detection.html#a41e33003ca15346526311b42956bc289',1,'FailureDetection']]],
-  ['system_5fdata_14',['system_data',['../df/d0a/main_8cpp.html#a4899420cff5a1ca01c0906f2f0911a76',1,'system_data:&#160;main.cpp'],['../dd/d46/test__digital_receiver_8cpp.html#a4899420cff5a1ca01c0906f2f0911a76',1,'system_data:&#160;test_digitalReceiver.cpp']]],
-  ['system_5fdata_5fcopy_15',['system_data_copy',['../df/d0a/main_8cpp.html#ac9bc3feeef3f6a6ad9ccc4f83cb464cb',1,'main.cpp']]]
+  ['system_5fdata_14',['system_data',['../df/d0a/main_8cpp.html#a4899420cff5a1ca01c0906f2f0911a76',1,'system_data:&#160;main.cpp'],['../dd/d46/test__digital_receiver_8cpp.html#a4899420cff5a1ca01c0906f2f0911a76',1,'system_data:&#160;test_digitalReceiver.cpp']]]
 ];

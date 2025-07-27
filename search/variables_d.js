@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['pc_5falive_5ftimestamp_5f_0',['pc_alive_timestamp_',['../d3/df6/struct_failure_detection.html#a020befcc7c90bd54e806c596ed29ffe2',1,'FailureDetection']]],
+  ['pc_5falive_5ftimestamp_5f_0',['pc_alive_timestamp_',['../da/d6f/struct_non_unitary_failure_detection.html#a2f3917a853eb355da4908c6e43dbf4b2',1,'NonUnitaryFailureDetection']]],
   ['pc_5fdead_5f_1',['pc_dead_',['../d3/df6/struct_failure_detection.html#adf7f3beb8dcee760aeeb0adf4f6aedb0',1,'FailureDetection']]],
   ['pneumatic_5fline_5fpressure_5f_2',['pneumatic_line_pressure_',['../df/d95/struct_hardware_data.html#aa26214d7a65d4e5724e1ee6d7a64bacb',1,'HardwareData']]],
   ['pneumatic_5fline_5fpressure_5f1_5f_3',['pneumatic_line_pressure_1_',['../df/d95/struct_hardware_data.html#af757a778e216416d8212dd2cc7222688',1,'HardwareData']]],

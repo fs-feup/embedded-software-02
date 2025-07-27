@@ -1,20 +1,21 @@
 <map id="test_shouldStayOff_whenInitialCheckupFails_false" name="test_shouldStayOff_whenInitialCheckupFails_false">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,119,210,160"/>
-<area shape="rect" id="Node000002" href="$d7/d1f/class_checkup_manager.html#abaf565f9d7f19293df1fc5a6d2280264" title="Performs an off checkup." alt="" coords="258,119,424,160"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="210,137,242,137,242,142,210,142"/>
-<area shape="rect" id="Node000003" href="$d7/d1f/class_checkup_manager.html#af42e7465ef8ea5047225257ac11c0870" title="Performs an initial checkup." alt="" coords="472,119,630,160"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="424,137,456,137,456,142,424,142"/>
-<area shape="rect" id="Node000004" href="$db/d60/class_metro.html#a95ed7cb80b7f56a80790c34fcea93724" title="Checks if the interval has passed without resetting the timer." alt="" coords="910,72,1083,98"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="565,117,610,66,642,41,677,21,727,6,769,3,811,10,862,21,916,39,962,62,959,67,914,44,861,26,810,15,769,9,728,11,679,26,645,45,614,70,569,121"/>
-<area shape="rect" id="Node000005" href="$da/db9/class_digital_sender.html#aeba7623043aeabfc9c4340cf5185fbca" title="Closes the SDC in Master and SDC Logic." alt="" coords="688,36,852,62"/>
-<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="587,117,629,94,677,72,698,65,700,70,679,77,632,98,589,121"/>
-<area shape="rect" id="Node000006" href="$da/db9/class_digital_sender.html#a306472b53ae1cf7beac1a77cdf790f1a" title="Closes the watchdog signal for SDC." alt="" coords="702,86,838,127"/>
-<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="630,125,686,116,687,122,631,130"/>
-<area shape="rect" id="Node000007" href="$d3/df6/struct_failure_detection.html#a2dce218ec78f523302e547071e600d87" title=" " alt="" coords="678,151,862,192"/>
-<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="631,149,663,153,663,159,630,154"/>
-<area shape="rect" id="Node000008" href="$db/d60/class_metro.html#a40a8e2c535e7558224f4336628797dbd" title="Resets the timer to the current time." alt="" coords="725,216,815,242"/>
-<area shape="poly" id="edge8_Node000003_Node000008" title=" " alt="" coords="590,158,679,201,711,212,710,217,677,206,587,163"/>
-<area shape="rect" id="Node000009" href="$da/db9/class_digital_sender.html#ad6c5006f6fe3807e86ab3ed992d8669e" title="Toggles the watchdog signal." alt="" coords="700,266,840,307"/>
-<area shape="poly" id="edge9_Node000003_Node000009" title=" " alt="" coords="572,159,619,205,648,230,680,252,688,257,685,261,677,257,645,234,615,209,569,163"/>
-<area shape="poly" id="edge7_Node000007_Node000004" title=" " alt="" coords="828,148,861,136,947,102,949,107,863,141,830,153"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,138,210,179"/>
+<area shape="rect" id="Node000002" href="$d7/d1f/class_checkup_manager.html#abaf565f9d7f19293df1fc5a6d2280264" title="Performs an off checkup." alt="" coords="258,138,424,179"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="210,156,242,156,242,161,210,161"/>
+<area shape="rect" id="Node000003" href="$d7/d1f/class_checkup_manager.html#af42e7465ef8ea5047225257ac11c0870" title="Performs an initial checkup." alt="" coords="472,138,630,179"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="424,156,456,156,456,161,424,161"/>
+<area shape="rect" id="Node000004" href="$db/d60/class_metro.html#a95ed7cb80b7f56a80790c34fcea93724" title="Checks if the interval has passed without resetting the timer." alt="" coords="683,5,857,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="567,135,613,87,644,62,677,40,688,35,690,39,680,44,647,66,617,91,571,139"/>
+<area shape="rect" id="Node000005" href="$da/db9/class_digital_sender.html#aeba7623043aeabfc9c4340cf5185fbca" title="Closes the SDC in Master and SDC Logic." alt="" coords="688,55,852,80"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="587,135,629,112,677,90,698,83,700,88,679,95,632,117,589,140"/>
+<area shape="rect" id="Node000006" href="$da/db9/class_digital_sender.html#a306472b53ae1cf7beac1a77cdf790f1a" title="Closes the watchdog signal for SDC." alt="" coords="702,105,838,145"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="630,143,686,135,687,140,631,149"/>
+<area shape="rect" id="Node000007" href="$d3/df6/struct_failure_detection.html#a2dce218ec78f523302e547071e600d87" title=" " alt="" coords="678,170,862,211"/>
+<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="631,167,663,172,663,177,630,172"/>
+<area shape="rect" id="Node000009" href="$db/d60/class_metro.html#a40a8e2c535e7558224f4336628797dbd" title="Resets the timer to the current time." alt="" coords="725,235,815,260"/>
+<area shape="poly" id="edge8_Node000003_Node000009" title=" " alt="" coords="590,176,679,220,711,230,710,236,677,225,587,181"/>
+<area shape="rect" id="Node000010" href="$da/db9/class_digital_sender.html#ad6c5006f6fe3807e86ab3ed992d8669e" title="Toggles the watchdog signal." alt="" coords="700,285,840,325"/>
+<area shape="poly" id="edge9_Node000003_Node000010" title=" " alt="" coords="572,177,619,224,648,249,680,271,688,275,685,280,677,275,645,253,615,228,569,181"/>
+<area shape="rect" id="Node000008" href="$d6/d64/class_volatile_metro.html#aa345ca0f2c0e30874a1701a2a8ca9e53" title="Checks if the interval has passed without resetting the timer." alt="" coords="910,170,1092,211"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="862,188,894,188,894,193,862,193"/>
 </map>

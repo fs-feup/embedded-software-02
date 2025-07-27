@@ -1,0 +1,5 @@
+<map id="VolatileMetro::interval" name="VolatileMetro::interval">
+<area shape="rect" id="Node000001" title="Sets a new interval for the timer." alt="" coords="233,5,378,31"/>
+<area shape="rect" id="Node000002" href="$d6/d64/class_volatile_metro.html#abcfb073f1ab81024c862137b037cf933" title="Constructor to initialize the timer with a given interval and autoreset behavior." alt="" coords="5,5,185,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="217,21,185,21,185,16,217,16"/>
+</map>

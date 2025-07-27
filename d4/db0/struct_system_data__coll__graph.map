@@ -1,12 +1,16 @@
 <map id="SystemData" name="SystemData">
-<area shape="rect" id="Node000001" title="The whole model of the system: holds all the data necessary." alt="" coords="213,707,340,812"/>
-<area shape="rect" id="Node000002" href="$d8/deb/struct_r2_d_logics.html" title=" " alt="" coords="5,441,161,566"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="118,565,154,623,196,681,207,693,203,696,192,684,149,626,114,568"/>
-<area shape="rect" id="Node000003" href="$db/d60/class_metro.html" title="Our own implementation of Metro class." alt="" coords="107,5,251,151"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="116,151,103,176,85,239,76,304,74,368,77,424,71,424,69,368,71,304,80,238,98,174,111,149"/>
-<area shape="rect" id="Node000004" href="$d3/df6/struct_failure_detection.html" title=" " alt="" coords="186,394,367,614"/>
-<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="232,149,243,174,258,224,268,276,279,376,274,377,263,277,253,225,238,176,227,151"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="279,613,279,690,274,690,274,613"/>
-<area shape="rect" id="Node000005" href="$df/d95/struct_hardware_data.html" title=" " alt="" coords="392,364,580,644"/>
-<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="427,645,397,685,356,719,352,715,393,681,423,642"/>
+<area shape="rect" id="Node000001" title="The whole model of the system: holds all the data necessary." alt="" coords="330,1005,457,1090"/>
+<area shape="rect" id="Node000002" href="$da/d6f/struct_non_unitary_failure_detection.html" title=" " alt="" coords="30,404,202,469"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="101,470,60,559,38,618,20,682,10,750,10,818,15,850,24,882,37,912,55,940,71,955,95,969,162,994,239,1015,314,1030,313,1036,238,1020,160,1000,93,974,68,959,51,944,32,915,19,884,10,851,5,818,5,750,15,681,33,616,55,557,96,468"/>
+<area shape="rect" id="Node000006" href="$d3/df6/struct_failure_detection.html" title=" " alt="" coords="207,652,388,892"/>
+<area shape="poly" id="edge6_Node000006_Node000002" title=" " alt="" coords="135,468,227,636,222,638,131,470"/>
+<area shape="rect" id="Node000003" href="$d6/d64/class_volatile_metro.html" title="Volatile version of Metro class for interrupt&#45;safe operations." alt="" coords="44,5,188,151"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="119,150,119,387,113,387,113,150"/>
+<area shape="rect" id="Node000004" href="$d8/deb/struct_r2_d_logics.html" title=" " alt="" coords="413,719,569,825"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="485,825,468,901,440,982,435,991,430,989,435,980,463,899,480,824"/>
+<area shape="rect" id="Node000005" href="$db/d60/class_metro.html" title="Our own implementation of Metro class." alt="" coords="419,364,563,509"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="493,509,493,703,488,703,488,509"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="301,891,310,937,327,980,333,990,328,993,322,982,305,938,296,892"/>
+<area shape="rect" id="Node000007" href="$df/d95/struct_hardware_data.html" title=" " alt="" coords="593,602,781,942"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="595,931,583,944,558,966,531,986,474,1018,471,1013,528,982,555,962,579,940,591,927"/>
 </map>

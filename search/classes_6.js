@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['outputcoordinator_0',['OutputCoordinator',['../d8/d3c/class_output_coordinator.html',1,'']]]
+  ['nonunitaryfailuredetection_0',['NonUnitaryFailureDetection',['../da/d6f/struct_non_unitary_failure_detection.html',1,'']]]
 ];

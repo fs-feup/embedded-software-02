@@ -1,5 +1,5 @@
-<map id="Communicator::reset_r2d" name="Communicator::reset_r2d">
-<area shape="rect" id="Node000001" title="Reset R2D state machine." alt="" coords="727,335,892,360"/>
+<map id="OutputCoordinator::refresh_emergency_vars" name="OutputCoordinator::refresh_emergency_vars">
+<area shape="rect" id="Node000001" title=" " alt="" coords="727,327,890,368"/>
 <area shape="rect" id="Node000002" href="$d2/d46/class_a_s_state.html#a813d8386653a4884bd4a8d986fc57d56" title="Calculates the state of the vehicle." alt="" coords="550,327,679,368"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="711,350,679,350,679,345,711,345"/>
 <area shape="rect" id="Node000003" href="$df/d0a/main_8cpp.html#afe461d27b9c48d5921c00d521181f12f" title=" " alt="" coords="393,5,438,31"/>

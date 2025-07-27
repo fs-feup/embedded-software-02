@@ -1,10 +1,10 @@
 var searchData=
 [
   ['dash_5fcallback_0',['dash_callback',['../d0/d02/class_communicator.html#a46466e44543d6d7e1859d2c1912f5136',1,'Communicator']]],
-  ['dc_5fvoltage_5f_1',['dc_voltage_',['../d3/df6/struct_failure_detection.html#ab7a505942693211eb6095159c4c8d186',1,'FailureDetection']]],
-  ['dc_5fvoltage_5fdrop_5ftimestamp_5f_2',['dc_voltage_drop_timestamp_',['../d3/df6/struct_failure_detection.html#a8b8f996e50ad40f2ab417694ee98daf4',1,'FailureDetection']]],
+  ['dc_5fvoltage_5f_1',['dc_voltage_',['../d3/df6/struct_failure_detection.html#aa89a0dfb86492ea9416ad51a93f8b751',1,'FailureDetection']]],
+  ['dc_5fvoltage_5fdrop_5ftimestamp_5f_2',['dc_voltage_drop_timestamp_',['../da/d6f/struct_non_unitary_failure_detection.html#ac5b6f33eeec20c594435baa43a87d170',1,'NonUnitaryFailureDetection']]],
   ['dc_5fvoltage_5fhold_3',['DC_VOLTAGE_HOLD',['../d4/d7d/hardware_settings_8hpp.html#a8190057e599d431fde47a99eed5fa9a4',1,'hardwareSettings.hpp']]],
-  ['dc_5fvoltage_5fhold_5ftimestamp_5f_4',['dc_voltage_hold_timestamp_',['../d3/df6/struct_failure_detection.html#a5287f7ba45e86bf130023ed349e64f1a',1,'FailureDetection']]],
+  ['dc_5fvoltage_5fhold_5ftimestamp_5f_4',['dc_voltage_hold_timestamp_',['../da/d6f/struct_non_unitary_failure_detection.html#ad72944e76b4fa2cb25dbc7fc394320fd',1,'NonUnitaryFailureDetection']]],
   ['dc_5fvoltage_5ftimeout_5',['DC_VOLTAGE_TIMEOUT',['../d4/d7d/hardware_settings_8hpp.html#af9f1d492013b491e9a7f53bc803a8325',1,'hardwareSettings.hpp']]],
   ['deactivate_5febs_6',['deactivate_ebs',['../da/db9/class_digital_sender.html#ac37de32ae8c5d6aff580f8ee1e09dff1',1,'DigitalSender']]],
   ['debounce_7',['debounce',['../df/d93/utils_8hpp.html#aeefd5d05777d8d468938df4d95489a7a',1,'debounce(const bool new_value, bool &amp;stored_value, unsigned int &amp;counter):&#160;utils.hpp'],['../df/d93/utils_8hpp.html#a55e08d54bdfb6ab82b486716970c5eb1',1,'debounce(const bool new_value, bool &amp;stored_value, unsigned int &amp;counter, const unsigned int counter_limit):&#160;utils.hpp']]],
