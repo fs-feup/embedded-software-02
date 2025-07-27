@@ -4,9 +4,13 @@
 #include <numeric>
 
 void insert_value_queue(const int value, std::deque<int>& queue) {
+  insert_value_queue(value, queue, 5);
+}
+
+void insert_value_queue(const int value, std::deque<int>& queue, const unsigned int max_queue_size) {
   queue.push_front(value);
 
-  if (queue.size() > 5) {
+  if (queue.size() > max_queue_size) {
     queue.pop_back();
   }
 }

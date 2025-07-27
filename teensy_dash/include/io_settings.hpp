@@ -64,8 +64,8 @@ constexpr uint16_t APPS_HIGHER_WHEN_LOWER_ZEROES = 210;
 constexpr uint16_t APPS_LOWER_DEADZONE_IN_APPS_HIGHER_SCALE = 360;
 
 constexpr uint16_t LINEAR_OFFSET = 140;
-constexpr uint16_t MAX = 677;
-constexpr uint16_t MIN = 210;
+constexpr uint16_t MAX = 510; // 677 for APPS Upper
+constexpr uint16_t MIN = 75; // 210 for APPS Lower
 constexpr uint16_t MIN_FOR_TORQUE = 0;
 constexpr uint16_t MAX_FOR_TORQUE = MAX - MIN;
 

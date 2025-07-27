@@ -7,14 +7,45 @@
 #include <model/structure.hpp>
 
 #include "debugUtils.hpp"
+#include "metro.h"
 #include "hardwareSettings.hpp"
 #include "utils.hpp"
+
+
+struct SimulateTSMSActivate {
+  private: 
+    unsigned long timer_ = 0;
+    int state = 0;
+  public:
+    bool activate_shit(bool tsms_activated) {
+      switch(state) {
+        case 0: {
+          if (millis() - timer_ > 10000) {
+            state = 1;
+            timer_ = millis();
+          }
+          return true & tsms_activated;
+          break;
+        }
+        case 1: {
+          if (millis() - timer_ > 50) {
+            timer_ = millis();
+            state = 0;
+          }
+          return false;
+        }
+      }
+    }
+
+};
 
 /**
  * @brief Class responsible for the reading of the digital
  * inputs into the Master teensy
  */
 class DigitalReceiver {
+  SimulateTSMSActivate sim;
+  unsigned long tsms_timer_ = 0;
 public:
   inline static uint32_t last_wheel_pulse_rl =
       0;  // Timestamp of the last pulse for left wheel RPM calculation
@@ -165,11 +196,14 @@ inline void DigitalReceiver::read_soc() {
 
 inline void DigitalReceiver::read_bspd_sdc() {
   bool is_sdc_closed = digitalRead(SDC_TSMS_STATE_PIN);  // low when sdc/bspd open
-  debounce(is_sdc_closed, system_data_->hardware_data_.tsms_sdc_closed_, sdc_bspd_change_counter_);
+  // is_sdc_closed = this->sim.activate_shit(is_sdc_closed);
+  debounce(is_sdc_closed, system_data_->hardware_data_.tsms_sdc_closed_, this->sdc_bspd_change_counter_, 25);
+  // DEBUG_PRINT_VAR(is_sdc_closed);
+  // DEBUG_PRINT_VAR(system_data_->hardware_data_.tsms_sdc_closed_);
 }
 inline void DigitalReceiver::read_brake_sensor() {
   int hydraulic_pressure = analogRead(BRAKE_SENSOR);
-  insert_value_queue(hydraulic_pressure, brake_readings);
+  insert_value_queue(hydraulic_pressure, brake_readings, 10);
   system_data_->hardware_data_._hydraulic_line_pressure = average_queue(brake_readings);
 }
 inline void DigitalReceiver::read_pneumatic_line() {
@@ -199,11 +233,6 @@ inline void DigitalReceiver::read_mission() {
     system_data_->mission_ = latest_mission;
     mission_change_counter_ = 0;
   }
-  system_data_->mission_ = Mission::MANUAL;
-  //print raw, mapped and current mission
-  DEBUG_PRINT_VAR(raw_value);
-  DEBUG_PRINT_VAR(mapped_value);
-  DEBUG_PRINT_VAR(to_underlying(system_data_->mission_));
 }
 
 inline void DigitalReceiver::read_asms_switch() {
@@ -214,9 +243,6 @@ inline void DigitalReceiver::read_asms_switch() {
 inline void DigitalReceiver::read_asats_state() {
   bool asats_pressed = !digitalRead(ASATS);
   debounce(asats_pressed, system_data_->hardware_data_.asats_pressed_, aats_change_counter_);
-  if (system_data_->hardware_data_.asats_pressed_) {  // TODO: remove this, shitty workaround
-    system_data_->failure_detection_.emergency_signal_ = false;
-  }
 }
 
 inline void DigitalReceiver::read_ats() {
@@ -234,15 +260,15 @@ inline void DigitalReceiver::read_rpm() {
   unsigned long time_interval_rr = (last_wheel_pulse_rr - second_to_last_wheel_pulse_rr);
   unsigned long time_interval_rl = (last_wheel_pulse_rl - second_to_last_wheel_pulse_rl);
   if (micros() - last_wheel_pulse_rr > LIMIT_RPM_INTERVAL) {
-    system_data_->hardware_data_.rr_wheel_rpm = 0.0;
+    system_data_->hardware_data_._right_wheel_rpm = 0.0;
   } else {
-    system_data_->hardware_data_.rr_wheel_rpm =
+    system_data_->hardware_data_._right_wheel_rpm =
         1 / (time_interval_rr * MICRO_TO_SECONDS * PULSES_PER_ROTATION) * SECONDS_IN_MINUTE;
   }
   if (micros() - last_wheel_pulse_rl > LIMIT_RPM_INTERVAL) {
-    system_data_->hardware_data_.rl_wheel_rpm = 0.0;
+    system_data_->hardware_data_._left_wheel_rpm = 0.0;
   } else {
-    system_data_->hardware_data_.rl_wheel_rpm =
+    system_data_->hardware_data_._left_wheel_rpm =
         1 / (time_interval_rl * MICRO_TO_SECONDS * PULSES_PER_ROTATION) * SECONDS_IN_MINUTE;
   }
 }

@@ -304,8 +304,6 @@ void code_reset() {
 
 #if !THIS_IS_MASTER
 void can_receive_from_master(const CAN_message_t& msg) {
-  DEBUG_PRINT("RECIEIVED FROM ID: ");
-  Serial.println(msg.id, HEX);
   if (msg.id == CELL_TEMPS_BASE_ID) {
     last_master_message_time = millis();
     master_has_communicated = true;

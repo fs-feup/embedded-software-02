@@ -22,7 +22,7 @@ struct R2DLogics {
   /**
    * @brief resets timestamps for ready
    */
-  void enter_ready_state() {
+  void refresh_r2d_vars() {
     readyTimestamp.reset();
     engageEbsTimestamp.reset();
     r2d = false;
@@ -40,11 +40,8 @@ struct R2DLogics {
    * It performs the necessary actions based on the received signal.
    *
    */
-  void reset() {
-    r2d = false;
-  }
   void process_go_signal() {
-    //if 5 seconds have passed all good, VVVRRRUUUMMMMM 
+    // if 5 seconds have passed all good, VVVRRRUUUMMMMM
     if (readyTimestamp.check()) {
       r2d = true;
       return;
@@ -54,30 +51,53 @@ struct R2DLogics {
   }
 };
 
-struct FailureDetection {
-  Metro pc_alive_timestamp_{COMPONENT_TIMESTAMP_TIMEOUT};
-  Metro steer_alive_timestamp_{COMPONENT_TIMESTAMP_TIMEOUT};
-  Metro inversor_alive_timestamp_{COMPONENT_TIMESTAMP_TIMEOUT};
-  Metro res_signal_loss_timestamp_{RES_TIMESTAMP_TIMEOUT};
-  Metro dc_voltage_drop_timestamp_{DC_VOLTAGE_TIMEOUT};  // timer to check if dc voltage drops below
-                                                         // threshold for more than 150ms
-  Metro dc_voltage_hold_timestamp_{
+struct NonUnitaryFailureDetection {
+  VolatileMetro pc_alive_timestamp_{COMPONENT_TIMESTAMP_TIMEOUT};
+  VolatileMetro steer_alive_timestamp_{COMPONENT_TIMESTAMP_TIMEOUT};
+  VolatileMetro inversor_alive_timestamp_{COMPONENT_TIMESTAMP_TIMEOUT};
+  VolatileMetro res_signal_loss_timestamp_{RES_TIMESTAMP_TIMEOUT};
+  VolatileMetro dc_voltage_drop_timestamp_{
+      DC_VOLTAGE_TIMEOUT};  // timer to check if dc voltage drops below
+                            // threshold for more than 150ms
+  VolatileMetro dc_voltage_hold_timestamp_{
       DC_VOLTAGE_HOLD};  // timer for ts on, only after enough voltage for 1 sec
+
+  NonUnitaryFailureDetection& operator=(const NonUnitaryFailureDetection& other) {
+    if (this != &other) {
+      pc_alive_timestamp_ = other.pc_alive_timestamp_;
+      steer_alive_timestamp_ = other.steer_alive_timestamp_;
+      inversor_alive_timestamp_ = other.inversor_alive_timestamp_;
+      res_signal_loss_timestamp_ = other.res_signal_loss_timestamp_;
+      dc_voltage_drop_timestamp_ = other.dc_voltage_drop_timestamp_;
+      dc_voltage_hold_timestamp_ = other.dc_voltage_hold_timestamp_;
+    }
+    return *this;
+  }
+};
+
+struct FailureDetection {
   bool steer_dead_{false};
   bool pc_dead_{false};
   bool inversor_dead_{false};
   bool res_dead_{false};
-  bool emergency_signal_{false};
-  bool ts_on_{false};
-  double radio_quality_{0};
-  unsigned dc_voltage_{0};
 
-  [[nodiscard]] bool has_any_component_timed_out() {  // no discard makes return value non ignorable
+  volatile bool emergency_signal_{false};
+  volatile bool ts_on_{false};
+  volatile double radio_quality_{0};
+  volatile unsigned dc_voltage_{0};
 
-    steer_dead_ = steer_alive_timestamp_.checkWithoutReset();
-    pc_dead_ = pc_alive_timestamp_.checkWithoutReset();
-    inversor_dead_ = inversor_alive_timestamp_.checkWithoutReset();
-    res_dead_ = res_signal_loss_timestamp_.checkWithoutReset();
+  // Reference to the timestamp struct
+  NonUnitaryFailureDetection& timestamps_;
+
+  // init ref
+  FailureDetection(NonUnitaryFailureDetection& timestamps) : timestamps_(timestamps) {}
+
+  [[nodiscard]] bool has_any_component_timed_out() {
+    steer_dead_ = timestamps_.steer_alive_timestamp_.checkWithoutReset();
+    pc_dead_ = timestamps_.pc_alive_timestamp_.checkWithoutReset();
+    inversor_dead_ = timestamps_.inversor_alive_timestamp_.checkWithoutReset();
+    res_dead_ = timestamps_.res_signal_loss_timestamp_.checkWithoutReset();
+
     if (steer_dead_ || pc_dead_ || inversor_dead_ || res_dead_) {
       DEBUG_PRINT("=== System Component Status Check ===");
     }
