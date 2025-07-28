@@ -81,7 +81,7 @@ inline void ASState::calculate_state() {
             150'000);
       }
       // If manual driving checkup fails, the car can't be in OFF state, so it goes back to MANUAL
-      if (_checkup_manager_.should_stay_manual_driving()) {
+      if (_checkup_manager_.should_enter_manual_driving()) {
         DEBUG_PRINT("Entering MANUAL state from OFF");
         _output_coordinator_->enter_manual_state();
         state_ = State::AS_MANUAL;
@@ -89,8 +89,8 @@ inline void ASState::calculate_state() {
       }
       _output_coordinator_->refresh_r2d_vars();
       _output_coordinator_->refresh_emergency_vars();
-      if (_checkup_manager_.should_stay_off()) break;
-      if (!_checkup_manager_.should_go_ready_from_off()) break;  // recheck all states
+      if (_checkup_manager_.should_stay_off()) break; // Initial Checkup Sequence
+      // if (!_checkup_manager_.should_go_ready_from_off()) break;  // recheck all states
 
       DEBUG_PRINT("Entering READY state from OFF");
       _output_coordinator_->enter_ready_state();

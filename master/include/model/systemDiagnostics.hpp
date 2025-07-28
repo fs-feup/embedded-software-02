@@ -24,6 +24,7 @@ struct R2DLogics {
    */
   void refresh_r2d_vars() {
     readyTimestamp.reset();
+    DEBUG_PRINT(readyTimestamp.checkWithoutReset());
     engageEbsTimestamp.reset();
     r2d = false;
   }
@@ -41,6 +42,7 @@ struct R2DLogics {
    *
    */
   void process_go_signal() {
+    DEBUG_PRINT(readyTimestamp.checkWithoutReset());
     // if 5 seconds have passed all good, VVVRRRUUUMMMMM
     if (readyTimestamp.check()) {
       r2d = true;

@@ -106,6 +106,11 @@ public:
   [[nodiscard]] bool should_stay_manual_driving() const;
 
   /**
+   * @brief Checks if it should enter manual driving (checks ATS)
+   */
+  bool should_enter_manual_driving() const;
+
+  /**
    * @brief Performs an off checkup.
    */
   bool should_stay_off();
@@ -161,10 +166,20 @@ inline void CheckupManager::reset_checkup_state() {
   _system_data_->mission_finished_ = false;
 }
 
+inline bool CheckupManager::should_enter_manual_driving() const {
+  bool result = _system_data_->hardware_data_.ats_pressed_ &&
+    _system_data_->hardware_data_.tsms_sdc_closed_ &&
+    _system_data_->mission_ == Mission::MANUAL && 
+    _system_data_->hardware_data_.pneumatic_line_pressure_ == 0 && 
+    !_system_data_->hardware_data_.asms_on_;
+  return result;
+}
+
 inline bool CheckupManager::should_stay_manual_driving() const {
   if (_system_data_->mission_ != Mission::MANUAL ||
       _system_data_->hardware_data_.pneumatic_line_pressure_ != 0 ||
-       _system_data_->hardware_data_.asms_on_) {
+       _system_data_->hardware_data_.asms_on_ ||
+      !_system_data_->hardware_data_.tsms_sdc_closed_) {
     return false;
   }
 
@@ -185,14 +200,14 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
     case CheckupState::WAIT_FOR_ASMS:
       if (_system_data_->hardware_data_.asms_on_) {
         checkup_state_ = CheckupState::WAIT_FOR_ASATS;
-        DEBUG_PRINT("ASMS activated, starting watchdog check");
+        DEBUG_PRINT("ASMS activated, starting watchdog check - Initial Checkup Sequence");
       }
       break;
     case CheckupState::START_TOGGLING_WATCHDOG:
       if (_system_data_->hardware_data_.wd_ready_) {
         checkup_state_ = CheckupState::TOGGLING_WATCHDOG;
         _watchdog_toggle_timer_.reset();
-        DEBUG_PRINT("Watchdog ready, starting toggle sequence");
+        DEBUG_PRINT("Watchdog ready, starting toggle sequence - Initial Checkup Sequence");
         break;
       }
       DigitalSender::toggle_watchdog();
@@ -201,7 +216,7 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
     case CheckupState::TOGGLING_WATCHDOG:
       // Fail immediately if WD_READY goes low during toggling
       if (!_system_data_->hardware_data_.wd_ready_) {
-        DEBUG_PRINT("Watchdog error: WD_READY went low during toggling phase");
+        DEBUG_PRINT("Watchdog error: WD_READY went low during toggling phase - Initial Checkup Sequence");
         return CheckupError::ERROR_WD_TOGGLE;
       }
 
@@ -211,14 +226,14 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
       if (_watchdog_toggle_timer_.checkWithoutReset()) {
         checkup_state_ = CheckupState::STOP_TOGGLING_WATCHDOG;
         _watchdog_test_timer_.reset();
-        DEBUG_PRINT("Watchdog toggle complete, stopping watchdog");
+        DEBUG_PRINT("Watchdog toggle complete, stopping watchdog - Initial Checkup Sequence");
       }
       break;
 
     case CheckupState::STOP_TOGGLING_WATCHDOG:
       _watchdog_test_timer_.reset();
       checkup_state_ = CheckupState::CHECK_WATCHDOG;
-      DEBUG_PRINT("Stopping watchdog toggle, beginning verification");
+      DEBUG_PRINT("Stopping watchdog toggle, beginning verification - Initial Checkup Sequence");
       break;
 
     case CheckupState::CHECK_WATCHDOG:
@@ -226,11 +241,11 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
         DigitalSender::close_watchdog_sdc();
 
         checkup_state_ = CheckupState::START_TOGGLING_WATCHDOG_AGAIN;
-        DEBUG_PRINT("Watchdog no longer ready - verification successful");
+        DEBUG_PRINT("Watchdog no longer ready - verification successful - Initial Checkup Sequence");
         break;
       }
       if (_watchdog_test_timer_.checkWithoutReset()) {
-        DEBUG_PRINT("Watchdog test failed - WD_READY did not go low during verification time");
+        DEBUG_PRINT("Watchdog test failed - WD_READY did not go low during verification time - Initial Checkup Sequence");
         return CheckupError::ERROR_WD_STAYED_READY;
       }
       break;
@@ -239,14 +254,14 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
       checkup_state_ = CheckupState::CHECK_EBS_STORAGE;
       break;
     case CheckupState::CHECK_EBS_STORAGE:
-    DEBUG_PRINT("EBS Storage - pressure: " + String(_system_data_->hardware_data_.pneumatic_line_pressure_));
+    DEBUG_PRINT("EBS Storage - pressure: " + String(_system_data_->hardware_data_.pneumatic_line_pressure_) + " - Initial Checkup Sequence");
       if (_system_data_->hardware_data_.pneumatic_line_pressure_) {
         checkup_state_ = CheckupState::CHECK_BRAKE_PRESSURE;
       }
       break;
     case CheckupState::CHECK_BRAKE_PRESSURE:
     DEBUG_PRINT("Hydraulic Pressure: " + String(_system_data_->hardware_data_._hydraulic_line_pressure) + " - " +
-                String(_system_data_->hardware_data_.hydraulic_line_front_pressure));
+                String(_system_data_->hardware_data_.hydraulic_line_front_pressure) + " - Initial Checkup Sequence");
       if (_system_data_->hardware_data_._hydraulic_line_pressure >= HYDRAULIC_BRAKE_THRESHOLD && 
         _system_data_->hardware_data_.hydraulic_line_front_pressure >= HYDRAULIC_BRAKE_THRESHOLD) {
         checkup_state_ = CheckupState::WAIT_FOR_ASATS;
@@ -256,7 +271,7 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
       if (_system_data_->hardware_data_.asats_pressed_) {
         _system_data_->failure_detection_.emergency_signal_ = false;
         checkup_state_ = CheckupState::CLOSE_SDC;
-        DEBUG_PRINT("AS ATS Pressed");
+        DEBUG_PRINT("AS ATS Pressed - Initial Checkup Sequence");
       }
       break;
     case CheckupState::CHECK_TIMESTAMPS: {
@@ -265,28 +280,29 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
         return CheckupError::ERROR_TIMESTAMPS_EMERGENCY;
       }
       checkup_state_ = CheckupState::CLOSE_SDC;
+      DEBUG_PRINT("Timestamps checked - Initial Checkup Sequence")
       break;
     }
     case CheckupState::CLOSE_SDC:
       DigitalSender::close_sdc();
       this->_system_data_->hardware_data_.master_sdc_closed_ = true;
       checkup_state_ = CheckupState::WAIT_FOR_TS;
-      DEBUG_PRINT("Closing SDC");
+      DEBUG_PRINT("Closing SDC - Initial Checkup Sequence");
       break;
     case CheckupState::WAIT_FOR_TS:
       // DEBUG_PRINT("Waiting for TS activation");
       if (_system_data_->failure_detection_.ts_on_) {
-        DEBUG_PRINT("TS activated");
+        DEBUG_PRINT("TS activated - Initial Checkup Sequence");
         checkup_state_ = CheckupState::EBS_CHECKS;
       }
       break;
     case CheckupState::EBS_CHECKS:  
-      DEBUG_PRINT("Starting EBS checks");
+      DEBUG_PRINT("Starting EBS checks - Initial Checkup Sequence");
       handle_ebs_check();
       break;
     case CheckupState::CHECKUP_COMPLETE:
       // Final state, all checks passed
-      DEBUG_PRINT("Checkup complete, transitioning to ready state");
+      DEBUG_PRINT("Checkup complete, transitioning to ready state - Initial Checkup Sequence");
       return CheckupError::SUCCESS;
 
 

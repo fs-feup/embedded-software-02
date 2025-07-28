@@ -26,10 +26,10 @@ private:
   uint8_t previous_checkup_state_;
   uint8_t previous_mission_;
 
-  unsigned long tsms_open_time_ = 0;  ///< Time when TSMS opened
-  unsigned long counter = 0;
-  bool opened = false;
-  bool tsms_was_closed_ = false;  ///< Track previous TSMS state
+  // unsigned long tsms_open_time_ = 0;  ///< Time when TSMS opened
+  // unsigned long counter = 0;
+  // bool opened = false;
+  // bool tsms_was_closed_ = false;  ///< Track previous TSMS state
 
 public:
   OutputCoordinator(SystemData* system_data, Communicator* communicator,
@@ -50,7 +50,7 @@ public:
   }
 
   void process(uint8_t current_master_state, uint8_t current_checkup_state, uint8_t ebs_state) {
-    dash_ats_update(current_master_state);
+    // dash_ats_update(current_master_state);
     update_physical_outputs();
     if (process_timer_.check()) {
       send_soc();
@@ -86,6 +86,7 @@ public:
     digital_sender_->activate_ebs();
     digital_sender_->open_sdc();
     this->system_data_->hardware_data_.master_sdc_closed_ = false;
+    DEBUG_PRINT("Entering emergency state");
   }
 
   /**
@@ -94,9 +95,9 @@ public:
   void enter_manual_state() {
     digital_sender_->turn_off_assi();
     digital_sender_->deactivate_ebs();
-    digital_sender_->open_sdc();
+    digital_sender_->close_sdc();
     this->system_data_->hardware_data_.master_sdc_closed_ = false;
-    DEBUG_PRINT("Entering manual state...");
+    DEBUG_PRINT("Entering manual driving");
   }
 
   /**
@@ -105,8 +106,9 @@ public:
   void enter_off_state() {
     digital_sender_->turn_off_assi();
     digital_sender_->deactivate_ebs();
-    // digital_sender_->open_sdc();
-    // this->system_data_->hardware_data_.master_sdc_closed_ = false;
+    digital_sender_->open_sdc();
+    this->system_data_->hardware_data_.master_sdc_closed_ = false;
+    DEBUG_PRINT("Entering off state");
   }
 
   /**
@@ -118,6 +120,7 @@ public:
     digital_sender_->activate_ebs();
     digital_sender_->close_sdc();
     this->system_data_->hardware_data_.master_sdc_closed_ = true;
+    DEBUG_PRINT("Entering ready state");
   }
 
   /**
@@ -129,6 +132,7 @@ public:
     digital_sender_->deactivate_ebs();
     digital_sender_->close_sdc();
     this->system_data_->hardware_data_.master_sdc_closed_ = true;
+    DEBUG_PRINT("Entering driving state");
   }
 
   /**
@@ -140,6 +144,7 @@ public:
     digital_sender_->activate_ebs();
     digital_sender_->open_sdc();
     this->system_data_->hardware_data_.master_sdc_closed_ = false;
+    DEBUG_PRINT("Entering finished state");
   }
 
   void refresh_r2d_vars() { this->system_data_->r2d_logics_.refresh_r2d_vars(); }
@@ -256,60 +261,60 @@ private:
       digital_sender_->no_bspd_error();
     }
   }
-  void dash_ats_update(uint8_t current_master_state) {
-    // DEBUG_PRINT("=== ATS Update Debug ===");
-    // DEBUG_PRINT("ATS Pressed: " + String(system_data_->hardware_data_.ats_pressed_));
-    // DEBUG_PRINT("Current Master State: " + String(current_master_state) +
-    //             " (AS_MANUAL=" + String(to_underlying(State::AS_MANUAL)) + ")");
-    // DEBUG_PRINT("TSMS SDC Closed: " +
-    // String(system_data_->hardware_data_.tsms_sdc_closed_)); if
-    // (system_data_->hardware_data_.tsms_sdc_closed_) {
-    //   opened_again = false;
-    // }
+  // void dash_ats_update(uint8_t current_master_state) {
+  //   // DEBUG_PRINT("=== ATS Update Debug ===");
+  //   // DEBUG_PRINT("ATS Pressed: " + String(system_data_->hardware_data_.ats_pressed_));
+  //   // DEBUG_PRINT("Current Master State: " + String(current_master_state) +
+  //   //             " (AS_MANUAL=" + String(to_underlying(State::AS_MANUAL)) + ")");
+  //   // DEBUG_PRINT("TSMS SDC Closed: " +
+  //   // String(system_data_->hardware_data_.tsms_sdc_closed_)); if
+  //   // (system_data_->hardware_data_.tsms_sdc_closed_) {
+  //   //   opened_again = false;
+  //   // }
 
-    // if (tsms_was_closed_ && !system_data_->hardware_data_.tsms_sdc_closed_) {
-    //   DEBUG_PRINT(">>> TSMS opened - recording time for 100ms delay");
-    //   tsms_open_time_ = millis();
-    //   opened = true;
-    // }
+  //   // if (tsms_was_closed_ && !system_data_->hardware_data_.tsms_sdc_closed_) {
+  //   //   DEBUG_PRINT(">>> TSMS opened - recording time for 100ms delay");
+  //   //   tsms_open_time_ = millis();
+  //   //   opened = true;
+  //   // }
 
-    // DEBUG_PRINT_VAR(system_data_->hardware_data_.tsms_sdc_closed_);
-    // DEBUG_PRINT_VAR(tsms_open_time_);
-    // DEBUG_PRINT_VAR(tsms_was_closed_);
-    // DEBUG_PRINT_VAR(this->counter);
-    // DEBUG_PRINT_VAR(this->opened);
-    // DEBUG_PRINT_VAR(this->system_data_->hardware_data_.master_sdc_closed_);
-    // if (tsms_open_time_ > 0) {
-    //   this->counter++;
+  //   // DEBUG_PRINT_VAR(system_data_->hardware_data_.tsms_sdc_closed_);
+  //   // DEBUG_PRINT_VAR(tsms_open_time_);
+  //   // DEBUG_PRINT_VAR(tsms_was_closed_);
+  //   // DEBUG_PRINT_VAR(this->counter);
+  //   // DEBUG_PRINT_VAR(this->opened);
+  //   // DEBUG_PRINT_VAR(this->system_data_->hardware_data_.master_sdc_closed_);
+  //   // if (tsms_open_time_ > 0) {
+  //   //   this->counter++;
 
-    // }
+  //   // }
 
-    if (system_data_->hardware_data_.ats_pressed_ &&
-      current_master_state == to_underlying(State::AS_MANUAL) &&
-      system_data_->hardware_data_.tsms_sdc_closed_) {
-        // DEBUG_PRINT(">>> CLOSING SDC - All conditions met");
-        digital_sender_->close_sdc();
-        // tsms_was_closed_ = system_data_->hardware_data_.tsms_sdc_closed_;
+  //   if (system_data_->hardware_data_.ats_pressed_ &&
+  //     current_master_state == to_underlying(State::AS_MANUAL) &&
+  //     system_data_->hardware_data_.tsms_sdc_closed_) {
+  //       // DEBUG_PRINT(">>> CLOSING SDC - All conditions met");
+  //       digital_sender_->close_sdc();
+  //       // tsms_was_closed_ = system_data_->hardware_data_.tsms_sdc_closed_;
 
-      this->system_data_->hardware_data_.master_sdc_closed_ = true;
-    } else if (!system_data_->hardware_data_.tsms_sdc_closed_
-      // && tsms_open_time_ > 0 &&
-      //          (millis() - tsms_open_time_) >= 100
-              )
-               {
-      // DEBUG_PRINT(">>> OPENING SDC - TSMS SDC not closed (100ms delay elapsed)");
-      digital_sender_->open_sdc();
-      this->system_data_->hardware_data_.master_sdc_closed_ = false;
-    } else {
-      // DEBUG_PRINT(">>> NO SDC ACTION - Conditions not met");
-      if (!system_data_->hardware_data_.ats_pressed_) {
-        // DEBUG_PRINT("    - ATS not pressed");
-      }
-      if (current_master_state != to_underlying(State::AS_MANUAL)) {
-        // DEBUG_PRINT("    - Not in AS_MANUAL state");
-      }
-    }
-    DEBUG_PRINT("========================");
-  }
+  //     this->system_data_->hardware_data_.master_sdc_closed_ = true;
+  //   } else if (!system_data_->hardware_data_.tsms_sdc_closed_
+  //     // && tsms_open_time_ > 0 &&
+  //     //          (millis() - tsms_open_time_) >= 100
+  //             )
+  //              {
+  //     // DEBUG_PRINT(">>> OPENING SDC - TSMS SDC not closed (100ms delay elapsed)");
+  //     digital_sender_->open_sdc();
+  //     this->system_data_->hardware_data_.master_sdc_closed_ = false;
+  //   } else {
+  //     // DEBUG_PRINT(">>> NO SDC ACTION - Conditions not met");
+  //     if (!system_data_->hardware_data_.ats_pressed_) {
+  //       // DEBUG_PRINT("    - ATS not pressed");
+  //     }
+  //     if (current_master_state != to_underlying(State::AS_MANUAL)) {
+  //       // DEBUG_PRINT("    - Not in AS_MANUAL state");
+  //     }
+  //   }
+  //   DEBUG_PRINT("========================");
+  // }
   void send_rpm() { Communicator::publish_rpm(); }
 };
