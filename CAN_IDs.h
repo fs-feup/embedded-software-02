@@ -42,6 +42,8 @@ constexpr uint8_t MISSION_MSG = 0x32;             // 0x32
 constexpr uint8_t LEFT_WHEEL_MSG = 0x33;          // 0x33
 constexpr uint8_t DBG_LOG_MSG = 0x34;             // 0x34
 constexpr uint8_t DBG_LOG_MSG_2 = 0x35;           // 0x35
+constexpr uint8_t EBS_STATE_MSG = 0x36;            // 0x36
+constexpr uint8_t EBS_REDUNDANCY_MSG = 0x37;         // 0x37
 
 //-----------------------------------------------------------------------------
 // Logging Status IDs
