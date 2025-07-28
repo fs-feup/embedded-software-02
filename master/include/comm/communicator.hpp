@@ -219,6 +219,7 @@ inline void Communicator::bamocar_callback(const uint8_t *buf) {
       }
     }
   }
+  _systemData->failure_detection_.ts_on_ = true; // TODO: remove, just for test purposes
 }
 
 inline void Communicator::pc_callback(const uint8_t *buf) {
