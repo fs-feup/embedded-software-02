@@ -10,7 +10,7 @@ var class_output_coordinator =
     [ "enter_off_state", "d8/d3c/class_output_coordinator.html#a728f67e71363b25a92c828c22fc3b8cd", null ],
     [ "enter_ready_state", "d8/d3c/class_output_coordinator.html#a990b6c38e46f0a7cd575ebc70fad259e", null ],
     [ "init", "d8/d3c/class_output_coordinator.html#a8d592cc766e80d28db1b2fd8e5a8bfd1", null ],
-    [ "process", "d8/d3c/class_output_coordinator.html#ac7023a51d8fbe5bae5501c0a6b15e99f", null ],
+    [ "process", "d8/d3c/class_output_coordinator.html#a888f92621cde72b028b3bc5b04a0f8eb", null ],
     [ "refresh_emergency_vars", "d8/d3c/class_output_coordinator.html#adb749a680d9c779662b7fa2c13a159fc", null ],
     [ "refresh_r2d_vars", "d8/d3c/class_output_coordinator.html#a96b64b45b9bab3c1ec9b7bcedc0ffff9", null ]
 ];

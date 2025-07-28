@@ -1,5 +1,5 @@
 <map id="Communicator" name="Communicator">
-<area shape="rect" id="Node000001" title="Class that contains definitions of typical messages to send via CAN It serves only as an example of t..." alt="" coords="313,1153,473,1533"/>
+<area shape="rect" id="Node000001" title="Class that contains definitions of typical messages to send via CAN It serves only as an example of t..." alt="" coords="313,1153,473,1553"/>
 <area shape="rect" id="Node000002" href="$d0/d9d/struct_system_data.html" title="The whole model of the system: holds all the data necessary." alt="" coords="330,1005,457,1090"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="396,1090,396,1137,391,1137,391,1090"/>
 <area shape="rect" id="Node000003" href="$da/d6f/struct_non_unitary_failure_detection.html" title=" " alt="" coords="30,404,202,469"/>
