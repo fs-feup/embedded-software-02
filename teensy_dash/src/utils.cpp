@@ -103,13 +103,13 @@ InverterModeParams get_inverter_mode_config(const SwitchMode switch_mode) {
                 .moment_ramp_decc = 1500};
       break;
     case SwitchMode::INVERTER_MODE_FAST_ACCELERATION:
-      params = {.i_max_pk_percent = 85,
-                .speed_limit_percent = 65,
+      params = {.i_max_pk_percent = 66,
+                .speed_limit_percent = 77,
                 .i_cont_percent = 55, //44
-                .speed_ramp_acc = 3000,
-                .moment_ramp_acc = 1500,
-                .speed_ramp_brake = 3000,
-                .moment_ramp_decc = 1500};
+                .speed_ramp_acc = 2000,
+                .moment_ramp_acc = 500,
+                .speed_ramp_brake = 2000,
+                .moment_ramp_decc = 500};
       break;
     default:
       break;
