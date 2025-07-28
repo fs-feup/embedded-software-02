@@ -29,7 +29,7 @@ private:
   unsigned long tsms_open_time_ = 0;  ///< Time when TSMS opened
   unsigned long counter = 0;
   bool opened = false;
-  bool tsms_was_closed_ = false;       ///< Track previous TSMS state
+  bool tsms_was_closed_ = false;  ///< Track previous TSMS state
 
 public:
   OutputCoordinator(SystemData* system_data, Communicator* communicator,
@@ -49,7 +49,7 @@ public:
     DEBUG_PRINT("Output coordinator initialized...");
   }
 
-  void process(uint8_t current_master_state, uint8_t current_checkup_state) {
+  void process(uint8_t current_master_state, uint8_t current_checkup_state, uint8_t ebs_state) {
     dash_ats_update(current_master_state);
     update_physical_outputs();
     if (process_timer_.check()) {
@@ -57,6 +57,7 @@ public:
       send_asms();
       send_mission_update();
       send_state_update(current_master_state);
+      send_ebs_state(current_checkup_state, ebs_state);
     }
     if (slower_process_timer_.check()) {
       send_debug_on_state_change(current_master_state, current_checkup_state);
@@ -167,7 +168,56 @@ private:
       mission_timer_.reset();
     }
   }
+  void send_ebs_state(uint8_t current_checkup_state, uint8_t ebs_state) {
+    static constexpr uint8_t ASB_EBS_STATE_OFF = 1;
+    static constexpr uint8_t ASB_EBS_STATE_INITIAL_CHECKUP_PASSED = 2;
+    static constexpr uint8_t ASB_EBS_STATE_ACTIVATED = 3;
 
+    static constexpr uint8_t ASB_REDUNDANCY_STATE_DEACTIVATED = 1;
+    static constexpr uint8_t ASB_REDUNDANCY_STATE_ENGAGED = 2;
+    static constexpr uint8_t ASB_REDUNDANCY_STATE_INITIAL_CHECKUP_PASSED = 3;
+    switch (ebs_state) {
+      case 0:  // DISABLE_ACTUATOR_1
+        Communicator::publish_ebs_states(ASB_EBS_STATE_OFF, false);
+        Communicator::publish_ebs_states(ASB_REDUNDANCY_STATE_ENGAGED, true);
+        break;
+
+      case 1:  // CHECK_ACTUATOR_2
+        Communicator::publish_ebs_states(ASB_EBS_STATE_OFF, false);
+        Communicator::publish_ebs_states(ASB_REDUNDANCY_STATE_ENGAGED, true);
+        break;
+
+      case 2:  // CHANGE_ACTUATORS
+        Communicator::publish_ebs_states(ASB_EBS_STATE_ACTIVATED, false);
+        Communicator::publish_ebs_states(ASB_REDUNDANCY_STATE_DEACTIVATED, true);
+        break;
+
+      case 3:  // CHECK_ACTUATOR_1
+        Communicator::publish_ebs_states(ASB_EBS_STATE_ACTIVATED, false);
+        Communicator::publish_ebs_states(ASB_REDUNDANCY_STATE_DEACTIVATED, true);
+        break;
+
+      case 4:  // ENABLE_ACTUATOR_2
+        Communicator::publish_ebs_states(ASB_EBS_STATE_ACTIVATED, false);
+        Communicator::publish_ebs_states(ASB_REDUNDANCY_STATE_ENGAGED, true);
+        break;
+
+      case 5:  // CHECK_BOTH_ACTUATORS
+        Communicator::publish_ebs_states(ASB_EBS_STATE_ACTIVATED, false);
+        Communicator::publish_ebs_states(ASB_REDUNDANCY_STATE_ENGAGED, true);
+        break;
+
+      case 6:  // COMPLETE
+        Communicator::publish_ebs_states(ASB_EBS_STATE_INITIAL_CHECKUP_PASSED, false);
+        Communicator::publish_ebs_states(ASB_REDUNDANCY_STATE_INITIAL_CHECKUP_PASSED, true);
+        break;
+
+      default:
+        Communicator::publish_ebs_states(ASB_EBS_STATE_OFF, false);
+        Communicator::publish_ebs_states(ASB_REDUNDANCY_STATE_DEACTIVATED, true);
+        break;
+    }
+  }
   void send_state_update(uint8_t current_master_state) {
     if (state_timer_.check()) {
       Communicator::publish_state(current_master_state);
@@ -177,9 +227,9 @@ private:
 
   void update_physical_outputs() {
     brake_light_update();
-    bsdp_sdc_update();
-    // digital_sender_->turn_on_blue();
-    // digital_sender_->turn_on_yellow();
+    // bsdp_sdc_update();
+    //  digital_sender_->turn_on_blue();
+    //  digital_sender_->turn_on_yellow();
   }
 
   void brake_light_update() {
@@ -211,8 +261,9 @@ private:
     // DEBUG_PRINT("ATS Pressed: " + String(system_data_->hardware_data_.ats_pressed_));
     // DEBUG_PRINT("Current Master State: " + String(current_master_state) +
     //             " (AS_MANUAL=" + String(to_underlying(State::AS_MANUAL)) + ")");
-    // DEBUG_PRINT("TSMS SDC Closed: " + String(system_data_->hardware_data_.tsms_sdc_closed_));
-    // if (system_data_->hardware_data_.tsms_sdc_closed_) {
+    // DEBUG_PRINT("TSMS SDC Closed: " +
+    // String(system_data_->hardware_data_.tsms_sdc_closed_)); if
+    // (system_data_->hardware_data_.tsms_sdc_closed_) {
     //   opened_again = false;
     // }
 
@@ -230,9 +281,9 @@ private:
     // DEBUG_PRINT_VAR(this->system_data_->hardware_data_.master_sdc_closed_);
     // if (tsms_open_time_ > 0) {
     //   this->counter++;
-      
+
     // }
-    
+
     if (system_data_->hardware_data_.ats_pressed_ &&
       current_master_state == to_underlying(State::AS_MANUAL) &&
       system_data_->hardware_data_.tsms_sdc_closed_) {
@@ -241,10 +292,10 @@ private:
         // tsms_was_closed_ = system_data_->hardware_data_.tsms_sdc_closed_;
 
       this->system_data_->hardware_data_.master_sdc_closed_ = true;
-    } else if (!system_data_->hardware_data_.tsms_sdc_closed_ 
+    } else if (!system_data_->hardware_data_.tsms_sdc_closed_
       // && tsms_open_time_ > 0 &&
       //          (millis() - tsms_open_time_) >= 100
-              ) 
+              )
                {
       // DEBUG_PRINT(">>> OPENING SDC - TSMS SDC not closed (100ms delay elapsed)");
       digital_sender_->open_sdc();
@@ -258,7 +309,7 @@ private:
         // DEBUG_PRINT("    - Not in AS_MANUAL state");
       }
     }
-    // DEBUG_PRINT("========================");
+    DEBUG_PRINT("========================");
   }
   void send_rpm() { Communicator::publish_rpm(); }
 };

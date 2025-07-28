@@ -6,13 +6,12 @@
 #include <string>
 
 #include "../../CAN_IDs.h"
+#include "../utils.hpp"
 #include "comm/utils.hpp"
 #include "debugUtils.hpp"
 #include "enum_utils.hpp"
 #include "model/systemData.hpp"
 #include "utils.hpp"
-#include "../utils.hpp"
-
 
 /**
  * @brief Array of standard CAN message codes to be used for FIFO filtering
@@ -85,7 +84,6 @@ public:
    */
   static void res_state_callback(const uint8_t *buf);
 
-
   /**
    * @brief Callback for RES activation
    */
@@ -104,12 +102,17 @@ public:
   /**
    * @brief Callback for dashboard
    */
-  static void dash_callback(const uint8_t* buf);
+  static void dash_callback(const uint8_t *buf);
 
   /**
    * @brief Publish AS State to CAN
    */
   static int publish_state(int state_id);
+
+  /**
+   * @brief Publish EBS States to CAN
+   */
+  static int publish_ebs_states(uint8_t ebs_state, bool is_redundancy = false);
 
   /**
    * @brief Publish AS Mission to CAN
@@ -150,7 +153,6 @@ void Communicator::init() {
   for (auto &fifoExtendedCode : fifoExtendedCodes)
     can3.setFIFOFilter(fifoExtendedCode.key, fifoExtendedCode.code, EXT);
 
-
   can3.onReceive(FIFO, parse_message);
 
   can3.mailboxStatus();
@@ -160,11 +162,12 @@ inline void Communicator::res_state_callback(const uint8_t *buf) {
   bool emg_stop2 = buf[3] >> 7 & 0x01;
   bool go_switch = (buf[0] >> 1) & 0x01;
   bool go_button = (buf[0] >> 2) & 0x01;
-  // DEBUG_PRINT("RES GO: " + String(go_switch) + "   EMG 1: " + String(emg_stop1) + "   EMG 2: " + String(emg_stop2));
-  
+  // DEBUG_PRINT("RES GO: " + String(go_switch) + "   EMG 1: " + String(emg_stop1) + "   EMG 2: " +
+  // String(emg_stop2));
+
   if (go_button || go_switch)
     _systemData->r2d_logics_.process_go_signal();
-  else if (!(emg_stop1 || emg_stop2)) { // If both are false 
+  else if (!(emg_stop1 || emg_stop2)) {  // If both are false
     // DEBUG_PRINT("Received Emergency from RES");
     _systemData->failure_detection_.emergency_signal_ = true;
   }
@@ -201,7 +204,7 @@ inline void Communicator::bamocar_callback(const uint8_t *buf) {
 
     // Voltage hysteresis:
     if (dc_voltage < DC_THRESHOLD) {
-      // When voltage drops/is below threshold: 
+      // When voltage drops/is below threshold:
       // Reset hold timer and check if voltage has been below threshold long enough
       _systemData->updatable_timestamps_.dc_voltage_hold_timestamp_.reset();
       if (_systemData->updatable_timestamps_.dc_voltage_drop_timestamp_.checkWithoutReset()) {
@@ -240,7 +243,6 @@ inline void Communicator::dash_callback(const uint8_t *buf) {
   }
 }
 
-
 inline void Communicator::parse_message(const CAN_message_t &msg) {
   switch (msg.id) {
     case AS_CU_ID:
@@ -264,7 +266,6 @@ inline void Communicator::parse_message(const CAN_message_t &msg) {
       break;
   }
 }
-
 
 inline int Communicator::publish_state(const int state_id) {
   const std::array<uint8_t, 2> msg = {STATE_MSG, static_cast<uint8_t>(state_id)};
@@ -317,6 +318,23 @@ inline int Communicator::publish_rpm() {
   }
   send_message(5, rl_rpm_msg, MASTER_ID);
   send_message(5, rr_rpm_msg, MASTER_ID);
+
+  return 0;
+}
+
+inline int Communicator::publish_ebs_states(uint8_t ebs_state, bool is_redundancy) {
+  // EBS state is a 4-bit value, we need to send it as a byte
+  // std::array<uint8_t, 2> msg = {EBS_REDUNDANCY_MSG, ebs_state & 0x0F};
+  // send_message(2, msg, MASTER_ID);
+  // std::array<uint8_t, 2> msg = {EBS_STATE_MSG, ebs_state & 0x0F};
+  // send_message(2, msg, MASTER_ID);
+  if (is_redundancy) {
+    std::array<uint8_t, 2> msg = {EBS_REDUNDANCY_MSG, ebs_state & 0x0F};
+    send_message(2, msg, MASTER_ID);
+  }else {
+    std::array<uint8_t, 2> msg = {EBS_STATE_MSG, ebs_state & 0x0F};
+    send_message(2, msg, MASTER_ID);
+  }
 
   return 0;
 }

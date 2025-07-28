@@ -45,6 +45,8 @@ void IOManager::update_R2D_timer() const {
 
 void IOManager::manage_ats() const {
   static bool ats_active = false;
+  //print active state
+  DEBUG_PRINTLN("ATS active: " + String(ats_active));
   static unsigned long ats_activated_time = 0;
 
   if (data.ats_pressed && !updated_data.asms_on && !ats_active) {
@@ -72,6 +74,7 @@ void IOManager::setup() {
   pinMode(pins::output::BSPD_LED, OUTPUT);
   pinMode(pins::output::INERTIA_LED, OUTPUT);
   pinMode(pins::digital::ATS_OUT, OUTPUT);
+  digitalWrite(pins::digital::ATS_OUT, LOW);
   pinMode(pins::output::TS_LED, OUTPUT);
 
   attachInterrupt(

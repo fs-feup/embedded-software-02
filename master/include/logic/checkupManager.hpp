@@ -255,7 +255,7 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
     case CheckupState::WAIT_FOR_ASATS:
       if (_system_data_->hardware_data_.asats_pressed_) {
         _system_data_->failure_detection_.emergency_signal_ = false;
-        checkup_state_ = CheckupState::CHECK_TIMESTAMPS;
+        checkup_state_ = CheckupState::CLOSE_SDC;
         DEBUG_PRINT("AS ATS Pressed");
       }
       break;

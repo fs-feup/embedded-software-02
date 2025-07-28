@@ -10,8 +10,7 @@
 
 SystemData system_data;
 Communicator communicator = Communicator(&system_data);  // CAN
-DigitalReceiver digital_receiver =
-    DigitalReceiver(&system_data);
+DigitalReceiver digital_receiver = DigitalReceiver(&system_data);
 DigitalSender digital_sender = DigitalSender();
 OutputCoordinator output_coordinator =
     OutputCoordinator(&system_data, &communicator, &digital_sender);
@@ -42,8 +41,9 @@ void loop() {
 
   uint8_t current_master_state = to_underlying(as_state.state_);
   uint8_t current_checkup_state = to_underlying(as_state._checkup_manager_.checkup_state_);
+  uint8_t ebs_state = to_underlying(as_state._checkup_manager_.pressure_test_phase_);
 
-  output_coordinator.process(current_master_state, current_checkup_state);
+  output_coordinator.process(current_master_state, current_checkup_state, ebs_state);
 
   delay(LOOP_DELAY);
-} 
+}

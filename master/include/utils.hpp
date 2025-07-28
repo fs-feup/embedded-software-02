@@ -3,9 +3,6 @@
 #include <deque>
 #include <numeric>
 
-void insert_value_queue(const int value, std::deque<int>& queue) {
-  insert_value_queue(value, queue, 5);
-}
 
 void insert_value_queue(const int value, std::deque<int>& queue, const unsigned int max_queue_size) {
   queue.push_front(value);
@@ -14,6 +11,11 @@ void insert_value_queue(const int value, std::deque<int>& queue, const unsigned 
     queue.pop_back();
   }
 }
+void insert_value_queue(const int value, std::deque<int>& queue) {
+  insert_value_queue(value, queue, 5);
+}
+
+
 
 int average_queue(const std::deque<int>& queue) {
   int avg = 0;
@@ -73,5 +75,5 @@ void debounce(const bool new_value, bool& stored_value, unsigned int& counter,
 }
 
 void debounce(const bool new_value, bool& stored_value, unsigned int& counter) {
-  debounce(new_value, stored_value, counter, CHANGE_COUNTER_LIMIT);
+  debounce(new_value, stored_value, counter, 5);
 }
