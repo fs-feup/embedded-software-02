@@ -249,6 +249,7 @@ void CanCommHandler::write_messages() {
 
   if (apps_timer >= APPS_MSG_PERIOD_MS) {
     write_apps();
+    write_dash_state();
     apps_timer = 0;
     // DEBUG_PRINTLN("APPS message sent");
   }
@@ -259,6 +260,19 @@ void CanCommHandler::write_messages() {
     write_inverter_mode(current_mode);
     previous_mode = current_mode;
   }
+}
+
+void CanCommHandler::write_dash_state() {
+  // Ensure boolean values are normalized to 0 or 1
+  auto normalize_bool = [](bool value) -> uint8_t { return value ? 1 : 0; };    
+
+  CAN_message_t dash_state;
+  dash_state.id = DASH_ID;
+  dash_state.len = 3;
+  dash_state.buf[0] = DRIVING_STATE;
+  dash_state.buf[1] = static_cast<uint8_t>(this->data.current_state);
+  dash_state.buf[2] = normalize_bool(this->data.implausibility);
+  this->can1.write(dash_state);
 }
 
 void CanCommHandler::write_rpm() {

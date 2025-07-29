@@ -49,6 +49,7 @@ private:
   void send_bamo_requests();
   void write_rpm();
   void write_apps();
+  void write_dash_state();
   void write_hydraulic_line();
   void write_inverter_mode(SwitchMode switch_mode);
 };

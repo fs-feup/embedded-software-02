@@ -11,6 +11,7 @@ struct HardwareData {
   bool asats_pressed_ = false;
   bool ats_pressed_ = false;
   bool tsms_sdc_closed_{false};
+  bool master_sdc_closed_ = false;
   bool wd_ready_ = false;
   int hydraulic_line_front_pressure = 0;
   int _hydraulic_line_pressure = 0;

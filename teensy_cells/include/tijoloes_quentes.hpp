@@ -5,19 +5,6 @@
 #include "Arduino.h"
 #include "../../CAN_IDs.h"
 // System Configuration
-
-enum FloatDetectionState {
-  NORMAL,
-  SUSPECTED_FLOAT,
-  CONFIRMED_FLOAT
-};
-
-struct SensorState {
-  FloatDetectionState state;
-  float reference_temp;
-  uint8_t confirmation_count;
-};
-
 constexpr uint8_t TOTAL_BOARDS = 6;
 constexpr uint16_t TEMP_SENSOR_READ_INTERVAL = 95;
 constexpr int8_t NO_ERROR_RESET_THRESHOLD = 50;
@@ -43,7 +30,7 @@ constexpr float NTC_BETA = 3971.0;
 constexpr float MAXIMUM_TEMPERATURE = 60.0;
 constexpr int8_t MAX_INT8_T = 127;
 constexpr int8_t MIN_INT8_T = -128;
-constexpr uint16_t MAX_TEMP_DELAY_MS = 700;
+constexpr uint16_t MAX_TEMP_DELAY_MS = 200;
 
 // CAN Communication
 constexpr uint8_t CELLS_PER_MESSAGE = 6;

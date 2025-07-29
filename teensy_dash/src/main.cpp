@@ -45,6 +45,7 @@ void loop() {
     can_comm_handler.write_messages();
     copy_volatile_data(updated_data, updatable_data);
     state_machine.update();
+    data.current_state = state_machine.get_state();
     spi_handler.handle_display_update(data, updated_data);
 
     loop_timer = 0;

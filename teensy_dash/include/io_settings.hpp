@@ -76,7 +76,7 @@ constexpr uint16_t MAX_ERROR_ABS = UPPER_BOUND_APPS_HIGHER * MAX_ERROR_PERCENT /
 
 constexpr uint8_t SAMPLES = 5;
 constexpr uint16_t BRAKE_BLOCK_THRESHOLD = 210;
-constexpr uint32_t IMPLAUSIBLE_TIMEOUT_MS = 0;
+constexpr uint32_t IMPLAUSIBLE_TIMEOUT_MS = 500; // Time to set implausibility flag back to false
 constexpr uint32_t BRAKE_PLAUSIBILITY_TIMEOUT_MS = 500;
 }  // namespace apps
 
