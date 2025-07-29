@@ -200,6 +200,7 @@ constexpr uint16_t WIDGET_CURRENT = 0x0009;
 constexpr uint16_t WIDGET_CH_STATUS = 0x000A;
 constexpr uint16_t WIDGET_SDC_BUTTON = 0x000B;
 constexpr uint16_t WIDGET_INVERTER_ERRORS = 0x000C;
+constexpr uint16_t WIDGET_INVERTER_WARNINGS = 0x000D;
 constexpr uint16_t WIDGET_BMS_DUMP_0 = 0xBB00;
 constexpr uint16_t WIDGET_BMS_DUMP_1 = 0xBB01;
 constexpr uint16_t WIDGET_BMS_DUMP_2 = 0xBB02;
