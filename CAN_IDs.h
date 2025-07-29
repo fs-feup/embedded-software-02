@@ -42,13 +42,13 @@ constexpr uint8_t MISSION_MSG = 0x32;             // 0x32
 constexpr uint8_t LEFT_WHEEL_MSG = 0x33;          // 0x33
 constexpr uint8_t DBG_LOG_MSG = 0x34;             // 0x34
 constexpr uint8_t DBG_LOG_MSG_2 = 0x35;           // 0x35
-constexpr uint8_t EBS_STATE_MSG = 0x36;            // 0x36
-constexpr uint8_t EBS_REDUNDANCY_MSG = 0x37;         // 0x37
+constexpr uint8_t EBS_STATE_MSG = 0x36;           // 0x36
+constexpr uint8_t EBS_REDUNDANCY_MSG = 0x37;      // 0x37
 
 //-----------------------------------------------------------------------------
 // Logging Status IDs
 //-----------------------------------------------------------------------------
-constexpr uint8_t DRIVING_STATE = 0x40;    // 0x40
+constexpr uint8_t DRIVING_STATE = 0x40;      // 0x40
 constexpr uint16_t DRIVING_CONTROL = 0x501;  // 0x501
 constexpr uint16_t SYSTEM_STATUS = 0x502;    // 0x502
 constexpr uint16_t SOC_MSG = 0x60;           // 0x60
@@ -201,6 +201,7 @@ constexpr uint16_t WIDGET_CH_STATUS = 0x000A;
 constexpr uint16_t WIDGET_SDC_BUTTON = 0x000B;
 constexpr uint16_t WIDGET_INVERTER_ERRORS = 0x000C;
 constexpr uint16_t WIDGET_AUTONOMOUS_MISSION = 0x000E;
+constexpr uint16_t WIDGET_INVERTER_WARNINGS = 0x000D;
 constexpr uint16_t WIDGET_BMS_DUMP_0 = 0xBB00;
 constexpr uint16_t WIDGET_BMS_DUMP_1 = 0xBB01;
 constexpr uint16_t WIDGET_BMS_DUMP_2 = 0xBB02;
