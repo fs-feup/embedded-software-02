@@ -7,36 +7,35 @@
 #include <model/structure.hpp>
 
 #include "debugUtils.hpp"
-#include "metro.h"
 #include "hardwareSettings.hpp"
+#include "metro.h"
 #include "utils.hpp"
 
-
 struct SimulateTSMSActivate {
-  private: 
-    unsigned long timer_ = 0;
-    int state = 0;
-  public:
-    bool activate_shit(bool tsms_activated) {
-      switch(state) {
-        case 0: {
-          if (millis() - timer_ > 10000) {
-            state = 1;
-            timer_ = millis();
-          }
-          return true & tsms_activated;
-          break;
+private:
+  unsigned long timer_ = 0;
+  int state = 0;
+
+public:
+  bool activate_shit(bool tsms_activated) {
+    switch (state) {
+      case 0: {
+        if (millis() - timer_ > 10000) {
+          state = 1;
+          timer_ = millis();
         }
-        case 1: {
-          if (millis() - timer_ > 50) {
-            timer_ = millis();
-            state = 0;
-          }
-          return false;
+        return true & tsms_activated;
+        break;
+      }
+      case 1: {
+        if (millis() - timer_ > 50) {
+          timer_ = millis();
+          state = 0;
         }
+        return false;
       }
     }
-
+  }
 };
 
 /**
@@ -46,6 +45,8 @@ struct SimulateTSMSActivate {
 class DigitalReceiver {
   SimulateTSMSActivate sim;
   unsigned long tsms_timer_ = 0;
+  Bounce asats_button = Bounce();
+
 public:
   inline static uint32_t last_wheel_pulse_rl =
       0;  // Timestamp of the last pulse for left wheel RPM calculation
@@ -77,9 +78,11 @@ public:
     pinMode(BRAKE_SENSOR, INPUT);
     pinMode(SOC, INPUT);
     pinMode(ATS, INPUT);
-    pinMode(ASATS, INPUT);
     pinMode(WD_READY, INPUT);
     pinMode(WD_SDC_RELAY, INPUT);
+
+    asats_button.attach(ASATS, INPUT);
+    asats_button.interval(100);
 
     attachInterrupt(
         digitalPinToInterrupt(RR_WSS),
@@ -175,10 +178,12 @@ private:
 };
 
 inline void DigitalReceiver::digital_reads() {
+  asats_button.update();
+  system_data_->hardware_data_.asats_pressed_ = asats_button.fell();
   read_pneumatic_line();
   read_mission();
   read_asms_switch();
-  read_asats_state();
+  // read_asats_state();
   read_soc();
   read_brake_sensor();
   read_ats();
@@ -197,7 +202,8 @@ inline void DigitalReceiver::read_soc() {
 inline void DigitalReceiver::read_bspd_sdc() {
   bool is_sdc_closed = digitalRead(SDC_TSMS_STATE_PIN);  // low when sdc/bspd open
   // is_sdc_closed = this->sim.activate_shit(is_sdc_closed);
-  debounce(is_sdc_closed, system_data_->hardware_data_.tsms_sdc_closed_, this->sdc_bspd_change_counter_, 25);
+  debounce(is_sdc_closed, system_data_->hardware_data_.tsms_sdc_closed_,
+           this->sdc_bspd_change_counter_, 25);
   // DEBUG_PRINT_VAR(is_sdc_closed);
   // DEBUG_PRINT_VAR(system_data_->hardware_data_.tsms_sdc_closed_);
 }
@@ -220,7 +226,8 @@ inline void DigitalReceiver::read_pneumatic_line() {
 
 inline void DigitalReceiver::read_mission() {
   int raw_value = analogRead(AMI);
-  int mapped_value = map(constrain(raw_value, 0, ADC_MAX_VALUE), 0, ADC_MAX_VALUE, 0, MAX_MISSION);  // constrain just in case
+  int mapped_value = map(constrain(raw_value, 0, ADC_MAX_VALUE), 0, ADC_MAX_VALUE, 0,
+                         MAX_MISSION);  // constrain just in case
   Mission latest_mission = static_cast<Mission>(mapped_value);
 
   if ((latest_mission == system_data_->mission_) && (latest_mission == last_tried_mission_)) {
@@ -240,10 +247,10 @@ inline void DigitalReceiver::read_asms_switch() {
   debounce(latest_asms_status, system_data_->hardware_data_.asms_on_, asms_change_counter_);
 }
 
-inline void DigitalReceiver::read_asats_state() {
-  bool asats_pressed = !digitalRead(ASATS);
-  debounce(asats_pressed, system_data_->hardware_data_.asats_pressed_, aats_change_counter_);
-}
+// inline void DigitalReceiver::read_asats_state() {
+//   bool asats_pressed = !digitalRead(ASATS);
+//   debounce(asats_pressed, system_data_->hardware_data_.asats_pressed_, aats_change_counter_);
+// }
 
 inline void DigitalReceiver::read_ats() {
   bool ats_pressed = digitalRead(ATS);
