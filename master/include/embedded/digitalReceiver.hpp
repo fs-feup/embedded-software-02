@@ -176,9 +176,6 @@ private:
 };
 
 inline void DigitalReceiver::digital_reads() {
-  Serial.print("asats: ");
-  Serial.println(system_data_->hardware_data_.asats_pressed_);
-
   read_pneumatic_line();
   read_mission();
   read_asms_switch();
