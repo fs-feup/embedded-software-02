@@ -309,7 +309,6 @@ private:
         // DEBUG_PRINT("    - Not in AS_MANUAL state");
       }
     }
-    DEBUG_PRINT("========================");
   }
   void send_rpm() { Communicator::publish_rpm(); }
 };

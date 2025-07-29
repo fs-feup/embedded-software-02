@@ -27,11 +27,6 @@ void setup() {
 }
 
 void loop() {
-  if (is_first_loop) {
-    watchdog_timer_.begin([] { DigitalSender::toggle_watchdog(); }, 10'000);
-    is_first_loop = false;
-  }
-  digitalWrite(WD_SDC_CLOSE, HIGH);
   digital_receiver.digital_reads();
   noInterrupts();
   system_data.updated_timestamps_ = system_data.updatable_timestamps_;

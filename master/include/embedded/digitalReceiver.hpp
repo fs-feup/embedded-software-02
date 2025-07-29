@@ -45,7 +45,6 @@ public:
 class DigitalReceiver {
   SimulateTSMSActivate sim;
   unsigned long tsms_timer_ = 0;
-  Bounce asats_button = Bounce();
 
 public:
   inline static uint32_t last_wheel_pulse_rl =
@@ -80,9 +79,8 @@ public:
     pinMode(ATS, INPUT);
     pinMode(WD_READY, INPUT);
     pinMode(WD_SDC_RELAY, INPUT);
+    pinMode(ASATS, INPUT);
 
-    asats_button.attach(ASATS, INPUT);
-    asats_button.interval(100);
 
     attachInterrupt(
         digitalPinToInterrupt(RR_WSS),
@@ -178,12 +176,13 @@ private:
 };
 
 inline void DigitalReceiver::digital_reads() {
-  asats_button.update();
-  system_data_->hardware_data_.asats_pressed_ = asats_button.fell();
+  Serial.print("asats: ");
+  Serial.println(system_data_->hardware_data_.asats_pressed_);
+
   read_pneumatic_line();
   read_mission();
   read_asms_switch();
-  // read_asats_state();
+  read_asats_state();
   read_soc();
   read_brake_sensor();
   read_ats();
@@ -247,10 +246,10 @@ inline void DigitalReceiver::read_asms_switch() {
   debounce(latest_asms_status, system_data_->hardware_data_.asms_on_, asms_change_counter_);
 }
 
-// inline void DigitalReceiver::read_asats_state() {
-//   bool asats_pressed = !digitalRead(ASATS);
-//   debounce(asats_pressed, system_data_->hardware_data_.asats_pressed_, aats_change_counter_);
-// }
+inline void DigitalReceiver::read_asats_state() {
+  bool asats_pressed = !digitalRead(ASATS) && system_data_->hardware_data_.asms_on_;
+  debounce(asats_pressed, system_data_->hardware_data_.asats_pressed_, aats_change_counter_);
+}
 
 inline void DigitalReceiver::read_ats() {
   bool ats_pressed = digitalRead(ATS);

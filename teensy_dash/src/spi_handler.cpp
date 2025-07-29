@@ -72,5 +72,8 @@ void SpiHandler::handle_display_update(SystemData& data, const SystemVolatileDat
     const auto inverter_mode = static_cast<uint16_t>(data.switch_mode);
     display_spi.transfer16(&inverter_mode, 1, WIDGET_INVERTER_MODE, millis() & 0xFFFF);
     inverter_timer = 0;
+    //publish autonomous mission
+    uint16_t autonomous_mission = updated_data.autonomous_mission;
+    display_spi.transfer16(&autonomous_mission, 1, WIDGET_AUTONOMOUS_MISSION, millis() & 0xFFFF); 
   }
 }

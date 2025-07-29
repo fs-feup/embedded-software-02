@@ -85,6 +85,7 @@ struct SystemVolatileData {
   uint8_t max_temp = 0;
   uint16_t error_bitmap = 0;
   uint16_t warning_bitmap = 0;
+  uint8_t autonomous_mission = 0;
 
   unsigned long last_wheel_pulse_fr = 0;
   unsigned long second_to_last_wheel_pulse_fr = 0;
@@ -108,5 +109,7 @@ inline void copy_volatile_data(SystemVolatileData& dest, volatile SystemVolatile
   dest.min_temp = src.min_temp;
   dest.max_temp = src.max_temp;
   dest.error_bitmap = src.error_bitmap;
+  dest.warning_bitmap = src.warning_bitmap;
+  dest.autonomous_mission = src.autonomous_mission;
   interrupts();
 }
