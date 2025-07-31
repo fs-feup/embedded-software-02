@@ -228,6 +228,9 @@ void CanCommHandler::master_callback(const uint8_t* const msg_data, const uint8_
     case STATE_MSG:
       updatable_data.as_state = msg_data[1];
       break;
+    case MISSION_MSG:
+      updatable_data.autonomous_mission = msg_data[1];
+      break;
     default:
       break;
   }

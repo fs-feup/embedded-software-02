@@ -17,20 +17,21 @@
  * @brief Array of standard CAN message codes to be used for FIFO filtering
  * Each Code struct contains a key and a corresponding message ID.
  */
-inline std::array<Code, 7> fifoCodes = {{{0, DASH_ID},
+inline std::array<Code, 8> fifoCodes = {{{0, DASH_ID},
                                          {1, BAMO_RESPONSE_ID},
                                          {2, AS_CU_EMERGENCY_SIGNAL},
                                          {3, MISSION_FINISHED},
                                          {4, AS_CU_ID},
                                          {5, RES_STATE},
-                                         {6, RES_READY}}};
+                                         {6, RES_READY},
+                                         {7, 0x500}}};
 
 /**
  * @brief Array of extended CAN message codes to be used for FIFO filtering
  * Contains the key and corresponding message ID for extended messages.
  */
 inline std::array<Code, 1> fifoExtendedCodes = {{
-    {7, STEERING_ID},
+    {8, STEERING_ID},
 }};
 
 /**
@@ -261,6 +262,8 @@ inline void Communicator::parse_message(const CAN_message_t &msg) {
       break;
     case DASH_ID:
       dash_callback(msg.buf);
+    case 0x500:
+      DEBUG_PRINT("Received message from 0x500");
       break;
     default:
       break;

@@ -89,8 +89,7 @@ inline void ASState::calculate_state() {
       }
       _output_coordinator_->refresh_r2d_vars();
       _output_coordinator_->refresh_emergency_vars();
-      if (_checkup_manager_.should_stay_off()) break;
-      if (!_checkup_manager_.should_go_ready_from_off()) break;  // recheck all states
+      if (_checkup_manager_.should_stay_off()) break;//todo delete should go ready from off decl
 
       DEBUG_PRINT("Entering READY state from OFF");
       _output_coordinator_->enter_ready_state();
