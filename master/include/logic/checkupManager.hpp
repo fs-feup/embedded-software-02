@@ -307,7 +307,7 @@ inline void CheckupManager::handle_ebs_check() {
       // Step 10: Disable EBS actuator 1
       DEBUG_PRINT("Disabling EBS actuator 1");
       DigitalSender::disable_ebs_actuator_REAR();
-      pressure_test_phase_ = EbsPressureTestPhase::CHECK_ACTUATOR_2;
+      pressure_test_phase_ = EbsPressureTestPhase::CHANGE_ACTUATORS;
       break;
 
     case EbsPressureTestPhase::CHECK_ACTUATOR_2:
@@ -325,7 +325,7 @@ inline void CheckupManager::handle_ebs_check() {
       DEBUG_PRINT("Re-enabling EBS actuator 1 and disabling actuator 2");
       DigitalSender::enable_ebs_actuator_REAR();
       DigitalSender::disable_ebs_actuator_FRONT();
-      pressure_test_phase_ = EbsPressureTestPhase::CHECK_ACTUATOR_1;
+      pressure_test_phase_ = EbsPressureTestPhase::ENABLE_ACTUATOR_2;
       break;
 
     case EbsPressureTestPhase::CHECK_ACTUATOR_1:
@@ -343,7 +343,7 @@ inline void CheckupManager::handle_ebs_check() {
       // Step 14: Enable EBS actuator 2 again
       DEBUG_PRINT("Re-enabling EBS actuator 2");
       DigitalSender::enable_ebs_actuator_FRONT();
-      pressure_test_phase_ = EbsPressureTestPhase::CHECK_BOTH_ACTUATORS;
+      pressure_test_phase_ = EbsPressureTestPhase::COMPLETE;
       break;
 
     case EbsPressureTestPhase::CHECK_BOTH_ACTUATORS:

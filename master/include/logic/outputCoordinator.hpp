@@ -84,7 +84,7 @@ public:
     digital_sender_->turn_off_assi();
     blink_timer_.reset();
     digital_sender_->activate_ebs();
-    // digital_sender_->open_sdc();
+    digital_sender_->open_sdc();
     this->system_data_->hardware_data_.master_sdc_closed_ = false;
   }
 
@@ -105,7 +105,7 @@ public:
   void enter_off_state() {
     digital_sender_->turn_off_assi();
     digital_sender_->deactivate_ebs();
-    // digital_sender_->open_sdc();
+    digital_sender_->open_sdc();
     // this->system_data_->hardware_data_.master_sdc_closed_ = false;
   }
 
@@ -138,7 +138,7 @@ public:
     digital_sender_->turn_off_assi();
     digital_sender_->turn_on_blue();
     digital_sender_->activate_ebs();
-    // digital_sender_->open_sdc();
+    digital_sender_->open_sdc();
     this->system_data_->hardware_data_.master_sdc_closed_ = false;
   }
 
