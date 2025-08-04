@@ -29,8 +29,7 @@ uint16_t LogicHandler::scale_apps_lower_to_apps_higher(const uint16_t apps_lower
   return apps_lower + config::apps::LINEAR_OFFSET;
 }
 
-bool LogicHandler::plausibility(const int apps_higher,
-                                const int apps_lower) {  // unit test, TODO(Yves)
+bool LogicHandler::plausibility(const int apps_higher, const int apps_lower) {
   const bool valid_input = (apps_higher >= apps_lower) &&
                            (apps_higher >= config::apps::LOWER_BOUND_APPS_HIGHER &&
                             apps_higher <= config::apps::UPPER_BOUND_APPS_HIGHER) &&
@@ -62,12 +61,17 @@ bool LogicHandler::plausibility(const int apps_higher,
   //   }
   // }
   // print values
+  // DEBUG_PRINTLN("Apps higher: " + String(apps_higher));
+  // DEBUG_PRINTLN("Apps lower: " + String(apps_lower));
+  // DEBUG_PRINTLN("Scaled apps lower: " + String(scaled_apps_lower));
+  // DEBUG_PRINTLN("Difference: " + String(difference));
+  DEBUG_PRINTLN("Percentage difference: " + String(percentage_difference));
   return (percentage_difference < config::apps::MAX_ERROR_PERCENT);
 }
 
 uint16_t LogicHandler::apps_to_bamocar_value(const uint16_t apps_higher,
                                              const uint16_t apps_lower) {
-  uint16_t torque_value = apps_higher; // APPS Lower works better
+  uint16_t torque_value = apps_higher;  // APPS Lower works better
 
   torque_value = constrain(torque_value, config::apps::MIN, config::apps::MAX);
 
@@ -119,18 +123,16 @@ bool LogicHandler::just_entered_driving() {
 bool LogicHandler::check_apps_plausibility(const uint16_t apps_higher_avg,
                                            const uint16_t apps_lower_avg) {
   if (plausibility(apps_higher_avg, apps_lower_avg)) {
+    apps_implausibility_timer = 0;
+    this->data.implausibility = false;
+  } else {
     if (apps_implausibility_timer > config::apps::IMPLAUSIBLE_TIMEOUT_MS) {
-      this->data.implausibility = false; 
+      this->data.implausibility = true;
+      return false;
     }
-    return true;
   }
-  // if (apps_implausibility_timer > config::apps::IMPLAUSIBLE_TIMEOUT_MS) {
-  //   apps_timeout = true;
-  //   return false;
-  // }
-  apps_implausibility_timer = 0;
-  this->data.implausibility = true;
-  return false;
+
+  return true;
 }
 
 int LogicHandler::calculate_torque() {
@@ -146,7 +148,9 @@ int LogicHandler::calculate_torque() {
 
     return config::apps::ERROR_PLAUSIBILITY;  // shutdown ?
   }
-
+  DEBUG_PRINTLN("Apps plausible, calculating torque");
+  DEBUG_PRINTLN("Apps plausible, calculating torque");
+  DEBUG_PRINTLN("Apps plausible, calculating torque");
   const uint16_t bamocar_value = apps_to_bamocar_value(apps_higher_average, apps_lower_average);
 
   // DEBUG_PRINTLN("Bamocar value: " + String(bamocar_value));

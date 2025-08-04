@@ -78,7 +78,7 @@ inline void ASState::calculate_state() {
                 instance->state_ = State::AS_EMERGENCY;
               }
             },
-            150'000);
+            50'000);
       }
       // If manual driving checkup fails, the car can't be in OFF state, so it goes back to MANUAL
       if (_checkup_manager_.should_stay_manual_driving()) {
@@ -89,7 +89,7 @@ inline void ASState::calculate_state() {
       }
       _output_coordinator_->refresh_r2d_vars();
       _output_coordinator_->refresh_emergency_vars();
-      if (_checkup_manager_.should_stay_off()) break;//todo delete should go ready from off decl
+      if (_checkup_manager_.should_stay_off()) break;
 
       DEBUG_PRINT("Entering READY state from OFF");
       _output_coordinator_->enter_ready_state();
@@ -137,7 +137,6 @@ inline void ASState::calculate_state() {
         DEBUG_PRINT("Entering OFF state from EMERGENCY");
         _output_coordinator_->enter_off_state();
         _checkup_manager_.reset_checkup_state();
-
         state_ = State::AS_OFF;
         break;
       }

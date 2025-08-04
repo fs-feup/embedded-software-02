@@ -258,7 +258,7 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
     case CheckupState::WAIT_FOR_ASATS:
       if (_system_data_->hardware_data_.asats_pressed_) {
         _system_data_->failure_detection_.emergency_signal_ = false;
-        checkup_state_ = CheckupState::CLOSE_SDC;
+        checkup_state_ = CheckupState::CHECK_TIMESTAMPS;
         DEBUG_PRINT("AS ATS Pressed");
       }
       break;
@@ -399,8 +399,8 @@ bool CheckupManager::should_enter_emergency_in_ready_state() const {
   DEBUG_PRINT_VAR(!_system_data_->hardware_data_.pneumatic_line_pressure_);
   return _system_data_->failure_detection_.emergency_signal_ ||
          //  !_system_data_->hardware_data_.pneumatic_line_pressure_ ||
-         //  component_timed_out ||
-         !_system_data_->hardware_data_.asms_on_ || !_system_data_->failure_detection_.ts_on_ ||
+         component_timed_out || !_system_data_->hardware_data_.asms_on_ ||
+         !_system_data_->failure_detection_.ts_on_ ||
          //  failed_to_build_pressure ||
          !_system_data_->hardware_data_.tsms_sdc_closed_;
 }
@@ -415,12 +415,11 @@ bool CheckupManager::should_enter_emergency_in_driving_state() const {
   DEBUG_PRINT_VAR(_system_data_->hardware_data_.tsms_sdc_closed_);
   DEBUG_PRINT_VAR(_system_data_->failure_detection_.emergency_signal_);
   DEBUG_PRINT_VAR(!_system_data_->hardware_data_.pneumatic_line_pressure_);
-  return /* component_timed_out || */
-      _system_data_->failure_detection_.emergency_signal_ ||
-      !_system_data_->hardware_data_.tsms_sdc_closed_ ||
-      //  !_system_data_->hardware_data_.pneumatic_line_pressure_ ||
-      //  failed_to_reduce_pressure ||
-      !_system_data_->hardware_data_.asms_on_ || !_system_data_->failure_detection_.ts_on_;
+  return component_timed_out || _system_data_->failure_detection_.emergency_signal_ ||
+         !_system_data_->hardware_data_.tsms_sdc_closed_ ||
+         //  !_system_data_->hardware_data_.pneumatic_line_pressure_ ||
+         //  failed_to_reduce_pressure ||
+         !_system_data_->hardware_data_.asms_on_ || !_system_data_->failure_detection_.ts_on_;
 }
 
 bool CheckupManager::failed_to_build_hydraulic_pressure_in_time() const {

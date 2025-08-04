@@ -81,7 +81,6 @@ public:
     pinMode(WD_SDC_RELAY, INPUT);
     pinMode(ASATS, INPUT);
 
-
     attachInterrupt(
         digitalPinToInterrupt(RR_WSS),
         []() {
@@ -215,6 +214,11 @@ inline void DigitalReceiver::read_pneumatic_line() {
   system_data_->hardware_data_.pneumatic_line_pressure_1_ = pneumatic1;
   system_data_->hardware_data_.pneumatic_line_pressure_2_ = pneumatic2;
   bool latest_pneumatic_pressure = pneumatic1 && pneumatic2;
+  // print values
+  //  DEBUG_PRINT_VAR(latest_pneumatic_pressure);
+  //  DEBUG_PRINT_VAR(system_data_->hardware_data_.pneumatic_line_pressure_);
+  //  DEBUG_PRINT_VAR(pneumatic1);
+  //  DEBUG_PRINT_VAR(pneumatic2);
 
   debounce(latest_pneumatic_pressure, system_data_->hardware_data_.pneumatic_line_pressure_,
            pneumatic_change_counter_);
@@ -224,8 +228,8 @@ inline void DigitalReceiver::read_mission() {
   int raw_value = analogRead(AMI);
   int mapped_value = map(constrain(raw_value, 0, ADC_MAX_VALUE), 0, ADC_MAX_VALUE, 0,
                          MAX_MISSION);  // constrain just in case
+  mapped_value = 1;
   Mission latest_mission = static_cast<Mission>(mapped_value);
-
   if ((latest_mission == system_data_->mission_) && (latest_mission == last_tried_mission_)) {
     mission_change_counter_ = 0;
   } else {

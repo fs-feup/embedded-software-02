@@ -262,9 +262,9 @@ inline void Communicator::parse_message(const CAN_message_t &msg) {
       break;
     case DASH_ID:
       dash_callback(msg.buf);
-    case 0x500:
-      DEBUG_PRINT("Received message from 0x500");
-      break;
+    // case 0x500:
+    //   DEBUG_PRINT("Received message from 0x500");
+    //   break;
     default:
       break;
   }

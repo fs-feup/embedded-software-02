@@ -104,7 +104,7 @@ public:
    */
   void enter_off_state() {
     digital_sender_->turn_off_assi();
-    digital_sender_->deactivate_ebs();
+    digital_sender_->activate_ebs();
     digital_sender_->open_sdc();
     // this->system_data_->hardware_data_.master_sdc_closed_ = false;
   }
