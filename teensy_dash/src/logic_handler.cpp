@@ -45,7 +45,7 @@ bool LogicHandler::plausibility(const int apps_higher, const int apps_lower) {
 
   const int difference = abs(scaled_apps_lower - apps_higher);
 
-  const int percentage_difference = (difference * 100) / apps_higher;
+  const int percentage_difference = (difference * 100) / 480;
 
   // if (apps_lower < config::apps::APPS_LOWER_ZEROED) {
   //   if (apps_higher < config::apps::APPS_HIGHER_WHEN_LOWER_ZEROES) {
@@ -71,7 +71,7 @@ bool LogicHandler::plausibility(const int apps_higher, const int apps_lower) {
 
 uint16_t LogicHandler::apps_to_bamocar_value(const uint16_t apps_higher,
                                              const uint16_t apps_lower) {
-  uint16_t torque_value = apps_higher;  // APPS Lower works better
+  uint16_t torque_value = apps_lower;  // APPS Lower works better
 
   torque_value = constrain(torque_value, config::apps::MIN, config::apps::MAX);
 

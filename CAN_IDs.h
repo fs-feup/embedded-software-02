@@ -22,6 +22,11 @@ constexpr uint16_t TA_ID = 0x301;          // 0x301
 constexpr uint32_t CH_ID = 0x0220'7446;    // 0x0220'7446
 constexpr uint16_t HC_ID = 0x105;          // 0x105
 constexpr uint16_t BMS_ERRORS_ID = 0x123;  // 0x123
+constexpr uint16_t DATA_LOGGER_SIGNALS_1 = 0x511;  // 0x511
+constexpr uint16_t DATA_LOGGER_SIGNALS_2 = 0x512;  // 0x512
+constexpr uint16_t DATA_LOGGER_SIGNALS_3 = 0x513;  // 0x513
+constexpr uint16_t DATA_LOGGER_SIGNALS_4 = 0x514;  // 0x514
+constexpr uint16_t DATA_LOGGER_SIGNALS_5 = 0x515;  // 0x515
 
 //-----------------------------------------------------------------------------
 
@@ -133,7 +138,7 @@ constexpr uint16_t HYDRAULIC_BRAKE_THRESHOLD = 165;  // 165
 //-----------------------------------------------------------------------------
 // Battery Management System
 //-----------------------------------------------------------------------------
-constexpr uint16_t BMS_ID = 0x666;                   // 0x666
+constexpr uint16_t BMS_ID = 0x101;                   // 0x666
 constexpr uint16_t BMS_ID_CCL = 0x101;               // 0x101
 constexpr uint16_t BMS_ID_ERR = 0x123;               // 0x123
 constexpr uint32_t BMS_THERMISTOR_ID = 0x1839'F380;  // 0x1839'F380

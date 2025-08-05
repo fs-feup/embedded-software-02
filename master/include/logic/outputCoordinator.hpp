@@ -60,8 +60,7 @@ public:
       send_ebs_state(current_checkup_state, ebs_state);
     }
     if (slower_process_timer_.check()) {
-      send_debug_on_state_change(current_master_state, current_checkup_state);
-      send_rpm();
+      send_data_logging_data(current_master_state, current_checkup_state);
     }
   }
 
@@ -94,7 +93,7 @@ public:
   void enter_manual_state() {
     digital_sender_->turn_off_assi();
     digital_sender_->deactivate_ebs();
-    // digital_sender_->open_sdc();
+    digital_sender_->open_sdc();
     this->system_data_->hardware_data_.master_sdc_closed_ = false;
     DEBUG_PRINT("Entering manual state...");
   }
@@ -153,7 +152,7 @@ public:
 
 private:
   // Communication functions
-  void send_debug_on_state_change(uint8_t current_master_state, uint8_t current_checkup_state) {
+  void send_data_logging_data(uint8_t current_master_state, uint8_t current_checkup_state) {
     Communicator::publish_debug_morning_log(*system_data_, current_master_state,
                                             current_checkup_state);
   }

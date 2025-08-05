@@ -33,7 +33,6 @@ void loop() {
   interrupts();
 
   as_state.calculate_state();
-
   uint8_t current_master_state = to_underlying(as_state.state_);
   uint8_t current_checkup_state = to_underlying(as_state._checkup_manager_.checkup_state_);
   uint8_t ebs_state = to_underlying(as_state._checkup_manager_.pressure_test_phase_);
