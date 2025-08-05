@@ -294,8 +294,7 @@ inline int Communicator::publish_debug_morning_log(const SystemData &system_data
   // send_message(8, create_debug_message_1(system_data, state, state_checkup), MASTER_ID);
   // send_message(8, create_debug_message_2(system_data), MASTER_ID);
   send_message(8, create_signals_msg_1(system_data, state, state_checkup), DATA_LOGGER_SIGNALS_1);
-  send_message(4, create_signals_msg_2(system_data), DATA_LOGGER_SIGNALS_2);
-  send_message(8, create_hydraulic_presures_msg(system_data), DATA_LOGGER_SIGNALS_3);
+  send_message(8, create_hydraulic_presures_msg(system_data), DATA_LOGGER_SIGNALS_2);
   return 0;
 }
 
