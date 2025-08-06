@@ -22,6 +22,11 @@ constexpr uint16_t TA_ID = 0x301;          // 0x301
 constexpr uint32_t CH_ID = 0x0220'7446;    // 0x0220'7446
 constexpr uint16_t HC_ID = 0x105;          // 0x105
 constexpr uint16_t BMS_ERRORS_ID = 0x123;  // 0x123
+constexpr uint16_t DATA_LOGGER_SIGNALS_1 = 0x511;  // 0x511
+constexpr uint16_t DATA_LOGGER_SIGNALS_2 = 0x512;  // 0x512
+constexpr uint16_t DATA_LOGGER_SIGNALS_3 = 0x513;  // 0x513
+constexpr uint16_t DATA_LOGGER_SIGNALS_4 = 0x514;  // 0x514
+constexpr uint16_t DATA_LOGGER_SIGNALS_5 = 0x515;  // 0x515
 
 //-----------------------------------------------------------------------------
 
@@ -42,13 +47,13 @@ constexpr uint8_t MISSION_MSG = 0x32;             // 0x32
 constexpr uint8_t LEFT_WHEEL_MSG = 0x33;          // 0x33
 constexpr uint8_t DBG_LOG_MSG = 0x34;             // 0x34
 constexpr uint8_t DBG_LOG_MSG_2 = 0x35;           // 0x35
-constexpr uint8_t EBS_STATE_MSG = 0x36;            // 0x36
-constexpr uint8_t EBS_REDUNDANCY_MSG = 0x37;         // 0x37
+constexpr uint8_t EBS_STATE_MSG = 0x36;           // 0x36
+constexpr uint8_t EBS_REDUNDANCY_MSG = 0x37;      // 0x37
 
 //-----------------------------------------------------------------------------
 // Logging Status IDs
 //-----------------------------------------------------------------------------
-constexpr uint8_t DRIVING_STATE = 0x40;    // 0x40
+constexpr uint8_t DRIVING_STATE = 0x40;      // 0x40
 constexpr uint16_t DRIVING_CONTROL = 0x501;  // 0x501
 constexpr uint16_t SYSTEM_STATUS = 0x502;    // 0x502
 constexpr uint16_t SOC_MSG = 0x60;           // 0x60
@@ -133,7 +138,7 @@ constexpr uint16_t HYDRAULIC_BRAKE_THRESHOLD = 165;  // 165
 //-----------------------------------------------------------------------------
 // Battery Management System
 //-----------------------------------------------------------------------------
-constexpr uint16_t BMS_ID = 0x666;                   // 0x666
+constexpr uint16_t BMS_ID = 0x101;                   // 0x666
 constexpr uint16_t BMS_ID_CCL = 0x101;               // 0x101
 constexpr uint16_t BMS_ID_ERR = 0x123;               // 0x123
 constexpr uint32_t BMS_THERMISTOR_ID = 0x1839'F380;  // 0x1839'F380
@@ -200,6 +205,7 @@ constexpr uint16_t WIDGET_CURRENT = 0x0009;
 constexpr uint16_t WIDGET_CH_STATUS = 0x000A;
 constexpr uint16_t WIDGET_SDC_BUTTON = 0x000B;
 constexpr uint16_t WIDGET_INVERTER_ERRORS = 0x000C;
+constexpr uint16_t WIDGET_AUTONOMOUS_MISSION = 0x000E;
 constexpr uint16_t WIDGET_INVERTER_WARNINGS = 0x000D;
 constexpr uint16_t WIDGET_BMS_DUMP_0 = 0xBB00;
 constexpr uint16_t WIDGET_BMS_DUMP_1 = 0xBB01;

@@ -55,6 +55,7 @@ struct NonUnitaryFailureDetection {
   VolatileMetro pc_alive_timestamp_{COMPONENT_TIMESTAMP_TIMEOUT};
   VolatileMetro steer_alive_timestamp_{COMPONENT_TIMESTAMP_TIMEOUT};
   VolatileMetro inversor_alive_timestamp_{COMPONENT_TIMESTAMP_TIMEOUT};
+  VolatileMetro bms_alive_timestamp_{COMPONENT_TIMESTAMP_TIMEOUT};
   VolatileMetro res_signal_loss_timestamp_{RES_TIMESTAMP_TIMEOUT};
   VolatileMetro dc_voltage_drop_timestamp_{
       DC_VOLTAGE_TIMEOUT};  // timer to check if dc voltage drops below
@@ -70,6 +71,7 @@ struct NonUnitaryFailureDetection {
       res_signal_loss_timestamp_ = other.res_signal_loss_timestamp_;
       dc_voltage_drop_timestamp_ = other.dc_voltage_drop_timestamp_;
       dc_voltage_hold_timestamp_ = other.dc_voltage_hold_timestamp_;
+      bms_alive_timestamp_ = other.bms_alive_timestamp_;
     }
     return *this;
   }
@@ -80,6 +82,7 @@ struct FailureDetection {
   bool pc_dead_{false};
   bool inversor_dead_{false};
   bool res_dead_{false};
+  bool bms_dead_{false};
 
   volatile bool emergency_signal_{false};
   volatile bool ts_on_{false};
@@ -97,8 +100,9 @@ struct FailureDetection {
     pc_dead_ = timestamps_.pc_alive_timestamp_.checkWithoutReset();
     inversor_dead_ = timestamps_.inversor_alive_timestamp_.checkWithoutReset();
     res_dead_ = timestamps_.res_signal_loss_timestamp_.checkWithoutReset();
+    bms_dead_ = timestamps_.bms_alive_timestamp_.checkWithoutReset();
 
-    if (steer_dead_ || pc_dead_ || inversor_dead_ || res_dead_) {
+    if (steer_dead_ || pc_dead_ || inversor_dead_ || res_dead_ || bms_dead_) {
       DEBUG_PRINT("=== System Component Status Check ===");
     }
     if (steer_dead_) {
@@ -114,6 +118,6 @@ struct FailureDetection {
       DEBUG_PRINT("RES Signal: " + String(res_dead_ ? "DEAD" : "ALIVE"));
     }
 
-    return steer_dead_ || pc_dead_ || inversor_dead_ || res_dead_;
+    return steer_dead_ || pc_dead_ || inversor_dead_ || res_dead_ || bms_dead_;
   }
 };

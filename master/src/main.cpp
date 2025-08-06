@@ -27,18 +27,12 @@ void setup() {
 }
 
 void loop() {
-  if (is_first_loop) {
-    watchdog_timer_.begin([] { DigitalSender::toggle_watchdog(); }, 10'000);
-    is_first_loop = false;
-  }
-  digitalWrite(WD_SDC_CLOSE, HIGH);
   digital_receiver.digital_reads();
   noInterrupts();
   system_data.updated_timestamps_ = system_data.updatable_timestamps_;
   interrupts();
 
   as_state.calculate_state();
-
   uint8_t current_master_state = to_underlying(as_state.state_);
   uint8_t current_checkup_state = to_underlying(as_state._checkup_manager_.checkup_state_);
   uint8_t ebs_state = to_underlying(as_state._checkup_manager_.pressure_test_phase_);

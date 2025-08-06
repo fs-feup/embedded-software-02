@@ -7,7 +7,7 @@ constexpr int DC_VOLTAGE_HOLD = 1000;
 constexpr int EBS_BUZZER_TIMEOUT = 8000;
 constexpr int LED_BLINK_INTERVAL = 500;
 constexpr int PROCESS_INTERVAL = 200;
-constexpr int SLOWER_PROCESS_INTERVAL = 500;
+constexpr int SLOWER_PROCESS_INTERVAL = 30;
 constexpr int INITIAL_CHECKUP_STEP_TIMEOUT = 500;
 constexpr unsigned long READY_TIMEOUT_MS = 5000;
 constexpr unsigned long RELEASE_EBS_TIMEOUT_MS = 1000;
@@ -58,7 +58,7 @@ constexpr int WD_ALIVE = 15;
  */
 
 constexpr int ASMS_IN_PIN = 18;
-constexpr int AMI = 23;
+constexpr int AMI = 19;
 
 // When pressure on the line passes the threshold defined, pin is set to HIGH
 constexpr int EBS_SENSOR1 = 41;

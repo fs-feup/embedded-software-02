@@ -9,12 +9,8 @@ StateMachine::StateMachine(CanCommHandler& can_handler, LogicHandler& logic_hand
 void StateMachine::update() {
   int torque_from_apps = 0;
 
-
   switch (current_state_) {
     case State::IDLE:
-      // DEBUG_PRINTLN("Torque from apps in IDLE: " + String(logic_handler.calculate_torque()));
-      // io_manager.play_emergency_buzzer();
-
       if (logic_handler.should_start_manual_driving()) {
         can_handler.reset_bamocar_init();
         current_state_ = State::INITIALIZING_DRIVING;
@@ -50,10 +46,11 @@ void StateMachine::update() {
         return;
       }
       if (torque_from_apps == config::apps::ERROR_PLAUSIBILITY) {
-        can_handler.send_torque(0);
-        break;
+        DEBUG_PRINTLN("Torque implausible, sending 0 torque");
+        DEBUG_PRINTLN("Torque implausible, sending 0 torque");
+        DEBUG_PRINTLN("Torque implausible, sending 0 torque");
+        torque_from_apps = 0;
       }
-      // DEBUG_PRINTLN("Torque from apps: " + String(torque_from_apps));
       if (torque_from_apps >= 0 && torque_from_apps <= config::bamocar::MAX) {
         can_handler.send_torque(
             torque_from_apps); /* VVVVVRRRRRRRRRRUUUUUUMMMMMMMMMMMMMMMMMMMMMMMm*/
@@ -102,9 +99,7 @@ bool StateMachine::transition_to_driving() const {
   return done;
 }
 
-State StateMachine::get_state() const {
-  return this->current_state_;
-}
+State StateMachine::get_state() const { return this->current_state_; }
 
 void StateMachine::transition_to_idle() {
   if (current_state_ == State::DRIVING || current_state_ == State::AS_DRIVING) {

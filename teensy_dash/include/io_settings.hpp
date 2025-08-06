@@ -65,18 +65,18 @@ constexpr uint16_t APPS_LOWER_DEADZONE_IN_APPS_HIGHER_SCALE = 360;
 
 constexpr uint16_t LINEAR_OFFSET = 140;
 constexpr uint16_t MAX = 510; // 677 for APPS Upper
-constexpr uint16_t MIN = 75; // 210 for APPS Lower
+constexpr uint16_t MIN = 80; // 210 for APPS Lower
 constexpr uint16_t MIN_FOR_TORQUE = 0;
 constexpr uint16_t MAX_FOR_TORQUE = MAX - MIN;
 
 constexpr int ERROR_PLAUSIBILITY = -4;
 
-constexpr uint8_t MAX_ERROR_PERCENT = 10;
+constexpr uint8_t MAX_ERROR_PERCENT = 50;
 constexpr uint16_t MAX_ERROR_ABS = UPPER_BOUND_APPS_HIGHER * MAX_ERROR_PERCENT / 100;
 
 constexpr uint8_t SAMPLES = 5;
 constexpr uint16_t BRAKE_BLOCK_THRESHOLD = 210;
-constexpr uint32_t IMPLAUSIBLE_TIMEOUT_MS = 500; // Time to set implausibility flag back to false
+constexpr uint32_t IMPLAUSIBLE_TIMEOUT_MS = 100; // Time to set implausibility flag back to false
 constexpr uint32_t BRAKE_PLAUSIBILITY_TIMEOUT_MS = 500;
 }  // namespace apps
 

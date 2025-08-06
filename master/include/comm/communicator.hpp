@@ -17,20 +17,21 @@
  * @brief Array of standard CAN message codes to be used for FIFO filtering
  * Each Code struct contains a key and a corresponding message ID.
  */
-inline std::array<Code, 7> fifoCodes = {{{0, DASH_ID},
+inline std::array<Code, 8> fifoCodes = {{{0, DASH_ID},
                                          {1, BAMO_RESPONSE_ID},
                                          {2, AS_CU_EMERGENCY_SIGNAL},
                                          {3, MISSION_FINISHED},
                                          {4, AS_CU_ID},
                                          {5, RES_STATE},
-                                         {6, RES_READY}}};
+                                         {6, RES_READY},
+                                         {7, BMS_ID}}};
 
 /**
  * @brief Array of extended CAN message codes to be used for FIFO filtering
  * Contains the key and corresponding message ID for extended messages.
  */
 inline std::array<Code, 1> fifoExtendedCodes = {{
-    {7, STEERING_ID},
+    {8, STEERING_ID},
 }};
 
 /**
@@ -104,6 +105,10 @@ public:
    */
   static void dash_callback(const uint8_t *buf);
 
+  /**
+   * @brief Callback for BMS messages
+   */
+  static void bms_callback(const uint8_t *buf);
   /**
    * @brief Publish AS State to CAN
    */
@@ -242,6 +247,9 @@ inline void Communicator::dash_callback(const uint8_t *buf) {
     _systemData->hardware_data_.hydraulic_line_front_pressure = (buf[2] << 8) | buf[1];
   }
 }
+inline void Communicator::bms_callback(const uint8_t *buf) {
+  _systemData->updatable_timestamps_.bms_alive_timestamp_.reset();
+}
 
 inline void Communicator::parse_message(const CAN_message_t &msg) {
   switch (msg.id) {
@@ -261,6 +269,8 @@ inline void Communicator::parse_message(const CAN_message_t &msg) {
       break;
     case DASH_ID:
       dash_callback(msg.buf);
+    case BMS_ID:
+      bms_callback(msg.buf);
       break;
     default:
       break;
@@ -281,8 +291,10 @@ inline int Communicator::publish_mission(int mission_id) {
 }
 inline int Communicator::publish_debug_morning_log(const SystemData &system_data, uint8_t state,
                                                    uint8_t state_checkup) {
-  send_message(8, create_debug_message_1(system_data, state, state_checkup), MASTER_ID);
-  send_message(8, create_debug_message_2(system_data), MASTER_ID);
+  // send_message(8, create_debug_message_1(system_data, state, state_checkup), MASTER_ID);
+  // send_message(8, create_debug_message_2(system_data), MASTER_ID);
+  send_message(8, create_signals_msg_1(system_data, state, state_checkup), DATA_LOGGER_SIGNALS_1);
+  send_message(8, create_hydraulic_presures_msg(system_data), DATA_LOGGER_SIGNALS_2);
   return 0;
 }
 

@@ -13,7 +13,7 @@ SystemData data;
 SystemVolatileData updated_data;
 volatile SystemVolatileData updatable_data;
 elapsedMillis loop_timer;
-constexpr uint8_t MAIN_LOOP_INTERVAL = 10;
+constexpr uint8_t MAIN_LOOP_INTERVAL = 20;
 
 SPI_MSTransfer_T4<&SPI> display_spi;
 IOManager io_manager(data, updatable_data, updated_data);
@@ -49,6 +49,5 @@ void loop() {
     spi_handler.handle_display_update(data, updated_data);
 
     loop_timer = 0;
-    Serial.flush();
   }
 }
