@@ -71,12 +71,12 @@ bool LogicHandler::plausibility(const int apps_higher, const int apps_lower) {
 
 uint16_t LogicHandler::apps_to_bamocar_value(const uint16_t apps_higher,
                                              const uint16_t apps_lower) {
-  uint16_t torque_value = apps_lower;  // APPS Lower works better
+  uint16_t torque_value = (apps_higher + apps_lower) / 2;  // Use average of both APPS values
 
-  torque_value = constrain(torque_value, config::apps::MIN, config::apps::MAX);
+  torque_value = constrain(torque_value, config::apps::AVG_MIN, config::apps::AVG_MAX);
 
   torque_value =
-      config::apps::MAX - torque_value;  // Invert the value to match Bamocar's expected input
+      config::apps::AVG_MAX - torque_value;  // Invert the value to match Bamocar's expected input
   // DEBUG_PRINTLN("Torque value before deadband: " + String(torque_value));
   if (torque_value <= config::apps::DEADBAND) {
     return 0;
