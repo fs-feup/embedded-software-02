@@ -1,7 +1,9 @@
 <map id="OutputCoordinator::enter_off_state" name="OutputCoordinator::enter_off_state">
-<area shape="rect" id="Node000001" title="Everything off, sdc open." alt="" coords="5,27,138,68"/>
-<area shape="rect" id="Node000002" href="$da/db9/class_digital_sender.html#ac37de32ae8c5d6aff580f8ee1e09dff1" title="Deactivates the solenoid EBS valves." alt="" coords="186,5,378,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="138,36,170,31,171,36,138,41"/>
-<area shape="rect" id="Node000003" href="$da/db9/class_digital_sender.html#a1db8385e42b643db5de2390a2bcf5a20" title="Turns off both ASSI LEDs (yellow and blue)." alt="" coords="219,55,345,96"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="138,54,204,62,203,68,138,59"/>
+<area shape="rect" id="Node000001" title="Everything off, sdc open." alt="" coords="5,47,138,88"/>
+<area shape="rect" id="Node000002" href="$da/db9/class_digital_sender.html#ab0cfa966c0a5e7c9538761dab485e4e2" title="Activates the solenoid EBS valves." alt="" coords="186,5,364,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="137,49,204,33,205,38,139,54"/>
+<area shape="rect" id="Node000003" href="$da/db9/class_digital_sender.html#add14481fc3edc2d052e8bc20dc5e7845" title="Opens the SDC in Master and SDC Logic." alt="" coords="195,55,355,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="138,65,179,65,179,70,138,70"/>
+<area shape="rect" id="Node000004" href="$da/db9/class_digital_sender.html#a1db8385e42b643db5de2390a2bcf5a20" title="Turns off both ASSI LEDs (yellow and blue)." alt="" coords="212,105,338,145"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="139,84,197,100,196,105,137,89"/>
 </map>

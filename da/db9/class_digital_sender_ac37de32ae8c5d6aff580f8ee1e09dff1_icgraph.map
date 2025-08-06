@@ -1,13 +1,11 @@
 <map id="DigitalSender::deactivate_ebs" name="DigitalSender::deactivate_ebs">
 <area shape="rect" id="Node000001" title="Deactivates the solenoid EBS valves." alt="" coords="910,335,1102,360"/>
-<area shape="rect" id="Node000002" href="$d8/d3c/class_output_coordinator.html#a74e1910e757880c3068c43d1d34dc60e" title="ASSI LEDs yellow flashing, ebs valves deactivated, sdc closed." alt="" coords="728,262,861,303"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="947,332,860,305,862,300,948,327"/>
-<area shape="rect" id="Node000020" href="$d8/d3c/class_output_coordinator.html#a5e261eb3d6f11edbd2fb44ad5d4b5323" title="Everything off, sdc closed." alt="" coords="727,327,862,368"/>
-<area shape="poly" id="edge40_Node000001_Node000020" title=" " alt="" coords="894,350,862,350,862,345,894,345"/>
-<area shape="rect" id="Node000021" href="$d8/d3c/class_output_coordinator.html#a728f67e71363b25a92c828c22fc3b8cd" title="Everything off, sdc open." alt="" coords="728,393,861,433"/>
-<area shape="poly" id="edge42_Node000001_Node000021" title=" " alt="" coords="948,368,862,395,860,390,947,363"/>
+<area shape="rect" id="Node000002" href="$d8/d3c/class_output_coordinator.html#a74e1910e757880c3068c43d1d34dc60e" title="ASSI LEDs yellow flashing, ebs valves deactivated, sdc closed." alt="" coords="728,294,861,335"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="905,334,861,327,862,322,906,329"/>
+<area shape="rect" id="Node000020" href="$d8/d3c/class_output_coordinator.html#a5e261eb3d6f11edbd2fb44ad5d4b5323" title="Everything off, sdc closed." alt="" coords="727,359,862,400"/>
+<area shape="poly" id="edge40_Node000001_Node000020" title=" " alt="" coords="902,366,862,372,862,367,901,361"/>
 <area shape="rect" id="Node000003" href="$d2/d46/class_a_s_state.html#a813d8386653a4884bd4a8d986fc57d56" title="Calculates the state of the vehicle." alt="" coords="550,327,679,368"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="723,311,673,329,672,324,721,306"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="713,332,680,338,679,333,712,327"/>
 <area shape="rect" id="Node000004" href="$df/d0a/main_8cpp.html#afe461d27b9c48d5921c00d521181f12f" title=" " alt="" coords="393,5,438,31"/>
 <area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="607,312,597,256,578,186,547,115,526,82,500,52,486,41,470,33,438,24,439,19,472,28,489,37,504,48,530,78,551,112,583,185,602,255,612,311"/>
 <area shape="rect" id="Node000005" href="$da/dad/test__integration_8cpp.html#a1136867e1558c6e16064d9a381541d74" title="Test function to validate AS_DRIVING to AS_FINISHED transition and AS_FINISHED to AS_OFF after." alt="" coords="113,37,271,77"/>
@@ -61,6 +59,5 @@
 <area shape="rect" id="Node000019" href="$da/dad/test__integration_8cpp.html#a5665bb2a1cfd6e9bc513ed13f99dc95e" title="Test function to validate AS_OFF to AS_Ready transition normal and successful transition." alt="" coords="104,249,280,275"/>
 <area shape="poly" id="edge34_Node000018_Node000019" title=" " alt="" coords="365,272,280,269,280,263,365,267"/>
 <area shape="poly" id="edge35_Node000019_Node000006" title=" " alt="" coords="112,284,104,288,84,304,67,322,41,357,37,354,63,319,81,300,101,284,109,279"/>
-<area shape="poly" id="edge41_Node000020_Node000003" title=" " alt="" coords="711,350,679,350,679,345,711,345"/>
-<area shape="poly" id="edge43_Node000021_Node000003" title=" " alt="" coords="721,389,672,371,673,366,723,384"/>
+<area shape="poly" id="edge41_Node000020_Node000003" title=" " alt="" coords="710,367,678,361,679,356,711,362"/>
 </map>

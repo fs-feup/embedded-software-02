@@ -1,0 +1,7 @@
+<map id="create_signals_msg_1" name="create_signals_msg_1">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,31,157,56"/>
+<area shape="rect" id="Node000002" href="$db/d60/class_metro.html#a95ed7cb80b7f56a80790c34fcea93724" title="Checks if the interval has passed without resetting the timer." alt="" coords="205,5,378,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="157,32,189,28,189,33,158,37"/>
+<area shape="rect" id="Node000003" href="$db/dac/enum__utils_8hpp.html#a7c51004dded6296bb71c6dd83c7ad4a9" title=" " alt="" coords="243,55,340,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="158,50,228,58,227,63,157,55"/>
+</map>

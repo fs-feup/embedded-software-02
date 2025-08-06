@@ -8,7 +8,7 @@ var searchData=
   ['close_5fsdc_5',['close_sdc',['../da/db9/class_digital_sender.html#aeba7623043aeabfc9c4340cf5185fbca',1,'DigitalSender']]],
   ['close_5fwatchdog_5fsdc_6',['close_watchdog_sdc',['../da/db9/class_digital_sender.html#a306472b53ae1cf7beac1a77cdf790f1a',1,'DigitalSender']]],
   ['communicator_7',['Communicator',['../d0/d02/class_communicator.html#a2e0dd0b9a1c3afb728c17639180d56dd',1,'Communicator']]],
-  ['create_5fdebug_5fmessage_5f1_8',['create_debug_message_1',['../d5/d5d/comm_2utils_8hpp.html#afc621da1b2c4efbdca125284a203f440',1,'utils.hpp']]],
-  ['create_5fdebug_5fmessage_5f2_9',['create_debug_message_2',['../d5/d5d/comm_2utils_8hpp.html#a7ec98a70fc18897715bddd50442594a9',1,'utils.hpp']]],
-  ['create_5fleft_5fwheel_5fmsg_10',['create_left_wheel_msg',['../d5/d5d/comm_2utils_8hpp.html#a64debfb46d428531f2ce27fa92f63685',1,'utils.hpp']]]
+  ['create_5fhydraulic_5fpresures_5fmsg_8',['create_hydraulic_presures_msg',['../d5/d5d/comm_2utils_8hpp.html#ad6a8d3467d45bda19e381a3edb64ec38',1,'utils.hpp']]],
+  ['create_5fleft_5fwheel_5fmsg_9',['create_left_wheel_msg',['../d5/d5d/comm_2utils_8hpp.html#a64debfb46d428531f2ce27fa92f63685',1,'utils.hpp']]],
+  ['create_5fsignals_5fmsg_5f1_10',['create_signals_msg_1',['../d5/d5d/comm_2utils_8hpp.html#ac27564440a673f59aeb13b419ff1084a',1,'utils.hpp']]]
 ];

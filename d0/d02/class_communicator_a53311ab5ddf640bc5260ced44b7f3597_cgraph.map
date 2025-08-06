@@ -1,0 +1,5 @@
+<map id="Communicator::bms_callback" name="Communicator::bms_callback">
+<area shape="rect" id="Node000001" title="Callback for BMS messages." alt="" coords="5,5,197,31"/>
+<area shape="rect" id="Node000002" href="$d6/d64/class_volatile_metro.html#a44ed714549015ecf17c88f6dcba10dbe" title="Resets the timer to the current time." alt="" coords="245,5,377,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="197,16,229,16,229,21,197,21"/>
+</map>

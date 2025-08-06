@@ -1,13 +1,13 @@
 <map id="Communicator::publish_debug_morning_log" name="Communicator::publish_debug_morning_log">
-<area shape="rect" id="Node000001" title="Publish AS Mission to CAN." alt="" coords="5,71,158,112"/>
-<area shape="rect" id="Node000002" href="$d5/d5d/comm_2utils_8hpp.html#afc621da1b2c4efbdca125284a203f440" title=" " alt="" coords="206,29,379,55"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="157,71,219,57,220,62,159,76"/>
-<area shape="rect" id="Node000005" href="$d5/d5d/comm_2utils_8hpp.html#a7ec98a70fc18897715bddd50442594a9" title=" " alt="" coords="206,79,379,104"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="158,89,190,89,190,94,158,94"/>
-<area shape="rect" id="Node000006" href="$d0/d02/class_communicator.html#a55c912e8973aa10866ae3fd9f2df8de7" title="Sends a message to the CAN bus." alt="" coords="223,129,362,169"/>
-<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="159,110,208,123,207,128,157,115"/>
-<area shape="rect" id="Node000003" href="$db/d60/class_metro.html#a95ed7cb80b7f56a80790c34fcea93724" title="Checks if the interval has passed without resetting the timer." alt="" coords="427,5,600,31"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="379,30,411,27,412,32,380,35"/>
-<area shape="rect" id="Node000004" href="$db/dac/enum__utils_8hpp.html#a7c51004dded6296bb71c6dd83c7ad4a9" title=" " alt="" coords="465,55,562,80"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="380,49,450,58,450,63,379,55"/>
+<area shape="rect" id="Node000001" title="Publish AS Mission to CAN." alt="" coords="5,47,158,88"/>
+<area shape="rect" id="Node000002" href="$d5/d5d/comm_2utils_8hpp.html#ad6a8d3467d45bda19e381a3edb64ec38" title=" " alt="" coords="206,5,410,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="157,48,230,32,231,38,159,54"/>
+<area shape="rect" id="Node000003" href="$d5/d5d/comm_2utils_8hpp.html#ac27564440a673f59aeb13b419ff1084a" title=" " alt="" coords="232,55,384,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="158,65,216,65,216,70,158,70"/>
+<area shape="rect" id="Node000006" href="$d0/d02/class_communicator.html#a55c912e8973aa10866ae3fd9f2df8de7" title="Sends a message to the CAN bus." alt="" coords="238,105,378,145"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="159,84,224,101,222,106,157,89"/>
+<area shape="rect" id="Node000004" href="$db/d60/class_metro.html#a95ed7cb80b7f56a80790c34fcea93724" title="Checks if the interval has passed without resetting the timer." alt="" coords="458,31,631,56"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="384,57,442,51,443,56,384,62"/>
+<area shape="rect" id="Node000005" href="$db/dac/enum__utils_8hpp.html#a7c51004dded6296bb71c6dd83c7ad4a9" title=" " alt="" coords="496,80,593,106"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="384,73,481,83,480,89,384,78"/>
 </map>

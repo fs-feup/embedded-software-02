@@ -1,28 +1,31 @@
 <map id="Communicator::parse_message" name="Communicator::parse_message">
-<area shape="rect" id="Node000001" title="Parses the message received from the CAN bus." alt="" coords="5,157,149,198"/>
-<area shape="rect" id="Node000002" href="$d0/d02/class_communicator.html#abb808b73526d1d221dafef31202f88cc" title="Callback from inversor, for alive signal and data." alt="" coords="206,5,368,46"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="92,155,136,107,164,80,195,57,205,51,207,56,198,61,167,84,139,110,96,159"/>
-<area shape="rect" id="Node000005" href="$d0/d02/class_communicator.html#a46466e44543d6d7e1859d2c1912f5136" title="Callback for dashboard." alt="" coords="217,71,357,111"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="120,154,196,121,210,115,212,120,198,125,122,159"/>
-<area shape="rect" id="Node000006" href="$d0/d02/class_communicator.html#a6e76ba59f478d3957c757b4cd211935b" title="Callback for message from AS CU." alt="" coords="197,136,377,161"/>
-<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="149,165,180,161,181,166,149,170"/>
-<area shape="rect" id="Node000007" href="$d0/d02/class_communicator.html#ade6c8ad4a457cda4b149c0fa44581002" title="Callback for RES activation." alt="" coords="203,316,371,357"/>
-<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="95,197,138,248,167,276,198,301,207,306,204,311,195,305,163,280,134,252,91,200"/>
-<area shape="rect" id="Node000009" href="$d0/d02/class_communicator.html#a42cf4c62a4ff6b22f9c0151f60ce53b2" title="Callback RES default callback." alt="" coords="204,251,370,291"/>
-<area shape="poly" id="edge9_Node000001_Node000009" title=" " alt="" coords="118,196,198,235,214,242,212,247,196,240,116,201"/>
-<area shape="rect" id="Node000012" href="$d0/d02/class_communicator.html#a04694b4fb21ef693a32ec31a13cd3127" title="Callback for steering actuator information." alt="" coords="208,185,366,226"/>
-<area shape="poly" id="edge13_Node000001_Node000012" title=" " alt="" coords="149,185,193,190,192,196,149,190"/>
-<area shape="rect" id="Node000003" href="$d6/d64/class_volatile_metro.html#aa345ca0f2c0e30874a1701a2a8ca9e53" title="Checks if the interval has passed without resetting the timer." alt="" coords="425,5,607,46"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="368,23,409,23,409,28,368,28"/>
-<area shape="rect" id="Node000004" href="$d6/d64/class_volatile_metro.html#a44ed714549015ecf17c88f6dcba10dbe" title="Resets the timer to the current time." alt="" coords="450,165,582,191"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="353,44,378,57,443,104,494,151,490,155,440,108,376,61,351,49"/>
-<area shape="poly" id="edge6_Node000006_Node000004" title=" " alt="" coords="377,157,435,165,435,170,377,162"/>
-<area shape="rect" id="Node000008" href="$d0/d02/class_communicator.html#a55c912e8973aa10866ae3fd9f2df8de7" title="Sends a message to the CAN bus." alt="" coords="447,316,586,357"/>
-<area shape="poly" id="edge8_Node000007_Node000008" title=" " alt="" coords="371,334,431,334,431,339,371,339"/>
-<area shape="poly" id="edge12_Node000009_Node000004" title=" " alt="" coords="344,248,376,235,471,195,473,200,378,240,346,253"/>
-<area shape="rect" id="Node000010" href="$d8/deb/struct_r2_d_logics.html#ac12d9b344b39a8a5da25dcc6cdfb3a3b" title="Processes the go signal." alt="" coords="448,251,585,291"/>
-<area shape="poly" id="edge10_Node000009_Node000010" title=" " alt="" coords="370,268,432,268,432,274,370,274"/>
-<area shape="rect" id="Node000011" href="$db/d60/class_metro.html#aca78646b9ae992c81ffc395c1a1da997" title="Checks if the interval has passed and resets the timer if true." alt="" coords="655,258,751,284"/>
-<area shape="poly" id="edge11_Node000010_Node000011" title=" " alt="" coords="585,268,640,268,640,274,585,274"/>
-<area shape="poly" id="edge14_Node000012_Node000004" title=" " alt="" coords="365,193,434,185,435,190,366,199"/>
+<area shape="rect" id="Node000001" title="Parses the message received from the CAN bus." alt="" coords="5,193,149,234"/>
+<area shape="rect" id="Node000002" href="$d0/d02/class_communicator.html#abb808b73526d1d221dafef31202f88cc" title="Callback from inversor, for alive signal and data." alt="" coords="212,5,373,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="87,192,128,126,159,89,195,57,203,51,206,56,198,61,163,93,133,129,91,194"/>
+<area shape="rect" id="Node000005" href="$d0/d02/class_communicator.html#a53311ab5ddf640bc5260ced44b7f3597" title="Callback for BMS messages." alt="" coords="197,201,388,227"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="149,211,181,211,181,216,149,216"/>
+<area shape="rect" id="Node000006" href="$d0/d02/class_communicator.html#a46466e44543d6d7e1859d2c1912f5136" title="Callback for dashboard." alt="" coords="223,136,362,177"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="148,192,207,176,208,181,150,197"/>
+<area shape="rect" id="Node000007" href="$d0/d02/class_communicator.html#a6e76ba59f478d3957c757b4cd211935b" title="Callback for message from AS CU." alt="" coords="202,250,383,276"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="150,227,219,244,218,249,149,233"/>
+<area shape="rect" id="Node000008" href="$d0/d02/class_communicator.html#ade6c8ad4a457cda4b149c0fa44581002" title="Callback for RES activation." alt="" coords="209,365,376,406"/>
+<area shape="poly" id="edge9_Node000001_Node000008" title=" " alt="" coords="93,233,136,291,165,323,198,350,207,356,204,360,195,354,161,326,131,294,89,236"/>
+<area shape="rect" id="Node000010" href="$d0/d02/class_communicator.html#a42cf4c62a4ff6b22f9c0151f60ce53b2" title="Callback RES default callback." alt="" coords="210,300,375,341"/>
+<area shape="poly" id="edge11_Node000001_Node000010" title=" " alt="" coords="108,232,150,259,198,286,210,292,208,296,195,291,147,264,105,237"/>
+<area shape="rect" id="Node000013" href="$d0/d02/class_communicator.html#a04694b4fb21ef693a32ec31a13cd3127" title="Callback for steering actuator information." alt="" coords="214,71,371,111"/>
+<area shape="poly" id="edge15_Node000001_Node000013" title=" " alt="" coords="100,191,143,156,195,122,209,115,211,120,198,127,146,161,103,195"/>
+<area shape="rect" id="Node000003" href="$d6/d64/class_volatile_metro.html#aa345ca0f2c0e30874a1701a2a8ca9e53" title="Checks if the interval has passed without resetting the timer." alt="" coords="436,5,618,46"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="374,23,420,23,420,28,374,28"/>
+<area shape="rect" id="Node000004" href="$d6/d64/class_volatile_metro.html#a44ed714549015ecf17c88f6dcba10dbe" title="Resets the timer to the current time." alt="" coords="461,201,593,227"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="366,44,389,57,428,87,462,122,511,186,507,190,458,126,424,91,387,61,364,49"/>
+<area shape="poly" id="edge5_Node000005_Node000004" title=" " alt="" coords="388,211,445,211,445,216,388,216"/>
+<area shape="poly" id="edge8_Node000007_Node000004" title=" " alt="" coords="357,247,447,228,448,233,358,252"/>
+<area shape="rect" id="Node000009" href="$d0/d02/class_communicator.html#a55c912e8973aa10866ae3fd9f2df8de7" title="Sends a message to the CAN bus." alt="" coords="458,365,597,406"/>
+<area shape="poly" id="edge10_Node000008_Node000009" title=" " alt="" coords="376,383,442,383,442,388,376,388"/>
+<area shape="poly" id="edge14_Node000010_Node000004" title=" " alt="" coords="359,297,387,286,441,259,490,232,492,237,444,264,389,291,361,302"/>
+<area shape="rect" id="Node000011" href="$d8/deb/struct_r2_d_logics.html#ac12d9b344b39a8a5da25dcc6cdfb3a3b" title="Processes the go signal." alt="" coords="459,300,596,341"/>
+<area shape="poly" id="edge12_Node000010_Node000011" title=" " alt="" coords="376,318,443,318,443,323,376,323"/>
+<area shape="rect" id="Node000012" href="$db/d60/class_metro.html#aca78646b9ae992c81ffc395c1a1da997" title="Checks if the interval has passed and resets the timer if true." alt="" coords="666,308,762,333"/>
+<area shape="poly" id="edge13_Node000011_Node000012" title=" " alt="" coords="596,318,651,318,651,323,596,323"/>
+<area shape="poly" id="edge16_Node000013_Node000004" title=" " alt="" coords="361,110,389,122,448,156,498,189,495,194,445,160,387,127,358,114"/>
 </map>

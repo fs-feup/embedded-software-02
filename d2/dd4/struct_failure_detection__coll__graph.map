@@ -1,7 +1,7 @@
 <map id="FailureDetection" name="FailureDetection">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,492,187,732"/>
-<area shape="rect" id="Node000002" href="$da/d6f/struct_non_unitary_failure_detection.html" title=" " alt="" coords="10,364,182,429"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="99,429,99,475,93,475,93,429"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,522,187,782"/>
+<area shape="rect" id="Node000002" href="$da/d6f/struct_non_unitary_failure_detection.html" title=" " alt="" coords="10,394,182,459"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="99,459,99,505,93,505,93,459"/>
 <area shape="rect" id="Node000003" href="$d6/d64/class_volatile_metro.html" title="Volatile version of Metro class for interrupt&#45;safe operations." alt="" coords="24,5,168,151"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="99,151,99,347,93,347,93,151"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="99,151,99,377,93,377,93,151"/>
 </map>

@@ -1,113 +1,112 @@
 <map id="test_off_to_manual_wayback" name="test_off_to_manual_wayback">
-<area shape="rect" id="Node000001" title="Test function to validate AS_OFF to AS_Manual transition and the other way around." alt="" coords="5,745,137,785"/>
-<area shape="rect" id="Node000002" href="$d2/d46/class_a_s_state.html#a813d8386653a4884bd4a8d986fc57d56" title="Calculates the state of the vehicle." alt="" coords="185,715,313,756"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="137,751,169,746,170,751,138,757"/>
-<area shape="rect" id="Node000044" href="$da/dad/test__integration_8cpp.html#ad20897c5c8bd47f5d4005989bead0e55" title="Auxiliary function to reset data values." alt="" coords="224,780,274,806"/>
-<area shape="poly" id="edge67_Node000001_Node000044" title=" " alt="" coords="137,773,209,784,208,789,137,778"/>
-<area shape="rect" id="Node000003" href="$d8/d3c/class_output_coordinator.html#a848078a36dcf417f37b4329772f58b35" title=" " alt="" coords="378,71,510,112"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="249,714,261,600,283,432,298,344,315,262,336,194,359,145,384,119,388,123,363,148,341,196,321,264,303,345,288,432,266,601,255,715"/>
-<area shape="rect" id="Node000006" href="$d8/d3c/class_output_coordinator.html#a8a0eb2c2d5e7ebd9ebb5629b1ce9fdae" title=" " alt="" coords="373,6,515,47"/>
-<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="248,715,255,584,273,388,288,286,306,191,330,113,344,82,359,58,361,55,365,59,363,61,348,84,335,115,312,193,293,287,279,389,261,584,254,715"/>
-<area shape="rect" id="Node000007" href="$d7/d1f/class_checkup_manager.html#a72c7e6b64cbfbea251a9d7c2c33adafd" title="Checks if the emergency sequence is complete and the vehicle can transition to AS_OFF." alt="" coords="592,105,784,145"/>
-<area shape="poly" id="edge8_Node000002_Node000007" title=" " alt="" coords="249,714,260,611,281,463,296,386,313,316,334,259,359,219,381,198,407,180,462,154,520,136,577,127,577,132,521,142,464,159,409,185,385,202,363,223,339,261,318,318,301,387,286,463,265,612,255,715"/>
-<area shape="rect" id="Node000009" href="$d8/d3c/class_output_coordinator.html#a74e1910e757880c3068c43d1d34dc60e" title="ASSI LEDs yellow flashing, ebs valves deactivated, sdc closed." alt="" coords="378,306,510,347"/>
-<area shape="poly" id="edge10_Node000002_Node000009" title=" " alt="" coords="248,714,252,648,268,553,282,501,301,450,326,401,359,358,364,353,368,357,363,361,331,404,306,452,287,503,273,554,257,648,253,715"/>
-<area shape="rect" id="Node000012" href="$db/d60/class_metro.html#a40a8e2c535e7558224f4336628797dbd" title="Resets the timer to the current time." alt="" coords="896,592,985,618"/>
-<area shape="poly" id="edge42_Node000002_Node000012" title=" " alt="" coords="258,713,274,686,296,655,325,625,360,602,428,577,500,562,573,555,646,554,715,559,779,567,881,587,880,592,778,572,715,564,646,560,574,560,501,567,430,582,362,607,329,629,300,659,278,689,263,716"/>
-<area shape="rect" id="Node000014" href="$d8/d3c/class_output_coordinator.html#a770772b6af06321909837fda0ccd8cd6" title="ASSI LEDs blue flashing, sdc open and buzzer ringing." alt="" coords="366,617,522,657"/>
-<area shape="poly" id="edge15_Node000002_Node000014" title=" " alt="" coords="281,712,360,668,373,661,376,666,362,673,284,717"/>
-<area shape="rect" id="Node000017" href="$d8/d3c/class_output_coordinator.html#a52082e61d82874252340304b8773e917" title="ASSI blue LED on, ebs valves activated, sdc open." alt="" coords="378,682,510,723"/>
-<area shape="poly" id="edge20_Node000002_Node000017" title=" " alt="" coords="313,722,362,713,363,719,314,727"/>
-<area shape="rect" id="Node000019" href="$d8/d3c/class_output_coordinator.html#a5e261eb3d6f11edbd2fb44ad5d4b5323" title="Everything off, sdc closed." alt="" coords="377,437,512,477"/>
-<area shape="poly" id="edge25_Node000002_Node000019" title=" " alt="" coords="252,714,263,668,284,608,315,545,335,515,359,488,364,484,367,488,363,492,340,518,320,547,288,610,268,670,257,715"/>
-<area shape="rect" id="Node000020" href="$d8/d3c/class_output_coordinator.html#a728f67e71363b25a92c828c22fc3b8cd" title="Everything off, sdc open." alt="" coords="378,371,510,412"/>
-<area shape="poly" id="edge29_Node000002_Node000020" title=" " alt="" coords="249,714,257,658,275,581,289,539,308,497,331,458,359,423,363,419,367,423,363,427,335,461,313,500,294,541,280,582,262,659,254,715"/>
-<area shape="rect" id="Node000021" href="$d8/d3c/class_output_coordinator.html#a990b6c38e46f0a7cd575ebc70fad259e" title="ASSI yellow LED on, ebs valves activated, sdc closed." alt="" coords="378,502,510,543"/>
-<area shape="poly" id="edge32_Node000002_Node000021" title=" " alt="" coords="256,713,294,640,324,597,359,559,373,549,376,553,363,563,328,600,299,642,261,716"/>
-<area shape="rect" id="Node000023" href="$d8/d3c/class_output_coordinator.html#adb749a680d9c779662b7fa2c13a159fc" title=" " alt="" coords="363,1009,526,1049"/>
-<area shape="poly" id="edge37_Node000002_Node000023" title=" " alt="" coords="303,754,315,766,333,797,340,826,341,855,338,883,336,910,337,937,345,965,363,994,366,997,362,1000,359,997,340,967,332,938,331,910,333,882,336,855,335,827,328,799,311,769,299,758"/>
-<area shape="rect" id="Node000024" href="$d8/d3c/class_output_coordinator.html#a96b64b45b9bab3c1ec9b7bcedc0ffff9" title=" " alt="" coords="378,747,510,788"/>
-<area shape="poly" id="edge38_Node000002_Node000024" title=" " alt="" coords="314,743,363,752,362,757,313,749"/>
-<area shape="rect" id="Node000026" href="$d7/d1f/class_checkup_manager.html#ae13f419b624cefcf107ac6a192a85aaa" title="Checks if the RES has been triggered." alt="" coords="371,1074,517,1115"/>
-<area shape="poly" id="edge41_Node000002_Node000026" title=" " alt="" coords="304,755,315,766,337,806,344,844,343,880,338,916,333,951,332,986,341,1022,363,1059,365,1062,361,1065,359,1062,336,1024,327,987,328,951,333,915,338,880,339,844,332,807,311,769,300,758"/>
-<area shape="rect" id="Node000027" href="$d7/d1f/class_checkup_manager.html#aa810d7c8863657dbc9a850d9026b3cbb" title="Resets the checkup state to the initial state." alt="" coords="366,1139,523,1180"/>
-<area shape="poly" id="edge43_Node000002_Node000027" title=" " alt="" coords="304,755,315,766,330,791,340,815,349,861,346,905,338,949,330,992,328,1035,337,1079,348,1101,363,1125,365,1127,361,1131,359,1128,343,1104,332,1080,322,1035,324,991,332,948,340,905,343,861,335,816,325,793,311,769,300,758"/>
-<area shape="rect" id="Node000028" href="$d7/d1f/class_checkup_manager.html#a1137db2adef0dae5c06fbbd1c86f8568" title="Performs an emergency checkup." alt="" coords="361,943,527,984"/>
-<area shape="poly" id="edge44_Node000002_Node000028" title=" " alt="" coords="303,755,315,766,329,788,336,809,339,849,342,889,349,908,363,928,366,931,362,935,359,932,344,911,336,890,333,850,331,810,324,790,311,769,299,758"/>
-<area shape="rect" id="Node000033" href="$d7/d1f/class_checkup_manager.html#a9a609a4d9f99f91092792ac2105eb247" title="Performs a last re&#45;check for off to ready transition." alt="" coords="361,813,527,853"/>
-<area shape="poly" id="edge50_Node000002_Node000033" title=" " alt="" coords="294,754,314,765,362,797,375,803,372,808,360,802,312,770,291,759"/>
-<area shape="rect" id="Node000034" href="$d7/d1f/class_checkup_manager.html#ae43d5cab5cc266bd19ba222b30fc06e3" title=" " alt="" coords="361,1205,527,1245"/>
-<area shape="poly" id="edge52_Node000002_Node000034" title=" " alt="" coords="304,754,315,766,332,795,344,823,350,851,353,878,348,931,337,982,327,1032,323,1083,326,1109,333,1135,345,1162,363,1190,365,1192,361,1195,359,1193,340,1165,328,1137,321,1110,318,1083,321,1032,332,981,343,930,347,878,345,852,339,825,328,797,311,769,300,758"/>
-<area shape="rect" id="Node000035" href="$d7/d1f/class_checkup_manager.html#a033456ba1c06b51f32f83c3706f39358" title="Performs a manual driving checkup." alt="" coords="361,1270,527,1311"/>
-<area shape="poly" id="edge53_Node000002_Node000035" title=" " alt="" coords="304,754,315,766,335,800,348,832,355,864,357,896,350,956,337,1015,324,1073,318,1132,321,1162,329,1192,343,1223,363,1255,365,1257,361,1261,359,1258,338,1226,324,1194,316,1163,313,1132,318,1072,332,1014,345,955,351,895,349,865,343,834,330,802,311,769,300,758"/>
-<area shape="rect" id="Node000036" href="$d7/d1f/class_checkup_manager.html#adab2ab683f0087fd08edaf7746d27980" title="Performs a mission finished checkup." alt="" coords="361,1335,527,1376"/>
-<area shape="poly" id="edge54_Node000002_Node000036" title=" " alt="" coords="304,754,315,766,327,789,335,816,342,883,342,962,338,1046,334,1130,335,1208,343,1273,352,1300,363,1321,365,1323,361,1326,359,1324,347,1302,338,1275,330,1208,329,1130,333,1046,337,962,337,884,329,817,322,791,311,769,301,758"/>
-<area shape="rect" id="Node000037" href="$d7/d1f/class_checkup_manager.html#abaf565f9d7f19293df1fc5a6d2280264" title="Performs an off checkup." alt="" coords="361,233,527,273"/>
-<area shape="poly" id="edge55_Node000002_Node000037" title=" " alt="" coords="247,715,249,639,263,528,276,467,296,405,323,346,359,292,371,280,375,284,363,296,328,349,301,407,282,468,268,529,254,639,252,715"/>
-<area shape="rect" id="Node000041" href="$d7/d1f/class_checkup_manager.html#a880c417754f8b2b1a171f70893326f16" title="Performs a ready to drive checkup." alt="" coords="361,878,527,919"/>
-<area shape="poly" id="edge63_Node000002_Node000041" title=" " alt="" coords="301,754,315,766,332,791,339,816,346,839,363,863,368,867,364,871,359,867,341,842,334,817,327,794,311,769,297,758"/>
-<area shape="rect" id="Node000043" href="$d2/d46/class_a_s_state.html#a78e9322d13be537b8ee58cbaa4d7ecd3" title=" " alt="" coords="368,1400,520,1426"/>
-<area shape="poly" id="edge66_Node000002_Node000043" title=" " alt="" coords="304,754,315,766,328,791,336,822,343,898,342,986,336,1080,331,1174,331,1261,340,1334,350,1363,363,1386,365,1388,361,1392,359,1389,345,1365,335,1335,325,1261,325,1174,331,1080,336,986,338,898,331,823,323,793,311,769,301,758"/>
-<area shape="rect" id="Node000004" href="$da/db9/class_digital_sender.html#a2e7fd9af17e61e7b0976de86e603895c" title="Blinks the LED at the given pin." alt="" coords="610,55,766,80"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="510,82,594,74,595,79,511,88"/>
-<area shape="rect" id="Node000005" href="$db/d60/class_metro.html#aca78646b9ae992c81ffc395c1a1da997" title="Checks if the interval has passed and resets the timer if true." alt="" coords="640,5,736,31"/>
-<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="494,68,575,40,624,27,626,32,576,45,496,73"/>
-<area shape="poly" id="edge6_Node000006_Node000004" title=" " alt="" coords="516,36,595,49,594,54,515,41"/>
-<area shape="poly" id="edge7_Node000006_Node000005" title=" " alt="" coords="516,21,625,18,625,23,516,26"/>
-<area shape="rect" id="Node000008" href="$db/d60/class_metro.html#a95ed7cb80b7f56a80790c34fcea93724" title="Checks if the interval has passed without resetting the timer." alt="" coords="854,112,1027,138"/>
-<area shape="poly" id="edge9_Node000007_Node000008" title=" " alt="" coords="784,122,838,122,838,128,784,128"/>
-<area shape="rect" id="Node000010" href="$da/db9/class_digital_sender.html#aeba7623043aeabfc9c4340cf5185fbca" title="Closes the SDC in Master and SDC Logic." alt="" coords="859,292,1022,318"/>
-<area shape="poly" id="edge11_Node000009_Node000010" title=" " alt="" coords="490,303,531,288,575,277,638,268,688,267,801,277,865,286,864,291,800,282,688,272,638,274,576,282,532,293,492,308"/>
-<area shape="rect" id="Node000011" href="$da/db9/class_digital_sender.html#ac37de32ae8c5d6aff580f8ee1e09dff1" title="Deactivates the solenoid EBS valves." alt="" coords="592,336,784,362"/>
-<area shape="poly" id="edge12_Node000009_Node000011" title=" " alt="" coords="511,330,577,336,576,341,511,335"/>
-<area shape="poly" id="edge13_Node000009_Node000012" title=" " alt="" coords="510,304,575,290,651,284,690,286,729,292,767,304,802,321,834,346,861,377,883,412,901,448,925,519,938,576,932,577,920,521,896,450,878,414,857,380,830,350,799,326,765,309,728,298,690,292,651,290,576,296,511,309"/>
-<area shape="rect" id="Node000013" href="$da/db9/class_digital_sender.html#a1db8385e42b643db5de2390a2bcf5a20" title="Turns off both ASSI LEDs (yellow and blue)." alt="" coords="625,386,751,427"/>
-<area shape="poly" id="edge14_Node000009_Node000013" title=" " alt="" coords="500,345,576,372,611,382,609,387,574,377,499,350"/>
-<area shape="poly" id="edge18_Node000014_Node000012" title=" " alt="" coords="522,629,880,606,880,611,523,634"/>
-<area shape="poly" id="edge19_Node000014_Node000013" title=" " alt="" coords="469,614,498,586,525,553,539,521,545,493,552,465,573,438,590,426,609,417,611,422,593,430,577,441,557,468,550,494,545,523,530,556,502,590,472,618"/>
-<area shape="rect" id="Node000015" href="$da/db9/class_digital_sender.html#ab0cfa966c0a5e7c9538761dab485e4e2" title="Activates the solenoid EBS valves." alt="" coords="599,717,777,743"/>
-<area shape="poly" id="edge16_Node000014_Node000015" title=" " alt="" coords="503,655,529,668,553,687,577,704,591,710,589,715,574,709,549,691,526,672,501,660"/>
-<area shape="rect" id="Node000016" href="$da/db9/class_digital_sender.html#add14481fc3edc2d052e8bc20dc5e7845" title="Opens the SDC in Master and SDC Logic." alt="" coords="608,668,768,694"/>
-<area shape="poly" id="edge17_Node000014_Node000016" title=" " alt="" coords="523,648,598,662,597,667,522,653"/>
-<area shape="poly" id="edge23_Node000017_Node000013" title=" " alt="" coords="509,681,525,667,543,638,550,610,551,581,547,553,544,525,545,496,553,467,573,438,590,424,609,415,611,420,593,429,577,441,558,469,550,497,549,525,553,553,556,581,556,610,548,640,529,671,513,685"/>
-<area shape="poly" id="edge21_Node000017_Node000015" title=" " alt="" coords="511,707,583,715,583,721,510,712"/>
-<area shape="poly" id="edge22_Node000017_Node000016" title=" " alt="" coords="511,694,592,686,593,692,511,699"/>
-<area shape="rect" id="Node000018" href="$da/db9/class_digital_sender.html#a5a90832e1fe9c2657e9c882ef74e00d5" title="Turns on the blue ASSI LED." alt="" coords="625,767,751,808"/>
-<area shape="poly" id="edge24_Node000017_Node000018" title=" " alt="" coords="498,721,528,733,576,753,611,764,609,769,574,758,526,738,496,726"/>
-<area shape="poly" id="edge26_Node000019_Node000011" title=" " alt="" coords="504,434,526,421,540,409,549,396,558,384,574,372,588,365,590,370,577,376,562,388,553,400,544,412,529,426,506,438"/>
-<area shape="poly" id="edge28_Node000019_Node000013" title=" " alt="" coords="511,440,609,420,610,425,513,445"/>
-<area shape="poly" id="edge27_Node000019_Node000016" title=" " alt="" coords="508,475,529,488,575,528,616,573,673,653,669,656,611,577,571,532,526,492,505,480"/>
-<area shape="poly" id="edge30_Node000020_Node000011" title=" " alt="" coords="510,377,595,362,596,368,511,383"/>
-<area shape="poly" id="edge31_Node000020_Node000013" title=" " alt="" coords="511,393,609,399,609,404,511,398"/>
-<area shape="poly" id="edge34_Node000021_Node000010" title=" " alt="" coords="511,532,575,539,650,540,727,529,764,517,799,501,824,485,845,465,882,419,909,371,927,331,932,333,914,374,886,422,849,469,827,489,802,506,766,522,728,534,650,545,575,545,510,538"/>
-<area shape="poly" id="edge35_Node000021_Node000013" title=" " alt="" coords="504,499,526,487,540,474,549,462,558,450,574,437,609,421,611,426,577,442,562,453,553,465,544,478,529,491,506,504"/>
-<area shape="poly" id="edge33_Node000021_Node000015" title=" " alt="" coords="472,541,501,569,530,603,544,633,550,658,558,682,577,704,587,711,584,715,574,708,553,684,545,660,539,634,525,606,497,573,468,545"/>
-<area shape="rect" id="Node000022" href="$da/db9/class_digital_sender.html#af2dad86a446fe22d6e9e16f24950e979" title="Turns on the yellow ASSI LED." alt="" coords="625,451,751,492"/>
-<area shape="poly" id="edge36_Node000021_Node000022" title=" " alt="" coords="510,506,609,485,610,490,511,511"/>
-<area shape="rect" id="Node000025" href="$d8/deb/struct_r2_d_logics.html#abfc6d63e5e4fb198bb790d1011b82b8c" title="resets timestamps for ready" alt="" coords="622,833,754,873"/>
-<area shape="poly" id="edge39_Node000024_Node000025" title=" " alt="" coords="498,786,576,817,608,828,607,833,574,822,496,791"/>
-<area shape="poly" id="edge40_Node000025_Node000012" title=" " alt="" coords="753,839,777,830,799,817,844,774,880,723,908,673,926,631,931,633,913,675,885,726,848,777,802,822,780,835,755,844"/>
-<area shape="rect" id="Node000029" href="$d7/d1f/class_checkup_manager.html#a4d3c5d16578d35a9db47e89ad63cfac8" title=" " alt="" coords="575,1029,801,1069"/>
-<area shape="poly" id="edge45_Node000028_Node000029" title=" " alt="" coords="498,982,576,1013,600,1021,598,1026,574,1018,496,987"/>
-<area shape="rect" id="Node000032" href="$d7/d1f/class_checkup_manager.html#a0ad49ca8165b728ea46d1d5e1e580148" title=" " alt="" coords="579,963,797,1004"/>
-<area shape="poly" id="edge48_Node000028_Node000032" title=" " alt="" coords="528,968,563,971,563,976,528,973"/>
-<area shape="rect" id="Node000030" href="$d3/df6/struct_failure_detection.html#a2dce218ec78f523302e547071e600d87" title=" " alt="" coords="849,963,1032,1004"/>
-<area shape="poly" id="edge46_Node000029_Node000030" title=" " alt="" coords="769,1025,844,1006,845,1011,770,1030"/>
-<area shape="rect" id="Node000031" href="$d6/d64/class_volatile_metro.html#aa345ca0f2c0e30874a1701a2a8ca9e53" title="Checks if the interval has passed without resetting the timer." alt="" coords="1080,963,1262,1004"/>
-<area shape="poly" id="edge47_Node000030_Node000031" title=" " alt="" coords="1032,981,1065,981,1065,986,1032,986"/>
-<area shape="poly" id="edge49_Node000032_Node000030" title=" " alt="" coords="798,981,833,981,833,986,798,986"/>
-<area shape="poly" id="edge51_Node000033_Node000025" title=" " alt="" coords="528,837,607,844,607,849,528,842"/>
-<area shape="rect" id="Node000038" href="$d7/d1f/class_checkup_manager.html#af42e7465ef8ea5047225257ac11c0870" title="Performs an initial checkup." alt="" coords="609,170,767,211"/>
-<area shape="poly" id="edge56_Node000037_Node000038" title=" " alt="" coords="525,229,593,212,595,217,527,234"/>
-<area shape="poly" id="edge57_Node000038_Node000008" title=" " alt="" coords="767,167,872,140,874,145,768,172"/>
-<area shape="poly" id="edge58_Node000038_Node000010" title=" " alt="" coords="766,209,802,227,817,240,827,253,836,265,850,277,862,283,859,288,847,282,832,269,822,256,813,243,799,231,764,213"/>
-<area shape="poly" id="edge61_Node000038_Node000012" title=" " alt="" coords="725,209,765,239,803,278,829,316,852,357,891,441,918,518,935,576,930,578,913,520,886,443,848,360,824,319,799,281,761,243,722,213"/>
-<area shape="poly" id="edge60_Node000038_Node000030" title=" " alt="" coords="715,209,761,258,784,289,803,322,820,366,831,405,838,473,840,543,851,630,894,809,931,947,926,949,888,810,846,631,835,543,833,473,826,406,815,368,798,325,780,292,757,261,711,213"/>
-<area shape="rect" id="Node000039" href="$da/db9/class_digital_sender.html#a306472b53ae1cf7beac1a77cdf790f1a" title="Closes the watchdog signal for SDC." alt="" coords="873,162,1008,203"/>
-<area shape="poly" id="edge59_Node000038_Node000039" title=" " alt="" coords="768,185,857,182,857,187,768,190"/>
-<area shape="rect" id="Node000040" href="$da/db9/class_digital_sender.html#ad6c5006f6fe3807e86ab3ed992d8669e" title="Toggles the watchdog signal." alt="" coords="871,227,1010,268"/>
-<area shape="poly" id="edge62_Node000038_Node000040" title=" " alt="" coords="768,206,856,226,855,231,767,211"/>
-<area shape="rect" id="Node000042" href="$d8/deb/struct_r2_d_logics.html#a33c5da56ad44e42e0c3d9bcfa1a96e4e" title="resets timestamps for driving" alt="" coords="614,898,762,939"/>
-<area shape="poly" id="edge64_Node000041_Node000042" title=" " alt="" coords="528,902,599,908,598,913,528,908"/>
-<area shape="poly" id="edge65_Node000042_Node000012" title=" " alt="" coords="762,903,781,895,799,883,827,855,851,823,890,753,915,686,930,632,936,634,921,687,895,756,856,826,831,858,802,887,784,899,764,908"/>
+<area shape="rect" id="Node000001" title="Test function to validate AS_OFF to AS_Manual transition and the other way around." alt="" coords="5,656,137,697"/>
+<area shape="rect" id="Node000002" href="$d2/d46/class_a_s_state.html#a813d8386653a4884bd4a8d986fc57d56" title="Calculates the state of the vehicle." alt="" coords="185,627,313,667"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="137,663,169,657,170,663,138,668"/>
+<area shape="rect" id="Node000043" href="$da/dad/test__integration_8cpp.html#ad20897c5c8bd47f5d4005989bead0e55" title="Auxiliary function to reset data values." alt="" coords="224,692,274,717"/>
+<area shape="poly" id="edge67_Node000001_Node000043" title=" " alt="" coords="137,684,209,695,208,701,137,689"/>
+<area shape="rect" id="Node000003" href="$d8/d3c/class_output_coordinator.html#a848078a36dcf417f37b4329772f58b35" title=" " alt="" coords="378,5,510,46"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="249,626,258,511,278,341,293,253,311,172,333,104,359,57,364,52,368,56,363,61,338,107,316,173,298,254,284,342,263,512,254,627"/>
+<area shape="rect" id="Node000006" href="$d8/d3c/class_output_coordinator.html#a8a0eb2c2d5e7ebd9ebb5629b1ce9fdae" title=" " alt="" coords="373,71,515,111"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="250,626,261,523,283,375,298,299,316,228,336,169,359,128,368,119,372,122,363,131,341,171,321,230,304,300,289,376,267,524,255,627"/>
+<area shape="rect" id="Node000007" href="$d7/d1f/class_checkup_manager.html#a72c7e6b64cbfbea251a9d7c2c33adafd" title="Checks if the emergency sequence is complete and the vehicle can transition to AS_OFF." alt="" coords="592,120,784,161"/>
+<area shape="poly" id="edge8_Node000002_Node000007" title=" " alt="" coords="249,626,260,529,280,391,295,321,313,258,334,206,359,172,375,162,396,154,450,143,513,138,577,136,577,141,513,143,450,149,397,159,377,167,363,176,339,209,318,260,300,323,286,392,265,530,255,627"/>
+<area shape="rect" id="Node000009" href="$d8/d3c/class_output_coordinator.html#a74e1910e757880c3068c43d1d34dc60e" title="ASSI LEDs yellow flashing, ebs valves deactivated, sdc closed." alt="" coords="378,431,510,471"/>
+<area shape="poly" id="edge10_Node000002_Node000009" title=" " alt="" coords="257,625,295,556,325,517,359,482,366,478,369,482,363,486,329,520,300,559,262,627"/>
+<area shape="rect" id="Node000012" href="$db/d60/class_metro.html#a40a8e2c535e7558224f4336628797dbd" title="Resets the timer to the current time." alt="" coords="896,308,985,333"/>
+<area shape="poly" id="edge43_Node000002_Node000012" title=" " alt="" coords="251,626,264,549,288,446,319,348,338,310,359,286,398,269,449,260,509,257,574,260,702,273,801,286,881,301,880,306,800,291,702,278,574,265,509,263,450,265,399,274,363,290,343,313,324,350,293,447,270,550,256,627"/>
+<area shape="rect" id="Node000014" href="$d8/d3c/class_output_coordinator.html#a770772b6af06321909837fda0ccd8cd6" title="ASSI LEDs blue flashing, sdc open and buzzer ringing." alt="" coords="366,561,522,602"/>
+<area shape="poly" id="edge15_Node000002_Node000014" title=" " alt="" coords="311,624,366,605,368,610,313,629"/>
+<area shape="rect" id="Node000017" href="$d8/d3c/class_output_coordinator.html#a52082e61d82874252340304b8773e917" title="ASSI blue LED on, ebs valves activated, sdc open." alt="" coords="378,888,510,929"/>
+<area shape="poly" id="edge20_Node000002_Node000017" title=" " alt="" coords="303,666,315,677,331,704,338,729,339,778,339,825,347,849,363,873,368,878,364,882,359,877,342,851,334,826,333,778,333,730,326,706,311,681,299,670"/>
+<area shape="rect" id="Node000019" href="$d8/d3c/class_output_coordinator.html#a5e261eb3d6f11edbd2fb44ad5d4b5323" title="Everything off, sdc closed." alt="" coords="377,496,512,537"/>
+<area shape="poly" id="edge25_Node000002_Node000019" title=" " alt="" coords="268,624,308,586,360,547,370,542,372,546,362,552,312,590,272,628"/>
+<area shape="rect" id="Node000020" href="$d8/d3c/class_output_coordinator.html#a728f67e71363b25a92c828c22fc3b8cd" title="Everything off, sdc open." alt="" coords="378,692,510,733"/>
+<area shape="poly" id="edge29_Node000002_Node000020" title=" " alt="" coords="313,665,368,684,366,689,311,670"/>
+<area shape="rect" id="Node000021" href="$d8/d3c/class_output_coordinator.html#a990b6c38e46f0a7cd575ebc70fad259e" title="ASSI yellow LED on, ebs valves activated, sdc closed." alt="" coords="378,1149,510,1190"/>
+<area shape="poly" id="edge33_Node000002_Node000021" title=" " alt="" coords="304,666,315,677,334,709,346,740,353,769,355,799,349,855,337,910,325,965,321,1020,324,1047,331,1076,344,1105,363,1135,368,1140,364,1144,359,1138,339,1107,326,1078,318,1048,315,1020,320,964,332,909,344,854,349,799,347,770,341,741,329,711,311,681,300,670"/>
+<area shape="rect" id="Node000023" href="$d8/d3c/class_output_coordinator.html#adb749a680d9c779662b7fa2c13a159fc" title=" " alt="" coords="363,627,526,667"/>
+<area shape="poly" id="edge38_Node000002_Node000023" title=" " alt="" coords="313,644,347,644,347,650,313,650"/>
+<area shape="rect" id="Node000024" href="$d8/d3c/class_output_coordinator.html#a96b64b45b9bab3c1ec9b7bcedc0ffff9" title=" " alt="" coords="378,300,510,341"/>
+<area shape="poly" id="edge39_Node000002_Node000024" title=" " alt="" coords="250,626,259,572,277,499,292,460,310,421,332,385,359,352,363,348,367,352,363,355,336,388,314,424,297,462,282,501,264,573,255,627"/>
+<area shape="rect" id="Node000026" href="$d7/d1f/class_checkup_manager.html#ae13f419b624cefcf107ac6a192a85aaa" title="Checks if the RES has been triggered." alt="" coords="371,757,517,798"/>
+<area shape="poly" id="edge42_Node000002_Node000026" title=" " alt="" coords="299,666,315,677,330,694,339,711,348,726,363,742,370,747,367,752,359,746,343,730,334,713,326,697,311,681,295,670"/>
+<area shape="rect" id="Node000027" href="$d7/d1f/class_checkup_manager.html#aa810d7c8863657dbc9a850d9026b3cbb" title="Resets the checkup state to the initial state." alt="" coords="366,823,523,863"/>
+<area shape="poly" id="edge44_Node000002_Node000027" title=" " alt="" coords="302,666,315,677,327,695,334,712,339,745,344,776,351,792,363,808,366,811,363,815,359,811,346,795,339,778,334,745,329,713,323,697,311,681,298,670"/>
+<area shape="rect" id="Node000028" href="$d7/d1f/class_checkup_manager.html#a1137db2adef0dae5c06fbbd1c86f8568" title="Performs an emergency checkup." alt="" coords="361,1215,527,1255"/>
+<area shape="poly" id="edge45_Node000002_Node000028" title=" " alt="" coords="304,666,315,677,336,713,349,748,357,783,359,816,352,880,337,943,322,1005,316,1068,319,1100,327,1132,341,1166,363,1200,365,1202,361,1206,359,1203,337,1168,322,1134,314,1101,311,1068,317,1004,331,942,346,879,354,816,351,783,344,750,331,716,311,681,300,670"/>
+<area shape="rect" id="Node000033" href="$d7/d1f/class_checkup_manager.html#ae43d5cab5cc266bd19ba222b30fc06e3" title=" " alt="" coords="361,953,527,994"/>
+<area shape="poly" id="edge51_Node000002_Node000033" title=" " alt="" coords="303,666,315,677,335,713,342,747,342,779,338,811,334,842,335,874,343,906,363,939,365,941,361,945,359,942,338,908,329,875,329,842,333,810,337,779,337,747,330,715,311,681,300,670"/>
+<area shape="rect" id="Node000034" href="$d7/d1f/class_checkup_manager.html#a033456ba1c06b51f32f83c3706f39358" title="Performs a manual driving checkup." alt="" coords="361,1019,527,1059"/>
+<area shape="poly" id="edge52_Node000002_Node000034" title=" " alt="" coords="304,666,315,677,338,722,347,764,345,805,338,844,331,883,330,922,339,962,363,1004,365,1007,361,1010,359,1007,334,964,325,923,326,883,333,843,339,804,341,764,333,723,311,681,300,670"/>
+<area shape="rect" id="Node000035" href="$d7/d1f/class_checkup_manager.html#adab2ab683f0087fd08edaf7746d27980" title="Performs a mission finished checkup." alt="" coords="361,1084,527,1125"/>
+<area shape="poly" id="edge53_Node000002_Node000035" title=" " alt="" coords="304,666,315,677,331,704,342,731,351,781,347,830,337,877,328,924,325,971,328,995,335,1019,346,1044,363,1069,365,1072,361,1075,359,1073,342,1046,330,1021,323,996,320,971,323,923,332,876,342,829,345,781,337,732,327,707,311,681,300,670"/>
+<area shape="rect" id="Node000036" href="$d7/d1f/class_checkup_manager.html#abaf565f9d7f19293df1fc5a6d2280264" title="Performs an off checkup." alt="" coords="361,365,527,406"/>
+<area shape="poly" id="edge54_Node000002_Node000036" title=" " alt="" coords="252,625,265,583,286,527,317,469,337,441,359,417,364,413,367,417,363,421,341,445,321,472,291,529,270,584,258,627"/>
+<area shape="rect" id="Node000040" href="$d7/d1f/class_checkup_manager.html#a880c417754f8b2b1a171f70893326f16" title="Performs a ready to drive checkup." alt="" coords="361,185,527,226"/>
+<area shape="poly" id="edge63_Node000002_Node000040" title=" " alt="" coords="247,626,251,556,266,455,280,399,300,344,326,291,359,243,368,233,372,237,363,246,330,293,304,346,285,401,271,456,256,556,253,626"/>
+<area shape="rect" id="Node000042" href="$d2/d46/class_a_s_state.html#a78e9322d13be537b8ee58cbaa4d7ecd3" title=" " alt="" coords="368,1280,520,1305"/>
+<area shape="poly" id="edge66_Node000002_Node000042" title=" " alt="" coords="304,666,315,677,327,701,335,731,342,802,341,886,336,976,332,1065,332,1147,341,1216,350,1244,363,1265,365,1268,361,1271,359,1269,345,1246,336,1217,326,1147,326,1065,331,975,336,886,337,803,330,732,322,703,311,681,301,670"/>
+<area shape="rect" id="Node000004" href="$da/db9/class_digital_sender.html#a2e7fd9af17e61e7b0976de86e603895c" title="Blinks the LED at the given pin." alt="" coords="610,66,766,92"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="511,37,612,60,610,65,510,43"/>
+<area shape="rect" id="Node000005" href="$db/d60/class_metro.html#aca78646b9ae992c81ffc395c1a1da997" title="Checks if the interval has passed and resets the timer if true." alt="" coords="640,16,736,41"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="511,24,625,25,625,30,511,29"/>
+<area shape="poly" id="edge6_Node000006_Node000004" title=" " alt="" coords="516,85,595,81,595,86,516,90"/>
+<area shape="poly" id="edge7_Node000006_Node000005" title=" " alt="" coords="515,67,575,51,625,39,626,44,576,56,516,73"/>
+<area shape="rect" id="Node000008" href="$db/d60/class_metro.html#a95ed7cb80b7f56a80790c34fcea93724" title="Checks if the interval has passed without resetting the timer." alt="" coords="854,193,1027,219"/>
+<area shape="poly" id="edge9_Node000007_Node000008" title=" " alt="" coords="770,159,874,186,872,191,769,164"/>
+<area shape="rect" id="Node000010" href="$da/db9/class_digital_sender.html#aeba7623043aeabfc9c4340cf5185fbca" title="Closes the SDC in Master and SDC Logic." alt="" coords="859,488,1022,513"/>
+<area shape="poly" id="edge11_Node000009_Node000010" title=" " alt="" coords="511,457,576,464,843,490,843,495,575,470,511,462"/>
+<area shape="rect" id="Node000011" href="$da/db9/class_digital_sender.html#ac37de32ae8c5d6aff580f8ee1e09dff1" title="Deactivates the solenoid EBS valves." alt="" coords="592,530,784,556"/>
+<area shape="poly" id="edge12_Node000009_Node000011" title=" " alt="" coords="501,470,529,482,552,496,576,509,617,523,615,528,574,513,550,500,526,487,499,474"/>
+<area shape="poly" id="edge13_Node000009_Node000012" title=" " alt="" coords="497,427,575,400,687,373,800,350,880,331,881,337,801,355,688,378,576,406,498,433"/>
+<area shape="rect" id="Node000013" href="$da/db9/class_digital_sender.html#a1db8385e42b643db5de2390a2bcf5a20" title="Turns off both ASSI LEDs (yellow and blue)." alt="" coords="625,632,751,673"/>
+<area shape="poly" id="edge14_Node000009_Node000013" title=" " alt="" coords="511,470,529,482,547,503,555,524,563,544,577,567,608,596,641,621,638,625,605,600,573,570,558,547,550,526,542,506,526,486,508,474"/>
+<area shape="poly" id="edge18_Node000014_Node000012" title=" " alt="" coords="519,600,585,611,660,614,698,610,734,601,768,587,799,566,820,542,829,516,829,489,825,461,821,432,820,402,827,373,847,344,862,332,880,324,882,329,865,337,851,347,832,375,825,403,826,431,830,460,834,489,834,517,824,544,802,570,771,592,736,606,698,615,660,619,585,617,518,605"/>
+<area shape="poly" id="edge19_Node000014_Node000013" title=" " alt="" coords="517,600,610,627,609,632,516,605"/>
+<area shape="rect" id="Node000015" href="$da/db9/class_digital_sender.html#ab0cfa966c0a5e7c9538761dab485e4e2" title="Activates the solenoid EBS valves." alt="" coords="599,792,777,817"/>
+<area shape="poly" id="edge16_Node000014_Node000015" title=" " alt="" coords="513,600,529,613,542,629,549,644,555,674,560,704,567,719,577,735,608,762,642,782,639,787,604,766,573,738,562,721,555,705,550,675,544,646,537,632,525,617,510,605"/>
+<area shape="rect" id="Node000016" href="$da/db9/class_digital_sender.html#add14481fc3edc2d052e8bc20dc5e7845" title="Opens the SDC in Master and SDC Logic." alt="" coords="608,698,768,724"/>
+<area shape="poly" id="edge17_Node000014_Node000016" title=" " alt="" coords="509,600,529,613,545,631,553,649,561,666,577,682,595,692,592,697,574,686,557,669,548,652,541,634,526,617,507,605"/>
+<area shape="poly" id="edge23_Node000017_Node000013" title=" " alt="" coords="509,887,525,873,541,850,548,826,548,779,546,756,548,732,556,708,573,684,590,671,609,661,611,666,593,675,577,688,561,710,553,733,551,756,553,779,553,827,546,852,529,877,512,891"/>
+<area shape="poly" id="edge21_Node000017_Node000015" title=" " alt="" coords="497,885,526,873,643,821,645,826,528,877,499,890"/>
+<area shape="poly" id="edge22_Node000017_Node000016" title=" " alt="" coords="508,885,525,873,543,850,550,827,557,803,573,777,606,750,640,729,643,733,609,754,577,781,562,805,555,829,547,852,529,877,511,890"/>
+<area shape="rect" id="Node000018" href="$da/db9/class_digital_sender.html#a5a90832e1fe9c2657e9c882ef74e00d5" title="Turns on the blue ASSI LED." alt="" coords="625,888,751,929"/>
+<area shape="poly" id="edge24_Node000017_Node000018" title=" " alt="" coords="511,906,609,906,609,911,511,911"/>
+<area shape="poly" id="edge26_Node000019_Node000011" title=" " alt="" coords="512,521,577,528,576,533,512,526"/>
+<area shape="poly" id="edge28_Node000019_Node000013" title=" " alt="" coords="502,535,529,547,592,584,648,621,645,625,589,589,526,552,500,540"/>
+<area shape="poly" id="edge27_Node000019_Node000016" title=" " alt="" coords="513,535,529,548,542,566,549,583,553,618,557,651,564,667,577,682,595,694,592,699,574,686,559,670,551,653,547,619,544,585,538,568,525,552,510,539"/>
+<area shape="poly" id="edge32_Node000020_Node000013" title=" " alt="" coords="510,694,609,669,610,674,511,699"/>
+<area shape="poly" id="edge30_Node000020_Node000015" title=" " alt="" coords="501,731,639,783,637,788,499,736"/>
+<area shape="poly" id="edge31_Node000020_Node000016" title=" " alt="" coords="511,709,593,709,593,714,511,715"/>
+<area shape="poly" id="edge35_Node000021_Node000010" title=" " alt="" coords="511,1166,588,1161,674,1152,750,1136,779,1126,799,1113,814,1095,829,1070,855,1003,877,922,896,832,921,655,934,529,939,529,927,656,901,833,882,923,860,1005,834,1072,819,1098,802,1117,781,1131,752,1142,675,1157,589,1166,511,1171"/>
+<area shape="poly" id="edge36_Node000021_Node000013" title=" " alt="" coords="509,1149,525,1135,544,1105,556,1076,563,1048,565,1020,559,964,546,909,533,854,528,799,531,771,539,742,553,713,573,684,590,670,609,660,611,665,593,674,577,687,557,716,544,744,536,772,533,799,538,853,551,908,564,963,570,1020,568,1049,561,1078,549,1108,529,1138,512,1153"/>
+<area shape="poly" id="edge34_Node000021_Node000015" title=" " alt="" coords="509,1148,525,1135,546,1102,554,1071,555,1040,552,1009,548,978,548,945,555,911,573,875,602,844,637,822,640,827,606,848,578,878,560,913,553,946,554,977,557,1008,561,1040,560,1071,550,1104,529,1138,513,1152"/>
+<area shape="rect" id="Node000022" href="$da/db9/class_digital_sender.html#af2dad86a446fe22d6e9e16f24950e979" title="Turns on the yellow ASSI LED." alt="" coords="625,1063,751,1103"/>
+<area shape="poly" id="edge37_Node000021_Node000022" title=" " alt="" coords="500,1146,574,1119,611,1106,613,1111,576,1124,502,1151"/>
+<area shape="rect" id="Node000025" href="$d8/deb/struct_r2_d_logics.html#abfc6d63e5e4fb198bb790d1011b82b8c" title="resets timestamps for ready" alt="" coords="622,300,754,341"/>
+<area shape="poly" id="edge40_Node000024_Node000025" title=" " alt="" coords="511,318,607,318,607,323,511,323"/>
+<area shape="poly" id="edge41_Node000025_Node000012" title=" " alt="" coords="754,318,880,318,880,323,754,323"/>
+<area shape="rect" id="Node000029" href="$d7/d1f/class_checkup_manager.html#a4d3c5d16578d35a9db47e89ad63cfac8" title=" " alt="" coords="575,1243,801,1283"/>
+<area shape="poly" id="edge46_Node000028_Node000029" title=" " alt="" coords="528,1242,560,1246,560,1251,528,1247"/>
+<area shape="rect" id="Node000032" href="$d7/d1f/class_checkup_manager.html#a0ad49ca8165b728ea46d1d5e1e580148" title=" " alt="" coords="579,1177,797,1218"/>
+<area shape="poly" id="edge49_Node000028_Node000032" title=" " alt="" coords="527,1220,563,1214,564,1219,528,1225"/>
+<area shape="rect" id="Node000030" href="$d3/df6/struct_failure_detection.html#a2dce218ec78f523302e547071e600d87" title=" " alt="" coords="849,1177,1032,1218"/>
+<area shape="poly" id="edge47_Node000029_Node000030" title=" " alt="" coords="769,1239,844,1220,845,1225,770,1245"/>
+<area shape="rect" id="Node000031" href="$d6/d64/class_volatile_metro.html#aa345ca0f2c0e30874a1701a2a8ca9e53" title="Checks if the interval has passed without resetting the timer." alt="" coords="1080,1177,1262,1218"/>
+<area shape="poly" id="edge48_Node000030_Node000031" title=" " alt="" coords="1032,1195,1065,1195,1065,1200,1032,1200"/>
+<area shape="poly" id="edge50_Node000032_Node000030" title=" " alt="" coords="798,1195,833,1195,833,1200,798,1200"/>
+<area shape="poly" id="edge62_Node000036_Node000025" title=" " alt="" coords="522,362,606,339,608,344,523,367"/>
+<area shape="rect" id="Node000037" href="$d7/d1f/class_checkup_manager.html#af42e7465ef8ea5047225257ac11c0870" title="Performs an initial checkup." alt="" coords="609,415,767,455"/>
+<area shape="poly" id="edge55_Node000036_Node000037" title=" " alt="" coords="528,400,594,413,593,419,527,405"/>
+<area shape="poly" id="edge56_Node000037_Node000008" title=" " alt="" coords="720,412,759,384,799,350,823,323,847,293,912,227,916,231,851,297,827,326,803,354,762,388,723,416"/>
+<area shape="poly" id="edge57_Node000037_Node000010" title=" " alt="" coords="768,453,874,480,872,486,767,458"/>
+<area shape="poly" id="edge60_Node000037_Node000012" title=" " alt="" coords="764,412,799,394,813,382,822,369,832,356,847,343,880,329,882,334,850,348,836,360,827,372,817,385,802,399,766,417"/>
+<area shape="poly" id="edge59_Node000037_Node000030" title=" " alt="" coords="732,454,770,480,803,516,828,571,852,647,873,737,892,834,921,1024,938,1162,932,1162,915,1025,886,835,868,738,847,648,823,573,798,519,767,484,729,458"/>
+<area shape="rect" id="Node000038" href="$da/db9/class_digital_sender.html#a306472b53ae1cf7beac1a77cdf790f1a" title="Closes the watchdog signal for SDC." alt="" coords="873,357,1008,398"/>
+<area shape="poly" id="edge58_Node000037_Node000038" title=" " alt="" coords="767,414,857,394,858,399,768,420"/>
+<area shape="rect" id="Node000039" href="$da/db9/class_digital_sender.html#ad6c5006f6fe3807e86ab3ed992d8669e" title="Toggles the watchdog signal." alt="" coords="871,423,1010,463"/>
+<area shape="poly" id="edge61_Node000037_Node000039" title=" " alt="" coords="768,435,855,438,855,443,768,440"/>
+<area shape="rect" id="Node000041" href="$d8/deb/struct_r2_d_logics.html#a33c5da56ad44e42e0c3d9bcfa1a96e4e" title="resets timestamps for driving" alt="" coords="614,185,762,226"/>
+<area shape="poly" id="edge64_Node000040_Node000041" title=" " alt="" coords="528,203,598,203,598,208,528,208"/>
+<area shape="poly" id="edge65_Node000041_Node000012" title=" " alt="" coords="756,224,802,242,857,270,906,297,903,302,855,274,800,247,754,229"/>
 </map>
