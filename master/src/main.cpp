@@ -52,6 +52,6 @@ void loop() {
   uint8_t ebs_state = to_underlying(as_state._checkup_manager_.pressure_test_phase_);
 
   output_coordinator.process(current_master_state, current_checkup_state, ebs_state);
-  print_all_board_temps();
+  // print_all_board_temps();
   delay(LOOP_DELAY);
 }

@@ -11,9 +11,6 @@ void StateMachine::update() {
 
   switch (current_state_) {
     case State::IDLE:
-      // DEBUG_PRINTLN("Torque from apps in IDLE: " + String(logic_handler.calculate_torque()));
-      // io_manager.play_emergency_buzzer();
-      torque_from_apps = logic_handler.calculate_torque();
       if (logic_handler.should_start_manual_driving()) {
         can_handler.reset_bamocar_init();
         current_state_ = State::INITIALIZING_DRIVING;
