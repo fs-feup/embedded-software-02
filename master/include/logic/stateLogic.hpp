@@ -64,7 +64,7 @@ inline void ASState::calculate_state() {
 
       _output_coordinator_->enter_off_state();
 
-      state_ = State::AS_OFF;
+      state_ = State::AS_EMERGENCY;
       break;
 
     case State::AS_OFF:
@@ -134,13 +134,13 @@ inline void ASState::calculate_state() {
     case State::AS_EMERGENCY:
       _output_coordinator_->blink_emergency_led();
 
-      if (_checkup_manager_.emergency_sequence_complete()) {
-        DEBUG_PRINT("Entering OFF state from EMERGENCY");
-        _output_coordinator_->enter_off_state();
-        _checkup_manager_.reset_checkup_state();
-        state_ = State::AS_OFF;
-        break;
-      }
+      // if (_checkup_manager_.emergency_sequence_complete()) {
+      //   DEBUG_PRINT("Entering OFF state from EMERGENCY");
+      //   _output_coordinator_->enter_off_state();
+      //   _checkup_manager_.reset_checkup_state();
+      //   state_ = State::AS_OFF;
+      //   break;
+      // }
       break;
     default:
       break;

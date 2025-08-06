@@ -199,6 +199,7 @@ inline void DigitalReceiver::read_bspd_sdc() {
   // is_sdc_closed = this->sim.activate_shit(is_sdc_closed);
   debounce(is_sdc_closed, system_data_->hardware_data_.tsms_sdc_closed_,
            this->sdc_bspd_change_counter_, 380);
+
   // DEBUG_PRINT_VAR(is_sdc_closed);
   // DEBUG_PRINT_VAR(system_data_->hardware_data_.tsms_sdc_closed_);
 }
