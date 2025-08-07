@@ -45,6 +45,24 @@ BO_ 3221225472 VECTOR__INDEPENDENT_SIG_MSG: 0 Vector__XXX
  SG_ error_bitmap_1 : 8|16@1+ (1,0) [0|65535] "" Vector__XXX
  SG_ error_bitmap_2 : 16|16@1+ (1,0) [0|65535] "" Vector__XXX
  SG_ mission_status : 0|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ dcvoltage m53 : 24|32@1+ (1,0) [0|32765] ""  Dash,ASCU
+ SG_ pneumatic_line_2 m53 : 16|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
+ SG_ pneumatic_line_1 m53 : 8|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
+ SG_ master_state_log m52 : 60|4@1+ (1,0) [0|15] ""  Dash,ASCU
+ SG_ mission_log m52 : 56|4@1+ (1,0) [0|15] ""  Dash,ASCU
+ SG_ asms_on_log m52 : 54|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
+ SG_ ts_on m52 : 53|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
+ SG_ tsms_state m52 : 52|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
+ SG_ checkup_state m52 : 48|4@1+ (1,0) [0|15] ""  Dash,ASCU
+ SG_ res_dead m52 : 40|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
+ SG_ inverson_dead m52 : 41|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
+ SG_ pc_dead m52 : 42|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
+ SG_ steer_dead m52 : 43|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
+ SG_ release_ebs_timestamp m52 : 44|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
+ SG_ engage_ebs_timestamp m52 : 45|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
+ SG_ emergency_signal m52 : 47|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
+ SG_ hydraulic_line_pressure m52 : 8|32@1+ (1,0) [0|1023] "adc"  Dash,ASCU
+ SG_ pneumatic_pressure m52 : 46|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
 
 BO_ 768 master_msgs: 8 Master
  SG_ multiplexor M : 0|8@1+ (1,0) [0|255] ""  Dash,ASCU
@@ -52,24 +70,6 @@ BO_ 768 master_msgs: 8 Master
  SG_ rl_rpm m18 : 8|32@1+ (1,0) [0|4294967295] "rpm"  Dash,ASCU
  SG_ asms_on m145 : 8|8@1+ (1,0) [0|1] "bool"  Dash,ASCU
  SG_ lv_soc m96 : 8|8@1+ (1,0) [0|100] "percentage"  Dash,ASCU
- SG_ hydraulic_line_pressure m52 : 8|32@1+ (1,0) [0|1023] "adc"  Dash,ASCU
- SG_ emergency_signal m52 : 47|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
- SG_ pneumatic_pressure m52 : 46|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
- SG_ engage_ebs_timestamp m52 : 45|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
- SG_ release_ebs_timestamp m52 : 44|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
- SG_ steer_dead m52 : 43|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
- SG_ pc_dead m52 : 42|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
- SG_ inverson_dead m52 : 41|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
- SG_ res_dead m52 : 40|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
- SG_ checkup_state m52 : 48|4@1+ (1,0) [0|15] ""  Dash,ASCU
- SG_ tsms_state m52 : 52|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
- SG_ ts_on m52 : 53|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
- SG_ asms_on_log m52 : 54|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
- SG_ mission_log m52 : 56|4@1+ (1,0) [0|15] ""  Dash,ASCU
- SG_ master_state_log m52 : 60|4@1+ (1,0) [0|15] ""  Dash,ASCU
- SG_ pneumatic_line_1 m53 : 8|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
- SG_ pneumatic_line_2 m53 : 16|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
- SG_ dcvoltage m53 : 24|32@1+ (1,0) [0|32765] ""  Dash,ASCU
  SG_ mission m50 : 8|8@1+ (1,0) [0|7] ""  Dash,ASCU
  SG_ master_state m49 : 8|8@1+ (1,0) [0|5] ""  Dash,ASCU
 
@@ -277,6 +277,35 @@ BO_ 401 RES_STATE: 8 RES
 BO_ 1809 RES_READY: 1 RES
 
 BO_ 257 BMS_periodic: 8 BMS
+
+BO_ 1297 DATA_LOGGER_SIGNALS_1: 8 Master
+ SG_ placeholder : 7|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ asms_on : 6|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ asats_pressed : 5|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ ats_pressed : 4|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ tsms_sdc_closed : 3|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ master_sdc_closed : 2|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ ts_on : 1|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ WD_ready : 0|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ res_dead : 8|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ inversor_dead : 9|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ pc_dead : 10|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ steer_dead : 11|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ EBS_released_in_time : 12|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ EBS_engaged_in_time : 13|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ bms_dead : 14|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ emergency_signal : 15|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ checkup_state : 16|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ pneumatic_pressure : 21|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ pneumatic_line_2 : 22|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ pneumatic_line_1 : 23|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ dc_voltage : 24|32@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ mission : 56|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ as_state : 60|4@1+ (1,0) [0|0] "" Vector__XXX
+
+BO_ 1298 DATA_LOGGER_SIGNALS_2: 8 Master
+ SG_ hydraulic_pressure_front : 0|32@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ hydraulic_pressure_back : 32|32@1+ (1,0) [0|0] "" Vector__XXX
 
 
 

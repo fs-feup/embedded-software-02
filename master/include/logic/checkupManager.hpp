@@ -161,7 +161,7 @@ inline void CheckupManager::reset_checkup_state() {
 }
 
 inline bool CheckupManager::should_stay_manual_driving() const {
-  return true;
+  return false;
 }
 
 inline bool CheckupManager::should_stay_off() {

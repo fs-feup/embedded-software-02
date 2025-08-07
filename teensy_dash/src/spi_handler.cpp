@@ -20,8 +20,8 @@ void SpiHandler::handle_display_update(SystemData& data, const SystemVolatileDat
     fast_timer = 0;
     // Fast updates (every loop iteration) - critical for pilot feedback
     const uint16_t apps_higher = average_queue(data.apps_higher_readings);
-    uint16_t torque_value = constrain(apps_higher, config::apps::MIN, config::apps::MAX);
-    torque_value = config::apps::MAX - torque_value;
+    uint16_t torque_value = constrain(apps_higher, config::apps::LOWER_MIN, config::apps::LOWER_MAX);
+    torque_value = config::apps::LOWER_MAX - torque_value;
     uint16_t apps_percent = 0;
     if (torque_value > config::apps::DEADBAND) {
       const float normalized =

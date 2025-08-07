@@ -13,7 +13,7 @@ SystemData data;
 SystemVolatileData updated_data;
 volatile SystemVolatileData updatable_data;
 elapsedMillis loop_timer;
-constexpr uint8_t MAIN_LOOP_INTERVAL = 5;
+constexpr uint8_t MAIN_LOOP_INTERVAL = 2;
 
 SPI_MSTransfer_T4<&SPI> display_spi;
 IOManager io_manager(data, updatable_data, updated_data);

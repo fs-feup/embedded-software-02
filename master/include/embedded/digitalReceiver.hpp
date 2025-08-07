@@ -198,7 +198,7 @@ inline void DigitalReceiver::read_bspd_sdc() {
   bool is_sdc_closed = digitalRead(SDC_TSMS_STATE_PIN);  // low when sdc/bspd open
   // is_sdc_closed = this->sim.activate_shit(is_sdc_closed);
   debounce(is_sdc_closed, system_data_->hardware_data_.tsms_sdc_closed_,
-           this->sdc_bspd_change_counter_, 280);
+           this->sdc_bspd_change_counter_, 380);
   // DEBUG_PRINT_VAR(is_sdc_closed);
   // DEBUG_PRINT_VAR(system_data_->hardware_data_.tsms_sdc_closed_);
 }
@@ -228,7 +228,7 @@ inline void DigitalReceiver::read_mission() {
   int raw_value = analogRead(AMI);
   int mapped_value = map(constrain(raw_value, 0, ADC_MAX_VALUE), 0, ADC_MAX_VALUE, 0,
                          MAX_MISSION);  // constrain just in case
-  mapped_value = 0;
+  mapped_value = 5;
   Mission latest_mission = static_cast<Mission>(mapped_value);
   if ((latest_mission == system_data_->mission_) && (latest_mission == last_tried_mission_)) {
     mission_change_counter_ = 0;

@@ -85,31 +85,31 @@ InverterModeParams get_inverter_mode_config(const SwitchMode switch_mode) {
                 .moment_ramp_decc = 400};
       break;
     case SwitchMode::INVERTER_MODE_AUTOCROSS: //FAST ENDURANCE
-      params = {.i_max_pk_percent = 66,
+      params = {.i_max_pk_percent = 77,
                 .speed_limit_percent = 55,
-                .i_cont_percent = 44,
-                .speed_ramp_acc = 700,
-                .moment_ramp_acc = 350,
-                .speed_ramp_brake = 700,
-                .moment_ramp_decc = 350};
+                .i_cont_percent = 55,
+                .speed_ramp_acc = 1000,
+                .moment_ramp_acc = 500,
+                .speed_ramp_brake = 1000,
+                .moment_ramp_decc = 500};
       break;
     case SwitchMode::INVERTER_MODE_ACCELERATION:
-      params = {.i_max_pk_percent = 66,
+      params = {.i_max_pk_percent = 77,
                 .speed_limit_percent = 55,
-                .i_cont_percent = 44,
-                .speed_ramp_acc = 600,
-                .moment_ramp_acc = 300,
-                .speed_ramp_brake = 600,
-                .moment_ramp_decc = 300};
+                .i_cont_percent = 55,
+                .speed_ramp_acc = 4000,
+                .moment_ramp_acc = 2000,
+                .speed_ramp_brake = 4000,
+                .moment_ramp_decc = 2000};
       break;
     case SwitchMode::INVERTER_MODE_FAST_ACCELERATION:
       params = {.i_max_pk_percent = 66,
-                .speed_limit_percent = 55,
-                .i_cont_percent = 44,
-                .speed_ramp_acc = 500,
-                .moment_ramp_acc = 250,
-                .speed_ramp_brake = 500,
-                .moment_ramp_decc = 250};
+                .speed_limit_percent = 77,
+                .i_cont_percent = 55,
+                .speed_ramp_acc = 1000,
+                .moment_ramp_acc = 500,
+                .speed_ramp_brake = 1000,
+                .moment_ramp_decc = 500};
       break;
     default:
       break;
