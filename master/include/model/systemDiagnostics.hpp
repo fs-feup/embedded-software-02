@@ -118,6 +118,6 @@ struct FailureDetection {
       DEBUG_PRINT("RES Signal: " + String(res_dead_ ? "DEAD" : "ALIVE"));
     }
 
-    return steer_dead_ || pc_dead_ || inversor_dead_ || res_dead_ || bms_dead_;
+    return  pc_dead_ || inversor_dead_ || res_dead_ || bms_dead_;
   }
 };

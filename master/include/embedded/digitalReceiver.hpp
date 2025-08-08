@@ -228,7 +228,7 @@ inline void DigitalReceiver::read_mission() {
   int raw_value = analogRead(AMI);
   int mapped_value = map(constrain(raw_value, 0, ADC_MAX_VALUE), 0, ADC_MAX_VALUE, 0,
                          MAX_MISSION);  // constrain just in case
-  mapped_value = 5;
+  mapped_value = 6;
   Mission latest_mission = static_cast<Mission>(mapped_value);
   if ((latest_mission == system_data_->mission_) && (latest_mission == last_tried_mission_)) {
     mission_change_counter_ = 0;
