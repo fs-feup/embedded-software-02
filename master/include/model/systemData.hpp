@@ -12,7 +12,6 @@ struct SystemData {
   NonUnitaryFailureDetection updatable_timestamps_;
   NonUnitaryFailureDetection updated_timestamps_;
 
-  int8_t cell_board_all_temps[6][18];
   R2DLogics r2d_logics_;
   FailureDetection failure_detection_{updated_timestamps_};
 

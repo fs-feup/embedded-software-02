@@ -20,7 +20,8 @@ void SpiHandler::handle_display_update(SystemData& data, const SystemVolatileDat
     fast_timer = 0;
     // Fast updates (every loop iteration) - critical for pilot feedback
     const uint16_t apps_higher = average_queue(data.apps_higher_readings);
-    uint16_t torque_value = constrain(apps_higher, config::apps::LOWER_MIN, config::apps::LOWER_MAX);
+    uint16_t torque_value =
+        constrain(apps_higher, config::apps::LOWER_MIN, config::apps::LOWER_MAX);
     torque_value = config::apps::LOWER_MAX - torque_value;
     uint16_t apps_percent = 0;
     if (torque_value > config::apps::DEADBAND) {
@@ -66,13 +67,25 @@ void SpiHandler::handle_display_update(SystemData& data, const SystemVolatileDat
     soc_timer = 0;
   }
 
-  // Inverter mode updates every 500ms
   if (inverter_timer >= INVERTER_INTERVAL) {
     const auto inverter_mode = static_cast<uint16_t>(data.switch_mode);
     display_spi.transfer16(&inverter_mode, 1, WIDGET_INVERTER_MODE, millis() & 0xFFFF);
     inverter_timer = 0;
-    //publish autonomous mission
+    // publish autonomous mission
     uint16_t autonomous_mission = updated_data.autonomous_mission;
-    display_spi.transfer16(&autonomous_mission, 1, WIDGET_AUTONOMOUS_MISSION, millis() & 0xFFFF); 
+    display_spi.transfer16(&autonomous_mission, 1, WIDGET_AUTONOMOUS_MISSION, millis() & 0xFFFF);
+  }
+
+  // All temperatures every 2 seconds
+  if (all_temps_timer >= ALL_TEMPS_INTERVAL) {
+    for (int board = 0; board < NUM_BOARDS; ++board) {
+      for (int sensor = 0; sensor < NTC_SENSOR_COUNT; ++sensor) {
+        int8_t temp = updated_data.cell_board_all_temps[board][sensor];
+        uint16_t temp_16 = static_cast<uint16_t>(temp);
+        display_spi.transfer16(&temp_16, 1,
+                               WIDGET_ALL_TEMPS + board * NTC_SENSOR_COUNT + sensor, millis() & 0xFFFF);
+      }
+    }
+    all_temps_timer = 0;
   }
 }

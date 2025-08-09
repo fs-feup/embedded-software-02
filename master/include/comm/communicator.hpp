@@ -260,36 +260,10 @@ inline void Communicator::bms_callback(const uint8_t *buf) {
 }
 
 inline void Communicator::parse_message(const CAN_message_t &msg) {
-  if (msg.id >= ALL_TEMPS_ID && msg.id < (ALL_TEMPS_ID + 6)) {
-    // Handle new chunked temperature messages
-    uint8_t board_id_from_can_id = msg.id - ALL_TEMPS_ID;
-
-    if (msg.len >= 2) {  // At least board_id + msg_index
-      uint8_t board_id_from_payload = msg.buf[0];
-      uint8_t msg_index = msg.buf[1];
-
-      if (board_id_from_can_id == board_id_from_payload && board_id_from_can_id < 6) {
-        // Process temperature data starting from buf[2]
-        uint8_t temp_count = msg.len - 2;        // Subtract board_id and msg_index bytes
-        uint8_t start_sensor_index = msg_index * 6;  // 6 temps per message as per your code
-
-        for (uint8_t i = 0; i < temp_count; i++) {
-          uint8_t sensor_index = start_sensor_index + i;
-          if (sensor_index < NTC_SENSOR_COUNT) {  // Make sure NTC_SENSOR_COUNT is defined
-            // Change this line to use the correct field name:
-            _systemData->cell_board_all_temps[board_id_from_can_id][sensor_index] =
-                static_cast<int8_t>(msg.buf[2 + i]);  // Store temperature
-          }
-        }
-
-        // Serial.printf("Received chunked temps for board %d, chunk %d, %d temperatures\n",
-        // board_id_from_payload, msg_index, temp_count);
-      }
-    }
-  }
   switch (msg.id) {
     case AS_CU_ID:
       pc_callback(msg.buf);
+      break;
     case RES_STATE:
       res_state_callback(msg.buf);
       break;
@@ -304,6 +278,7 @@ inline void Communicator::parse_message(const CAN_message_t &msg) {
       break;
     case DASH_ID:
       dash_callback(msg.buf);
+      break;
     case BMS_ID:
       bms_callback(msg.buf);
       break;

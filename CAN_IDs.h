@@ -15,13 +15,13 @@ constexpr float WHEEL_PRECISION = 1e-2;           // 1e-2
 //-----------------------------------------------------------------------------
 // CAN Message IDs
 //-----------------------------------------------------------------------------
-constexpr uint16_t MASTER_ID = 0x300;      // 0x300
-constexpr uint16_t DASH_ID = 0x132;        // 0x132
-constexpr uint16_t AS_CU_ID = 0x400;       // 0x400
-constexpr uint16_t TA_ID = 0x301;          // 0x301
-constexpr uint32_t CH_ID = 0x0220'7446;    // 0x0220'7446
-constexpr uint16_t HC_ID = 0x105;          // 0x105
-constexpr uint16_t BMS_ERRORS_ID = 0x123;  // 0x123
+constexpr uint16_t MASTER_ID = 0x300;              // 0x300
+constexpr uint16_t DASH_ID = 0x132;                // 0x132
+constexpr uint16_t AS_CU_ID = 0x400;               // 0x400
+constexpr uint16_t TA_ID = 0x301;                  // 0x301
+constexpr uint32_t CH_ID = 0x0220'7446;            // 0x0220'7446
+constexpr uint16_t HC_ID = 0x105;                  // 0x105
+constexpr uint16_t BMS_ERRORS_ID = 0x123;          // 0x123
 constexpr uint16_t DATA_LOGGER_SIGNALS_1 = 0x511;  // 0x511
 constexpr uint16_t DATA_LOGGER_SIGNALS_2 = 0x512;  // 0x512
 constexpr uint16_t DATA_LOGGER_SIGNALS_3 = 0x513;  // 0x513
@@ -188,6 +188,7 @@ constexpr uint8_t DEVICE_I_CNT = 0xC5;        // 0xC5
 constexpr uint32_t CELL_TEMPS_BASE_ID = 0x110;  // 0x110
 constexpr uint32_t ALL_TEMPS_ID = 0x280;        // 0x280
 constexpr uint8_t NTC_SENSOR_COUNT = 18;        // 18
+constexpr uint8_t NUM_BOARDS = 6;               // 6 boards
 
 // -----------------------------------------------------------------------------
 // DISPLAY WIDGET IDS
@@ -207,6 +208,7 @@ constexpr uint16_t WIDGET_SDC_BUTTON = 0x000B;
 constexpr uint16_t WIDGET_INVERTER_ERRORS = 0x000C;
 constexpr uint16_t WIDGET_AUTONOMOUS_MISSION = 0x000E;
 constexpr uint16_t WIDGET_INVERTER_WARNINGS = 0x000D;
+constexpr uint16_t WIDGET_ALL_TEMPS = 0x0010;  // Base ID for all temperature widgets
 constexpr uint16_t WIDGET_BMS_DUMP_0 = 0xBB00;
 constexpr uint16_t WIDGET_BMS_DUMP_1 = 0xBB01;
 constexpr uint16_t WIDGET_BMS_DUMP_2 = 0xBB02;

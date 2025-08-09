@@ -26,19 +26,6 @@ void setup() {
   delay(100);
 }
 
-void print_all_board_temps() {
-  Serial.println("\n--- ALL NTC SENSOR DATA ---");
-
-  for (int board = 0; board < 6; board++) {
-    Serial.printf("\n=== BOARD %d ===\n", board + 1);
-
-    for (int sensor = 0; sensor < NTC_SENSOR_COUNT; sensor++) {
-      int8_t temp = system_data.cell_board_all_temps[board][sensor];
-      Serial.printf("Sensor %2d: %3d°C\n", sensor, temp);
-    }
-  }
-}
-
 void loop() {
   digital_receiver.digital_reads();
   noInterrupts();
@@ -51,6 +38,5 @@ void loop() {
   uint8_t ebs_state = to_underlying(as_state._checkup_manager_.pressure_test_phase_);
 
   output_coordinator.process(current_master_state, current_checkup_state, ebs_state);
-  // print_all_board_temps();
   delay(LOOP_DELAY);
 }

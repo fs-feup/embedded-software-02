@@ -26,7 +26,7 @@ private:
   bool command_sent = false;
   static inline std::function<void(const CAN_message_t&)> static_callback;
   static void can_snifflas(const CAN_message_t& msg);
-  void handle_can_message(const CAN_message_t& msg);
+  void real_snifflas(const CAN_message_t& msg);
 
   void bms_callback(const uint8_t* str, uint8_t len);
   void bamocar_callback(const uint8_t* msg_data, uint8_t len);

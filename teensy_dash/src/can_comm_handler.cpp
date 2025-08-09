@@ -15,7 +15,7 @@ CanCommHandler::CanCommHandler(SystemData& system_data,
       updatable_data(volatile_updatable_data),
       updated_data(volatile_updated_data)/*,
       display_spi(display_spi)*/ {
-  static_callback = [this](const CAN_message_t& msg) { this->handle_can_message(msg); };
+  static_callback = [this](const CAN_message_t& msg) { this->real_snifflas(msg); };
 }
 
 void CanCommHandler::setup() {
@@ -64,8 +64,30 @@ void CanCommHandler::can_snifflas(const CAN_message_t& msg) {
     static_callback(msg);
   }
 }
-void CanCommHandler::handle_can_message(const CAN_message_t& msg) {
-  // DEBUG_PRINTLN("CAN INT");
+void CanCommHandler::real_snifflas(const CAN_message_t& msg) {
+  if (msg.id >= ALL_TEMPS_ID && msg.id < (ALL_TEMPS_ID + 6)) {
+    // Handle new chunked temperature messages
+    uint8_t board_id_from_can_id = msg.id - ALL_TEMPS_ID;
+
+    if (msg.len >= 2) {  // At least board_id + msg_index
+      uint8_t board_id_from_payload = msg.buf[0];
+      uint8_t msg_index = msg.buf[1];
+
+      if (board_id_from_can_id == board_id_from_payload && board_id_from_can_id < 6) {
+        // Process temperature data starting from buf[2]
+        uint8_t temp_count = msg.len - 2;
+        uint8_t start_sensor_index = msg_index * 6;
+
+        for (uint8_t i = 0; i < temp_count; i++) {
+          uint8_t sensor_index = start_sensor_index + i;
+          if (sensor_index < NTC_SENSOR_COUNT) {  // Make sure NTC_SENSOR_COUNT is defined
+            updatable_data.cell_board_all_temps[board_id_from_can_id][sensor_index] =
+                static_cast<int8_t>(msg.buf[2 + i]);  // Update volatile data
+          }
+        }
+      }
+    }
+  }
   switch (msg.id) {
     case BMS_THERMISTOR_ID:
       bms_callback(msg.buf, msg.len);
@@ -267,7 +289,7 @@ void CanCommHandler::write_messages() {
 
 void CanCommHandler::write_dash_state() {
   // Ensure boolean values are normalized to 0 or 1
-  auto normalize_bool = [](bool value) -> uint8_t { return value ? 1 : 0; };    
+  auto normalize_bool = [](bool value) -> uint8_t { return value ? 1 : 0; };
 
   CAN_message_t dash_state;
   dash_state.id = DASH_ID;
