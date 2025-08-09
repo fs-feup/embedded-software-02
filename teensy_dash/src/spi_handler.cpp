@@ -11,7 +11,7 @@ void SpiHandler::setup() {
 
 void SpiHandler::handle_display_update(SystemData& data, const SystemVolatileData& updated_data) {
   if (data.display_pressed) {
-    current_form = (current_form % 3) + 1;
+    current_form = (current_form % 4) + 1;
     display_spi.transfer16(&current_form, 1, WIDGET_FORM_CMD, millis() & 0xFFFF);
     data.display_pressed = false;
   }
@@ -63,7 +63,7 @@ void SpiHandler::handle_display_update(SystemData& data, const SystemVolatileDat
   // SOC updates every 2/3 seconds
   if (soc_timer >= SOC_INTERVAL) {
     uint16_t soc = updated_data.soc;
-    display_spi.transfer16(&soc, 1, WIDGET_SOC, millis() & 0xFFFF);
+    display_spi.transfer16(&soc, 1, WIDGET_LV_SOC, millis() & 0xFFFF);
     soc_timer = 0;
   }
 
@@ -78,14 +78,17 @@ void SpiHandler::handle_display_update(SystemData& data, const SystemVolatileDat
 
   // All temperatures every 2 seconds
   if (all_temps_timer >= ALL_TEMPS_INTERVAL) {
+    constexpr int total_temps = NUM_BOARDS * NTC_SENSOR_COUNT;
+    uint16_t temp_array[total_temps];
+
     for (int board = 0; board < NUM_BOARDS; ++board) {
       for (int sensor = 0; sensor < NTC_SENSOR_COUNT; ++sensor) {
-        int8_t temp = updated_data.cell_board_all_temps[board][sensor];
-        uint16_t temp_16 = static_cast<uint16_t>(temp);
-        display_spi.transfer16(&temp_16, 1,
-                               WIDGET_ALL_TEMPS + board * NTC_SENSOR_COUNT + sensor, millis() & 0xFFFF);
+        const int8_t temp = updated_data.cell_board_all_temps[board][sensor];
+        temp_array[board * NTC_SENSOR_COUNT + sensor] = static_cast<uint16_t>(temp);
       }
     }
+
+    display_spi.transfer16(temp_array, total_temps, WIDGET_ALL_TEMPS, millis() & 0xFFFF);
     all_temps_timer = 0;
   }
 }
