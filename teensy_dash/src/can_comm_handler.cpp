@@ -74,15 +74,14 @@ void CanCommHandler::real_snifflas(const CAN_message_t& msg) {
       uint8_t msg_index = msg.buf[1];
 
       if (board_id_from_can_id == board_id_from_payload && board_id_from_can_id < 6) {
-        // Process temperature data starting from buf[2]
         uint8_t temp_count = msg.len - 2;
         uint8_t start_sensor_index = msg_index * 6;
 
         for (uint8_t i = 0; i < temp_count; i++) {
           uint8_t sensor_index = start_sensor_index + i;
-          if (sensor_index < NTC_SENSOR_COUNT) {  // Make sure NTC_SENSOR_COUNT is defined
+          if (sensor_index < NTC_SENSOR_COUNT) {
             updatable_data.cell_board_all_temps[board_id_from_can_id][sensor_index] =
-                static_cast<int8_t>(msg.buf[2 + i]);  // Update volatile data
+                static_cast<int8_t>(msg.buf[2 + i]);
           }
         }
       }
@@ -261,22 +260,18 @@ void CanCommHandler::master_callback(const uint8_t* const msg_data, const uint8_
 void CanCommHandler::write_messages() {
   if (rpm_timer >= RPM_MSG_PERIOD_MS) {
     write_rpm();
-    // write_bamocar_speed();
     rpm_timer = 0;
-    // DEBUG_PRINTLN("RPM message sent");
   }
 
   if (hydraulic_timer >= HYDRAULIC_MSG_PERIOD_MS) {
     write_hydraulic_line();
     hydraulic_timer = 0;
-    // DEBUG_PRINTLN("Hydraulic line message sent");
   }
 
   if (apps_timer >= APPS_MSG_PERIOD_MS) {
     write_apps();
     write_dash_state();
     apps_timer = 0;
-    // DEBUG_PRINTLN("APPS message sent");
   }
 
   const auto& current_mode = data.switch_mode;
@@ -288,7 +283,6 @@ void CanCommHandler::write_messages() {
 }
 
 void CanCommHandler::write_dash_state() {
-  // Ensure boolean values are normalized to 0 or 1
   auto normalize_bool = [](bool value) -> uint8_t { return value ? 1 : 0; };
 
   CAN_message_t dash_state;
@@ -414,22 +408,22 @@ void CanCommHandler::write_inverter_mode(const SwitchMode switch_mode) {
   CAN_message_t deccRamp_msg = {
       .id = BAMO_COMMAND_ID, .len = 5, .buf = {SPEED_DELTAMA_DECC, 0x00, 0x00}};
 
-  i_max_msg.buf[1] = i_max_pk & 0xFF;                // Lower byte
-  i_max_msg.buf[2] = (i_max_pk >> 8) & 0xFF;         // Upper byte
-  speed_limit_msg.buf[1] = speed_lim & 0xFF;         // Lower byte
-  speed_limit_msg.buf[2] = (speed_lim >> 8) & 0xFF;  // Upper byte
-  i_cont_msg.buf[1] = i_cont & 0xFF;                 // Lower byte
-  i_cont_msg.buf[2] = (i_cont >> 8) & 0xFF;          // Upper byte
+  i_max_msg.buf[1] = i_max_pk & 0xFF;                
+  i_max_msg.buf[2] = (i_max_pk >> 8) & 0xFF;       
+  speed_limit_msg.buf[1] = speed_lim & 0xFF;         
+  speed_limit_msg.buf[2] = (speed_lim >> 8) & 0xFF;
+  i_cont_msg.buf[1] = i_cont & 0xFF;                 
+  i_cont_msg.buf[2] = (i_cont >> 8) & 0xFF;        
 
-  accRamp_msg.buf[1] = params.speed_ramp_acc & 0xFF;          // Lower byte
-  accRamp_msg.buf[2] = (params.speed_ramp_acc >> 8) & 0xFF;   // Upper byte
-  accRamp_msg.buf[3] = params.moment_ramp_acc & 0xFF;         // Lower byte
-  accRamp_msg.buf[4] = (params.moment_ramp_acc >> 8) & 0xFF;  // Upper byte
+  accRamp_msg.buf[1] = params.speed_ramp_acc & 0xFF;          
+  accRamp_msg.buf[2] = (params.speed_ramp_acc >> 8) & 0xFF; 
+  accRamp_msg.buf[3] = params.moment_ramp_acc & 0xFF;         
+  accRamp_msg.buf[4] = (params.moment_ramp_acc >> 8) & 0xFF;
 
-  deccRamp_msg.buf[1] = params.speed_ramp_brake & 0xFF;         // Lower byte
-  deccRamp_msg.buf[2] = (params.speed_ramp_brake >> 8) & 0xFF;  // Upper byte
-  deccRamp_msg.buf[3] = params.moment_ramp_decc & 0xFF;         // Lower byte
-  deccRamp_msg.buf[4] = (params.moment_ramp_decc >> 8) & 0xFF;  // Upper byte
+  deccRamp_msg.buf[1] = params.speed_ramp_brake & 0xFF;         
+  deccRamp_msg.buf[2] = (params.speed_ramp_brake >> 8) & 0xFF;
+  deccRamp_msg.buf[3] = params.moment_ramp_decc & 0xFF;         
+  deccRamp_msg.buf[4] = (params.moment_ramp_decc >> 8) & 0xFF;
 
   can1.write(i_max_msg);
   can1.write(speed_limit_msg);

@@ -21,18 +21,18 @@ uint16_t average_queue(const std::deque<uint16_t> &queue) {
   return avg;
 }
 
-// void print_all_board_temps() {
-//   Serial.println("\n--- ALL NTC SENSOR DATA ---");
+void print_all_board_temps(const int8_t temps[6][18]) {
+  Serial.println("\n--- ALL NTC SENSOR DATA ---");
 
-//   for (int board = 0; board < 6; board++) {
-//     Serial.printf("\n=== BOARD %d ===\n", board + 1);
+  for (int board = 0; board < 6; board++) {
+    Serial.printf("\n=== BOARD %d ===\n", board + 1);
 
-//     for (int sensor = 0; sensor < 18; sensor++) {
-//       int8_t temp = system_data.cell_board_all_temps[board][sensor];
-//       Serial.printf("Sensor %2d: %3d°C\n", sensor, temp);
-//     }
-//   }
-// }
+    for (int sensor = 0; sensor < 18; sensor++) {
+      int8_t temp = temps[board][sensor];
+      Serial.printf("Sensor %2d: %3d°C\n", sensor, temp);
+    }
+  }
+}
 
 bool check_sequence(const uint8_t *data, const std::array<uint8_t, 3> &expected) {
   return (data[1] == expected[0] && data[2] == expected[1] && data[3] == expected[2]);
