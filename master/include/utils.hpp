@@ -75,5 +75,5 @@ void debounce(const bool new_value, bool& stored_value, unsigned int& counter,
 }
 
 void debounce(const bool new_value, bool& stored_value, unsigned int& counter) {
-  debounce(new_value, stored_value, counter, 5);
+  debounce(new_value, stored_value, counter, 50);
 }
