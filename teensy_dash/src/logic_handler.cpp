@@ -36,10 +36,10 @@ bool LogicHandler::plausibility(const int apps_higher, const int apps_lower) {
                            (apps_lower >= config::apps::LOWER_BOUND_APPS_LOWER &&
                             apps_lower <= config::apps::UPPER_BOUND_APPS_LOWER);
 
-  if (!valid_input) {
-    return false;
-    DEBUG_PRINTLN("Apps implausible: invalid input");
-  }
+  // if (!valid_input) {
+  //   return false;
+  //   DEBUG_PRINTLN("Apps implausible: invalid input");
+  // }
 
   const int scaled_apps_lower = scale_apps_lower_to_apps_higher(apps_lower);
 
