@@ -71,7 +71,7 @@ constexpr uint16_t MAX_FOR_TORQUE = MAX - MIN;
 
 constexpr int ERROR_PLAUSIBILITY = -4;
 
-constexpr uint8_t MAX_ERROR_PERCENT = 9900;
+constexpr uint8_t MAX_ERROR_PERCENT = 60;
 constexpr uint16_t MAX_ERROR_ABS = UPPER_BOUND_APPS_HIGHER * MAX_ERROR_PERCENT / 100;
 
 constexpr uint8_t SAMPLES = 5;
