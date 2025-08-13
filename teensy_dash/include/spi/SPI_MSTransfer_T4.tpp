@@ -132,23 +132,18 @@ uint16_t SPI_MSTransfer_T4_OPT::transfer16(const uint16_t *buffer, const uint16_
                                            const uint16_t packetID) {
     uint16_t data[5 + length], checksum = 0, data_pos = 0;
 
-    // Build the packet first
-    // Header
     data[data_pos] = 0xDA7A;
     checksum ^= data[data_pos];
     data_pos++;
 
-    // Packet Length
     data[data_pos] = length + 5;
     checksum ^= data[data_pos];
     data_pos++;
 
-    // Widget ID
     data[data_pos] = widgetID;
     checksum ^= data[data_pos];
     data_pos++;
 
-    // Packet ID
     data[data_pos] = packetID;
     checksum ^= data[data_pos];
     data_pos++;
