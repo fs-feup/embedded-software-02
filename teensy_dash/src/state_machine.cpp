@@ -8,7 +8,6 @@ StateMachine::StateMachine(CanCommHandler& can_handler, LogicHandler& logic_hand
 
 void StateMachine::update() {
   int torque_from_apps = 0;
-
   switch (current_state_) {
     case State::IDLE:
       if (logic_handler.should_start_manual_driving()) {

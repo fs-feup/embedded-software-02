@@ -58,25 +58,25 @@ InverterModeParams get_inverter_mode_config(const SwitchMode switch_mode) {
                 .moment_ramp_decc = 500};
       break;
     case SwitchMode::INVERTER_MODE_AS_ACCELERATION:
-      params = {.i_max_pk_percent = 48,
-                .speed_limit_percent = 39,
+      params = {.i_max_pk_percent = 44,
+                .speed_limit_percent = 33,
                 .i_cont_percent = 33,
                 .speed_ramp_acc = 1000,
                 .moment_ramp_acc = 500,
                 .speed_ramp_brake = 1000,
                 .moment_ramp_decc = 500};
       break;
-    case SwitchMode::INVERTER_MODE_SKIDPAD: //Mangueiras
-      params = {.i_max_pk_percent = 66,
-                .speed_limit_percent = 55,
+    case SwitchMode::INVERTER_MODE_SKIDPAD: //Mangueiras Skidpad
+      params = {.i_max_pk_percent = 50,
+                .speed_limit_percent = 100,
                 .i_cont_percent = 44,
                 .speed_ramp_acc = 1000,
                 .moment_ramp_acc = 500,
                 .speed_ramp_brake = 1000,
                 .moment_ramp_decc = 500};
       break;
-    case SwitchMode::INVERTER_MODE_ENDURANCE: //Campos
-      params = {.i_max_pk_percent = 66,
+    case SwitchMode::INVERTER_MODE_ENDURANCE: //Chicão Endurance
+      params = {.i_max_pk_percent = 55,
                 .speed_limit_percent = 55,
                 .i_cont_percent = 44,
                 .speed_ramp_acc = 1000,
@@ -85,15 +85,15 @@ InverterModeParams get_inverter_mode_config(const SwitchMode switch_mode) {
                 .moment_ramp_decc = 500};
       break;
     case SwitchMode::INVERTER_MODE_AUTOCROSS: //FAST ENDURANCE
-      params = {.i_max_pk_percent = 70,
-                .speed_limit_percent = 60,
+      params = {.i_max_pk_percent = 66,
+                .speed_limit_percent = 55,
                 .i_cont_percent = 44,
                 .speed_ramp_acc = 1000,
                 .moment_ramp_acc = 500,
-                .speed_ramp_brake = 1000,
-                .moment_ramp_decc = 500};
+                .speed_ramp_brake = 500,
+                .moment_ramp_decc = 250};
       break;
-    case SwitchMode::INVERTER_MODE_ACCELERATION:
+    case SwitchMode::INVERTER_MODE_ACCELERATION: //Mangueiras Aceleração
       params = {.i_max_pk_percent = 70,
                 .speed_limit_percent = 60,
                 .i_cont_percent = 44,

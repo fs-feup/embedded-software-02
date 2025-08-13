@@ -226,8 +226,26 @@ inline void DigitalReceiver::read_pneumatic_line() {
 
 inline void DigitalReceiver::read_mission() {
   int raw_value = analogRead(AMI);
-  int mapped_value = map(constrain(raw_value, 0, ADC_MAX_VALUE), 0, ADC_MAX_VALUE, 0,
-                         MAX_MISSION);  // constrain just in case
+  int contrained_value = constrain(raw_value, 0, 600);
+  int mapped_value;
+  // int mapped_value = map(constrain(raw_value, 0, ADC_MAX_VALUE), 0, ADC_MAX_VALUE, 0,
+  //                        MAX_MISSION);  // constrain just in case
+  if (contrained_value < 130) {
+    mapped_value = 0;  // Manual
+  } else if (contrained_value < 250) {
+    mapped_value = 1;  // Acceleration
+  } else if (contrained_value < 300) {
+    mapped_value = 2;  // Skidpad
+  } else if (contrained_value < 420) {
+    mapped_value = 3;  // Autocross
+  } else if (contrained_value < 500) {
+    mapped_value = 4;  // Trackdrive
+  } else if (contrained_value < 540) {
+    mapped_value = 5;  // EBS Test
+  } else {
+    mapped_value = 6;  // Inspection
+  }
+
   Mission latest_mission = static_cast<Mission>(mapped_value);
   if ((latest_mission == system_data_->mission_) && (latest_mission == last_tried_mission_)) {
     mission_change_counter_ = 0;

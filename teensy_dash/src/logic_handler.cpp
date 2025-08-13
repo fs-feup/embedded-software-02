@@ -7,6 +7,11 @@
 LogicHandler::LogicHandler(SystemData& system_data, SystemVolatileData& current_updated_data)
     : data(system_data), updated_data(current_updated_data) {}
 
+bool LogicHandler::bamocar_has_error() {
+  // Check if there are any errors in the error bitmap
+  return (updated_data.error_bitmap != 0 || updated_data.warning_bitmap != 0);
+}
+
 bool LogicHandler::should_start_manual_driving() const {
   // DEBUG_PRINTLN("Checking if should start manual driving v8");
   // print var
@@ -30,16 +35,17 @@ uint16_t LogicHandler::scale_apps_lower_to_apps_higher(const uint16_t apps_lower
 }
 
 bool LogicHandler::plausibility(const int apps_higher, const int apps_lower) {
-  const bool valid_input = (apps_higher >= apps_lower) &&
-                           (apps_higher >= config::apps::LOWER_BOUND_APPS_HIGHER &&
-                            apps_higher <= config::apps::UPPER_BOUND_APPS_HIGHER) &&
+  const bool valid_input = 
+  // (apps_higher >= apps_lower) &&
+  //                          (apps_higher >= config::apps::LOWER_BOUND_APPS_HIGHER &&
+  //                           apps_higher <= config::apps::UPPER_BOUND_APPS_HIGHER) &&
                            (apps_lower >= config::apps::LOWER_BOUND_APPS_LOWER &&
                             apps_lower <= config::apps::UPPER_BOUND_APPS_LOWER);
 
-  // if (!valid_input) {
-  //   return false;
-  //   DEBUG_PRINTLN("Apps implausible: invalid input");
-  // } // This triggered often because APPS_HIGHER was misbehaving
+  if (!valid_input) {
+    return false;
+    DEBUG_PRINTLN("Apps implausible: invalid input");
+  } // This triggered often because APPS_HIGHER was misbehaving
 
   const int scaled_apps_lower = scale_apps_lower_to_apps_higher(apps_lower);
 
