@@ -47,31 +47,13 @@ bool LogicHandler::plausibility(const int apps_higher, const int apps_lower) {
 
   const int percentage_difference = (difference * 100) / 480;
 
-  // if (apps_lower < config::apps::APPS_LOWER_ZEROED) {
-  //   if (apps_higher < config::apps::APPS_HIGHER_WHEN_LOWER_ZEROES) {
-  //     DEBUG_PRINTLN("Apps implausible: apps lower is zeroed, so we can ignore the
-  //     implausibility"); return true;  // apps lower is zeroed, so we can ignore the
-  //     implausibility
-
-  //   } else {
-  //     DEBUG_PRINTLN(
-  //       "Apps implausible: apps lower is zeroed, but apps higher is not in the expected range");
-  //     return false;
-
-  //   }
-  // }
-  // print values
-  // DEBUG_PRINTLN("Apps higher: " + String(apps_higher));
-  // DEBUG_PRINTLN("Apps lower: " + String(apps_lower));
-  // DEBUG_PRINTLN("Scaled apps lower: " + String(scaled_apps_lower));
-  // DEBUG_PRINTLN("Difference: " + String(difference));
   DEBUG_PRINTLN("Percentage difference: " + String(percentage_difference));
   return (percentage_difference < config::apps::MAX_ERROR_PERCENT);
 }
 
 uint16_t LogicHandler::apps_to_bamocar_value(const uint16_t apps_higher,
                                              const uint16_t apps_lower) {
-  uint16_t torque_value = apps_lower;  // Use average of both APPS values
+  uint16_t torque_value = apps_lower;
 
   torque_value = constrain(torque_value, config::apps::LOWER_MIN, config::apps::LOWER_MAX);
 

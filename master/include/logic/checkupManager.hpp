@@ -161,7 +161,12 @@ inline void CheckupManager::reset_checkup_state() {
 }
 
 inline bool CheckupManager::should_stay_manual_driving() const {
-  return false;
+  if (_system_data_->mission_ != Mission::MANUAL) {
+    return false;
+  }
+  
+  return !_system_data_->hardware_data_.asms_on_ && 
+         !_system_data_->hardware_data_.pneumatic_line_pressure_;
 }
 
 inline bool CheckupManager::should_stay_off() {
@@ -184,7 +189,7 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
       }
       break;
     case CheckupState::START_TOGGLING_WATCHDOG:
-    DEBUG_PRINT("start toggling");
+      DEBUG_PRINT("start toggling");
       if (_system_data_->hardware_data_.wd_ready_) {
         checkup_state_ = CheckupState::TOGGLING_WATCHDOG;
         _watchdog_toggle_timer_.reset();
@@ -195,7 +200,7 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
       break;
 
     case CheckupState::TOGGLING_WATCHDOG:
-    DEBUG_PRINT("toggling");
+      DEBUG_PRINT("toggling");
       // Fail immediately if WD_READY goes low during toggling
       if (!_system_data_->hardware_data_.wd_ready_) {
         DEBUG_PRINT("Watchdog error: WD_READY went low during toggling phase");
@@ -219,7 +224,7 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
       break;
 
     case CheckupState::CHECK_WATCHDOG:
-        DEBUG_PRINT("check wd");
+      DEBUG_PRINT("check wd");
 
       if (!_system_data_->hardware_data_.wd_ready_) {
         DigitalSender::close_watchdog_sdc();
@@ -255,7 +260,7 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
       }
       break;
     case CheckupState::WAIT_FOR_ASATS:
-    DEBUG_PRINT("wait for asats");
+      DEBUG_PRINT("wait for asats");
       if (_system_data_->hardware_data_.asats_pressed_) {
         _system_data_->failure_detection_.emergency_signal_ = false;
         checkup_state_ = CheckupState::CHECK_TIMESTAMPS;
@@ -317,7 +322,7 @@ inline void CheckupManager::handle_ebs_check() {
       DEBUG_PRINT_VAR(_system_data_->hardware_data_.hydraulic_line_front_pressure);
       DEBUG_PRINT_VAR(_system_data_->hardware_data_._hydraulic_line_pressure);
       DEBUG_PRINT_VAR(_system_data_->hardware_data_.pneumatic_line_pressure_);
-            
+
       if (_system_data_->hardware_data_.pneumatic_line_pressure_ &&
           _system_data_->hardware_data_._hydraulic_line_pressure < HYDRAULIC_BRAKE_THRESHOLD &&
           _system_data_->hardware_data_.hydraulic_line_front_pressure >=
@@ -341,8 +346,7 @@ inline void CheckupManager::handle_ebs_check() {
       DEBUG_PRINT_VAR(_system_data_->hardware_data_._hydraulic_line_pressure);
       DEBUG_PRINT_VAR(_system_data_->hardware_data_.pneumatic_line_pressure_);
       if (_system_data_->hardware_data_.pneumatic_line_pressure_ &&
-          _system_data_->hardware_data_.hydraulic_line_front_pressure <
-              HYDRAULIC_BRAKE_THRESHOLD &&
+          _system_data_->hardware_data_.hydraulic_line_front_pressure < HYDRAULIC_BRAKE_THRESHOLD &&
           _system_data_->hardware_data_._hydraulic_line_pressure >= HYDRAULIC_BRAKE_THRESHOLD) {
         DEBUG_PRINT("Pressure high confirmed with only actuator 1");
         pressure_test_phase_ = EbsPressureTestPhase::ENABLE_ACTUATOR_2;
