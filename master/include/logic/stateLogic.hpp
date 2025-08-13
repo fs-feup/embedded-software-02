@@ -64,7 +64,7 @@ inline void ASState::calculate_state() {
 
       _output_coordinator_->enter_off_state();
 
-      state_ = State::AS_EMERGENCY;
+      state_ = State::AS_OFF;
       break;
 
     case State::AS_OFF:

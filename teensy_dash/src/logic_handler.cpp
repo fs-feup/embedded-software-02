@@ -8,13 +8,6 @@ LogicHandler::LogicHandler(SystemData& system_data, SystemVolatileData& current_
     : data(system_data), updated_data(current_updated_data) {}
 
 bool LogicHandler::should_start_manual_driving() const {
-  // DEBUG_PRINTLN("Checking if should start manual driving v8");
-  // print var
-  // DEBUG_PRINTLN("R2D pressed: " + String(data.r2d_pressed));
-  // DEBUG_PRINTLN("TSOn: " + String(updated_data.TSOn));
-  // print timer
-  // DEBUG_PRINTLN("R2D brake timer: " + String(data.r2d_brake_timer));
-  // DEBUG_PRINTLN("R2D brake timer: " + String(data
   return (data.r2d_pressed && updated_data.TSOn && data.r2d_brake_timer < config::r2d::TIMEOUT_MS);
 }
 
@@ -134,16 +127,6 @@ int LogicHandler::calculate_torque() {
   DEBUG_PRINTLN("Apps plausible, calculating torque");
   DEBUG_PRINTLN("Apps plausible, calculating torque");
   const uint16_t bamocar_value = apps_to_bamocar_value(apps_higher_average, apps_lower_average);
-
-  // DEBUG_PRINTLN("Bamocar value: " + String(bamocar_value));
-
-  // if (apps_timeout) {
-  //   if (bamocar_value == 0) {  // Pedal released
-  //     apps_timeout = false;
-  //   } else {
-  //     return 0;
-  //   }
-  // }
 
   return bamocar_value;
 }

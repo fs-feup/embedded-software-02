@@ -67,24 +67,15 @@ constexpr uint16_t LINEAR_OFFSET = 140;
 constexpr uint16_t HIGHER_MAX = 677; // 677 for APPS Upper 515 APPS lower
 constexpr uint16_t HIGHER_MIN = 210; // 210 for APPS Lower 80 APPS lower
 
-<<<<<<< HEAD
 constexpr uint16_t LOWER_MAX = 510; // 677 for APPS Upper 515 APPS lower
 constexpr uint16_t LOWER_MIN = 75; // 210 for APPS Lower 80 APPS lower
-=======
-constexpr uint16_t LOWER_MAX = 515; // 677 for APPS Upper 515 APPS lower
-constexpr uint16_t LOWER_MIN = 80; // 210 for APPS Lower 80 APPS lower
->>>>>>> 9a6f342 (new mode, apps avg)
 
 
 constexpr uint16_t AVG_MIN = 145;
 constexpr uint16_t AVG_MAX = 596;
 
 constexpr uint16_t MIN_FOR_TORQUE = 0;
-<<<<<<< HEAD
 constexpr uint16_t MAX_FOR_TORQUE = LOWER_MAX - LOWER_MIN;
-=======
-constexpr uint16_t MAX_FOR_TORQUE = AVG_MAX - AVG_MIN;
->>>>>>> 9a6f342 (new mode, apps avg)
 
 
 constexpr int ERROR_PLAUSIBILITY = -4;
