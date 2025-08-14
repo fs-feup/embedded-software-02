@@ -1,5 +1,6 @@
 var NAVTREEINDEX1 =
 {
+"da/d6f/struct_non_unitary_failure_detection.html#aba82dc01ba0970b2393a3bf22c8b3c05":[2,0,10,6],
 "da/d6f/struct_non_unitary_failure_detection.html#ac5b6f33eeec20c594435baa43a87d170":[2,0,10,2],
 "da/d6f/struct_non_unitary_failure_detection.html#ad72944e76b4fa2cb25dbc7fc394320fd":[2,0,10,3],
 "da/d6f/struct_non_unitary_failure_detection.html#ad92c5016a9b66b1e3239afb4da6f9b73":[2,0,10,1],

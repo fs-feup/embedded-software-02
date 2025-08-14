@@ -38,6 +38,7 @@ var class_checkup_manager =
     [ "initial_checkup_sequence", "d7/d1f/class_checkup_manager.html#af42e7465ef8ea5047225257ac11c0870", null ],
     [ "res_triggered", "d7/d1f/class_checkup_manager.html#ae13f419b624cefcf107ac6a192a85aaa", null ],
     [ "reset_checkup_state", "d7/d1f/class_checkup_manager.html#aa810d7c8863657dbc9a850d9026b3cbb", null ],
+    [ "reset_mission_finished", "d7/d1f/class_checkup_manager.html#a44a2e0a08e84c893c07cf3207e16e584", null ],
     [ "should_enter_emergency", "d7/d1f/class_checkup_manager.html#a1137db2adef0dae5c06fbbd1c86f8568", null ],
     [ "should_enter_emergency_in_driving_state", "d7/d1f/class_checkup_manager.html#a4d3c5d16578d35a9db47e89ad63cfac8", null ],
     [ "should_enter_emergency_in_ready_state", "d7/d1f/class_checkup_manager.html#a0ad49ca8165b728ea46d1d5e1e580148", null ],
