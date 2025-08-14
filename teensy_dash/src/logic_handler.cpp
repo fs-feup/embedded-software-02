@@ -7,14 +7,12 @@
 LogicHandler::LogicHandler(SystemData& system_data, SystemVolatileData& current_updated_data)
     : data(system_data), updated_data(current_updated_data) {}
 
+bool LogicHandler::bamocar_has_error() {
+  // Check if there are any errors in the error bitmap
+  return (updated_data.error_bitmap != 0 || updated_data.warning_bitmap != 0);
+}
+
 bool LogicHandler::should_start_manual_driving() const {
-  // DEBUG_PRINTLN("Checking if should start manual driving v8");
-  // print var
-  // DEBUG_PRINTLN("R2D pressed: " + String(data.r2d_pressed));
-  // DEBUG_PRINTLN("TSOn: " + String(updated_data.TSOn));
-  // print timer
-  // DEBUG_PRINTLN("R2D brake timer: " + String(data.r2d_brake_timer));
-  // DEBUG_PRINTLN("R2D brake timer: " + String(data
   return (data.r2d_pressed && updated_data.TSOn && data.r2d_brake_timer < config::r2d::TIMEOUT_MS);
 }
 
@@ -30,16 +28,17 @@ uint16_t LogicHandler::scale_apps_lower_to_apps_higher(const uint16_t apps_lower
 }
 
 bool LogicHandler::plausibility(const int apps_higher, const int apps_lower) {
-  const bool valid_input = (apps_higher >= apps_lower) &&
-                           (apps_higher >= config::apps::LOWER_BOUND_APPS_HIGHER &&
-                            apps_higher <= config::apps::UPPER_BOUND_APPS_HIGHER) &&
+  const bool valid_input = 
+  // (apps_higher >= apps_lower) &&
+  //                          (apps_higher >= config::apps::LOWER_BOUND_APPS_HIGHER &&
+  //                           apps_higher <= config::apps::UPPER_BOUND_APPS_HIGHER) &&
                            (apps_lower >= config::apps::LOWER_BOUND_APPS_LOWER &&
                             apps_lower <= config::apps::UPPER_BOUND_APPS_LOWER);
 
   if (!valid_input) {
     return false;
     DEBUG_PRINTLN("Apps implausible: invalid input");
-  }
+  } // This triggered often because APPS_HIGHER was misbehaving
 
   const int scaled_apps_lower = scale_apps_lower_to_apps_higher(apps_lower);
 
@@ -47,24 +46,6 @@ bool LogicHandler::plausibility(const int apps_higher, const int apps_lower) {
 
   const int percentage_difference = (difference * 100) / 480;
 
-  // if (apps_lower < config::apps::APPS_LOWER_ZEROED) {
-  //   if (apps_higher < config::apps::APPS_HIGHER_WHEN_LOWER_ZEROES) {
-  //     DEBUG_PRINTLN("Apps implausible: apps lower is zeroed, so we can ignore the
-  //     implausibility"); return true;  // apps lower is zeroed, so we can ignore the
-  //     implausibility
-
-  //   } else {
-  //     DEBUG_PRINTLN(
-  //       "Apps implausible: apps lower is zeroed, but apps higher is not in the expected range");
-  //     return false;
-
-  //   }
-  // }
-  // print values
-  // DEBUG_PRINTLN("Apps higher: " + String(apps_higher));
-  // DEBUG_PRINTLN("Apps lower: " + String(apps_lower));
-  // DEBUG_PRINTLN("Scaled apps lower: " + String(scaled_apps_lower));
-  // DEBUG_PRINTLN("Difference: " + String(difference));
   DEBUG_PRINTLN("Percentage difference: " + String(percentage_difference));
   return (percentage_difference < config::apps::MAX_ERROR_PERCENT);
 }
@@ -73,10 +54,10 @@ uint16_t LogicHandler::apps_to_bamocar_value(const uint16_t apps_higher,
                                              const uint16_t apps_lower) {
   uint16_t torque_value = apps_lower;  // APPS Lower works better
 
-  torque_value = constrain(torque_value, config::apps::MIN, config::apps::MAX);
+  torque_value = constrain(torque_value, config::apps::LOWER_MIN, config::apps::LOWER_MAX);
 
   torque_value =
-      config::apps::MAX - torque_value;  // Invert the value to match Bamocar's expected input
+      config::apps::LOWER_MAX - torque_value;  // Invert the value to match Bamocar's expected input
   // DEBUG_PRINTLN("Torque value before deadband: " + String(torque_value));
   if (torque_value <= config::apps::DEADBAND) {
     return 0;
@@ -142,9 +123,6 @@ int LogicHandler::calculate_torque() {
   // DEBUG_PRINTLN("Apps Lower Average v2: " + String(apps_lower_average));
   if (!check_apps_plausibility(apps_higher_average, apps_lower_average)) {
     DEBUG_PRINTLN("Apps implausible, going idle");
-    // DEBUG_PRINTLN("Apps implausible, going idle");
-    // DEBUG_PRINTLN("Apps implausible, going idle");
-    // DEBUG_PRINTLN("Apps implausible, going idle");
 
     return config::apps::ERROR_PLAUSIBILITY;  // shutdown ?
   }

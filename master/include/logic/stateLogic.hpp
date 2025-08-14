@@ -62,7 +62,7 @@ inline void ASState::calculate_state() {
 
       DEBUG_PRINT("Entering OFF state from MANUAL");
       _output_coordinator_->enter_off_state();
-
+      _checkup_manager_.reset_checkup_state();
       state_ = State::AS_OFF;
       break;
 
@@ -103,6 +103,7 @@ inline void ASState::calculate_state() {
         break;
       }
       _output_coordinator_->enter_driving_state();
+      _checkup_manager_.reset_mission_finished();
       state_ = State::AS_DRIVING;
       break;
 

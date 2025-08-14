@@ -54,7 +54,7 @@ namespace apps {
 constexpr uint16_t UPPER_BOUND_APPS_HIGHER = 700;
 constexpr uint16_t LOWER_BOUND_APPS_HIGHER = 200;
 constexpr uint16_t UPPER_BOUND_APPS_LOWER = 600;
-constexpr uint16_t LOWER_BOUND_APPS_LOWER = 60;
+constexpr uint16_t LOWER_BOUND_APPS_LOWER = 40;
 
 constexpr uint16_t DEAD_THRESHOLD_APPS_HIGHER = 780;
 constexpr uint16_t APPS_LOWER_ZEROED = 5;
@@ -64,14 +64,21 @@ constexpr uint16_t APPS_HIGHER_WHEN_LOWER_ZEROES = 210;
 constexpr uint16_t APPS_LOWER_DEADZONE_IN_APPS_HIGHER_SCALE = 360;
 
 constexpr uint16_t LINEAR_OFFSET = 140;
-constexpr uint16_t MAX = 510; // 677 for APPS Upper
-constexpr uint16_t MIN = 80; // 210 for APPS Lower
+constexpr uint16_t HIGHER_MAX = 677; // 677 for APPS Upper 515 APPS lower
+constexpr uint16_t HIGHER_MIN = 210; // 210 for APPS Lower 80 APPS lower
+
+constexpr uint16_t LOWER_MAX = 510; // 677 for APPS Upper 515 APPS lower
+constexpr uint16_t LOWER_MIN = 75; // 210 for APPS Lower 80 APPS lower
+
+
+constexpr uint16_t AVG_MIN = 145;
+constexpr uint16_t AVG_MAX = 596;
 constexpr uint16_t MIN_FOR_TORQUE = 0;
-constexpr uint16_t MAX_FOR_TORQUE = MAX - MIN;
+constexpr uint16_t MAX_FOR_TORQUE = LOWER_MAX - LOWER_MIN;
 
 constexpr int ERROR_PLAUSIBILITY = -4;
 
-constexpr uint8_t MAX_ERROR_PERCENT = 50;
+constexpr uint8_t MAX_ERROR_PERCENT = 60;
 constexpr uint16_t MAX_ERROR_ABS = UPPER_BOUND_APPS_HIGHER * MAX_ERROR_PERCENT / 100;
 
 constexpr uint8_t SAMPLES = 5;

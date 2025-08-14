@@ -12,6 +12,7 @@ private:
   elapsedMillis temp_timer;
   elapsedMillis error_timer;
   elapsedMillis soc_timer;
+  elapsedMillis all_temps_timer;
   elapsedMillis inverter_timer;
   elapsedMillis fast_timer;
 
@@ -20,6 +21,7 @@ private:
   static constexpr uint16_t SOC_INTERVAL = 3000;        // 3 seconds
   static constexpr uint16_t INVERTER_INTERVAL = 500;    // 500ms
   static constexpr uint16_t FAST_UPDATE_INTERVAL = 30;  // 30ms
+  static constexpr uint16_t ALL_TEMPS_INTERVAL = 2000;  // 2 seconds
 
 public:
   SpiHandler(SPI_MSTransfer_T4<&SPI>& spi);

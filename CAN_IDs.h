@@ -133,7 +133,7 @@ constexpr uint8_t LEFT_WHEEL_CODE = 0x12;  // 0x12
 // Hydraulic System
 //-----------------------------------------------------------------------------
 constexpr uint16_t HYDRAULIC_LINE = 0x90;            // 0x90
-constexpr uint16_t HYDRAULIC_BRAKE_THRESHOLD = 300;  // 165 TODO: Back to 165 again
+constexpr uint16_t HYDRAULIC_BRAKE_THRESHOLD = 165;  // 165 TODO: Back to 165 again
 
 //-----------------------------------------------------------------------------
 // Battery Management System
@@ -188,6 +188,7 @@ constexpr uint8_t DEVICE_I_CNT = 0xC5;        // 0xC5
 constexpr uint32_t CELL_TEMPS_BASE_ID = 0x110;  // 0x110
 constexpr uint32_t ALL_TEMPS_ID = 0x280;        // 0x280
 constexpr uint8_t NTC_SENSOR_COUNT = 18;        // 18
+constexpr uint8_t NUM_BOARDS = 6;               // 6 boards
 
 // -----------------------------------------------------------------------------
 // DISPLAY WIDGET IDS
@@ -199,7 +200,7 @@ constexpr uint16_t WIDGET_SPEED = 0x0003;
 constexpr uint16_t WIDGET_INVERTER_MODE = 0x0004;
 constexpr uint16_t WIDGET_CELLS_MIN = 0x0005;
 constexpr uint16_t WIDGET_CELLS_MAX = 0x0006;
-constexpr uint16_t WIDGET_SOC = 0x0007;
+constexpr uint16_t WIDGET_LV_SOC = 0x0007;
 constexpr uint16_t WIDGET_VOLTAGE = 0x0008;
 constexpr uint16_t WIDGET_CURRENT = 0x0009;
 constexpr uint16_t WIDGET_CH_STATUS = 0x000A;
@@ -207,6 +208,8 @@ constexpr uint16_t WIDGET_SDC_BUTTON = 0x000B;
 constexpr uint16_t WIDGET_INVERTER_ERRORS = 0x000C;
 constexpr uint16_t WIDGET_AUTONOMOUS_MISSION = 0x000E;
 constexpr uint16_t WIDGET_INVERTER_WARNINGS = 0x000D;
+constexpr uint16_t WIDGET_ALL_TEMPS = 0x0010;  // Base ID for all temperature widgets
+constexpr uint16_t WIDGET_HV_SOC = 0x0011;
 constexpr uint16_t WIDGET_BMS_DUMP_0 = 0xBB00;
 constexpr uint16_t WIDGET_BMS_DUMP_1 = 0xBB01;
 constexpr uint16_t WIDGET_BMS_DUMP_2 = 0xBB02;

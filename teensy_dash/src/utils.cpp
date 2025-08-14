@@ -21,6 +21,19 @@ uint16_t average_queue(const std::deque<uint16_t> &queue) {
   return avg;
 }
 
+void print_all_board_temps(const int8_t temps[6][18]) {
+  Serial.println("\n--- ALL NTC SENSOR DATA ---");
+
+  for (int board = 0; board < 6; board++) {
+    Serial.printf("\n=== BOARD %d ===\n", board + 1);
+
+    for (int sensor = 0; sensor < 18; sensor++) {
+      int8_t temp = temps[board][sensor];
+      Serial.printf("Sensor %2d: %3d°C\n", sensor, temp);
+    }
+  }
+}
+
 bool check_sequence(const uint8_t *data, const std::array<uint8_t, 3> &expected) {
   return (data[1] == expected[0] && data[2] == expected[1] && data[3] == expected[2]);
 }
@@ -58,25 +71,25 @@ InverterModeParams get_inverter_mode_config(const SwitchMode switch_mode) {
                 .moment_ramp_decc = 500};
       break;
     case SwitchMode::INVERTER_MODE_AS_ACCELERATION:
-      params = {.i_max_pk_percent = 48,
-                .speed_limit_percent = 39,
+      params = {.i_max_pk_percent = 44,
+                .speed_limit_percent = 33,
                 .i_cont_percent = 33,
                 .speed_ramp_acc = 1000,
                 .moment_ramp_acc = 500,
                 .speed_ramp_brake = 1000,
                 .moment_ramp_decc = 500};
       break;
-    case SwitchMode::INVERTER_MODE_SKIDPAD: //Mangueiras
-      params = {.i_max_pk_percent = 66,
-                .speed_limit_percent = 55,
+    case SwitchMode::INVERTER_MODE_SKIDPAD: //Mangueiras Skidpad
+      params = {.i_max_pk_percent = 50,
+                .speed_limit_percent = 100,
                 .i_cont_percent = 44,
                 .speed_ramp_acc = 1000,
                 .moment_ramp_acc = 500,
                 .speed_ramp_brake = 1000,
                 .moment_ramp_decc = 500};
       break;
-    case SwitchMode::INVERTER_MODE_ENDURANCE: //Campos
-      params = {.i_max_pk_percent = 66,
+    case SwitchMode::INVERTER_MODE_ENDURANCE: //Chicão Endurance
+      params = {.i_max_pk_percent = 55,
                 .speed_limit_percent = 55,
                 .i_cont_percent = 44,
                 .speed_ramp_acc = 1000,
@@ -90,12 +103,12 @@ InverterModeParams get_inverter_mode_config(const SwitchMode switch_mode) {
                 .i_cont_percent = 44,
                 .speed_ramp_acc = 1000,
                 .moment_ramp_acc = 500,
-                .speed_ramp_brake = 1000,
-                .moment_ramp_decc = 500};
+                .speed_ramp_brake = 500,
+                .moment_ramp_decc = 250};
       break;
-    case SwitchMode::INVERTER_MODE_ACCELERATION:
-      params = {.i_max_pk_percent = 66,
-                .speed_limit_percent = 55,
+    case SwitchMode::INVERTER_MODE_ACCELERATION: // Aceleração
+      params = {.i_max_pk_percent = 65,
+                .speed_limit_percent = 70,
                 .i_cont_percent = 44,
                 .speed_ramp_acc = 1000,
                 .moment_ramp_acc = 500,
@@ -103,8 +116,8 @@ InverterModeParams get_inverter_mode_config(const SwitchMode switch_mode) {
                 .moment_ramp_decc = 500};
       break;
     case SwitchMode::INVERTER_MODE_FAST_ACCELERATION:
-      params = {.i_max_pk_percent = 66,
-                .speed_limit_percent = 55,
+      params = {.i_max_pk_percent = 60,
+                .speed_limit_percent = 75,
                 .i_cont_percent = 44,
                 .speed_ramp_acc = 1000,
                 .moment_ramp_acc = 500,
