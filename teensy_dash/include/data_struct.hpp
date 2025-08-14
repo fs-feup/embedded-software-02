@@ -86,6 +86,7 @@ struct SystemVolatileData {
   uint16_t error_bitmap = 0;
   uint16_t warning_bitmap = 0;
   uint8_t autonomous_mission = 0;
+  uint8_t hv_soc = 0;
 
   int8_t cell_board_all_temps[6][18] = {{0}};
 
@@ -118,5 +119,6 @@ inline void copy_volatile_data(SystemVolatileData& dest, volatile SystemVolatile
       dest.cell_board_all_temps[i][j] = src.cell_board_all_temps[i][j];
     }
   }
+  dest.hv_soc = src.hv_soc;
   interrupts();
 }

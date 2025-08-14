@@ -63,6 +63,8 @@ void SpiHandler::handle_display_update(SystemData& data, const SystemVolatileDat
   if (soc_timer >= SOC_INTERVAL) {
     uint16_t soc = updated_data.soc;
     display_spi.transfer16(&soc, 1, WIDGET_LV_SOC, millis() & 0xFFFF);
+    soc = updated_data.hv_soc;
+    display_spi.transfer16(&soc, 1, WIDGET_HV_SOC, millis() & 0xFFFF);
     soc_timer = 0;
   }
 
