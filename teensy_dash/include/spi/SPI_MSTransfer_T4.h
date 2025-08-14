@@ -37,7 +37,7 @@ if ( (SLAVE_SR & (1UL << 8)) ) { /* WCF set */
 #endif
 
 #define SPI_MST_QUEUE_SLOTS 32
-#define SPI_MST_DATA_BUFFER_MAX 32
+#define SPI_MST_DATA_BUFFER_MAX 128
 
 struct AsyncMST {
   uint16_t packetID = 0;

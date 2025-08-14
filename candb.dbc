@@ -36,40 +36,12 @@ BS_:
 BU_: Master Dash Bamocar Cell_1 Cell_2 Cell_3 Cell_4 Cell_5 Cell_0 BoschSteeringSensor ASCU SteeringController RES BMS DataLogger
 
 
-BO_ 3221225472 VECTOR__INDEPENDENT_SIG_MSG: 0 Vector__XXX
- SG_ NewSignal_0027 : 8|8@1+ (1,0) [0|0] "" Vector__XXX
- SG_ speed_actual_request m48 : 8|8@1+ (1,0) [0|255] "" Vector__XXX
- SG_ current_actual_request m32 : 8|8@1+ (1,0) [0|255] "" Vector__XXX
- SG_ logicmap_errors_request m143 : 8|8@1+ (1,0) [0|255] "" Vector__XXX
- SG_ motor_temperature_request m73 : 8|8@1+ (1,0) [0|255] "" Vector__XXX
- SG_ error_bitmap_1 : 8|16@1+ (1,0) [0|65535] "" Vector__XXX
- SG_ error_bitmap_2 : 16|16@1+ (1,0) [0|65535] "" Vector__XXX
- SG_ mission_status : 0|8@1+ (1,0) [0|255] "" Vector__XXX
-
 BO_ 768 master_msgs: 8 Master
  SG_ multiplexor M : 0|8@1+ (1,0) [0|255] ""  Dash,ASCU
  SG_ rr_rpm m17 : 8|32@1+ (1,0) [0|4294967295] "rpm"  Dash,ASCU
  SG_ rl_rpm m18 : 8|32@1+ (1,0) [0|4294967295] "rpm"  Dash,ASCU
  SG_ asms_on m145 : 8|8@1+ (1,0) [0|1] "bool"  Dash,ASCU
  SG_ lv_soc m96 : 8|8@1+ (1,0) [0|100] "percentage"  Dash,ASCU
- SG_ hydraulic_line_pressure m52 : 8|32@1+ (1,0) [0|1023] "adc"  Dash,ASCU
- SG_ emergency_signal m52 : 47|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
- SG_ pneumatic_pressure m52 : 46|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
- SG_ engage_ebs_timestamp m52 : 45|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
- SG_ release_ebs_timestamp m52 : 44|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
- SG_ steer_dead m52 : 43|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
- SG_ pc_dead m52 : 42|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
- SG_ inverson_dead m52 : 41|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
- SG_ res_dead m52 : 40|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
- SG_ checkup_state m52 : 48|4@1+ (1,0) [0|15] ""  Dash,ASCU
- SG_ tsms_state m52 : 52|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
- SG_ ts_on m52 : 53|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
- SG_ asms_on_log m52 : 54|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
- SG_ mission_log m52 : 56|4@1+ (1,0) [0|15] ""  Dash,ASCU
- SG_ master_state_log m52 : 60|4@1+ (1,0) [0|15] ""  Dash,ASCU
- SG_ pneumatic_line_1 m53 : 8|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
- SG_ pneumatic_line_2 m53 : 16|1@1+ (1,0) [0|1] "bool"  Dash,ASCU
- SG_ dcvoltage m53 : 24|32@1+ (1,0) [0|32765] ""  Dash,ASCU
  SG_ mission m50 : 8|8@1+ (1,0) [0|7] ""  Dash,ASCU
  SG_ master_state m49 : 8|8@1+ (1,0) [0|5] ""  Dash,ASCU
 
@@ -101,19 +73,19 @@ BO_ 2553934720 BMS_THERMISTOR_ID: 8 Cell_0
  SG_ min_temp : 8|8@1- (1,0) [-128|127] "C"  BMS
  SG_ max_temp : 16|8@1- (1,0) [-128|127] "C"  BMS
  SG_ avg_temp : 24|8@1- (1,0) [-128|127] "C"  BMS
- SG_ number_of_thermistors : 32|8@1+ (1,0) [0|255] ""  BMS
+ SG_ number_of_thermistors : 32|8@1+ (1,0) [1|255] ""  BMS
  SG_ highest_thermistor_id : 40|8@1+ (1,0) [0|255] ""  BMS
  SG_ lowest_thermistor_id : 48|8@1+ (1,0) [0|255] ""  BMS
  SG_ checksum : 56|8@1+ (1,0) [0|255] ""  BMS
 
 BO_ 385 bamocar_tx: 8 Bamocar
- SG_ dc_voltage m235 : 8|16@1- (1,0) [-32768|32767] "" Vector__XXX
- SG_ speed m48 : 8|16@1+ (1,0) [-32768|32767] "" Vector__XXX
- SG_ motor_current m32 : 8|16@1+ (1,0) [-32768|32767] "" Vector__XXX
- SG_ error_bitmap m143 : 8|16@1+ (1,0) [-32768|32767] "" Vector__XXX
- SG_ multiplexor M : 0|8@1+ (1,0) [0|255] "" Vector__XXX
- SG_ ready_sig m226 : 8|32@1+ (1,0) [0|0] "" Vector__XXX
- SG_ enable_sig m232 : 8|32@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ dc_voltage m235 : 8|16@1- (1,0) [-32768|32767] ""  Dash,Master,ASCU
+ SG_ speed m48 : 8|16@1- (1,0) [-32768|32767] ""  Dash,Master,ASCU
+ SG_ motor_current m32 : 8|16@1- (1,0) [-32768|32767] ""  Dash,Master,ASCU
+ SG_ error_bitmap m143 : 8|16@1- (1,0) [-32768|32767] ""  Dash,Master,ASCU
+ SG_ multiplexor M : 0|8@1+ (1,0) [0|255] ""  Dash,Master,ASCU
+ SG_ ready_sig m226 : 8|32@1+ (1,0) [0|0] ""  Dash,Master,ASCU
+ SG_ enable_sig m232 : 8|32@1+ (1,0) [0|0] ""  Dash,Master,ASCU
 
 BO_ 272 CELL_TEMPS_BOARD_0: 4 Cell_0
  SG_ board_id : 0|8@1+ (1,0) [0|5] ""  BMS,Cell_1,Cell_2,Cell_3,Cell_4,Cell_5
@@ -152,64 +124,64 @@ BO_ 277 CELL_TEMPS_BOARD_5: 4 Cell_5
  SG_ avg_temp : 24|8@1- (1,0) [-128|127] "C"  BMS,Cell_0
 
 BO_ 640 ALL_TEMPS_BOARD_0: 8 Cell_0
- SG_ board_id : 0|8@1+ (1,0) [0|5] "" Vector__XXX
- SG_ msg_index : 8|8@1+ (1,0) [0|255] "" Vector__XXX
- SG_ temp_0 : 16|8@1- (1,0) [-128|127] "C" Vector__XXX
- SG_ temp_1 : 24|8@1- (1,0) [-128|127] "C" Vector__XXX
- SG_ temp_2 : 32|8@1- (1,0) [-128|127] "C" Vector__XXX
- SG_ temp_3 : 40|8@1- (1,0) [-128|127] "C" Vector__XXX
- SG_ temp_4 : 48|8@1- (1,0) [-128|127] "C" Vector__XXX
- SG_ temp_5 : 56|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ board_id : 0|8@1+ (1,0) [0|5] ""  Master,Dash
+ SG_ msg_index : 8|8@1+ (1,0) [0|255] ""  Master,Dash
+ SG_ temp_0 : 16|8@1- (1,0) [-128|127] "C"  Master,Dash
+ SG_ temp_1 : 24|8@1- (1,0) [-128|127] "C"  Master,Dash
+ SG_ temp_2 : 32|8@1- (1,0) [-128|127] "C"  Master,Dash
+ SG_ temp_3 : 40|8@1- (1,0) [-128|127] "C"  Master,Dash
+ SG_ temp_4 : 48|8@1- (1,0) [-128|127] "C"  Master,Dash
+ SG_ temp_5 : 56|8@1- (1,0) [-128|127] "C"  Master,Dash
 
 BO_ 641 ALL_TEMPS_BOARD_1: 8 Cell_1
- SG_ board_id : 0|8@1+ (1,0) [0|5] "" Vector__XXX
- SG_ msg_index : 8|8@1+ (1,0) [0|255] "" Vector__XXX
- SG_ temp_0 : 16|8@1- (1,0) [-128|127] "C" Vector__XXX
- SG_ temp_1 : 24|8@1- (1,0) [-128|127] "C" Vector__XXX
- SG_ temp_2 : 32|8@1- (1,0) [-128|127] "C" Vector__XXX
- SG_ temp_3 : 40|8@1- (1,0) [-128|127] "C" Vector__XXX
- SG_ temp_4 : 48|8@1- (1,0) [-128|127] "C" Vector__XXX
- SG_ temp_5 : 56|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ board_id : 0|8@1+ (1,0) [0|5] ""  Master,Dash
+ SG_ msg_index : 8|8@1+ (1,0) [0|255] ""  Master,Dash
+ SG_ temp_0 : 16|8@1- (1,0) [-128|127] "C"  Master,Dash
+ SG_ temp_1 : 24|8@1- (1,0) [-128|127] "C"  Master,Dash
+ SG_ temp_2 : 32|8@1- (1,0) [-128|127] "C"  Master,Dash
+ SG_ temp_3 : 40|8@1- (1,0) [-128|127] "C"  Master,Dash
+ SG_ temp_4 : 48|8@1- (1,0) [-128|127] "C"  Master,Dash
+ SG_ temp_5 : 56|8@1- (1,0) [-128|127] "C"  Master,Dash
 
 BO_ 642 ALL_TEMPS_BOARD_2: 8 Cell_2
- SG_ board_id : 0|8@1+ (1,0) [0|5] "" Vector__XXX
- SG_ msg_index : 8|8@1+ (1,0) [0|255] "" Vector__XXX
- SG_ temp_0 : 16|8@1- (1,0) [-128|127] "C" Vector__XXX
- SG_ temp_1 : 24|8@1- (1,0) [-128|127] "C" Vector__XXX
- SG_ temp_2 : 32|8@1- (1,0) [-128|127] "C" Vector__XXX
- SG_ temp_3 : 40|8@1- (1,0) [-128|127] "C" Vector__XXX
- SG_ temp_4 : 48|8@1- (1,0) [-128|127] "C" Vector__XXX
- SG_ temp_5 : 56|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ board_id : 0|8@1+ (1,0) [0|5] ""  Master,Dash
+ SG_ msg_index : 8|8@1+ (1,0) [0|255] ""  Master,Dash
+ SG_ temp_0 : 16|8@1- (1,0) [-128|127] "C"  Master,Dash
+ SG_ temp_1 : 24|8@1- (1,0) [-128|127] "C"  Master,Dash
+ SG_ temp_2 : 32|8@1- (1,0) [-128|127] "C"  Master,Dash
+ SG_ temp_3 : 40|8@1- (1,0) [-128|127] "C"  Master,Dash
+ SG_ temp_4 : 48|8@1- (1,0) [-128|127] "C"  Master,Dash
+ SG_ temp_5 : 56|8@1- (1,0) [-128|127] "C"  Master,Dash
 
 BO_ 643 ALL_TEMPS_BOARD_3: 8 Cell_3
- SG_ board_id : 0|8@1+ (1,0) [0|5] "" Vector__XXX
- SG_ msg_index : 8|8@1+ (1,0) [0|255] "" Vector__XXX
- SG_ temp_0 : 16|8@1- (1,0) [-128|127] "C" Vector__XXX
- SG_ temp_1 : 24|8@1- (1,0) [-128|127] "C" Vector__XXX
- SG_ temp_2 : 32|8@1- (1,0) [-128|127] "C" Vector__XXX
- SG_ temp_3 : 40|8@1- (1,0) [-128|127] "C" Vector__XXX
- SG_ temp_4 : 48|8@1- (1,0) [-128|127] "C" Vector__XXX
- SG_ temp_5 : 56|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ board_id : 0|8@1+ (1,0) [0|5] ""  Master,Dash
+ SG_ msg_index : 8|8@1+ (1,0) [0|255] ""  Master,Dash
+ SG_ temp_0 : 16|8@1- (1,0) [-128|127] "C"  Master,Dash
+ SG_ temp_1 : 24|8@1- (1,0) [-128|127] "C"  Master,Dash
+ SG_ temp_2 : 32|8@1- (1,0) [-128|127] "C"  Master,Dash
+ SG_ temp_3 : 40|8@1- (1,0) [-128|127] "C"  Master,Dash
+ SG_ temp_4 : 48|8@1- (1,0) [-128|127] "C"  Master,Dash
+ SG_ temp_5 : 56|8@1- (1,0) [-128|127] "C"  Master,Dash
 
 BO_ 644 ALL_TEMPS_BOARD_4: 8 Cell_4
- SG_ board_id : 0|8@1+ (1,0) [0|5] "" Vector__XXX
- SG_ msg_index : 8|8@1+ (1,0) [0|255] "" Vector__XXX
- SG_ temp_0 : 16|8@1- (1,0) [-128|127] "C" Vector__XXX
- SG_ temp_1 : 24|8@1- (1,0) [-128|127] "C" Vector__XXX
- SG_ temp_2 : 32|8@1- (1,0) [-128|127] "C" Vector__XXX
- SG_ temp_3 : 40|8@1- (1,0) [-128|127] "C" Vector__XXX
- SG_ temp_4 : 48|8@1- (1,0) [-128|127] "C" Vector__XXX
- SG_ temp_5 : 56|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ board_id : 0|8@1+ (1,0) [0|5] ""  Master,Dash
+ SG_ msg_index : 8|8@1+ (1,0) [0|255] ""  Master,Dash
+ SG_ temp_0 : 16|8@1- (1,0) [-128|127] "C"  Master,Dash
+ SG_ temp_1 : 24|8@1- (1,0) [-128|127] "C"  Master,Dash
+ SG_ temp_2 : 32|8@1- (1,0) [-128|127] "C"  Master,Dash
+ SG_ temp_3 : 40|8@1- (1,0) [-128|127] "C"  Master,Dash
+ SG_ temp_4 : 48|8@1- (1,0) [-128|127] "C"  Master,Dash
+ SG_ temp_5 : 56|8@1- (1,0) [-128|127] "C"  Master,Dash
 
 BO_ 645 ALL_TEMPS_BOARD_5: 8 Cell_5
- SG_ board_id : 0|8@1+ (1,0) [0|5] "" Vector__XXX
- SG_ msg_index : 8|8@1+ (1,0) [0|255] "" Vector__XXX
- SG_ temp_0 : 16|8@1- (1,0) [-128|127] "C" Vector__XXX
- SG_ temp_1 : 24|8@1- (1,0) [-128|127] "C" Vector__XXX
- SG_ temp_2 : 32|8@1- (1,0) [-128|127] "C" Vector__XXX
- SG_ temp_3 : 40|8@1- (1,0) [-128|127] "C" Vector__XXX
- SG_ temp_4 : 48|8@1- (1,0) [-128|127] "C" Vector__XXX
- SG_ temp_5 : 56|8@1- (1,0) [-128|127] "C" Vector__XXX
+ SG_ board_id : 0|8@1+ (1,0) [0|5] ""  Master,Dash
+ SG_ msg_index : 8|8@1+ (1,0) [0|255] ""  Master,Dash
+ SG_ temp_0 : 16|8@1- (1,0) [-128|127] "C"  Master,Dash
+ SG_ temp_1 : 24|8@1- (1,0) [-128|127] "C"  Master,Dash
+ SG_ temp_2 : 32|8@1- (1,0) [-128|127] "C"  Master,Dash
+ SG_ temp_3 : 40|8@1- (1,0) [-128|127] "C"  Master,Dash
+ SG_ temp_4 : 48|8@1- (1,0) [-128|127] "C"  Master,Dash
+ SG_ temp_5 : 56|8@1- (1,0) [-128|127] "C"  Master,Dash
 
 BO_ 1117 STEERING_MOTOR_COMMAND: 4 ASCU
  SG_ steering_angle : 0|32@1- (0.0001,0) [-90|90] "degrees"  SteeringController
@@ -264,19 +236,54 @@ BO_ 1282 DV_system_status: 5 ASCU
  SG_ ASB_redundancy_state : 9|2@1+ (1,0) [0|3] ""  DataLogger
  SG_ Lap_counter : 11|4@1+ (1,0) [0|15] ""  DataLogger
  SG_ Cones_count_actual : 15|8@1+ (1,0) [0|255] ""  DataLogger
- SG_ Cones_count_all : 23|16@1+ (1,0) [0|255] ""  DataLogger
+ SG_ Cones_count_all : 23|16@1+ (1,0) [0|65535] ""  DataLogger
 
 BO_ 401 RES_STATE: 8 RES
- SG_ emg_stop1 : 0|1@0+ (1,0) [0|1] ""  Master
- SG_ go_switch : 1|1@0+ (1,0) [0|1] ""  Master
- SG_ go_button : 2|1@0+ (1,0) [0|1] ""  Master
- SG_ emg_stop2 : 31|1@0+ (1,0) [0|1] ""  Master
- SG_ radio_quality : 48|8@0+ (1,0) [0|255] ""  Master
- SG_ signal_loss : 54|1@0+ (1,0) [0|1] ""  Master
+ SG_ emg_stop1 : 0|1@1+ (1,0) [0|1] ""  Master
+ SG_ go_switch : 1|1@1+ (1,0) [0|1] ""  Master
+ SG_ go_button : 2|1@1+ (1,0) [0|1] ""  Master
+ SG_ emg_stop2 : 31|1@1+ (1,0) [0|1] ""  Master
+ SG_ radio_quality : 48|8@1+ (1,0) [0|255] ""  Master
+ SG_ signal_loss : 62|1@1+ (1,0) [0|1] ""  Master
 
 BO_ 1809 RES_READY: 1 RES
+ SG_ single_byte : 0|8@1+ (1,0) [0|0] ""  Master
 
 BO_ 257 BMS_periodic: 8 BMS
+ SG_ charg_current_limit : 0|16@1+ (1,0) [0|0] ""  Master
+ SG_ relay_state : 16|8@1+ (1,0) [0|1] ""  Master
+ SG_ pack_inst_voltage : 24|8@1+ (1,0) [0|0] ""  Master
+ SG_ pack_soc : 32|8@1+ (1,0) [0|100] ""  Master
+ SG_ error_flags : 40|16@1+ (1,0) [0|0] ""  Master
+
+BO_ 1297 DATA_LOGGER_SIGNALS_1: 8 Master
+ SG_ placeholder : 7|1@1+ (1,0) [0|0] ""  DataLogger
+ SG_ asms_on : 6|1@1+ (1,0) [0|0] ""  DataLogger
+ SG_ asats_pressed : 5|1@1+ (1,0) [0|0] ""  DataLogger
+ SG_ ats_pressed : 4|1@1+ (1,0) [0|0] ""  DataLogger
+ SG_ tsms_sdc_closed : 3|1@1+ (1,0) [0|1] ""  DataLogger
+ SG_ master_sdc_closed : 2|1@1+ (1,0) [0|1] ""  DataLogger
+ SG_ ts_on : 1|1@1+ (1,0) [0|1] ""  DataLogger
+ SG_ WD_ready : 0|1@1+ (1,0) [0|1] ""  DataLogger
+ SG_ res_dead : 8|1@1+ (1,0) [0|1] ""  DataLogger
+ SG_ inversor_dead : 9|1@1+ (1,0) [1|1] ""  DataLogger
+ SG_ pc_dead : 10|1@1+ (1,0) [0|1] ""  DataLogger
+ SG_ steer_dead : 11|1@1+ (1,0) [0|1] ""  DataLogger
+ SG_ EBS_released_in_time : 12|1@1+ (1,0) [0|1] ""  DataLogger
+ SG_ EBS_engaged_in_time : 13|1@1+ (1,0) [0|1] ""  DataLogger
+ SG_ bms_dead : 14|1@1+ (1,0) [0|0] ""  DataLogger
+ SG_ emergency_signal : 15|1@1+ (1,0) [0|1] ""  DataLogger
+ SG_ checkup_state : 16|4@1+ (1,0) [0|0] ""  DataLogger
+ SG_ pneumatic_pressure : 21|1@1+ (1,0) [0|1] ""  DataLogger
+ SG_ pneumatic_line_2 : 22|1@1+ (1,0) [0|1] ""  DataLogger
+ SG_ pneumatic_line_1 : 23|1@1+ (1,0) [0|1] ""  DataLogger
+ SG_ dc_voltage : 24|32@1+ (1,0) [0|0] ""  DataLogger
+ SG_ mission : 56|4@1+ (1,0) [0|0] ""  DataLogger
+ SG_ as_state : 60|4@1+ (1,0) [0|0] ""  DataLogger
+
+BO_ 1298 DATA_LOGGER_SIGNALS_2: 8 Master
+ SG_ hydraulic_pressure_front : 0|32@1+ (1,0) [0|0] ""  DataLogger
+ SG_ hydraulic_pressure_back : 32|32@1+ (1,0) [0|0] ""  DataLogger
 
 
 

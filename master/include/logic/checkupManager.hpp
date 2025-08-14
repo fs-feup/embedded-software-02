@@ -101,6 +101,11 @@ public:
   void reset_checkup_state();
 
   /**
+   * @brief Resets the mission finished state.
+   */
+  void reset_mission_finished();
+
+  /**
    * @brief Performs a manual driving checkup.
    */
   [[nodiscard]] bool should_stay_manual_driving() const;
@@ -178,6 +183,10 @@ inline bool CheckupManager::should_stay_off() {
     return true;
   }
   return false;
+}
+
+inline void CheckupManager::reset_mission_finished() {
+  _system_data_->mission_finished_ = false;
 }
 
 inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {

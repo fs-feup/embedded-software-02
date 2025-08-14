@@ -28,4 +28,7 @@ bool check_sequence(const uint8_t* data, const std::array<uint8_t, 3>& expected)
  */
 std::array<uint8_t, 4> rpm_to_bytes(float rpm);
 
+// Print all temperature sensor data from the boards
+void print_all_board_temps(const int8_t temps[6][18]);
+
 InverterModeParams get_inverter_mode_config(SwitchMode switch_mode);

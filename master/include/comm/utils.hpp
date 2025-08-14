@@ -64,12 +64,12 @@ inline std::array<uint8_t, 8> create_signals_msg_1(const SystemData& system_data
 
 inline std::array<uint8_t, 8> create_hydraulic_presures_msg(const SystemData& system_data) {
   return {
-      static_cast<uint8_t>(system_data.hardware_data_.hydraulic_line_front_pressure >> 24 & 0xFF),
-      static_cast<uint8_t>(system_data.hardware_data_.hydraulic_line_front_pressure >> 16 & 0xFF),
+static_cast<uint8_t>(system_data.hardware_data_.hydraulic_line_front_pressure & 0xFF),
       static_cast<uint8_t>(system_data.hardware_data_.hydraulic_line_front_pressure >> 8 & 0xFF),
-      static_cast<uint8_t>(system_data.hardware_data_.hydraulic_line_front_pressure & 0xFF),
-      static_cast<uint8_t>((system_data.hardware_data_._hydraulic_line_pressure >> 24) & 0xFF),
-      static_cast<uint8_t>((system_data.hardware_data_._hydraulic_line_pressure >> 16) & 0xFF),
+      static_cast<uint8_t>(system_data.hardware_data_.hydraulic_line_front_pressure >> 16 & 0xFF),
+      static_cast<uint8_t>(system_data.hardware_data_.hydraulic_line_front_pressure >> 24 & 0xFF),
+      static_cast<uint8_t>(system_data.hardware_data_._hydraulic_line_pressure & 0xFF),
       static_cast<uint8_t>((system_data.hardware_data_._hydraulic_line_pressure >> 8) & 0xFF),
-      static_cast<uint8_t>(system_data.hardware_data_._hydraulic_line_pressure & 0xFF)};
+      static_cast<uint8_t>((system_data.hardware_data_._hydraulic_line_pressure >> 16) & 0xFF),
+      static_cast<uint8_t>((system_data.hardware_data_._hydraulic_line_pressure >> 24) & 0xFF)};
 }

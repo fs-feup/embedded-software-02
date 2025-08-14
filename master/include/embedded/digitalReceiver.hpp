@@ -106,7 +106,7 @@ private:
   unsigned int sdc_change_counter_ = 0;           ///< counter to avoid noise on sdc
   unsigned int pneumatic_change_counter_ = 0;     ///< counter to avoid noise on pneumatic line
   unsigned int mission_change_counter_ = 0;       ///< counter to avoid noise on mission change
-  unsigned int sdc_bspd_change_counter_ = 0;      ///< counter to avoid noise on sdc bspd
+  unsigned int sdc_tsms_change_counter_ = 0;      ///< counter to avoid noise on sdc bspd
   unsigned int ats_change_counter_ = 0;           ///< counter to avoid noise on ats
   unsigned int wd_ready_change_counter_ = 0;      ///< counter to avoid noise on wd ready
   Mission last_tried_mission_ = Mission::MANUAL;  ///< Last attempted mission state
@@ -144,7 +144,7 @@ private:
    * @brief Reads the bspd pin and updates the HardwareData object.
    * Debounces input changes to avoid spurious transitions.
    */
-  void read_bspd_sdc();
+  void read_tsms_sdc();
 
   /**
    * @brief Reads the brake sensor and updates the HardwareData object.
@@ -182,7 +182,7 @@ inline void DigitalReceiver::digital_reads() {
   read_soc();
   read_brake_sensor();
   read_ats();
-  read_bspd_sdc();
+  read_tsms_sdc();
   read_watchdog_ready();
   read_rpm();
 }
@@ -194,11 +194,11 @@ inline void DigitalReceiver::read_soc() {
   system_data_->hardware_data_.soc_ = static_cast<uint8_t>(mapped_value);
 }
 
-inline void DigitalReceiver::read_bspd_sdc() {
+inline void DigitalReceiver::read_tsms_sdc() {
   bool is_sdc_closed = digitalRead(SDC_TSMS_STATE_PIN);  // low when sdc/bspd open
   // is_sdc_closed = this->sim.activate_shit(is_sdc_closed);
   debounce(is_sdc_closed, system_data_->hardware_data_.tsms_sdc_closed_,
-           this->sdc_bspd_change_counter_, 1000);
+           this->sdc_tsms_change_counter_, 1000);
   // DEBUG_PRINT_VAR(is_sdc_closed);
   // DEBUG_PRINT_VAR(system_data_->hardware_data_.tsms_sdc_closed_);
 }
@@ -228,17 +228,18 @@ inline void DigitalReceiver::read_mission() {
   int raw_value = analogRead(AMI);
   int contrained_value = constrain(raw_value, 0, 600);
   int mapped_value;
+  DEBUG_PRINT_VAR(raw_value);
   // int mapped_value = map(constrain(raw_value, 0, ADC_MAX_VALUE), 0, ADC_MAX_VALUE, 0,
   //                        MAX_MISSION);  // constrain just in case
-  if (contrained_value < 130) {
+  if (contrained_value < 60) {
     mapped_value = 0;  // Manual
-  } else if (contrained_value < 250) {
+  } else if (contrained_value < 220) {
     mapped_value = 1;  // Acceleration
-  } else if (contrained_value < 300) {
+  } else if (contrained_value < 330) {
     mapped_value = 2;  // Skidpad
   } else if (contrained_value < 420) {
     mapped_value = 3;  // Autocross
-  } else if (contrained_value < 500) {
+  } else if (contrained_value < 475) {
     mapped_value = 4;  // Trackdrive
   } else if (contrained_value < 540) {
     mapped_value = 5;  // EBS Test

@@ -87,6 +87,8 @@ struct SystemVolatileData {
   uint16_t warning_bitmap = 0;
   uint8_t autonomous_mission = 0;
 
+  int8_t cell_board_all_temps[6][18] = {{0}};
+
   unsigned long last_wheel_pulse_fr = 0;
   unsigned long second_to_last_wheel_pulse_fr = 0;
   unsigned long last_wheel_pulse_fl = 0;
@@ -111,5 +113,10 @@ inline void copy_volatile_data(SystemVolatileData& dest, volatile SystemVolatile
   dest.error_bitmap = src.error_bitmap;
   dest.warning_bitmap = src.warning_bitmap;
   dest.autonomous_mission = src.autonomous_mission;
+  for (int i = 0; i < 6; ++i) {
+    for (int j = 0; j < 18; ++j) {
+      dest.cell_board_all_temps[i][j] = src.cell_board_all_temps[i][j];
+    }
+  }
   interrupts();
 }
