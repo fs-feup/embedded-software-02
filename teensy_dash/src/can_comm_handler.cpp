@@ -22,12 +22,19 @@ void CanCommHandler::setup() {
   DEBUG_PRINTLN("Setting up CAN communication handler...");
   can1.begin();
   can1.setBaudRate(1'000'000);
+  +can1.setRFFN(RFFN_32);
   can1.enableFIFO();
   can1.enableFIFOInterrupt();
   can1.setFIFOFilter(REJECT_ALL);
   can1.setFIFOFilter(0, BMS_THERMISTOR_ID, EXT);
   can1.setFIFOFilter(1, BAMO_RESPONSE_ID, STD);
   can1.setFIFOFilter(2, MASTER_ID, STD);
+  +can1.setFIFOFilter(3, ALL_TEMPS_ID, STD);
+  +can1.setFIFOFilter(4, ALL_TEMPS_ID + 1, STD);
+  +can1.setFIFOFilter(5, ALL_TEMPS_ID + 2, STD);
+  +can1.setFIFOFilter(6, ALL_TEMPS_ID + 3, STD);
+  +can1.setFIFOFilter(7, ALL_TEMPS_ID + 4, STD);
+  +can1.setFIFOFilter(8, ALL_TEMPS_ID + 5, STD);
   can1.onReceive(can_snifflas);
   delay(100);
 
@@ -65,7 +72,6 @@ void CanCommHandler::can_snifflas(const CAN_message_t& msg) {
   }
 }
 void CanCommHandler::handle_can_message(const CAN_message_t& msg) {
-
   if (msg.id >= ALL_TEMPS_ID && msg.id < (ALL_TEMPS_ID + 6)) {
     // Handle new chunked temperature messages
     uint8_t board_id_from_can_id = msg.id - ALL_TEMPS_ID;
@@ -99,74 +105,70 @@ void CanCommHandler::handle_can_message(const CAN_message_t& msg) {
     case MASTER_ID:
       master_callback(msg.buf, msg.len);
       break;
-    case BMS_ERRORS_ID: {
-      // yves: estes são menos importantes mas se der mete tb
-      DEBUG_PRINTLN("BMS Error ID received - Raw msg data:");
-      for (uint8_t i = 0; i < msg.len; i++) {
-        DEBUG_PRINTLN("  msg_data[" + String(i) + "] = 0x" + String(msg.buf[i], HEX));
-      }
+    case BMS_TX_ID: {
+      uint8_t inst_voltage = msg.buf[3];
+      DEBUG_PRINTLN("BMS Instantaneous Voltage: " + String(inst_voltage) + " V");
 
-      // Handle DTC Status #1 (indices 0 and 1)
-      if (msg.len >= 2) {
-        uint16_t error_bitmap_1 = (msg.buf[1] << 8) | msg.buf[0];
-        DEBUG_PRINTLN("BMS ERRORS #1: 0x" + String(error_bitmap_1, HEX));
-        DEBUG_PRINTLN("DTC Status #1 error bits:");
-        DEBUG_PRINTLN("  Bit 1 (0x0001): P0A07 (Discharge Limit Enforcement Fault): " +
-                      String((error_bitmap_1 & (1 << 0)) ? 1 : 0));
-        DEBUG_PRINTLN("  Bit 2 (0x0002): P0A08 (Charger Safety Relay Fault): " +
-                      String((error_bitmap_1 & (1 << 1)) ? 1 : 0));
-        DEBUG_PRINTLN("  Bit 3 (0x0004): P0A09 (Internal Hardware Fault): " +
-                      String((error_bitmap_1 & (1 << 2)) ? 1 : 0));
-        DEBUG_PRINTLN("  Bit 4 (0x0008): P0A0A (Internal Heatsink Thermistor Fault): " +
-                      String((error_bitmap_1 & (1 << 3)) ? 1 : 0));
-        DEBUG_PRINTLN("  Bit 5 (0x0010): P0A0B (Internal Software Fault): " +
-                      String((error_bitmap_1 & (1 << 4)) ? 1 : 0));
-        DEBUG_PRINTLN("  Bit 6 (0x0020): P0A0C (Highest Cell Voltage Too High Fault): " +
-                      String((error_bitmap_1 & (1 << 5)) ? 1 : 0));
-        DEBUG_PRINTLN("  Bit 7 (0x0040): P0A0E (Lowest Cell Voltage Too Low Fault): " +
-                      String((error_bitmap_1 & (1 << 6)) ? 1 : 0));
-        DEBUG_PRINTLN("  Bit 8 (0x0080): P0A10 (Pack Too Hot Fault): " +
-                      String((error_bitmap_1 & (1 << 7)) ? 1 : 0));
-      }
+      uint8_t pack_soc = msg.buf[4];
+      DEBUG_PRINTLN("BMS Pack SOC: " + String(pack_soc) + "%");
+      updatable_data.hv_soc = pack_soc;
+
+      uint8_t error_bitmap_1 = msg.buf[5];
+      DEBUG_PRINTLN("BMS ERRORS #1: 0x" + String(error_bitmap_1, HEX));
+      DEBUG_PRINTLN("DTC Status #1 error bits:");
+      DEBUG_PRINTLN("  Bit 1 (0x01): P0A07 (Discharge Limit Enforcement Fault): " +
+                    String((error_bitmap_1 & (1 << 0)) ? 1 : 0));
+      DEBUG_PRINTLN("  Bit 2 (0x02): P0A08 (Charger Safety Relay Fault): " +
+                    String((error_bitmap_1 & (1 << 1)) ? 1 : 0));
+      DEBUG_PRINTLN("  Bit 3 (0x04): P0A09 (Internal Hardware Fault): " +
+                    String((error_bitmap_1 & (1 << 2)) ? 1 : 0));
+      DEBUG_PRINTLN("  Bit 4 (0x08): P0A0A (Internal Heatsink Thermistor Fault): " +
+                    String((error_bitmap_1 & (1 << 3)) ? 1 : 0));
+      DEBUG_PRINTLN("  Bit 5 (0x10): P0A0B (Internal Software Fault): " +
+                    String((error_bitmap_1 & (1 << 4)) ? 1 : 0));
+      DEBUG_PRINTLN("  Bit 6 (0x20): P0A0C (Highest Cell Voltage Too High Fault): " +
+                    String((error_bitmap_1 & (1 << 5)) ? 1 : 0));
+      DEBUG_PRINTLN("  Bit 7 (0x40): P0A0E (Lowest Cell Voltage Too Low Fault): " +
+                    String((error_bitmap_1 & (1 << 6)) ? 1 : 0));
+      DEBUG_PRINTLN("  Bit 8 (0x80): P0A10 (Pack Too Hot Fault): " +
+                    String((error_bitmap_1 & (1 << 7)) ? 1 : 0));
 
       // Handle DTC Status #2 (indices 2 and 3)
-      if (msg.len >= 4) {
-        uint16_t error_bitmap_2 = (msg.buf[3] << 8) | msg.buf[2];
-        DEBUG_PRINTLN("BMS ERRORS #2: 0x" + String(error_bitmap_2, HEX));
-        DEBUG_PRINTLN("DTC Status #2 error bits:");
-        DEBUG_PRINTLN("  Bit 1 (0x0001): P0A1F (Internal Communication Fault): " +
-                      String((error_bitmap_2 & (1 << 0)) ? 1 : 0));
-        DEBUG_PRINTLN("  Bit 2 (0x0002): P0A12 (Cell Balancing Stuck Off Fault): " +
-                      String((error_bitmap_2 & (1 << 1)) ? 1 : 0));
-        DEBUG_PRINTLN("  Bit 3 (0x0004): P0A80 (Weak Cell Fault): " +
-                      String((error_bitmap_2 & (1 << 2)) ? 1 : 0));
-        DEBUG_PRINTLN("  Bit 4 (0x0008): P0AFA (Low Cell Voltage Fault): " +
-                      String((error_bitmap_2 & (1 << 3)) ? 1 : 0));
-        DEBUG_PRINTLN("  Bit 5 (0x0010): P0A04 (Open Wiring Fault): " +
-                      String((error_bitmap_2 & (1 << 4)) ? 1 : 0));
-        DEBUG_PRINTLN("  Bit 6 (0x0020): P0AC0 (Current Sensor Fault): " +
-                      String((error_bitmap_2 & (1 << 5)) ? 1 : 0));
-        DEBUG_PRINTLN("  Bit 7 (0x0040): P0A0D (Highest Cell Voltage Over 5V Fault): " +
-                      String((error_bitmap_2 & (1 << 6)) ? 1 : 0));
-        DEBUG_PRINTLN("  Bit 8 (0x0080): P0A0F (Cell ASIC Fault): " +
-                      String((error_bitmap_2 & (1 << 7)) ? 1 : 0));
-        DEBUG_PRINTLN("  Bit 9 (0x0100): P0A02 (Weak Pack Fault): " +
-                      String((error_bitmap_2 & (1 << 8)) ? 1 : 0));
-        DEBUG_PRINTLN("  Bit 10 (0x0200): P0A81 (Fan Monitor Fault): " +
-                      String((error_bitmap_2 & (1 << 9)) ? 1 : 0));
-        DEBUG_PRINTLN("  Bit 11 (0x0400): P0A9C (Thermistor Fault): " +
-                      String((error_bitmap_2 & (1 << 10)) ? 1 : 0));
-        DEBUG_PRINTLN("  Bit 12 (0x0800): U0100 (External Communication Fault): " +
-                      String((error_bitmap_2 & (1 << 11)) ? 1 : 0));
-        DEBUG_PRINTLN("  Bit 13 (0x1000): P0560 (Redundant Power Supply Fault): " +
-                      String((error_bitmap_2 & (1 << 12)) ? 1 : 0));
-        DEBUG_PRINTLN("  Bit 14 (0x2000): P0AA6 (High Voltage Isolation Fault): " +
-                      String((error_bitmap_2 & (1 << 13)) ? 1 : 0));
-        DEBUG_PRINTLN("  Bit 15 (0x4000): P0A05 (Input Power Supply Fault): " +
-                      String((error_bitmap_2 & (1 << 14)) ? 1 : 0));
-        DEBUG_PRINTLN("  Bit 16 (0x8000): P0A06 (Charge Limit Enforcement Fault): " +
-                      String((error_bitmap_2 & (1 << 15)) ? 1 : 0));
-      }
+      uint16_t error_bitmap_2 = (msg.buf[7] << 8) | msg.buf[6];
+      DEBUG_PRINTLN("BMS ERRORS #2: 0x" + String(error_bitmap_2, HEX));
+      DEBUG_PRINTLN("DTC Status #2 error bits:");
+      DEBUG_PRINTLN("  Bit 1 (0x0001): P0A1F (Internal Communication Fault): " +
+                    String((error_bitmap_2 & (1 << 0)) ? 1 : 0));
+      DEBUG_PRINTLN("  Bit 2 (0x0002): P0A12 (Cell Balancing Stuck Off Fault): " +
+                    String((error_bitmap_2 & (1 << 1)) ? 1 : 0));
+      DEBUG_PRINTLN("  Bit 3 (0x0004): P0A80 (Weak Cell Fault): " +
+                    String((error_bitmap_2 & (1 << 2)) ? 1 : 0));
+      DEBUG_PRINTLN("  Bit 4 (0x0008): P0AFA (Low Cell Voltage Fault): " +
+                    String((error_bitmap_2 & (1 << 3)) ? 1 : 0));
+      DEBUG_PRINTLN("  Bit 5 (0x0010): P0A04 (Open Wiring Fault): " +
+                    String((error_bitmap_2 & (1 << 4)) ? 1 : 0));
+      DEBUG_PRINTLN("  Bit 6 (0x0020): P0AC0 (Current Sensor Fault): " +
+                    String((error_bitmap_2 & (1 << 5)) ? 1 : 0));
+      DEBUG_PRINTLN("  Bit 7 (0x0040): P0A0D (Highest Cell Voltage Over 5V Fault): " +
+                    String((error_bitmap_2 & (1 << 6)) ? 1 : 0));
+      DEBUG_PRINTLN("  Bit 8 (0x0080): P0A0F (Cell ASIC Fault): " +
+                    String((error_bitmap_2 & (1 << 7)) ? 1 : 0));
+      DEBUG_PRINTLN("  Bit 9 (0x0100): P0A02 (Weak Pack Fault): " +
+                    String((error_bitmap_2 & (1 << 8)) ? 1 : 0));
+      DEBUG_PRINTLN("  Bit 10 (0x0200): P0A81 (Fan Monitor Fault): " +
+                    String((error_bitmap_2 & (1 << 9)) ? 1 : 0));
+      DEBUG_PRINTLN("  Bit 11 (0x0400): P0A9C (Thermistor Fault): " +
+                    String((error_bitmap_2 & (1 << 10)) ? 1 : 0));
+      DEBUG_PRINTLN("  Bit 12 (0x0800): U0100 (External Communication Fault): " +
+                    String((error_bitmap_2 & (1 << 11)) ? 1 : 0));
+      DEBUG_PRINTLN("  Bit 13 (0x1000): P0560 (Redundant Power Supply Fault): " +
+                    String((error_bitmap_2 & (1 << 12)) ? 1 : 0));
+      DEBUG_PRINTLN("  Bit 14 (0x2000): P0AA6 (High Voltage Isolation Fault): " +
+                    String((error_bitmap_2 & (1 << 13)) ? 1 : 0));
+      DEBUG_PRINTLN("  Bit 15 (0x4000): P0A05 (Input Power Supply Fault): " +
+                    String((error_bitmap_2 & (1 << 14)) ? 1 : 0));
+      DEBUG_PRINTLN("  Bit 16 (0x8000): P0A06 (Charge Limit Enforcement Fault): " +
+                    String((error_bitmap_2 & (1 << 15)) ? 1 : 0));
     } break;
     default:
       break;
@@ -287,7 +289,7 @@ void CanCommHandler::write_messages() {
 
 void CanCommHandler::write_dash_state() {
   // Ensure boolean values are normalized to 0 or 1
-  auto normalize_bool = [](bool value) -> uint8_t { return value ? 1 : 0; };    
+  auto normalize_bool = [](bool value) -> uint8_t { return value ? 1 : 0; };
 
   CAN_message_t dash_state;
   dash_state.id = DASH_ID;
