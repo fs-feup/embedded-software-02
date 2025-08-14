@@ -8,7 +8,6 @@ StateMachine::StateMachine(CanCommHandler& can_handler, LogicHandler& logic_hand
 
 void StateMachine::update() {
   int torque_from_apps = 0;
-
   switch (current_state_) {
     case State::IDLE:
       if (logic_handler.should_start_manual_driving()) {
@@ -35,6 +34,11 @@ void StateMachine::update() {
       }
       break;  // wait for transition to finish
     case State::DRIVING:
+      if (logic_handler.bamocar_has_error()) {
+        transition_to_idle();
+        can_handler.reset_bamocar_init();
+        current_state_ = State::INITIALIZING_DRIVING;
+      } 
       torque_from_apps = logic_handler.calculate_torque();
       if (logic_handler.should_go_idle()) {
         DEBUG_PRINTLN("Going idle from driving state");

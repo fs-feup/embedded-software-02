@@ -195,11 +195,10 @@ inline void DigitalReceiver::read_soc() {
 }
 
 inline void DigitalReceiver::read_tsms_sdc() {
-  bool is_sdc_closed = digitalRead(SDC_TSMS_STATE_PIN);  // low when sdc open
+  bool is_sdc_closed = digitalRead(SDC_TSMS_STATE_PIN);  // low when sdc/bspd open
   // is_sdc_closed = this->sim.activate_shit(is_sdc_closed);
   debounce(is_sdc_closed, system_data_->hardware_data_.tsms_sdc_closed_,
-           this->sdc_tsms_change_counter_, 380);
-
+           this->sdc_tsms_change_counter_, 1000);
   // DEBUG_PRINT_VAR(is_sdc_closed);
   // DEBUG_PRINT_VAR(system_data_->hardware_data_.tsms_sdc_closed_);
 }
@@ -227,9 +226,27 @@ inline void DigitalReceiver::read_pneumatic_line() {
 
 inline void DigitalReceiver::read_mission() {
   int raw_value = analogRead(AMI);
-  int mapped_value = map(constrain(raw_value, 0, ADC_MAX_VALUE), 0, ADC_MAX_VALUE, 0,
-                         MAX_MISSION);  // constrain just in case
-  mapped_value = 6;
+  int contrained_value = constrain(raw_value, 0, 600);
+  int mapped_value;
+  DEBUG_PRINT_VAR(raw_value);
+  // int mapped_value = map(constrain(raw_value, 0, ADC_MAX_VALUE), 0, ADC_MAX_VALUE, 0,
+  //                        MAX_MISSION);  // constrain just in case
+  if (contrained_value < 60) {
+    mapped_value = 0;  // Manual
+  } else if (contrained_value < 220) {
+    mapped_value = 1;  // Acceleration
+  } else if (contrained_value < 330) {
+    mapped_value = 2;  // Skidpad
+  } else if (contrained_value < 420) {
+    mapped_value = 3;  // Autocross
+  } else if (contrained_value < 475) {
+    mapped_value = 4;  // Trackdrive
+  } else if (contrained_value < 540) {
+    mapped_value = 5;  // EBS Test
+  } else {
+    mapped_value = 6;  // Inspection
+  }
+
   Mission latest_mission = static_cast<Mission>(mapped_value);
   if ((latest_mission == system_data_->mission_) && (latest_mission == last_tried_mission_)) {
     mission_change_counter_ = 0;
@@ -245,7 +262,7 @@ inline void DigitalReceiver::read_mission() {
 
 inline void DigitalReceiver::read_asms_switch() {
   bool latest_asms_status = digitalRead(ASMS_IN_PIN);
-  debounce(latest_asms_status, system_data_->hardware_data_.asms_on_, asms_change_counter_);
+  debounce(latest_asms_status, system_data_->hardware_data_.asms_on_, asms_change_counter_, 1000);
 }
 
 inline void DigitalReceiver::read_asats_state() {

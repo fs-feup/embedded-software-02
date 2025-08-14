@@ -15,7 +15,7 @@ struct R2DLogics {
   Metro releaseEbsTimestamp{RELEASE_EBS_TIMEOUT_MS};
 
   /// Timestamp from when EBS is activate on entering ready state,
-  /// used to tolerate a small delay in which pneumatic line pressure is low
+  /// used to tolerate a small delay in which hydraulic line pressure is low
   Metro engageEbsTimestamp{ENGAGE_EBS_TIMEOUT_MS};
   bool r2d{false};
 

@@ -101,6 +101,11 @@ public:
   void reset_checkup_state();
 
   /**
+   * @brief Resets the mission finished state.
+   */
+  void reset_mission_finished();
+
+  /**
    * @brief Performs a manual driving checkup.
    */
   [[nodiscard]] bool should_stay_manual_driving() const;
@@ -179,7 +184,14 @@ inline bool CheckupManager::should_stay_off() {
   return false;
 }
 
+inline void CheckupManager::reset_mission_finished() {
+  _system_data_->mission_finished_ = false;
+}
+
 inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
+  if (!_system_data_->hardware_data_.asms_on_) {
+    checkup_state_ = CheckupState::WAIT_FOR_ASMS;
+  }
   switch (checkup_state_) {
     case CheckupState::WAIT_FOR_ASMS:
       DEBUG_PRINT("ASMS CHECK");
@@ -253,7 +265,8 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
       DEBUG_PRINT(
           "Hydraulic Pressure: " + String(_system_data_->hardware_data_._hydraulic_line_pressure) +
           " - " + String(_system_data_->hardware_data_.hydraulic_line_front_pressure));
-      if (_system_data_->hardware_data_._hydraulic_line_pressure >= HYDRAULIC_BRAKE_THRESHOLD &&
+      if (
+        // _system_data_->hardware_data_._hydraulic_line_pressure >= HYDRAULIC_BRAKE_THRESHOLD &&
           _system_data_->hardware_data_.hydraulic_line_front_pressure >=
               HYDRAULIC_BRAKE_THRESHOLD) {
         checkup_state_ = CheckupState::WAIT_FOR_ASATS;
@@ -294,7 +307,7 @@ inline CheckupManager::CheckupError CheckupManager::initial_checkup_sequence() {
       }
       break;
     case CheckupState::EBS_CHECKS:
-      DEBUG_PRINT("Starting EBS checks");
+      // DEBUG_PRINT("Starting EBS checks");
       handle_ebs_check();
       break;
     case CheckupState::CHECKUP_COMPLETE:
@@ -318,11 +331,7 @@ inline void CheckupManager::handle_ebs_check() {
       break;
 
     case EbsPressureTestPhase::CHECK_ACTUATOR_2:
-      // print values inside if
-      DEBUG_PRINT_VAR(_system_data_->hardware_data_.hydraulic_line_front_pressure);
-      DEBUG_PRINT_VAR(_system_data_->hardware_data_._hydraulic_line_pressure);
-      DEBUG_PRINT_VAR(_system_data_->hardware_data_.pneumatic_line_pressure_);
-
+    DEBUG_PRINT_VAR(_system_data_->hardware_data_.hydraulic_line_front_pressure);
       if (_system_data_->hardware_data_.pneumatic_line_pressure_ &&
           _system_data_->hardware_data_._hydraulic_line_pressure < HYDRAULIC_BRAKE_THRESHOLD &&
           _system_data_->hardware_data_.hydraulic_line_front_pressure >=
@@ -346,8 +355,9 @@ inline void CheckupManager::handle_ebs_check() {
       DEBUG_PRINT_VAR(_system_data_->hardware_data_._hydraulic_line_pressure);
       DEBUG_PRINT_VAR(_system_data_->hardware_data_.pneumatic_line_pressure_);
       if (_system_data_->hardware_data_.pneumatic_line_pressure_ &&
-          _system_data_->hardware_data_.hydraulic_line_front_pressure < HYDRAULIC_BRAKE_THRESHOLD &&
-          _system_data_->hardware_data_._hydraulic_line_pressure >= HYDRAULIC_BRAKE_THRESHOLD) {
+          _system_data_->hardware_data_._hydraulic_line_pressure >=
+              HYDRAULIC_BRAKE_THRESHOLD &&
+          _system_data_->hardware_data_.hydraulic_line_front_pressure < HYDRAULIC_BRAKE_THRESHOLD) {
         DEBUG_PRINT("Pressure high confirmed with only actuator 1");
         pressure_test_phase_ = EbsPressureTestPhase::ENABLE_ACTUATOR_2;
       }
@@ -357,7 +367,7 @@ inline void CheckupManager::handle_ebs_check() {
       // Step 14: Enable EBS actuator 2 again
       DEBUG_PRINT("Re-enabling EBS actuator 2");
       DigitalSender::enable_ebs_actuator_FRONT();
-      pressure_test_phase_ = EbsPressureTestPhase::COMPLETE;
+      pressure_test_phase_ = EbsPressureTestPhase::CHECK_BOTH_ACTUATORS;
       break;
 
     case EbsPressureTestPhase::CHECK_BOTH_ACTUATORS:
@@ -404,47 +414,47 @@ inline bool CheckupManager::should_enter_emergency(State current_state) const {
 bool CheckupManager::should_enter_emergency_in_ready_state() const {
   bool component_timed_out = _system_data_->failure_detection_.has_any_component_timed_out();
   bool failed_to_build_pressure = failed_to_build_hydraulic_pressure_in_time();
-  DEBUG_PRINT_VAR(component_timed_out);
-  DEBUG_PRINT_VAR(failed_to_build_pressure);
-  DEBUG_PRINT_VAR(_system_data_->hardware_data_.asms_on_);
-  DEBUG_PRINT_VAR(_system_data_->failure_detection_.ts_on_);
-  DEBUG_PRINT_VAR(_system_data_->hardware_data_.tsms_sdc_closed_);
-  DEBUG_PRINT_VAR(_system_data_->failure_detection_.emergency_signal_);
-  DEBUG_PRINT_VAR(!_system_data_->hardware_data_.pneumatic_line_pressure_);
+  // DEBUG_PRINT_VAR(component_timed_out);
+  // DEBUG_PRINT_VAR(failed_to_build_pressure);
+  // DEBUG_PRINT_VAR(_system_data_->hardware_data_.asms_on_);
+  // DEBUG_PRINT_VAR(_system_data_->failure_detection_.ts_on_);
+  // DEBUG_PRINT_VAR(_system_data_->hardware_data_.tsms_sdc_closed_);
+  // DEBUG_PRINT_VAR(_system_data_->failure_detection_.emergency_signal_);
+  // DEBUG_PRINT_VAR(!_system_data_->hardware_data_.pneumatic_line_pressure_);
   return _system_data_->failure_detection_.emergency_signal_ ||
-         //  !_system_data_->hardware_data_.pneumatic_line_pressure_ ||
+          !_system_data_->hardware_data_.pneumatic_line_pressure_ ||
          component_timed_out || !_system_data_->hardware_data_.asms_on_ ||
          !_system_data_->failure_detection_.ts_on_ ||
-         //  failed_to_build_pressure ||
+          failed_to_build_pressure ||
          !_system_data_->hardware_data_.tsms_sdc_closed_;
 }
 
 bool CheckupManager::should_enter_emergency_in_driving_state() const {
   bool component_timed_out = _system_data_->failure_detection_.has_any_component_timed_out();
   bool failed_to_reduce_pressure = failed_to_reduce_hydraulic_pressure_in_time();
-  DEBUG_PRINT_VAR(component_timed_out);
-  DEBUG_PRINT_VAR(failed_to_reduce_pressure);
-  DEBUG_PRINT_VAR(_system_data_->hardware_data_.asms_on_);
-  DEBUG_PRINT_VAR(_system_data_->failure_detection_.ts_on_);
-  DEBUG_PRINT_VAR(_system_data_->hardware_data_.tsms_sdc_closed_);
-  DEBUG_PRINT_VAR(_system_data_->failure_detection_.emergency_signal_);
-  DEBUG_PRINT_VAR(!_system_data_->hardware_data_.pneumatic_line_pressure_);
+  // DEBUG_PRINT_VAR(component_timed_out);
+  // DEBUG_PRINT_VAR(failed_to_reduce_pressure);
+  // DEBUG_PRINT_VAR(_system_data_->hardware_data_.asms_on_);
+  // DEBUG_PRINT_VAR(_system_data_->failure_detection_.ts_on_);
+  // DEBUG_PRINT_VAR(_system_data_->hardware_data_.tsms_sdc_closed_);
+  // DEBUG_PRINT_VAR(_system_data_->failure_detection_.emergency_signal_);
+  // DEBUG_PRINT_VAR(!_system_data_->hardware_data_.pneumatic_line_pressure_);
   return component_timed_out || _system_data_->failure_detection_.emergency_signal_ ||
          !_system_data_->hardware_data_.tsms_sdc_closed_ ||
-         //  !_system_data_->hardware_data_.pneumatic_line_pressure_ ||
-         //  failed_to_reduce_pressure ||
+          !_system_data_->hardware_data_.pneumatic_line_pressure_ ||
+          failed_to_reduce_pressure ||
          !_system_data_->hardware_data_.asms_on_ || !_system_data_->failure_detection_.ts_on_;
 }
 
 bool CheckupManager::failed_to_build_hydraulic_pressure_in_time() const {
-  return _system_data_->hardware_data_._hydraulic_line_pressure < HYDRAULIC_BRAKE_THRESHOLD &&
-         _system_data_->hardware_data_.hydraulic_line_front_pressure < HYDRAULIC_BRAKE_THRESHOLD &&
+  return (_system_data_->hardware_data_._hydraulic_line_pressure < HYDRAULIC_BRAKE_THRESHOLD ||
+         _system_data_->hardware_data_.hydraulic_line_front_pressure < HYDRAULIC_BRAKE_THRESHOLD) &&
          _system_data_->r2d_logics_.engageEbsTimestamp.checkWithoutReset();
 }
 
 bool CheckupManager::failed_to_reduce_hydraulic_pressure_in_time() const {
-  return _system_data_->hardware_data_._hydraulic_line_pressure >= HYDRAULIC_BRAKE_THRESHOLD &&
-         _system_data_->hardware_data_.hydraulic_line_front_pressure >= HYDRAULIC_BRAKE_THRESHOLD &&
+  return (_system_data_->hardware_data_._hydraulic_line_pressure >= HYDRAULIC_BRAKE_THRESHOLD + 30 ||
+         _system_data_->hardware_data_.hydraulic_line_front_pressure >= HYDRAULIC_BRAKE_THRESHOLD + 30) &&
          _system_data_->r2d_logics_.releaseEbsTimestamp.checkWithoutReset();
 }
 

@@ -22,6 +22,7 @@ void SpiHandler::handle_display_update(SystemData& data, const SystemVolatileDat
     const uint16_t apps_higher = average_queue(data.apps_higher_readings);
     uint16_t torque_value =
         constrain(apps_higher, config::apps::LOWER_MIN, config::apps::LOWER_MAX);
+
     torque_value = config::apps::LOWER_MAX - torque_value;
     uint16_t apps_percent = 0;
     if (torque_value > config::apps::DEADBAND) {
@@ -74,6 +75,22 @@ void SpiHandler::handle_display_update(SystemData& data, const SystemVolatileDat
     // publish autonomous mission
     uint16_t autonomous_mission = updated_data.autonomous_mission;
     display_spi.transfer16(&autonomous_mission, 1, WIDGET_AUTONOMOUS_MISSION, millis() & 0xFFFF);
+  }
+
+  // All temperatures every 2 seconds
+  if (all_temps_timer >= ALL_TEMPS_INTERVAL) {
+    constexpr int total_temps = NUM_BOARDS * NTC_SENSOR_COUNT;
+    uint16_t temp_array[total_temps];
+
+    for (int board = 0; board < NUM_BOARDS; ++board) {
+      for (int sensor = 0; sensor < NTC_SENSOR_COUNT; ++sensor) {
+        const int8_t temp = updated_data.cell_board_all_temps[board][sensor];
+        temp_array[board * NTC_SENSOR_COUNT + sensor] = static_cast<uint16_t>(temp);
+      }
+    }
+
+    display_spi.transfer16(temp_array, total_temps, WIDGET_ALL_TEMPS, millis() & 0xFFFF);
+    all_temps_timer = 0;
   }
 
   // All temperatures every 2 seconds

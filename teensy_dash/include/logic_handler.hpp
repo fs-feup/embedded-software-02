@@ -13,6 +13,7 @@ public:
   [[nodiscard]] bool should_go_idle() const;
   bool just_entered_emergency();
   bool just_entered_driving();
+  bool bamocar_has_error();
   [[nodiscard]] static uint16_t scale_apps_lower_to_apps_higher(uint16_t apps_lower);
   int calculate_torque();
 

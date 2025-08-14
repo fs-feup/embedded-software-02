@@ -64,7 +64,9 @@ void CanCommHandler::can_snifflas(const CAN_message_t& msg) {
     static_callback(msg);
   }
 }
-void CanCommHandler::real_snifflas(const CAN_message_t& msg) {
+
+void CanCommHandler::handle_can_message(const CAN_message_t& msg) {
+
   if (msg.id >= ALL_TEMPS_ID && msg.id < (ALL_TEMPS_ID + 6)) {
     // Handle new chunked temperature messages
     uint8_t board_id_from_can_id = msg.id - ALL_TEMPS_ID;
@@ -87,6 +89,7 @@ void CanCommHandler::real_snifflas(const CAN_message_t& msg) {
       }
     }
   }
+
   switch (msg.id) {
     case BMS_THERMISTOR_ID:
       bms_callback(msg.buf, msg.len);
