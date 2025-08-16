@@ -31,6 +31,10 @@ constexpr int WD_PULSE_INTERVAL_MS = 50;
 constexpr int WATCHDOG_TOGGLE_DURATION = 1000;
 constexpr int WATCHDOG_TEST_DURATION = 1000;
 
+constexpr float MAX_V_ANALOG = 3.3; // Volts
+constexpr float MIN_HYDRAULIC_V = 0.5; // Volts
+constexpr float BAR_TO_V_DEGREE = 0.01538461 // Degree of the linear function that maps Bars of hydraulic pressure to Volts
+
 /*
  * ===========
  * OUTPUT PINS
