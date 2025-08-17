@@ -46,7 +46,7 @@ void IOManager::update_R2D_timer() const {
 void IOManager::manage_ats() const {
   static bool ats_active = false;
   //print active state
-  DEBUG_PRINTLN("ATS active: " + String(ats_active));
+  // DEBUG_PRINTLN(s"ATS active: " + String(ats_active));
   static unsigned long ats_activated_time = 0;
 
   if (data.ats_pressed && !updated_data.asms_on && !ats_active) {
@@ -66,7 +66,7 @@ void IOManager::manage_ats() const {
 void IOManager::setup() {
   pinMode(pins::digital::INERTIA, INPUT);
   pinMode(pins::analog::APPS_HIGHER, INPUT_PULLDOWN);
-  pinMode(pins::analog::APPS_LOWER, INPUT_PULLDOWN);
+  pinMode(pins::analog::APPS_LOWER, INPUT_PULLUP);
   pinMode(pins::analog::ROTARY_SWITCH, INPUT);
   pinMode(pins::analog::BRAKE_PRESSURE, INPUT);
   pinMode(pins::digital::TS, INPUT);
@@ -109,8 +109,9 @@ void IOManager::read_apps() const {
   //print value
   DEBUG_PRINT("APPS LOW:");
   DEBUG_PRINTLN(average_queue(data.apps_lower_readings));
-  DEBUG_PRINT("APPS HIGH:");
+  DEBUG_PRINT("APPS HIG:");
   DEBUG_PRINTLN(average_queue(data.apps_higher_readings));
+  DEBUG_PRINTLN("");
 
 }
 

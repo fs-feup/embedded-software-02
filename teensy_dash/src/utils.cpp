@@ -107,7 +107,7 @@ InverterModeParams get_inverter_mode_config(const SwitchMode switch_mode) {
                 .moment_ramp_decc = 250};
       break;
     case SwitchMode::INVERTER_MODE_ACCELERATION: // Aceleração
-      params = {.i_max_pk_percent = 65,
+      params = {.i_max_pk_percent = 60,
                 .speed_limit_percent = 70,
                 .i_cont_percent = 44,
                 .speed_ramp_acc = 1000,
@@ -116,7 +116,7 @@ InverterModeParams get_inverter_mode_config(const SwitchMode switch_mode) {
                 .moment_ramp_decc = 500};
       break;
     case SwitchMode::INVERTER_MODE_FAST_ACCELERATION:
-      params = {.i_max_pk_percent = 60,
+      params = {.i_max_pk_percent = 55,
                 .speed_limit_percent = 75,
                 .i_cont_percent = 44,
                 .speed_ramp_acc = 1000,

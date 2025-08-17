@@ -53,7 +53,7 @@ constexpr uint8_t EMERGENCY_DURATION = 1;
 namespace apps {
 constexpr uint16_t UPPER_BOUND_APPS_HIGHER = 700;
 constexpr uint16_t LOWER_BOUND_APPS_HIGHER = 200;
-constexpr uint16_t UPPER_BOUND_APPS_LOWER = 600;
+constexpr uint16_t UPPER_BOUND_APPS_LOWER = 610;
 constexpr uint16_t LOWER_BOUND_APPS_LOWER = 40;
 
 constexpr uint16_t DEAD_THRESHOLD_APPS_HIGHER = 780;
@@ -67,8 +67,8 @@ constexpr uint16_t LINEAR_OFFSET = 140;
 constexpr uint16_t HIGHER_MAX = 677; // 677 for APPS Upper 515 APPS lower
 constexpr uint16_t HIGHER_MIN = 210; // 210 for APPS Lower 80 APPS lower
 
-constexpr uint16_t LOWER_MAX = 510; // 677 for APPS Upper 515 APPS lower
-constexpr uint16_t LOWER_MIN = 75; // 210 for APPS Lower 80 APPS lower
+constexpr uint16_t LOWER_MAX = 520; // 677 for APPS Upper 515 APPS lower
+constexpr uint16_t LOWER_MIN = 85; // 210 for APPS Lower 80 APPS lower
 
 
 constexpr uint16_t AVG_MIN = 145;

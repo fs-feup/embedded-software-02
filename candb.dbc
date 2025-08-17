@@ -275,15 +275,15 @@ BO_ 1297 DATA_LOGGER_SIGNALS_1: 8 Master
  SG_ emergency_signal : 15|1@1+ (1,0) [0|1] ""  DataLogger
  SG_ checkup_state : 16|4@1+ (1,0) [0|0] ""  DataLogger
  SG_ pneumatic_pressure : 21|1@1+ (1,0) [0|1] ""  DataLogger
- SG_ pneumatic_line_2 : 22|1@1+ (1,0) [0|1] ""  DataLogger
- SG_ pneumatic_line_1 : 23|1@1+ (1,0) [0|1] ""  DataLogger
+ SG_ PS2 : 22|1@1+ (1,0) [0|1] "Pressure > 6 bar"  DataLogger
+ SG_ PS1 : 23|1@1+ (1,0) [0|1] "Pressure > 6 bar"  DataLogger
  SG_ dc_voltage : 24|32@1+ (1,0) [0|0] ""  DataLogger
  SG_ mission : 56|4@1+ (1,0) [0|0] ""  DataLogger
  SG_ as_state : 60|4@1+ (1,0) [0|0] ""  DataLogger
 
 BO_ 1298 DATA_LOGGER_SIGNALS_2: 8 Master
- SG_ hydraulic_pressure_front : 0|32@1+ (1,0) [0|0] ""  DataLogger
- SG_ hydraulic_pressure_back : 32|32@1+ (1,0) [0|0] ""  DataLogger
+ SG_ BP1 : 0|32@1- (1,0) [0|260] "bar"  DataLogger
+ SG_ BP2 : 32|32@1- (1,0) [0|260] "bar"  DataLogger
 
 
 
@@ -300,6 +300,12 @@ CM_ SG_ 513 value_request "requests values from the motor byte 1 determines whic
 ";
 CM_ SG_ 513 clear_errors "Command to clear errors on the Bamocar (0x8E)";
 CM_ SG_ 1024 emergency_status "";
+CM_ SG_ 1297 PS2 "Corresponds to Pneumatic Pressure for the Rear Brake Line > 6 bar
+";
+CM_ SG_ 1297 PS1 "Corresponds to Pneumatic Pressure for the Front Brake Line > 6 bar
+";
+CM_ SG_ 1298 BP1 "Floating Point for Hydraulic Pressure Front Line in Bar";
+CM_ SG_ 1298 BP2 "Floating Point for Hydraulic Pressure Rear Line in Bar";
 VAL_ 513 value_request 235 "dc_voltage" 48 "motor_speed" 32 "motor_current" 143 "motor_errors" 73 "motor_temperature" ;
 VAL_ 1829 command_code 80 "RESET_ORIGIN" 48 "SET_ORIGIN" ;
 VAL_ 1282 AS_status 1 "AS_status_off" 2 "AS_status_ready" 3 "AS_status_emergency" 4 "AS_status_driving" 5 "AS_status_finished" ;
@@ -307,4 +313,6 @@ VAL_ 1282 ASB_EBS_state 1 "ASB_EBS_state_deactivated" 2 "ASB_EBS_state_initial_c
 VAL_ 1282 AMI_state 1 "AMI_state_acceleration" 2 "AMI_state_skidpad" 3 "AMI_state_trackdrive" 4 "AMI_state_braketest" 5 "AMI_state_inspection" 6 "AMI_state_autocross" ;
 VAL_ 1282 Steering_state 0 "FALSE" 1 "TRUE" ;
 VAL_ 1282 ASB_redundancy_state 1 "ASB_redundancy_state_deactivated" 2 "ASB_redundancy_state_engaged" 3 "ASB_redundancy_state_initial_checkup_passed" ;
+SIG_VALTYPE_ 1298 BP1 : 1;
+SIG_VALTYPE_ 1298 BP2 : 1;
 
