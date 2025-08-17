@@ -31,10 +31,25 @@ constexpr int WD_PULSE_INTERVAL_MS = 50;
 constexpr int WATCHDOG_TOGGLE_DURATION = 1000;
 constexpr int WATCHDOG_TEST_DURATION = 1000;
 
-constexpr float MAX_V_ANALOG = 3.3; // Volts
-constexpr float MIN_HYDRAULIC_V = 0.5; // Volts
-constexpr float BAR_TO_V_DEGREE = 0.01538461 // Degree of the linear function that maps Bars of hydraulic pressure to Volts
+constexpr float MAX_V_ANALOG = 3.3;     // Volts
+constexpr float MIN_HYDRAULIC_V = 0.5;  // Volts
 
+// Hydraulic pressure sensor constants
+constexpr float HYDRAULIC_PRESSURE_SLOPE = 65.0f;  // bar/V slope from sensor equation
+constexpr int HYDRAULIC_PRESSURE_MAX_BAR = 95;     // Maximum pressure in bar
+
+// Hydraulic pressure sensor ADC calculations
+// Sensor equation: U = (p/65) + 0.5, where 65 is the slope of the linear function
+// With 10-bit ADC (0-1023 over 0-3.3 V): U = (N / 1023) x 3.3
+constexpr int HYDRAULIC_PRESSURE_ADC_MIN =
+    static_cast<int>(MIN_HYDRAULIC_V / MAX_V_ANALOG * ADC_MAX_VALUE);  // 155
+constexpr float MAX_HYDRAULIC_V =
+    (static_cast<float>(HYDRAULIC_PRESSURE_MAX_BAR) / HYDRAULIC_PRESSURE_SLOPE) +
+    MIN_HYDRAULIC_V;  // (95/65) + 0.5 ≈ 1.96V
+constexpr int HYDRAULIC_PRESSURE_ADC_MAX =
+    static_cast<int>(MAX_HYDRAULIC_V / MAX_V_ANALOG * ADC_MAX_VALUE);  // 607
+constexpr int HYDRAULIC_PRESSURE_SPAN_ADC =
+    HYDRAULIC_PRESSURE_ADC_MAX - HYDRAULIC_PRESSURE_ADC_MIN;  // 452
 /*
  * ===========
  * OUTPUT PINS
