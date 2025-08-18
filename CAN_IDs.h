@@ -133,7 +133,7 @@ constexpr uint8_t LEFT_WHEEL_CODE = 0x12;  // 0x12
 // Hydraulic System
 //-----------------------------------------------------------------------------
 constexpr uint16_t HYDRAULIC_LINE = 0x90;            // 0x90
-constexpr uint16_t HYDRAULIC_BRAKE_THRESHOLD = 165;  // 165 TODO: Back to 165 again
+constexpr uint16_t HYDRAULIC_BRAKE_THRESHOLD = 165; 
 
 //-----------------------------------------------------------------------------
 // Battery Management System
