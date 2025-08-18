@@ -439,7 +439,9 @@ bool CheckupManager::should_enter_emergency_in_driving_state() const {
 
 bool CheckupManager::failed_to_build_hydraulic_pressure_in_time() const {
   return (_system_data_->hardware_data_._hydraulic_line_pressure < HYDRAULIC_BRAKE_THRESHOLD ||
-         _system_data_->hardware_data_.hydraulic_line_front_pressure < HYDRAULIC_BRAKE_THRESHOLD) &&
+         _system_data_->hardware_data_.hydraulic_line_front_pressure < HYDRAULIC_BRAKE_THRESHOLD || 
+        _system_data_->hardware_data_._hydraulic_line_pressure > BRAKE_PRESSURE_UPPER_THRESHOLD ||
+         _system_data_->hardware_data_.hydraulic_line_front_pressure > BRAKE_PRESSURE_UPPER_THRESHOLD) &&
          _system_data_->r2d_logics_.engageEbsTimestamp.checkWithoutReset();
 }
 
