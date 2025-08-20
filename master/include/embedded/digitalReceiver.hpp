@@ -228,7 +228,6 @@ inline void DigitalReceiver::read_mission() {
   int raw_value = analogRead(AMI);
   int contrained_value = constrain(raw_value, 0, 600);
   int mapped_value;
-  DEBUG_PRINT_VAR(raw_value);
   // int mapped_value = map(constrain(raw_value, 0, ADC_MAX_VALUE), 0, ADC_MAX_VALUE, 0,
   //                        MAX_MISSION);  // constrain just in case
   if (contrained_value < 60) {
