@@ -13,8 +13,8 @@ constexpr unsigned long READY_TIMEOUT_MS = 5000;
 constexpr unsigned long RELEASE_EBS_TIMEOUT_MS = 1000;
 constexpr unsigned long ENGAGE_EBS_TIMEOUT_MS = 5000;
 constexpr int WD_TIMEOUT_MS = 500;
-constexpr int BRAKE_PRESSURE_LOWER_THRESHOLD = 170;
-constexpr int BRAKE_PRESSURE_UPPER_THRESHOLD = 510;
+constexpr int BRAKE_PRESSURE_LOWER_THRESHOLD = 393;
+constexpr int BRAKE_PRESSURE_UPPER_THRESHOLD = 441;
 constexpr int LIMIT_RPM_INTERVAL = 500000;
 
 constexpr int ADC_MAX_VALUE = 1023;

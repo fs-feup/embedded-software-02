@@ -49,6 +49,11 @@ inline std::array<uint8_t, 8> create_signals_msg_1(const SystemData& system_data
                   ((system_data.hardware_data_.pneumatic_line_pressure_2_ & 0x01) << 6) |
                   ((system_data.hardware_data_.pneumatic_line_pressure_ & 0x01) << 5);
 
+  bool pneumatic1 = system_data.hardware_data_.pneumatic_line_pressure_1_;
+  bool pneumatic2 = system_data.hardware_data_.pneumatic_line_pressure_2_;
+  DEBUG_PRINT_VAR(pneumatic1);
+  DEBUG_PRINT_VAR(pneumatic2);
+
   return {
       byte0,
       byte1,
@@ -70,6 +75,9 @@ inline std::array<uint8_t, 8> create_hydraulic_presures_msg(const SystemData& sy
   float hydraulic_rear_bar =
       (adc_rear - HYDRAULIC_PRESSURE_ADC_MIN) *
       (static_cast<float>(HYDRAULIC_PRESSURE_MAX_BAR) / HYDRAULIC_PRESSURE_SPAN_ADC);
+
+  DEBUG_PRINT_VAR(hydraulic_front_bar);
+  DEBUG_PRINT_VAR(hydraulic_rear_bar);
 
   union FloatToBytes {
     float f;
