@@ -35,6 +35,7 @@ void CanCommHandler::setup() {
   +can1.setFIFOFilter(6, ALL_TEMPS_ID + 3, STD);
   +can1.setFIFOFilter(7, ALL_TEMPS_ID + 4, STD);
   +can1.setFIFOFilter(8, ALL_TEMPS_ID + 5, STD);
+  can1.setFIFOFilter(9, BMS_TX_ID, STD);
   can1.onReceive(can_snifflas);
   delay(100);
 
@@ -111,7 +112,7 @@ void CanCommHandler::handle_can_message(const CAN_message_t& msg) {
 
       uint8_t pack_soc = msg.buf[4];
       DEBUG_PRINTLN("BMS Pack SOC: " + String(pack_soc) + "%");
-      updatable_data.hv_soc = pack_soc;
+      updatable_data.hv_soc = pack_soc / 2;
 
       uint8_t error_bitmap_1 = msg.buf[5];
       DEBUG_PRINTLN("BMS ERRORS #1: 0x" + String(error_bitmap_1, HEX));
