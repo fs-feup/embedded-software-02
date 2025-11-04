@@ -57,9 +57,8 @@ uint16_t LogicHandler::apps_to_bamocar_value(const uint16_t apps_higher,
     braking_enabled = !braking_enabled;
     DEBUG_PRINT("Regen Braking switched\n");
     DEBUG_PRINTLN(String(braking_enabled));
-    data.display_pressed = false;  // reset the flag
   }
-
+  data.display_pressed = false;  // reset the flag
   uint16_t torque_value = apps_lower;  // APPS Lower works better
 
   torque_value = constrain(torque_value, config::apps::LOWER_MIN, config::apps::LOWER_MAX);

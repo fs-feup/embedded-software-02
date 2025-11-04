@@ -555,7 +555,7 @@ void CanCommHandler::stop_bamocar() {
 void CanCommHandler::send_torque(const int torque) {
   int safe_torque = torque;
   DEBUG_PRINTLN("Speed: " + String(updatable_data.speed));
-  if (updatable_data.speed <=100 && safe_torque<0) {
+  if (updatable_data.speed <=config::bamocar::BRAKING_RPM_THRESHOLD && safe_torque<0) {
     safe_torque = 0;
   }
 

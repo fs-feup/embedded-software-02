@@ -12,7 +12,6 @@ void StateMachine::update() {
 
   switch (current_state_) {
     case State::IDLE:
-      current_state_ = State::DRIVING; // Just to be sure
       if (logic_handler.should_start_manual_driving()) {
         can_handler.reset_bamocar_init();
         current_state_ = State::INITIALIZING_DRIVING;
@@ -24,7 +23,6 @@ void StateMachine::update() {
       } else {
         // Serial.println("chillin");
       }
-      current_state_ = State::DRIVING; // Just to be sure
       break;
     case State::INITIALIZING_DRIVING:
       if (transition_to_driving()) {

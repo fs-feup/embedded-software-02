@@ -107,7 +107,8 @@ constexpr uint32_t TIMEOUT_MS = 1'000;
 
 namespace bamocar {
 constexpr uint16_t MAX = 32'760;
-constexpr uint16_t BRAKING_MAX = 8'000;
+constexpr uint16_t BRAKING_MAX = 1'000;
+constexpr uint16_t BRAKING_RPM_THRESHOLD = 300;
 constexpr uint16_t MIN = 0;
 }  // namespace bamocar
 }  // namespace config
