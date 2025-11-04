@@ -553,12 +553,19 @@ void CanCommHandler::stop_bamocar() {
 }
 
 void CanCommHandler::send_torque(const int torque) {
+  int safe_torque = torque;
+  if (updatable_data.speed <=0){
+    safe_torque = 0;
+    return;
+  }
+  DEBUG_PRINTLN("Requested torque: " + String(safe_torque));
+
   CAN_message_t torque_message;
   torque_message.id = BAMO_COMMAND_ID;
   torque_message.len = 3;
   torque_message.buf[0] = 0x90;
-  torque_message.buf[1] = torque & 0xFF;         // Lower byte
-  torque_message.buf[2] = (torque >> 8) & 0xFF;  // Upper byte
+  torque_message.buf[1] = safe_torque & 0xFF;         // Lower byte
+  torque_message.buf[2] = (safe_torque >> 8) & 0xFF;  // Upper byte
 
   can1.write(torque_message);
 }

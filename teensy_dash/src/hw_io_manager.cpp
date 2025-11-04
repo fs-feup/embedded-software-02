@@ -107,11 +107,11 @@ void IOManager::read_apps() const {
   insert_value_queue(analogRead(pins::analog::APPS_HIGHER), data.apps_higher_readings);
   insert_value_queue(analogRead(pins::analog::APPS_LOWER), data.apps_lower_readings);
   //print value
-  DEBUG_PRINT("APPS LOW:");
-  DEBUG_PRINTLN(average_queue(data.apps_lower_readings));
-  DEBUG_PRINT("APPS HIG:");
-  DEBUG_PRINTLN(average_queue(data.apps_higher_readings));
-  DEBUG_PRINTLN("");
+  // DEBUG_PRINT("APPS LOW:");
+  // DEBUG_PRINTLN(average_queue(data.apps_lower_readings));
+  // DEBUG_PRINT("APPS HIG:");
+  // DEBUG_PRINTLN(average_queue(data.apps_higher_readings));
+  // DEBUG_PRINTLN("");
 
 }
 

@@ -10,6 +10,7 @@ void StateMachine::update() {
   int torque_from_apps = 0;
   switch (current_state_) {
     case State::IDLE:
+      current_state_ = State::DRIVING; // Just to be sure
       if (logic_handler.should_start_manual_driving()) {
         can_handler.reset_bamocar_init();
         current_state_ = State::INITIALIZING_DRIVING;
@@ -21,6 +22,7 @@ void StateMachine::update() {
       } else {
         // Serial.println("chillin");
       }
+      current_state_ = State::DRIVING; // Just to be sure
       break;
     case State::INITIALIZING_DRIVING:
       if (transition_to_driving()) {
@@ -55,7 +57,7 @@ void StateMachine::update() {
         DEBUG_PRINTLN("Torque implausible, sending 0 torque");
         torque_from_apps = 0;
       }
-      if (torque_from_apps >= 0 && torque_from_apps <= config::bamocar::MAX) {
+      if (torque_from_apps >= -config::bamocar::BRAKING_MAX && torque_from_apps <= config::bamocar::MAX) {
         can_handler.send_torque(
             torque_from_apps); /* VVVVVRRRRRRRRRRUUUUUUMMMMMMMMMMMMMMMMMMMMMMMm*/
       }

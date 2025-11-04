@@ -19,12 +19,13 @@ public:
 
 private:
   [[nodiscard]] static bool plausibility(int apps_higher, int apps_lower);
-  [[nodiscard]] static uint16_t apps_to_bamocar_value(uint16_t apps_higher, uint16_t apps_lower);
+  [[nodiscard]] uint16_t apps_to_bamocar_value(uint16_t apps_higher, uint16_t apps_lower);
   elapsedMillis brake_implausibility_timer = 0;
   elapsedMillis apps_implausibility_timer = 0;
   bool apps_timeout = false;
   bool entered_emergency = false;
   bool entered_driving = false;
+  bool braking_enabled = false;
   SystemData& data;
   SystemVolatileData& updated_data;
   bool check_apps_plausibility(uint16_t apps_higher_avg, uint16_t apps_lower_avg);

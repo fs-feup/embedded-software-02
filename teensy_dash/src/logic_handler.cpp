@@ -52,6 +52,14 @@ bool LogicHandler::plausibility(const int apps_higher, const int apps_lower) {
 
 uint16_t LogicHandler::apps_to_bamocar_value(const uint16_t apps_higher,
                                              const uint16_t apps_lower) {
+  // if the button was pressed, enable braking
+  if (data.display_pressed) {
+    braking_enabled = !braking_enabled;
+    DEBUG_PRINT("Regen Braking switched\n");
+    DEBUG_PRINTLN(String(braking_enabled));
+    data.display_pressed = false;  // reset the flag
+  }
+
   uint16_t torque_value = apps_lower;  // APPS Lower works better
 
   torque_value = constrain(torque_value, config::apps::LOWER_MIN, config::apps::LOWER_MAX);
@@ -59,16 +67,40 @@ uint16_t LogicHandler::apps_to_bamocar_value(const uint16_t apps_higher,
   torque_value =
       config::apps::LOWER_MAX - torque_value;  // Invert the value to match Bamocar's expected input
   // DEBUG_PRINTLN("Torque value before deadband: " + String(torque_value));
-  if (torque_value <= config::apps::DEADBAND) {
-    return 0;
+
+  int16_t mapped_value;
+
+  if (!braking_enabled) {
+    if (torque_value <= config::apps::DEADBAND) {
+      return 0;
+    }
+    float normalized_input = (float)(torque_value - config::apps::DEADBAND) /
+                             (float)(config::apps::MAX_FOR_TORQUE - config::apps::DEADBAND);
+    mapped_value = int16_t(normalized_input * (config::bamocar::MAX));
+    DEBUG_PRINT("Not enabled");
+    return min(static_cast<int16_t>(mapped_value), config::bamocar::MAX);
   }
 
-  float normalized_input = (float)(torque_value - config::apps::DEADBAND) /
-                           (float)(config::apps::MAX_FOR_TORQUE - config::apps::DEADBAND);
+  uint16_t apps_range = config::apps::LOWER_MAX - config::apps::LOWER_MIN;
+  uint16_t apps_braking_range =
+      apps_range * config::apps::BRAKING_THRESHOLD - config::apps::REGEN_BRAKING_DEADBAND;
+  uint16_t apps_acceleration_point =
+      apps_range * config::apps::BRAKING_THRESHOLD + config::apps::REGEN_BRAKING_DEADBAND;
+  uint16_t apps_acceleration_range = apps_range - apps_acceleration_point;
 
-  uint16_t mapped_value = (uint16_t)(normalized_input * (config::bamocar::MAX));
 
-  return min(mapped_value, config::bamocar::MAX);
+  if (torque_value < apps_braking_range) {
+    float normalized_input = ((float)torque_value - (float)apps_braking_range)/ (float)apps_braking_range;
+    mapped_value = (int16_t)(normalized_input * (config::bamocar::BRAKING_MAX));
+    return max(static_cast<int16_t>(mapped_value), -config::bamocar::BRAKING_MAX);
+  } else if (torque_value <= apps_acceleration_point) {
+    return 0;
+  } else {
+    float normalized_input =
+        (float)(torque_value - apps_acceleration_point) / (float)apps_acceleration_range;
+    mapped_value = (int16_t)(normalized_input * (config::bamocar::MAX));
+    return min(static_cast<int16_t>(mapped_value), config::bamocar::MAX);
+  }
 }
 
 bool LogicHandler::just_entered_emergency() {
@@ -126,11 +158,11 @@ int LogicHandler::calculate_torque() {
 
     return config::apps::ERROR_PLAUSIBILITY;  // shutdown ?
   }
-  DEBUG_PRINTLN("Apps plausible, calculating torque");
-  DEBUG_PRINTLN("Apps plausible, calculating torque");
-  DEBUG_PRINTLN("Apps plausible, calculating torque");
-  const uint16_t bamocar_value = apps_to_bamocar_value(apps_higher_average, apps_lower_average);
-
+  // DEBUG_PRINTLN("Apps plausible, calculating torque");
+  // DEBUG_PRINTLN("Apps plausible, calculating torque");
+  // DEBUG_PRINTLN("Apps plausible, calculating torque");
+  const int16_t bamocar_value = apps_to_bamocar_value(apps_higher_average, apps_lower_average);
+  DEBUG_PRINTLN("Calculated Torque" + String(bamocar_value));
   // DEBUG_PRINTLN("Bamocar value: " + String(bamocar_value));
 
   // if (apps_timeout) {
