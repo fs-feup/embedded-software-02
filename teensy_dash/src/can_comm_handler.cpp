@@ -215,7 +215,7 @@ void CanCommHandler::bamocar_callback(const uint8_t* const msg_data, const uint8
       break;
 
     case SPEED_ACTUAL:
-      updatable_data.speed = message_value;
+      updatable_data.speed = static_cast<int16_t>(message_value); // THIS WAS GIVING WRONG VALUES BECAUSE IT IS A 16 BIT SIGNED INTEGER
       // DEBUG_PRINTLN("BAMOCAR SPEED: " + String(message_value));
       break;
     case CURRENT_ACTUAL:
@@ -554,18 +554,19 @@ void CanCommHandler::stop_bamocar() {
 
 void CanCommHandler::send_torque(const int torque) {
   int safe_torque = torque;
-  if (updatable_data.speed <=0){
+  DEBUG_PRINTLN("Speed: " + String(updatable_data.speed));
+  if (updatable_data.speed <=100 && safe_torque<0) {
     safe_torque = 0;
-    return;
   }
-  DEBUG_PRINTLN("Requested torque: " + String(safe_torque));
 
+  DEBUG_PRINT("HEREEEE");
+  DEBUG_PRINTLN("Requested torque: " + String(safe_torque));
   CAN_message_t torque_message;
   torque_message.id = BAMO_COMMAND_ID;
   torque_message.len = 3;
   torque_message.buf[0] = 0x90;
   torque_message.buf[1] = safe_torque & 0xFF;         // Lower byte
   torque_message.buf[2] = (safe_torque >> 8) & 0xFF;  // Upper byte
-
+  
   can1.write(torque_message);
 }
