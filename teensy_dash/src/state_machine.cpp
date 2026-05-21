@@ -8,7 +8,7 @@ StateMachine::StateMachine(CanCommHandler& can_handler, LogicHandler& logic_hand
 
 void StateMachine::update() {
   int torque_from_apps = 0;
-  DEBUG_PRINTLN("Current state: " + String(static_cast<int>(current_state_)));
+  //DEBUG_PRINTLN("Current state: " + String(static_cast<int>(current_state_)));
 
   switch (current_state_) {
     case State::IDLE:

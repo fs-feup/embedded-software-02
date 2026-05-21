@@ -50,7 +50,7 @@ void CanCommHandler::send_bamo_requests() {
 
   // Speed actual request
   constexpr CAN_message_t speed_actual_request = {
-      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, SPEED_ACTUAL, 0xFB}};
+      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, SPEED_ACTUAL, 0x0A}};
   constexpr CAN_message_t current_actual_request = {
       .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, CURRENT_ACTUAL, 0xFA}};
   constexpr CAN_message_t logicmap_errors_request = {

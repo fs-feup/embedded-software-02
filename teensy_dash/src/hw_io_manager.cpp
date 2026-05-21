@@ -89,7 +89,6 @@ void IOManager::setup() {
   attachInterrupt(
       digitalPinToInterrupt(pins::encoder::FRONT_LEFT_WHEEL),
       []() {
-        DEBUG_PRINTLN("Front left wheel pulse detected");
         instance->updatable_data.second_to_last_wheel_pulse_fl =
             instance->updatable_data.last_wheel_pulse_fl;
         instance->updatable_data.last_wheel_pulse_fl = micros();
