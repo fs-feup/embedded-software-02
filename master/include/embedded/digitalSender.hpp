@@ -126,6 +126,7 @@ inline void DigitalSender::activate_ebs() {
 }
 
 inline void DigitalSender::deactivate_ebs() {
+  DEBUG_PRINT("Deactivating EBS");
   digitalWrite(EBS_VALVE_REAR_PIN, LOW);
   digitalWrite(EBS_VALVE_FRONT_PIN, LOW);
 }

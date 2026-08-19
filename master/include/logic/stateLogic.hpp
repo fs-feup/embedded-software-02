@@ -98,7 +98,6 @@ inline void ASState::calculate_state() {
       break;
 
     case State::AS_READY:
-
       if (_checkup_manager_.should_stay_ready()) {
         break;
       }

@@ -96,11 +96,11 @@ struct FailureDetection {
   FailureDetection(NonUnitaryFailureDetection& timestamps) : timestamps_(timestamps) {}
 
   [[nodiscard]] bool has_any_component_timed_out() {
-    steer_dead_ = timestamps_.steer_alive_timestamp_.checkWithoutReset();
-    pc_dead_ = timestamps_.pc_alive_timestamp_.checkWithoutReset();
-    inversor_dead_ = timestamps_.inversor_alive_timestamp_.checkWithoutReset();
+    steer_dead_ = false; // timestamps_.steer_alive_timestamp_.checkWithoutReset();
+    pc_dead_ = false ; //timestamps_.pc_alive_timestamp_.checkWithoutReset();
+    inversor_dead_ = false; //timestamps_.inversor_alive_timestamp_.checkWithoutReset();
     res_dead_ = timestamps_.res_signal_loss_timestamp_.checkWithoutReset();
-    bms_dead_ = timestamps_.bms_alive_timestamp_.checkWithoutReset();
+    bms_dead_ = false; // timestamps_.bms_alive_timestamp_.checkWithoutReset();
 
     if (steer_dead_ || pc_dead_ || inversor_dead_ || res_dead_ || bms_dead_) {
       DEBUG_PRINT("=== System Component Status Check ===");

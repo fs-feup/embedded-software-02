@@ -13,8 +13,7 @@ SystemData data;
 SystemVolatileData updated_data;
 volatile SystemVolatileData updatable_data;
 elapsedMillis loop_timer;
-constexpr uint8_t MAIN_LOOP_INTERVAL = 20;
-
+constexpr uint8_t MAIN_LOOP_INTERVAL = 1;
 SPI_MSTransfer_T4<&SPI> display_spi;
 IOManager io_manager(data, updatable_data, updated_data);
 CanCommHandler can_comm_handler(data, updatable_data, updated_data /*, display_spi*/);
@@ -47,7 +46,6 @@ void loop() {
     state_machine.update();
     data.current_state = state_machine.get_state();
     spi_handler.handle_display_update(data, updated_data);
-
     loop_timer = 0;
   }
 }

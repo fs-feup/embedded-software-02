@@ -13,7 +13,7 @@ void SpiHandler::handle_display_update(SystemData& data, const SystemVolatileDat
   if (data.display_pressed) {
     current_form = (current_form % 4) + 1;
     display_spi.transfer16(&current_form, 1, WIDGET_FORM_CMD, millis() & 0xFFFF);
-    data.display_pressed = false;
+    DEBUG_PRINT("DISPLAY PRESSED\n");
   }
 
   if (fast_timer >= FAST_UPDATE_INTERVAL) {

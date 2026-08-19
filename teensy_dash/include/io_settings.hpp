@@ -59,6 +59,7 @@ constexpr uint16_t LOWER_BOUND_APPS_LOWER = 40;
 constexpr uint16_t DEAD_THRESHOLD_APPS_HIGHER = 780;
 constexpr uint16_t APPS_LOWER_ZEROED = 5;
 constexpr uint16_t DEADBAND = 40;
+constexpr uint16_t REGEN_BRAKING_DEADBAND = 20;
 
 constexpr uint16_t APPS_HIGHER_WHEN_LOWER_ZEROES = 210;
 constexpr uint16_t APPS_LOWER_DEADZONE_IN_APPS_HIGHER_SCALE = 360;
@@ -75,6 +76,9 @@ constexpr uint16_t AVG_MIN = 145;
 constexpr uint16_t AVG_MAX = 596;
 constexpr uint16_t MIN_FOR_TORQUE = 0;
 constexpr uint16_t MAX_FOR_TORQUE = LOWER_MAX - LOWER_MIN;
+
+// FOR REGENERATIVE BRAKING
+constexpr float BRAKING_THRESHOLD = 0.30; // 15% of the throttle range is used for braking
 
 constexpr int ERROR_PLAUSIBILITY = -4;
 
@@ -103,6 +107,8 @@ constexpr uint32_t TIMEOUT_MS = 1'000;
 
 namespace bamocar {
 constexpr uint16_t MAX = 32'760;
+constexpr uint16_t BRAKING_MAX = 1'000;
+constexpr uint16_t BRAKING_RPM_THRESHOLD = 300;
 constexpr uint16_t MIN = 0;
 }  // namespace bamocar
 }  // namespace config

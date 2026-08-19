@@ -89,7 +89,6 @@ void IOManager::setup() {
   attachInterrupt(
       digitalPinToInterrupt(pins::encoder::FRONT_LEFT_WHEEL),
       []() {
-        DEBUG_PRINTLN("Front left wheel pulse detected");
         instance->updatable_data.second_to_last_wheel_pulse_fl =
             instance->updatable_data.last_wheel_pulse_fl;
         instance->updatable_data.last_wheel_pulse_fl = micros();
@@ -107,11 +106,11 @@ void IOManager::read_apps() const {
   insert_value_queue(analogRead(pins::analog::APPS_HIGHER), data.apps_higher_readings);
   insert_value_queue(analogRead(pins::analog::APPS_LOWER), data.apps_lower_readings);
   //print value
-  DEBUG_PRINT("APPS LOW:");
-  DEBUG_PRINTLN(average_queue(data.apps_lower_readings));
-  DEBUG_PRINT("APPS HIG:");
-  DEBUG_PRINTLN(average_queue(data.apps_higher_readings));
-  DEBUG_PRINTLN("");
+  // DEBUG_PRINT("APPS LOW:");
+  // DEBUG_PRINTLN(average_queue(data.apps_lower_readings));
+  // DEBUG_PRINT("APPS HIG:");
+  // DEBUG_PRINTLN(average_queue(data.apps_higher_readings));
+  // DEBUG_PRINTLN("");
 
 }
 

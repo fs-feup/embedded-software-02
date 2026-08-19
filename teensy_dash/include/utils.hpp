@@ -5,7 +5,7 @@
 
 #include "data_struct.hpp"
 
-#ifdef DEBUG_PRINTS
+#ifndef DEBUG_PRINTS
 #define DEBUG_PRINT(x) Serial.print(x)
 #define DEBUG_PRINTLN(x) Serial.println(x)
 #else

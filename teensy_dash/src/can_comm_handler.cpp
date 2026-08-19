@@ -50,9 +50,9 @@ void CanCommHandler::send_bamo_requests() {
 
   // Speed actual request
   constexpr CAN_message_t speed_actual_request = {
-      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, SPEED_ACTUAL, 0xFB}};
+      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, SPEED_ACTUAL, 0x0A}}; // CHANGED TO INCREASE REQUEST FREQUENCY to 100hz
   constexpr CAN_message_t current_actual_request = {
-      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, CURRENT_ACTUAL, 0xFA}};
+      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, CURRENT_ACTUAL, 0x0A}}; // Changed to Increase requested current to 100hz
   constexpr CAN_message_t logicmap_errors_request = {
       .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, LOGICMAP_ERRORS, 0xEE}};
   constexpr CAN_message_t motor_temperature_request = {
@@ -215,7 +215,7 @@ void CanCommHandler::bamocar_callback(const uint8_t* const msg_data, const uint8
       break;
 
     case SPEED_ACTUAL:
-      updatable_data.speed = message_value;
+      updatable_data.speed = static_cast<int16_t>(message_value); // THIS WAS GIVING WRONG VALUES BECAUSE IT IS A 16 BIT SIGNED INTEGER
       // DEBUG_PRINTLN("BAMOCAR SPEED: " + String(message_value));
       break;
     case CURRENT_ACTUAL:
@@ -553,12 +553,20 @@ void CanCommHandler::stop_bamocar() {
 }
 
 void CanCommHandler::send_torque(const int torque) {
+  int safe_torque = torque;
+  DEBUG_PRINTLN("Speed: " + String(updatable_data.speed));
+  if (updatable_data.speed <=config::bamocar::BRAKING_RPM_THRESHOLD && safe_torque<0) {
+    safe_torque = 0;
+  }
+
+  DEBUG_PRINT("HEREEEE");
+  DEBUG_PRINTLN("Requested torque: " + String(safe_torque));
   CAN_message_t torque_message;
   torque_message.id = BAMO_COMMAND_ID;
   torque_message.len = 3;
   torque_message.buf[0] = 0x90;
-  torque_message.buf[1] = torque & 0xFF;         // Lower byte
-  torque_message.buf[2] = (torque >> 8) & 0xFF;  // Upper byte
-
+  torque_message.buf[1] = safe_torque & 0xFF;         // Lower byte
+  torque_message.buf[2] = (safe_torque >> 8) & 0xFF;  // Upper byte
+  
   can1.write(torque_message);
 }
