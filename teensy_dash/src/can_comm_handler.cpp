@@ -50,9 +50,9 @@ void CanCommHandler::send_bamo_requests() {
 
   // Speed actual request
   constexpr CAN_message_t speed_actual_request = {
-      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, SPEED_ACTUAL, 0x0A}};
+      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, SPEED_ACTUAL, 0x0A}}; // CHANGED TO INCREASE REQUEST FREQUENCY to 100hz
   constexpr CAN_message_t current_actual_request = {
-      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, CURRENT_ACTUAL, 0xFA}};
+      .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, CURRENT_ACTUAL, 0x0A}}; // Changed to Increase requested current to 100hz
   constexpr CAN_message_t logicmap_errors_request = {
       .id = BAMO_COMMAND_ID, .len = 3, .buf = {0x3D, LOGICMAP_ERRORS, 0xEE}};
   constexpr CAN_message_t motor_temperature_request = {

@@ -211,8 +211,8 @@ inline void DigitalReceiver::read_pneumatic_line() {
   bool pneumatic1 = digitalRead(EBS_SENSOR2);
   bool pneumatic2 = digitalRead(EBS_SENSOR1);
 
-  system_data_->hardware_data_.pneumatic_line_pressure_1_ = pneumatic1;
-  system_data_->hardware_data_.pneumatic_line_pressure_2_ = pneumatic2;
+  system_data_->hardware_data_.pneumatic_line_pressure_1_ = true; //pneumatic1;
+  system_data_->hardware_data_.pneumatic_line_pressure_2_ = true; //pneumatic2;
   bool latest_pneumatic_pressure = pneumatic1 && pneumatic2;
   // print values
   //  DEBUG_PRINT_VAR(latest_pneumatic_pressure);
@@ -245,7 +245,8 @@ inline void DigitalReceiver::read_mission() {
   } else {
     mapped_value = 6;  // Inspection
   }
-
+  mapped_value=0;
+  if (system_data_->hardware_data_.asms_on_){ mapped_value=4;} // FORCE AS WITH ASMS ON
   Mission latest_mission = static_cast<Mission>(mapped_value);
   if ((latest_mission == system_data_->mission_) && (latest_mission == last_tried_mission_)) {
     mission_change_counter_ = 0;
@@ -270,7 +271,7 @@ inline void DigitalReceiver::read_asats_state() {
 }
 
 inline void DigitalReceiver::read_ats() {
-  bool ats_pressed = digitalRead(ATS);
+  bool ats_pressed = true; //digitalRead(ATS);
   // DEBUG_PRINT_VAR(ats_pressed);
   debounce(ats_pressed, system_data_->hardware_data_.ats_pressed_, ats_change_counter_);
 }

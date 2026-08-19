@@ -7,7 +7,7 @@
 //-----------------------------------------------------------------------------
 
 constexpr unsigned CAN_TIMEOUT_MS = 100;          // 100
-constexpr uint8_t RPM_MSG_PERIOD_MS = 150;        // 150
+constexpr uint8_t RPM_MSG_PERIOD_MS = 20;        // 20
 constexpr uint8_t HYDRAULIC_MSG_PERIOD_MS = 165;  // 165
 constexpr uint8_t APPS_MSG_PERIOD_MS = 250;       // 250
 constexpr float WHEEL_PRECISION = 1e-2;           // 1e-2
@@ -133,7 +133,7 @@ constexpr uint8_t LEFT_WHEEL_CODE = 0x12;  // 0x12
 // Hydraulic System
 //-----------------------------------------------------------------------------
 constexpr uint16_t HYDRAULIC_LINE = 0x90;            // 0x90
-constexpr uint16_t HYDRAULIC_BRAKE_THRESHOLD = 165; 
+constexpr uint16_t HYDRAULIC_BRAKE_THRESHOLD = 160; 
 
 //-----------------------------------------------------------------------------
 // Battery Management System
